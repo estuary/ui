@@ -6,8 +6,6 @@ import { useCallback, useMemo } from 'react';
 
 import { Box, Stack, Typography } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 import BackfillCount from 'src/components/editor/Bindings/Backfill/BackfillCount';
 import BackfillNotSupportedAlert from 'src/components/editor/Bindings/Backfill/BackfillNotSupportedAlert';
 import EvolvedAlert from 'src/components/editor/Bindings/Backfill/EvolvedAlert';
@@ -40,7 +38,6 @@ function BackfillButton({
     description,
     bindingIndex = -1,
 }: BackfillButtonProps) {
-    const intl = useIntl();
     const { updateBackfillCounter } = useUpdateBackfillCounter();
 
     const workflow = useEntityWorkflow();
@@ -254,9 +251,7 @@ function BackfillButton({
                             handleClick(checked === 'true' ? 'false' : 'true');
                         }}
                     >
-                        {intl.formatMessage({
-                            id: 'workflows.collectionSelector.manualBackfill.cta.backfill',
-                        })}
+                        Backfill
                     </BooleanToggleButton>
 
                     {backfillSupported && bindingIndex === -1 ? (

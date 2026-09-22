@@ -25,7 +25,6 @@ export interface EntitySetting {
     >;
     background: { light: string; dark: string };
     backgroundNesting: { light: string | undefined; dark: string | undefined };
-    bindingTermId: string;
     pluralId: string;
     routes: {
         connectorSelect: string;
