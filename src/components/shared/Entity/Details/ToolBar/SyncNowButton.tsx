@@ -4,8 +4,6 @@ import { useEffect, useRef, useState } from 'react';
 
 import { Alert, Button, CircularProgress, Stack, Tooltip } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 import { syncNow, SyncNowError } from 'src/api/syncNow';
 import { useEntityType } from 'src/context/EntityContext';
 import { useUserStore } from 'src/context/User/useUserContextStore';
@@ -20,14 +18,13 @@ import {
 
 type Status = SyncNowProgress | 'idle' | 'success' | 'error' | 'stopped';
 
-export function SyncNowAction({
+function SyncNowAction({
     taskName,
     disabled = false,
 }: {
     taskName: string;
     disabled?: boolean;
 }) {
-    const intl = useIntl();
     const [status, setStatus] = useState<Status>('idle');
     const [errorCode, setErrorCode] = useState<number>();
     const request = useRef<AbortController | null>(null);
@@ -80,21 +77,33 @@ export function SyncNowAction({
         }
     };
 
-    const messageId =
-        status === 'error'
-            ? errorCode === 5
-                ? 'syncNow.unavailable'
+    const messages: Record<Status, string> = {
+        idle: '',
+        connecting: 'Requesting an immediate sync…',
+        waiting:
+            'Sync requested. Waiting for the data to be queryable in the destination.',
+        reconnecting:
+            'Connection interrupted. Reconnecting to confirm completion…',
+        success:
+            'Sync complete. Data received before this request is queryable in the destination.',
+        error:
+            errorCode === 5
+                ? 'This materialization is not available for syncing. It must be running on the V2 runtime in this data plane.'
                 : errorCode === 7 || errorCode === 16
-                  ? 'syncNow.unauthorized'
-                  : 'syncNow.error'
-            : `syncNow.${status}`;
+                  ? 'You are not authorized to sync this materialization. Check your access or sign in again.'
+                  : 'Could not confirm sync completion. Try syncing again.',
+        stopped:
+            'Stopped waiting for confirmation. A sync already requested will continue in the background.',
+    };
 
     return (
         <Stack spacing={1} sx={{ alignItems: 'flex-end', maxWidth: 480 }}>
             <Tooltip
-                title={intl.formatMessage({
-                    id: disabled ? 'syncNow.disabled' : 'syncNow.description',
-                })}
+                title={
+                    disabled
+                        ? 'Enable this materialization before syncing.'
+                        : 'Commit the data this materialization has received so it is queryable in the destination. Your sync schedule stays unchanged.'
+                }
             >
                 <span>
                     <Button
@@ -107,9 +116,7 @@ export function SyncNowAction({
                             ) : undefined
                         }
                     >
-                        {intl.formatMessage({
-                            id: pending ? 'syncNow.pending' : 'syncNow.label',
-                        })}
+                        {pending ? 'Syncing…' : 'Sync now'}
                     </Button>
                 </span>
             </Tooltip>
@@ -134,12 +141,12 @@ export function SyncNowAction({
                                     setStatus('stopped');
                                 }}
                             >
-                                {intl.formatMessage({ id: 'syncNow.stop' })}
+                                Stop waiting
                             </Button>
                         ) : undefined
                     }
                 >
-                    {intl.formatMessage({ id: messageId })}
+                    {messages[status]}
                 </Alert>
             ) : null}
         </Stack>
