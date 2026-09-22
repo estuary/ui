@@ -2,6 +2,7 @@ import { Stack, Typography } from '@mui/material';
 
 import EditButton from 'src/components/shared/Entity/Details/ToolBar/EditButton';
 import MaterializeButton from 'src/components/shared/Entity/Details/ToolBar/MaterializeButton';
+import SyncNowButton from 'src/components/shared/Entity/Details/ToolBar/SyncNowButton';
 import { truncateTextSx } from 'src/context/Theme';
 import useGlobalSearchParams, {
     GlobalSearchParams,
@@ -23,7 +24,12 @@ function DetailsToolBar() {
                 {catalogName}
             </Typography>
 
-            <Stack direction="row">
+            <Stack
+                direction="row"
+                spacing={1}
+                sx={{ alignItems: 'flex-start' }}
+            >
+                <SyncNowButton taskName={catalogName} />
                 <EditButton buttonVariant="outlined" />
 
                 <MaterializeButton />
