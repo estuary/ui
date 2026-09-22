@@ -87,7 +87,6 @@ export const CommonMessages: Record<string, string> = {
     // Not 100% sure on this approach yet. Like keeping all this together.
     //  However, when translating it can lead to extra translations. Also, this
     //  is just how react-intl handles it and we might end up rolling our own.
-    'terms.bindings.plural': `{count, plural, one {binding} other {bindings}}`,
     'terms.collections.plural': `{count, plural, one {collection} other {collections}}`,
     'terms.destinations.plural': `{count, plural, one {materialization} other {materializations}}`,
     'terms.sources.plural': `{count, plural, one {capture} other {captures}}`,

@@ -17,7 +17,9 @@ import {
 } from '../helpers/utils';
 import { expect, Page, test } from '@playwright/test';
 
-const defaultBackfillMessage = 'no bindings marked for backfill';
+const defaultBackfillMessage = 'no collections marked for backfill';
+// "Backfill All" marks every binding, so the two counts in the chip must match.
+const allBackfilledMessage = /(\d+) of \1 collections? will be backfilled/;
 
 test.describe.serial('Captures:', () => {
     const uuid = crypto.randomUUID().split('-')[0];
@@ -58,12 +60,12 @@ test.describe.serial('Captures:', () => {
 
         const backfillCounter = page.getByLabel('Backfill count');
 
-        // Checking defailt
-        await expect(backfillCounter).toHaveScreenshot();
+        // Checking default
+        await expect(backfillCounter).toContainText(defaultBackfillMessage);
 
         // Ensuring backfill all shows status
         await backfillAllButton.click();
-        await expect(backfillCounter).toHaveScreenshot();
+        await expect(backfillCounter).toContainText(allBackfilledMessage);
 
         // Disabling all backfills and checking status
         await backfillAllButton.click();

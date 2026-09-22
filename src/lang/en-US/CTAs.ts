@@ -44,7 +44,6 @@ export const CTAs: Record<string, string> = {
     'cta.reload': `Reload`,
     'cta.evolve': `Apply`,
     'cta.support': `contact support`,
-    'cta.add': `Add`,
     'cta.transform': `Transform`,
     'cta.back': `Back`,
     'cta.remove': `Remove`,
