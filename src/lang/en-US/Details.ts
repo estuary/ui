@@ -5,27 +5,6 @@ const RETRY_AND_CONTACT =
     'Reload the page and if the issue persists, please contact support.';
 
 export const Details: Record<string, string> = {
-    'syncNow.label': 'Sync now',
-    'syncNow.description':
-        'Commit the data this materialization has received so it is queryable in the destination. Your sync schedule stays unchanged.',
-    'syncNow.disabled': 'Enable this materialization before syncing.',
-    'syncNow.pending': 'Syncing…',
-    'syncNow.connecting': 'Requesting an immediate sync…',
-    'syncNow.waiting':
-        'Sync requested. Waiting for the data to be queryable in the destination.',
-    'syncNow.reconnecting':
-        'Connection interrupted. Reconnecting to confirm completion…',
-    'syncNow.success':
-        'Sync complete. Data received before this request is queryable in the destination.',
-    'syncNow.error': 'Could not confirm sync completion. Try syncing again.',
-    'syncNow.unavailable':
-        'This materialization is not available for syncing. It must be running on the V2 runtime in this data plane.',
-    'syncNow.unauthorized':
-        'You are not authorized to sync this materialization. Check your access or sign in again.',
-    'syncNow.stop': 'Stop waiting',
-    'syncNow.stopped':
-        'Stopped waiting for confirmation. A sync already requested will continue in the background.',
-
     'details.tabs.overview': `Overview`,
     'details.tabs.alerts': `Alerts`,
     'details.tabs.spec': `Spec`,
