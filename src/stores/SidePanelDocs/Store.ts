@@ -42,10 +42,7 @@ const getInitialState = (
         set(
             produce((state: SidePanelDocsState) => {
                 state.url = val;
-                state.disabled = !isTrustedDocsUrl(
-                    val,
-                    iframeStringInclude
-                );
+                state.disabled = !isTrustedDocsUrl(val, iframeStringInclude);
             }),
             false,
             'Side Panel Docs URL Updated'
