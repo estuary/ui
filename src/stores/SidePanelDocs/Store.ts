@@ -7,6 +7,7 @@ import { devtools } from 'zustand/middleware';
 import produce from 'immer';
 
 import { GlobalStoreNames } from 'src/stores/names';
+import { isTrustedDocsUrl } from 'src/stores/SidePanelDocs/utils';
 import { getDocsSettings } from 'src/utils/env-utils';
 import { devtoolsOptions } from 'src/utils/store-utils';
 
@@ -41,7 +42,10 @@ const getInitialState = (
         set(
             produce((state: SidePanelDocsState) => {
                 state.url = val;
-                state.disabled = !val.includes(iframeStringInclude);
+                state.disabled = !isTrustedDocsUrl(
+                    val,
+                    iframeStringInclude
+                );
             }),
             false,
             'Side Panel Docs URL Updated'
