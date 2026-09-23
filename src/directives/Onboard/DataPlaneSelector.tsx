@@ -15,8 +15,7 @@ import { usePostHog } from '@posthog/react';
 import DataPlaneIcon from 'src/components/shared/Entity/DataPlaneIcon';
 import { usePublicDataPlanes } from 'src/hooks/dataPlanes/usePublicDataPlanes';
 
-// Matches est-dry-dock's phased rollout of colocated trial buckets: this is
-// the plane new tenants land on when nothing else is picked.
+// The platform's default plane for new tenants.
 const DEFAULT_PUBLIC_DATA_PLANE = 'ops/dp/public/aws-us-east-1-c1';
 
 const INPUT_SX = {
@@ -24,9 +23,7 @@ const INPUT_SX = {
     [`& .${inputBaseClasses.root}`]: { borderRadius: 3 },
 };
 
-// Options are grouped by provider, so the label only needs the region plus
-// the cluster suffix (`aws-us-east-1-c1` -> `us-east-1 c1`) to tell apart
-// planes sharing a region. Falls back to the full name if it doesn't parse.
+// `aws-us-east-1-c1` -> `us-east-1 c1`; the provider is the group header.
 const optionLabel = ({ name, region }: PublicDataPlaneNode) => {
     const suffix = name.substring(name.lastIndexOf('/') + 1);
     const marker = `${region}-`;
@@ -48,8 +45,7 @@ export function DataPlaneSelector({ value, onChange }: Props) {
     const postHog = usePostHog();
     const { dataPlanes, loading, error } = usePublicDataPlanes();
 
-    // Sorted by provider first because groupBy only groups correctly when the
-    // list is already ordered by group.
+    // groupBy requires options to be sorted by group.
     const options = useMemo(
         () =>
             [...dataPlanes].sort(
@@ -60,8 +56,7 @@ export function DataPlaneSelector({ value, onChange }: Props) {
         [dataPlanes]
     );
 
-    // Preselect the platform default so submitting without touching the
-    // picker still records an explicit, valid choice.
+    // Preselect so an untouched picker still submits an explicit choice.
     useEffect(() => {
         if (!value && options.length > 0) {
             const preferred =
@@ -81,9 +76,8 @@ export function DataPlaneSelector({ value, onChange }: Props) {
         }
     }, [error, postHog]);
 
-    // Fail safe: if the plane list can't be fetched, render nothing. The
-    // claim simply omits requestedDataPlane and the backend applies its
-    // own default instead of blocking signup on this field.
+    // Render nothing on failure: the claim then omits requestedDataPlane and
+    // the backend applies its default, so signup isn't blocked.
     if (error || (!loading && options.length === 0)) {
         return null;
     }
@@ -100,8 +94,7 @@ export function DataPlaneSelector({ value, onChange }: Props) {
                 disableClearable
                 loading={loading}
                 options={options}
-                // disableClearable types the value as non-nullable; the cast
-                // covers the moment before the default is preselected.
+                // Null only until the default is preselected.
                 value={
                     currentOption ?? (null as unknown as PublicDataPlaneNode)
                 }

@@ -84,10 +84,8 @@ export const DIRECTIVES: Directives = {
             return {
                 requestedTenant,
                 survey: survey ?? null,
-                // Omitted (never sent as null) when unset: the agent's
-                // claims parser rejects unknown keys, and older agents
-                // don't know this one — leaving it out lets the backend
-                // fall back to its own default plane.
+                // Omit rather than send null: agents that predate this
+                // field reject unknown claim keys.
                 ...(hasLength(requestedDataPlane)
                     ? { requestedDataPlane }
                     : {}),
