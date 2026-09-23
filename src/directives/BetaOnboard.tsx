@@ -12,6 +12,7 @@ import { submitDirective } from 'src/api/directives';
 import RegistrationProgress from 'src/app/guards/RegistrationProgress';
 import BetaWarningAndError from 'src/components/transformation/create/BetaWarningAndError';
 import Actions from 'src/directives/Actions';
+import { DataPlaneSelector } from 'src/directives/Onboard/DataPlaneSelector';
 import OrganizationNameField from 'src/directives/Onboard/OrganizationName';
 import {
     useOnboardingStore_nameInvalid,
@@ -39,13 +40,15 @@ const EVENT_NAME = 'Tenant:Create';
 const submit_onboard = async (
     requestedTenant: string,
     directive: any,
-    surveyResponse: any
+    surveyResponse: any,
+    requestedDataPlane: string | null
 ) => {
     return submitDirective(
         directiveName,
         directive,
         requestedTenant,
-        surveyResponse
+        surveyResponse,
+        requestedDataPlane
     );
 };
 
@@ -63,6 +66,9 @@ const BetaOnboard = ({ directive, mutate, status }: DirectiveProps) => {
     const resetOnboardingState = useOnboardingStore_resetState();
     const setServerError = useOnboardingStore_setServerError();
 
+    const [requestedDataPlane, setRequestedDataPlane] = useState<string | null>(
+        null
+    );
     const [nameTaken, setNameTaken] = useState(false);
     const [saving, setSaving] = useState(false);
 
@@ -100,7 +106,8 @@ const BetaOnboard = ({ directive, mutate, status }: DirectiveProps) => {
             const onboardingResponse = await submit_onboard(
                 requestedTenant,
                 directive,
-                surveyResponse
+                surveyResponse,
+                requestedDataPlane
             );
 
             if (onboardingResponse.error) {
@@ -193,6 +200,11 @@ const BetaOnboard = ({ directive, mutate, status }: DirectiveProps) => {
                     }}
                 >
                     <OrganizationNameField forceError={nameTaken} />
+
+                    <DataPlaneSelector
+                        value={requestedDataPlane}
+                        onChange={setRequestedDataPlane}
+                    />
 
                     <OnboardingSurvey />
 

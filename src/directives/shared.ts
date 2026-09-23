@@ -80,9 +80,15 @@ export const DIRECTIVES: Directives = {
             return queryBuilder;
         },
         generateUserClaim: (args: any[]) => {
+            const [requestedTenant, survey, requestedDataPlane] = args;
             return {
-                requestedTenant: args[0],
-                survey: args.length > 1 ? args[1] : null,
+                requestedTenant,
+                survey: survey ?? null,
+                // Omit rather than send null: agents that predate this
+                // field reject unknown claim keys.
+                ...(hasLength(requestedDataPlane)
+                    ? { requestedDataPlane }
+                    : {}),
             };
         },
         calculateStatus: (appliedDirective) => {
