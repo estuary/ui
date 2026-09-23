@@ -1,4 +1,5 @@
 import type { PublicDataPlaneNode } from 'src/api/gql/dataPlanes';
+import type { CloudProvider } from 'src/utils/cloudRegions';
 
 import { useEffect, useMemo } from 'react';
 
@@ -15,8 +16,30 @@ import { usePostHog } from '@posthog/react';
 import DataPlaneIcon from 'src/components/shared/Entity/DataPlaneIcon';
 import { usePublicDataPlanes } from 'src/hooks/dataPlanes/usePublicDataPlanes';
 
-// The platform's default plane for new tenants.
-const DEFAULT_PUBLIC_DATA_PLANE = 'ops/dp/public/aws-us-east-1-c1';
+// New tenants default to a region rather than a specific plane. A region's
+// plane is succeeded (c1 -> c2 -> ...) by opening the new plane and closing the
+// old one, and publicDataPlanes only returns open planes, so this doesn't
+// change when a plane is replaced.
+const DEFAULT_PROVIDER: CloudProvider = 'AWS';
+const DEFAULT_REGION = 'us-east-1';
+
+// The newest open plane in the default region, or the first option if the
+// region has none. Names are compared numerically so `c10` beats `c9`.
+export const preferredDataPlane = (
+    options: PublicDataPlaneNode[]
+): PublicDataPlaneNode | undefined => {
+    const inRegion = options
+        .filter(
+            (option) =>
+                option.cloudProvider === DEFAULT_PROVIDER &&
+                option.region === DEFAULT_REGION
+        )
+        .sort((a, b) =>
+            a.name.localeCompare(b.name, undefined, { numeric: true })
+        );
+
+    return inRegion[inRegion.length - 1] ?? options[0];
+};
 
 const INPUT_SX = {
     maxWidth: 424,
@@ -58,11 +81,8 @@ export function DataPlaneSelector({ value, onChange }: Props) {
 
     // Preselect so an untouched picker still submits an explicit choice.
     useEffect(() => {
-        if (!value && options.length > 0) {
-            const preferred =
-                options.find(
-                    (option) => option.name === DEFAULT_PUBLIC_DATA_PLANE
-                ) ?? options[0];
+        const preferred = preferredDataPlane(options);
+        if (!value && preferred) {
             onChange(preferred.name);
         }
     }, [onChange, options, value]);
