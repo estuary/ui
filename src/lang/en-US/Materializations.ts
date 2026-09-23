@@ -30,7 +30,6 @@ export const Materializations: Record<string, string> = {
     'materializationCreate.test.inProgress': `Please wait while we try to connect to the destination.`,
 
     'materializationCreate.collectionSelector.heading': `Collection Selector`,
-    'materializationCreate.collectionSelector.instructions': `Choose one or more collections to materialize.`,
 
     'materializationCreate.resourceConfig.heading': `Resource Configuration`,
     'materializationCreate.save.failedErrorTitle': `Materialization Save Failed`,
@@ -65,7 +64,6 @@ export const Materializations: Record<string, string> = {
     'materializationEdit.test.inProgress': `Please wait while we try to connect to the destination.`,
 
     'materializationEdit.collectionSelector.heading': `Collection Selector`,
-    'materializationEdit.collectionSelector.instructions': `The collections bound to your materialization. Update configuration under the Endpoint Config tab.`,
 
     'materializationEdit.resourceConfig.heading': `Resource Configuration`,
     'materializationEdit.save.failedErrorTitle': `Materialization Save Failed`,

@@ -412,7 +412,6 @@ function CollectionSelectorList({
 
                     {hideFooter ? null : (
                         <CollectionSelectorFooter
-                            columnCount={columns.length}
                             totalCount={mappedResourceConfigs.length}
                         />
                     )}

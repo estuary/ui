@@ -10,7 +10,6 @@ export interface Directives {
     acceptDemoTenant: DirectiveSettings<AcceptDemoTenantClaim>;
     betaOnboard: DirectiveSettings<OnboardClaim>;
     clickToAccept: DirectiveSettings<ClickToAcceptClaim>;
-    storageMappings: DirectiveSettings<StorageMappingsClaim>;
 }
 
 export type JobStatusQueryData = Pick<
@@ -45,16 +44,10 @@ interface OnboardClaim {
     requestedDataPlane?: string;
 }
 
-interface StorageMappingsClaim {
-    addStore: object;
-    catalogPrefix: string;
-}
-
 export type UserClaims =
     | AcceptDemoTenantClaim
     | ClickToAcceptClaim
-    | OnboardClaim
-    | StorageMappingsClaim;
+    | OnboardClaim;
 
 // TODO (V2 typing) - queryFilter should take in filter builder better
 interface DirectiveSettings<T> {

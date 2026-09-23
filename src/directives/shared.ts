@@ -191,36 +191,5 @@ export const DIRECTIVES: Directives = {
             return 'unfulfilled';
         },
     },
-    storageMappings: {
-        token: 'dd1319b2-e72b-421c-ad2b-082352569bb1',
-        queryFilter: (queryBuilder) => {
-            return queryBuilder;
-        },
-        generateUserClaim: (args: any[]) => {
-            return {
-                addStore: args[0],
-                catalogPrefix: args[1],
-            };
-        },
-        calculateStatus: (appliedDirective?) => {
-            // If there is no directive to check it is unfulfilled
-            if (!appliedDirective || isEmpty(appliedDirective)) {
-                return 'unfulfilled';
-            }
-
-            // If the directive already queued, we can just use that directive again
-            if (appliedDirective.job_status.type === 'queued') {
-                return 'in progress';
-            }
-
-            // If it was success and passed all the other checks we're good
-            if (appliedDirective.job_status.type === 'success') {
-                return 'fulfilled';
-            }
-
-            // Catch all for edge cases like a "invalidClaim" status
-            return 'unfulfilled';
-        },
-    },
 };
 export type DirectivesList = (keyof typeof DIRECTIVES)[];

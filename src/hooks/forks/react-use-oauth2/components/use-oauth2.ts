@@ -9,6 +9,7 @@ import {
     POPUP_HEIGHT,
     POPUP_WIDTH,
 } from 'src/hooks/forks/react-use-oauth2/components/constants';
+import { base64RemovePadding } from 'src/utils/misc-utils';
 
 type AuthTokenPayload = {
     token_type: string;
@@ -63,6 +64,36 @@ const cleanup = (
     window.removeEventListener(MESSAGE_KEY, handleMessageListener);
 };
 
+// The popup is the only window allowed to complete a flow. Any other frame or
+// window (the connector docs iframe, for instance) can post a message tagged
+// with our response type, so we check that the message came from the popup we
+// opened and that it carries the state we saved for this flow before acting on
+// it. The popup's own state check runs in the sender, so it cannot protect us.
+const isTrustedResponse = (
+    message: MessageEvent<any>,
+    popupRef: React.MutableRefObject<Window | null | undefined>,
+    state: string
+) => {
+    if (!popupRef.current || message.source !== popupRef.current) {
+        return false;
+    }
+
+    if (message.origin !== window.location.origin) {
+        return false;
+    }
+
+    // Errors are reported without a state, so the source check above is all we
+    // can require of them.
+    if (message.data?.error) {
+        return true;
+    }
+
+    return (
+        base64RemovePadding(message.data?.payload?.state) ===
+        base64RemovePadding(state)
+    );
+};
+
 export type State<TData = AuthTokenPayload> = TData | null;
 
 const useOAuth2 = <TData = AuthTokenPayload>(props: Oauth2Props<TData>) => {
@@ -88,6 +119,10 @@ const useOAuth2 = <TData = AuthTokenPayload>(props: Oauth2Props<TData>) => {
                 try {
                     const type = message.data?.type;
                     if (type === OAUTH_RESPONSE) {
+                        if (!isTrustedResponse(message, popupRef, state)) {
+                            return;
+                        }
+
                         const errorMaybe = message.data?.error;
                         if (errorMaybe) {
                             await onError(errorMaybe);
