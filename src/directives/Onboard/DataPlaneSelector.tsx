@@ -16,16 +16,14 @@ import { usePostHog } from '@posthog/react';
 import DataPlaneIcon from 'src/components/shared/Entity/DataPlaneIcon';
 import { usePublicDataPlanes } from 'src/hooks/dataPlanes/usePublicDataPlanes';
 
-// New tenants default to a region rather than a specific plane. A region's
-// plane is succeeded (c1 -> c2 -> ...) by opening the new plane and closing the
-// old one, and publicDataPlanes only returns open planes, so this doesn't
-// change when a plane is replaced.
+// Default to a region, not a plane: a replacement plane is opened and the old
+// one closed, and only open planes are listed, so this survives c1 -> c2.
 const DEFAULT_PROVIDER: CloudProvider = 'AWS';
 const DEFAULT_REGION = 'us-east-1';
 
 // The newest open plane in the default region, or the first option if the
 // region has none. Names are compared numerically so `c10` beats `c9`.
-export const preferredDataPlane = (
+const preferredDataPlane = (
     options: PublicDataPlaneNode[]
 ): PublicDataPlaneNode | undefined => {
     const inRegion = options
