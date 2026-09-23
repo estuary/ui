@@ -35,9 +35,7 @@ export const ENTITY_SETTINGS: { [k in Entity]: EntitySetting } = {
         },
         details: {
             relatedEntitiesContentIds: {
-                // A capture's collections are its bindings, and they now have
-                // their own section on the Overview tab. The rail listed them as
-                // chips with the remainder behind an "N more" toggle.
+                // Shown in the Bindings section instead.
                 collections: undefined,
                 readBy: undefined,
                 writtenBy: undefined,
@@ -125,8 +123,7 @@ export const ENTITY_SETTINGS: { [k in Entity]: EntitySetting } = {
         },
         details: {
             relatedEntitiesContentIds: {
-                // As above: a materialization's collections are its bindings, so
-                // the Bindings section carries them rather than the rail.
+                // Shown in the Bindings section instead.
                 collections: undefined,
                 readBy: undefined,
                 writtenBy: undefined,

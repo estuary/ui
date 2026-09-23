@@ -28,10 +28,6 @@ function EntityNameDetailsLink({
         </LinkWrapper>
     );
 
-    // The tooltip advertises this text as its own clickable target, which is
-    // exactly the affordance `plain` exists to drop — a redundant, narrower
-    // promise on top of a click surface that already covers more than this
-    // text.
     if (plain) {
         return link;
     }

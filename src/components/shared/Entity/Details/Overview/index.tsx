@@ -44,10 +44,7 @@ function Overview({ name }: DetailsOverviewProps) {
         </Grid>
     ) : null;
 
-    // Everything else on the tab below the chart and the rail: a task's
-    // bindings (full width — they were a chip list inside the quarter-width
-    // rail, so anything past the first few sat behind an "N more" toggle)
-    // and its endpoints. A collection has neither.
+    // Everything below the chart and the rail. A collection has neither.
     const taskSections = isCollection ? null : (
         <>
             <Grid size={{ xs: 12 }}>

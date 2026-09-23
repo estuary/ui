@@ -9,10 +9,8 @@ interface Props extends BaseComponentProps {
     link: string;
     ariaLabel?: string;
     newWindow?: boolean;
-    // Renders as an anchor with none of Link's own color/underline styling —
-    // for when a larger element (a whole clickable row) already carries the
-    // click affordance, so this text doesn't separately advertise itself as
-    // a narrower target.
+    // An anchor without Link's colour and underline, for when a larger element
+    // such as a clickable row carries the affordance.
     plain?: boolean;
 }
 

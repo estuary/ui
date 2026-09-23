@@ -60,9 +60,7 @@ function CardWrapper({
                             ? `1px solid ${theme.palette.divider}`
                             : 'none',
                 },
-                // `sx` may itself be an array (MUI's own composition form),
-                // so it is spread into this one rather than nested as a
-                // single element, which `Stack` would otherwise reject.
+                // `sx` may itself be an array, which `Stack` rejects nested.
                 ...(Array.isArray(sx) ? sx : [sx]),
             ]}
         >

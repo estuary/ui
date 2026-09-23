@@ -67,14 +67,7 @@ export const LUXON_GRAIN_SETTINGS: {
     },
 };
 
-/**
- * How a selected range is worded: the message id, and the values it needs.
- *
- * Shared by the range picker and by anything restating the window it chose, so
- * a label and the control that set it can never word the same range
- * differently. `selectedLabelKey` exists because "13 months" reads wrong for
- * what the user picked as "Year".
- */
+// How a selected range is worded, as a message descriptor for the range picker.
 export const getRangeLabelDescriptor = (range: DataByHourRange) => {
     const { relativeUnit, selectedLabelKey } =
         LUXON_GRAIN_SETTINGS[range.grain];

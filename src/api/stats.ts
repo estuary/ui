@@ -214,12 +214,8 @@ const getStatsByName = async (names: string[], filter?: StatsFilter) => {
     return errors[0] ?? { data: response.flatMap((r) => r.data) };
 };
 
-/**
- * The `ts` bounds of a range, formatted for a `catalog_stats` query.
- *
- * Shared so that two queries covering "the same window" cannot compute it
- * differently — the bindings table's figures have to line up with the chart's.
- */
+// Shared so the bindings table and the usage chart query exactly the same
+// window.
 const getRangeBounds = (range: DataByHourRange) => {
     const rangeSettings = LUXON_GRAIN_SETTINGS[range.grain];
     const current = DateTime.utc().startOf(rangeSettings.timeUnit);
@@ -303,20 +299,13 @@ const getCollectionsLastPublished = (collectionNames: string[]) => {
         .returns<CatalogStats_LastPublished[]>();
 };
 
-// Per-binding stats live only inside `flow_document` — `catalog_stats` is keyed
-// (catalog_name, grain, ts) with no per-binding column. The breakdown is attached
-// to task rows (not tenant-prefix rows) by `taskStats` in
+// Per-binding stats live only inside `flow_document`, attached to task rows by
+// `taskStats` in
 // https://github.com/estuary/flow/blob/master/ops-catalog/catalog-stats.ts
+// Callers sum `taskStats` across the returned rows.
 //
-// Shares `getRangeBounds` with `getStatsForDetails`, so the bindings table and
-// the usage chart above it cover exactly the same window. Callers sum
-// `taskStats` across the returned rows.
-//
-// Only the `taskStats` subtree is selected, never the whole document: the
-// breakdown carries an entry per binding on every row, so a wide range on a task
-// with a thousand bindings is megabytes even after PostgREST has narrowed it.
-// That is why the volume columns render a loading state on a range change rather
-// than assuming the response is instant.
+// Only the `taskStats` subtree is selected: it carries an entry per binding on
+// every row, so a wide range on a large task is megabytes even so.
 const getBindingStats = (catalogName: string, range: DataByHourRange) => {
     const { current, past } = getRangeBounds(range);
 

@@ -45,7 +45,7 @@ import {
     getTableHeaderWithoutHeaderColor,
 } from 'src/context/Theme';
 import useDetailsNavigator from 'src/hooks/useDetailsNavigator';
-import { ENTITY_SETTINGS } from 'src/settings/entity';
+import { BINDING_TERMS, ENTITY_SETTINGS } from 'src/settings/entity';
 
 interface Column {
     align?: 'right';
@@ -277,6 +277,9 @@ export function BindingsTable({
     const columns = getBindingColumns(entityType);
     const isCapture = entityType !== 'materialization';
 
+    const [, termPlural] = BINDING_TERMS[entityType];
+    const tableLabel = termPlural.charAt(0).toUpperCase() + termPlural.slice(1);
+
     return (
         // `minWidth: 0` is load-bearing: without it the table's own `minWidth`
         // becomes this child's floor and the overflow escapes to the page
@@ -287,7 +290,7 @@ export function BindingsTable({
                 sx={{ maxWidth: '100%', overflowX: 'auto' }}
             >
                 <Table
-                    aria-label="Collections"
+                    aria-label={tableLabel}
                     size="small"
                     sx={{
                         // Materialization swaps one freshness column for two
@@ -422,8 +425,8 @@ export function BindingsTable({
 
                                         <Typography component="div">
                                             {totalBindings === 0
-                                                ? 'This task has no collections.'
-                                                : 'No collections match this filter.'}
+                                                ? `This task has no ${termPlural}.`
+                                                : `No ${termPlural} match this filter.`}
                                         </Typography>
 
                                         {isFiltered ? (
@@ -574,7 +577,7 @@ export function BindingsTable({
                 ActionsComponent={TablePaginationActions}
                 component="div"
                 count={rows.length}
-                labelRowsPerPage="Collections per page"
+                labelRowsPerPage={`${tableLabel} per page`}
                 onPageChange={(_event: MouseEvent | null, newPage: number) => {
                     onPageChange(newPage);
                 }}

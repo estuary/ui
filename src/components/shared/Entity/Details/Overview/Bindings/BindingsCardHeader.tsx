@@ -27,6 +27,7 @@ import {
     cardHeaderSx_emphasized,
     diminishedTextColor,
 } from 'src/context/Theme';
+import { BINDING_TERMS } from 'src/settings/entity';
 
 interface Props {
     count: number;
@@ -83,7 +84,9 @@ export function BindingsCardHeader({
         [isCapture, rows]
     );
 
-    const unit = count === 1 ? 'collection' : 'collections';
+    const [termSingular, termPlural] = BINDING_TERMS[entityType];
+    const heading = termPlural.charAt(0).toUpperCase() + termPlural.slice(1);
+    const unit = count === 1 ? termSingular : termPlural;
     const verb = entityType === 'materialization' ? 'read' : 'written';
 
     return (
@@ -99,7 +102,7 @@ export function BindingsCardHeader({
         >
             <Stack direction="row" spacing={1} sx={{ alignItems: 'baseline' }}>
                 <Typography component="span" sx={cardHeaderSx_emphasized}>
-                    Collections
+                    {heading}
                 </Typography>
 
                 <RangeChip range={range} />
@@ -128,7 +131,7 @@ export function BindingsCardHeader({
                     columns={exportColumns}
                     datas={exportData}
                     disabled={loading || rows.length === 0}
-                    filename={generateFileName('collections')}
+                    filename={generateFileName(termPlural.replaceAll(' ', '_'))}
                     separator={tableExportSeparator}
                 >
                     <Tooltip title="Download CSV">

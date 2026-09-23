@@ -19,10 +19,8 @@ function DetailsToolBar() {
             spacing={1}
             sx={{ justifyContent: 'space-between' }}
         >
-            {/* minWidth 0 so the name still truncates now that something sits
-                beside it: a flex item's floor is its content by default, so a
-                long catalog name would push the buttons off the right edge
-                instead of ellipsing. */}
+            {/* minWidth 0, or a flex item's content-width floor lets a long
+                name push the buttons off the edge instead of truncating. */}
             <Stack
                 direction="row"
                 spacing={0.5}
@@ -32,9 +30,6 @@ function DetailsToolBar() {
                     {catalogName}
                 </Typography>
 
-                {/* The name is the one thing on this page people paste
-                    elsewhere — into flowctl, a ticket, a Slack thread — and it
-                    is also the thing truncation can take away from them. */}
                 <Tooltip title={copyLabel}>
                     <Box component="span" sx={{ display: 'flex' }}>
                         <CopyToClipboardButton
