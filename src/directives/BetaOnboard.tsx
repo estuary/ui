@@ -12,11 +12,10 @@ import { submitDirective } from 'src/api/directives';
 import RegistrationProgress from 'src/app/guards/RegistrationProgress';
 import BetaWarningAndError from 'src/components/transformation/create/BetaWarningAndError';
 import Actions from 'src/directives/Actions';
-import DataPlaneSelector from 'src/directives/Onboard/DataPlaneSelector';
+import { DataPlaneSelector } from 'src/directives/Onboard/DataPlaneSelector';
 import OrganizationNameField from 'src/directives/Onboard/OrganizationName';
 import {
     useOnboardingStore_nameInvalid,
-    useOnboardingStore_requestedDataPlane,
     useOnboardingStore_requestedTenant,
     useOnboardingStore_resetState,
     useOnboardingStore_setNameMissing,
@@ -64,10 +63,12 @@ const BetaOnboard = ({ directive, mutate, status }: DirectiveProps) => {
     const setNameMissing = useOnboardingStore_setNameMissing();
     const setSurveyMissing = useOnboardingStore_setSurveyMissing();
     const surveyResponse = useOnboardingStore_surveyResponse();
-    const requestedDataPlane = useOnboardingStore_requestedDataPlane();
     const resetOnboardingState = useOnboardingStore_resetState();
     const setServerError = useOnboardingStore_setServerError();
 
+    const [requestedDataPlane, setRequestedDataPlane] = useState<string | null>(
+        null
+    );
     const [nameTaken, setNameTaken] = useState(false);
     const [saving, setSaving] = useState(false);
 
@@ -200,7 +201,10 @@ const BetaOnboard = ({ directive, mutate, status }: DirectiveProps) => {
                 >
                     <OrganizationNameField forceError={nameTaken} />
 
-                    <DataPlaneSelector />
+                    <DataPlaneSelector
+                        value={requestedDataPlane}
+                        onChange={setRequestedDataPlane}
+                    />
 
                     <OnboardingSurvey />
 

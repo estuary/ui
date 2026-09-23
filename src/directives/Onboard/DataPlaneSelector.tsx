@@ -10,13 +10,9 @@ import {
     TextField,
 } from '@mui/material';
 
-import { useIntl } from 'react-intl';
+import { usePostHog } from '@posthog/react';
 
 import DataPlaneIcon from 'src/components/shared/Entity/DataPlaneIcon';
-import {
-    useOnboardingStore_requestedDataPlane,
-    useOnboardingStore_setRequestedDataPlane,
-} from 'src/directives/Onboard/Store/hooks';
 import { usePublicDataPlanes } from 'src/hooks/dataPlanes/usePublicDataPlanes';
 
 // Matches est-dry-dock's phased rollout of colocated trial buckets: this is
@@ -28,21 +24,32 @@ const INPUT_SX = {
     [`& .${inputBaseClasses.root}`]: { borderRadius: 3 },
 };
 
-// The region and full catalog name are both shown: multiple public planes can
-// share a region, so the name is what makes the choice unambiguous.
-const optionLabel = (option: PublicDataPlaneNode) =>
-    `${option.region} (${option.name})`;
+// Options are grouped by provider, so the label only needs the region plus
+// the cluster suffix (`aws-us-east-1-c1` -> `us-east-1 c1`) to tell apart
+// planes sharing a region. Falls back to the full name if it doesn't parse.
+const optionLabel = ({ name, region }: PublicDataPlaneNode) => {
+    const suffix = name.substring(name.lastIndexOf('/') + 1);
+    const marker = `${region}-`;
+    const markerIndex = suffix.lastIndexOf(marker);
 
-function DataPlaneSelector() {
-    const intl = useIntl();
+    if (markerIndex !== -1) {
+        return `${region} ${suffix.substring(markerIndex + marker.length)}`;
+    }
+
+    return suffix.endsWith(`-${region}`) ? region : name;
+};
+
+interface Props {
+    value: string | null;
+    onChange: (value: string) => void;
+}
+
+export function DataPlaneSelector({ value, onChange }: Props) {
+    const postHog = usePostHog();
     const { dataPlanes, loading, error } = usePublicDataPlanes();
 
-    const selected = useOnboardingStore_requestedDataPlane();
-    const setSelected = useOnboardingStore_setRequestedDataPlane();
-
     // Sorted by provider first because groupBy only groups correctly when the
-    // list is already ordered by group; sorting on name alone worked only
-    // because the names happen to embed the provider.
+    // list is already ordered by group.
     const options = useMemo(
         () =>
             [...dataPlanes].sort(
@@ -56,14 +63,23 @@ function DataPlaneSelector() {
     // Preselect the platform default so submitting without touching the
     // picker still records an explicit, valid choice.
     useEffect(() => {
-        if (!selected && options.length > 0) {
+        if (!value && options.length > 0) {
             const preferred =
                 options.find(
                     (option) => option.name === DEFAULT_PUBLIC_DATA_PLANE
                 ) ?? options[0];
-            setSelected(preferred.name);
+            onChange(preferred.name);
         }
-    }, [options, selected, setSelected]);
+    }, [onChange, options, value]);
+
+    useEffect(() => {
+        if (error) {
+            postHog.capture('Onboarding:DataPlanes', {
+                status: 'failure',
+                error: error.message,
+            });
+        }
+    }, [error, postHog]);
 
     // Fail safe: if the plane list can't be fetched, render nothing. The
     // claim simply omits requestedDataPlane and the backend applies its
@@ -72,19 +88,24 @@ function DataPlaneSelector() {
         return null;
     }
 
-    const currentOption = options.find((option) => option.name === selected);
+    const currentOption = options.find((option) => option.name === value);
 
     return (
         <FormControl>
             <FormLabel id="requestedDataPlane" sx={{ mb: 1, fontSize: 20 }}>
-                {intl.formatMessage({ id: 'tenant.dataPlane.label' })}
+                Data Plane
             </FormLabel>
 
             <Autocomplete
+                disableClearable
                 loading={loading}
                 options={options}
-                value={currentOption ?? null}
-                onChange={(_event, value) => setSelected(value?.name ?? null)}
+                // disableClearable types the value as non-nullable; the cast
+                // covers the moment before the default is preselected.
+                value={
+                    currentOption ?? (null as unknown as PublicDataPlaneNode)
+                }
+                onChange={(_event, option) => onChange(option.name)}
                 groupBy={(option) => option.cloudProvider}
                 getOptionLabel={optionLabel}
                 renderOption={(props, option) => {
@@ -107,9 +128,7 @@ function DataPlaneSelector() {
                         {...params}
                         size="small"
                         variant="outlined"
-                        helperText={intl.formatMessage({
-                            id: 'tenant.dataPlane.helper',
-                        })}
+                        helperText="Where your data is processed. Pick the region closest to your data sources."
                         sx={INPUT_SX}
                     />
                 )}
@@ -117,5 +136,3 @@ function DataPlaneSelector() {
         </FormControl>
     );
 }
-
-export default DataPlaneSelector;
