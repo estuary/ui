@@ -35,7 +35,8 @@ export const ENTITY_SETTINGS: { [k in Entity]: EntitySetting } = {
         },
         details: {
             relatedEntitiesContentIds: {
-                collections: 'data.writes_to',
+                // Shown in the Bindings section instead.
+                collections: undefined,
                 readBy: undefined,
                 writtenBy: undefined,
             },
@@ -122,7 +123,8 @@ export const ENTITY_SETTINGS: { [k in Entity]: EntitySetting } = {
         },
         details: {
             relatedEntitiesContentIds: {
-                collections: 'data.reads_from',
+                // Shown in the Bindings section instead.
+                collections: undefined,
                 readBy: undefined,
                 writtenBy: undefined,
             },

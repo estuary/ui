@@ -190,6 +190,41 @@ export interface CatalogStats_LastPublished extends BaseCatalogStats {
     };
 }
 
+interface DocsAndBytes {
+    docsTotal?: number;
+    bytesTotal?: number;
+}
+
+// Shapes mirror ops-catalog/stats.schema.yaml. `bytesBehind` has no reduce
+// strategy and is modelled separately, on `CatalogStats_Backlog` above.
+export interface CaptureBindingStats {
+    // Documents written out to the collection; what the task's own
+    // `bytes_written_by_me` is accumulated from.
+    out?: DocsAndBytes;
+    // Publication time of the most recently captured document.
+    lastPublishedAt?: string;
+}
+
+export interface MaterializeBindingStats {
+    // Documents read from the source collection; what the task's own
+    // `bytes_read_by_me` is accumulated from.
+    right?: DocsAndBytes;
+    // Publication time of the most recent *source* document processed.
+    // Last-write-wins in the stats pipeline, because over all time it tracks a
+    // catch-up frontier: a task replaying a backlog really is processing old
+    // source documents, and a `maximize` reduce would hide that.
+    lastSourcePublishedAt?: string;
+}
+
+export interface TaskStats {
+    capture?: Record<string, CaptureBindingStats>;
+    materialize?: Record<string, MaterializeBindingStats>;
+}
+
+export interface BindingStatsResponse extends BaseCatalogStats {
+    taskStats: TaskStats | null;
+}
+
 export interface Directive {
     created_at: Date;
     detail: null;

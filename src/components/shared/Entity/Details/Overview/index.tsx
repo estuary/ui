@@ -8,7 +8,9 @@ import { Grid } from '@mui/material';
 import { DataPreview } from 'src/components/collection/DataPreview';
 import { useEditorStore_specs } from 'src/components/editor/Store/hooks';
 import { TaskEndpoints } from 'src/components/shared/Endpoints/TaskEndpoints';
+import { Bindings } from 'src/components/shared/Entity/Details/Overview/Bindings';
 import DetailsSection from 'src/components/shared/Entity/Details/Overview/DetailsSection';
+import { ShardAwareSectionOrder } from 'src/components/shared/Entity/Details/Overview/ShardAwareSectionOrder';
 import Usage from 'src/components/shared/Entity/Details/Usage';
 import ShardInformation from 'src/components/shared/Entity/Shard/Information';
 import { useEntityType } from 'src/context/EntityContext';
@@ -36,6 +38,32 @@ function Overview({ name }: DetailsOverviewProps) {
 
     const taskTypes = useDetailsEntityTaskTypes();
 
+    const shardInformation = hasLength(taskTypes) ? (
+        <Grid size={{ xs: 12 }}>
+            <ShardInformation taskTypes={taskTypes} taskName={entityName} />
+        </Grid>
+    ) : null;
+
+    // Everything below the chart and the rail. A collection has neither.
+    const taskSections = isCollection ? null : (
+        <>
+            <Grid size={{ xs: 12 }}>
+                <Bindings
+                    entityName={entityName}
+                    latestLiveSpec={latestLiveSpec}
+                />
+            </Grid>
+
+            {/* The grid item below exists when no children are present which creates 16 pixels of vertical padding. */}
+            <Grid size={{ xs: 12 }}>
+                <TaskEndpoints
+                    reactorAddress={latestLiveSpec?.reactor_address}
+                    taskName={catalogName}
+                />
+            </Grid>
+        </>
+    );
+
     return (
         <Grid container spacing={2}>
             <Grid size={{ xs: 12, md: 8, lg: 9 }}>
@@ -50,24 +78,12 @@ function Overview({ name }: DetailsOverviewProps) {
                 />
             </Grid>
 
-            {/* The grid item below exists when no children are present which creates 16 pixels of vertical padding. */}
-            {!isCollection ? (
-                <Grid size={{ xs: 12 }}>
-                    <TaskEndpoints
-                        reactorAddress={latestLiveSpec?.reactor_address}
-                        taskName={catalogName}
-                    />
-                </Grid>
-            ) : null}
-
-            {hasLength(taskTypes) ? (
-                <Grid size={{ xs: 12 }}>
-                    <ShardInformation
-                        taskTypes={taskTypes}
-                        taskName={entityName}
-                    />
-                </Grid>
-            ) : null}
+            <ShardAwareSectionOrder
+                shardInformation={shardInformation}
+                taskName={entityName}
+                taskSections={taskSections}
+                taskTypes={taskTypes}
+            />
 
             {isCollection && entityName ? (
                 <Grid size={{ xs: 12 }}>
