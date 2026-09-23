@@ -29,7 +29,6 @@ export enum TablePrefixes {
     captures = 'cap',
     collections = 'col',
     connectors = 'con',
-    dataPlanes = 'dpt',
     entitySelector = 'esl',
     fieldSelection = 'fs',
     materializations = 'mat',

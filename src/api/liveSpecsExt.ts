@@ -17,7 +17,6 @@ import { CONNECTOR_IMAGE, CONNECTOR_TITLE } from 'src/api/shared';
 import { supabaseClient } from 'src/context/GlobalProviders';
 import {
     defaultTableFilter,
-    escapeReservedCharacters,
     handleFailure,
     handleSuccess,
     parsePagedFetchAllResponse,
@@ -398,7 +397,7 @@ const getLiveSpecsByConnectorId = async (
             queryBuilder = queryBuilder.not(
                 'catalog_name',
                 'ilike',
-                `${escapeReservedCharacters(prefix)}/%`
+                `${prefix}/%`
             );
         });
     }

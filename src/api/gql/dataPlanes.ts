@@ -4,8 +4,8 @@ import type { CloudProvider } from 'src/utils/cloudRegions';
 import { graphql } from 'src/gql-types';
 
 export const DATA_PLANES_QUERY = graphql(`
-    query DataPlanes($after: String) {
-        dataPlanes(first: 100, after: $after) {
+    query DataPlanes($filter: DataPlanesFilter, $first: Int, $after: String) {
+        dataPlanes(filter: $filter, first: $first, after: $after) {
             edges {
                 node {
                     name
@@ -21,8 +21,7 @@ export const DATA_PLANES_QUERY = graphql(`
                 }
             }
             pageInfo {
-                hasNextPage
-                endCursor
+                ...PageInfoFields
             }
         }
     }

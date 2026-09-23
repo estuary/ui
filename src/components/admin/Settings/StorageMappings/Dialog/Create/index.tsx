@@ -11,7 +11,6 @@ import {
     useForm,
     useFormContext,
 } from 'react-hook-form';
-import { useIntl } from 'react-intl';
 
 import { useStorageMappingService } from 'src/api/gql/storageMappings';
 import {
@@ -26,7 +25,6 @@ import MessageWithLink from 'src/components/content/MessageWithLink';
 import AlertBox from 'src/components/shared/AlertBox';
 import CardWrapper from 'src/components/shared/CardWrapper';
 import { WizardDialog } from 'src/components/shared/WizardDialog/WizardDialog';
-import { useStorageMappingsRefresh } from 'src/components/tables/StorageMappings/shared';
 import { cardHeaderSx } from 'src/context/Theme';
 import { useDataPlanes } from 'src/hooks/dataPlanes/useDataPlanes';
 import { useDialog } from 'src/hooks/useDialog';
@@ -54,7 +52,6 @@ function CreateMappingWizardInner({
     open: boolean;
     onClose: () => void;
 }) {
-    const intl = useIntl();
     const { error: dataPlanesError } = useDataPlanes();
     const { create } = useStorageMappingService();
     const {
@@ -68,17 +65,13 @@ function CreateMappingWizardInner({
     const { append, remove, move } = useFieldArray({
         name: 'dataPlanes',
         rules: {
-            required: intl.formatMessage({
-                id: 'storageMappings.dialog.dataPlanes.validation.required',
-            }),
+            required: 'At least one data plane is required',
         },
     });
 
     const dataPlanes = watch('dataPlanes');
     const allowPublic = watch('allowPublic');
     const stores = watch('fragmentStores');
-
-    const refresh = useStorageMappingsRefresh();
 
     const closeDialog = useCallback(() => {
         onClose();
@@ -88,28 +81,23 @@ function CreateMappingWizardInner({
 
     const handleComplete = useCallback(async () => {
         await create(buildMappingPayload(getValues()));
-        refresh();
         return true;
-    }, [create, getValues, refresh]);
+    }, [create, getValues]);
 
     const steps = useMemo(
         (): WizardStep[] =>
             dataPlanesError
                 ? [
                       {
-                          title: intl.formatMessage({
-                              id: 'storageMappings.wizard.title.configure',
-                          }),
+                          title: 'New Collection Storage',
                           component: (
                               <AlertBox short severity="error">
-                                  {intl.formatMessage({
-                                      id: 'storageMappings.dialog.error.loadFailed',
-                                  })}
+                                  We weren&apos;t able to load the data needed
+                                  for this form. Please reload the page and try
+                                  again.
                               </AlertBox>
                           ),
-                          nextLabel: intl.formatMessage({
-                              id: 'cta.close',
-                          }),
+                          nextLabel: 'Close',
                           onAdvance: async () => {
                               closeDialog();
                               return false;
@@ -118,9 +106,7 @@ function CreateMappingWizardInner({
                   ]
                 : [
                       {
-                          title: intl.formatMessage({
-                              id: 'storageMappings.wizard.title.configure',
-                          }),
+                          title: 'New Collection Storage',
                           component: (
                               <>
                                   <MessageWithLink messageID="storageMappings.dialog.create.description" />
@@ -149,9 +135,7 @@ function CreateMappingWizardInner({
                                       </CardWrapper>
                                       <CardWrapper>
                                           <Typography sx={cardHeaderSx}>
-                                              {intl.formatMessage({
-                                                  id: 'storageMappings.dialog.storageLocations.title',
-                                              })}
+                                              Storage Locations
                                           </Typography>
                                           <StorageFields
                                               defaultDataPlane={dataPlanes[0]}
@@ -160,9 +144,7 @@ function CreateMappingWizardInner({
                                   </Stack>
                               </>
                           ),
-                          nextLabel: intl.formatMessage({
-                              id: 'storageMappings.wizard.cta.testConnection',
-                          }),
+                          nextLabel: 'Continue to connection test',
                           canAdvance: () => formState.isValid,
                           onAdvance: async () => {
                               const connections = initializeEndpoints(
@@ -175,25 +157,19 @@ function CreateMappingWizardInner({
                           },
                       },
                       {
-                          title: intl.formatMessage({
-                              id: 'storageMappings.wizard.title.test',
-                          }),
+                          title: 'Authorize Storage Access',
                           component: (
                               <Stack spacing={3}>
                                   <Typography>
-                                      {intl.formatMessage({
-                                          id: 'storageMappings.dialog.create.testDescription.prefix',
-                                      })}
+                                      Each data plane that processes your data
+                                      needs its own access to your storage
+                                      bucket. For more details, see the{' '}
                                       <Link
-                                          href={intl.formatMessage({
-                                              id: 'storageMappings.dialog.docsPath',
-                                          })}
+                                          href="https://docs.estuary.dev/getting-started/installation/#configuring-your-cloud-storage-bucket-for-use-with-flow"
                                           target="_blank"
                                           rel="noopener noreferrer"
                                       >
-                                          {intl.formatMessage({
-                                              id: 'storageMappings.dialog.docsLink',
-                                          })}
+                                          documentation
                                       </Link>
                                   </Typography>
 
@@ -205,7 +181,6 @@ function CreateMappingWizardInner({
                       },
                   ],
         [
-            intl,
             dataPlanesError,
             formState.isValid,
             allTestsPassing,

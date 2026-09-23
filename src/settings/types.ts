@@ -16,7 +16,7 @@ export interface AlertSetting {
 
 export interface DataPlaneSetting {
     prefix: string;
-    table: TableSettings;
+    table: Pick<TableSettings, 'noExistingDataContentIds'>;
 }
 
 export interface EntitySetting {
@@ -25,7 +25,6 @@ export interface EntitySetting {
     >;
     background: { light: string; dark: string };
     backgroundNesting: { light: string | undefined; dark: string | undefined };
-    bindingTermId: string;
     pluralId: string;
     routes: {
         connectorSelect: string;

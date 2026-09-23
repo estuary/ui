@@ -26,7 +26,14 @@ export function useCursorPagination() {
         (_event: any, page: number, nextCursor: string | undefined | null) => {
             if (page > currentPage && nextCursor) {
                 setCursor(nextCursor);
-                setCursorHistory((prev) => [...prev, nextCursor]);
+                // `cursorHistory[i]` holds the cursor that starts page
+                // `i + 1`. Record `nextCursor` at `page - 1` and drop every
+                // entry past it, so the history always describes the path to
+                // the page now on screen.
+                setCursorHistory((prev) => [
+                    ...prev.slice(0, page - 1),
+                    nextCursor,
+                ]);
                 setCurrentPage(page);
             } else if (page < currentPage) {
                 goToPage(page);

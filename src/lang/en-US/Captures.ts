@@ -31,7 +31,6 @@ export const Captures: Record<string, string> = {
 
     'captureCreate.collections.heading': `3. Output Collections`,
     'captureCreate.collectionSelector.heading': `Collection Selector`,
-    'captureCreate.collectionSelector.instructions': `The collections bound to your capture. To update the configuration, please update the fields under the Config tab. To update the schema, click Edit under the Collection tab.`,
 
     'captureCreate.test.failedErrorTitle': `Configuration Test Failed`,
     'captureCreate.test.serverUnreachable': `${CommonMessages['common.failedFetch']} while testing configuration.`,
@@ -65,7 +64,6 @@ export const Captures: Record<string, string> = {
 
     'captureEdit.collections.heading': `3. Target Collections`,
     'captureEdit.collectionSelector.heading': `Collection Selector`,
-    'captureEdit.collectionSelector.instructions': `The collections bound to your existing capture. To update the configuration, please update the fields under the Config tab. To update the schema, click Edit under the Collection tab.`,
 
     'captureEdit.test.failedErrorTitle': `Configuration Test Failed`,
     'captureEdit.test.serverUnreachable': `${CommonMessages['common.failedFetch']} while testing configuration.`,
