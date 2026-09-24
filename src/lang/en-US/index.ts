@@ -13,7 +13,6 @@ import { EntityTable } from 'src/lang/en-US/EntityTable';
 import { Errors } from 'src/lang/en-US/Errors';
 import { Fetchers } from 'src/lang/en-US/Fetchers';
 import { GeneratedModules } from 'src/lang/en-US/GeneratedModules';
-import { Graphs } from 'src/lang/en-US/Graphs';
 import { HomePage } from 'src/lang/en-US/HomePage';
 import { JsonForms } from 'src/lang/en-US/JsonForms';
 import { Materializations } from 'src/lang/en-US/Materializations';
@@ -43,7 +42,6 @@ const enUSMessages: Record<string, string> = {
     ...EntityTable,
     ...Errors,
     ...Fetchers,
-    ...Graphs,
     ...HomePage,
     ...JsonForms,
     ...Authentication,
