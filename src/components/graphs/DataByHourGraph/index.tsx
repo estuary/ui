@@ -43,6 +43,7 @@ interface DataByHourGraphProps {
     id: string;
     stats: CatalogStats_Details[] | undefined;
     createdAt?: string;
+    updatedAt: string;
 }
 
 // These are keys that are used all over. Not typing them as Echarts typing within
@@ -65,7 +66,7 @@ const defaultDataFormat = (value: any, options: Options) => {
 //  not renaming as this is not 100% supporting of all the grains
 //  just hourly and daily as it required for details not (Q4 2024)
 // This handled monthly grain fine after updating "renderingTimezone" (Q1 2026)
-function DataByHourGraph({ id, stats = [] }: DataByHourGraphProps) {
+function DataByHourGraph({ id, stats = [], updatedAt }: DataByHourGraphProps) {
     const intl = useIntl();
     const theme = useTheme();
     const legendConfig = useLegendConfig();
@@ -81,7 +82,6 @@ function DataByHourGraph({ id, stats = [] }: DataByHourGraphProps) {
 
     const resizeObserver = useRef<ResizeObserver | null>(null);
     const [myChart, setMyChart] = useState<echarts.ECharts | null>(null);
-    const [lastUpdated, setLastUpdated] = useState<string>('');
     const [renderingTimezone, setRenderingTimezone] = useState<string>('');
 
     const renderingBytes = useMemo(() => statType === 'bytes', [statType]);
@@ -127,17 +127,6 @@ function DataByHourGraph({ id, stats = [] }: DataByHourGraphProps) {
     useUnmount(() => {
         resizeObserver.current?.disconnect();
     });
-
-    // Update the "last updated" string shown as an xAxis label
-    // Want to format with seconds to show more of a "ticking clock" to users
-    useEffect(() => {
-        // Made a string instead of passing value into message to make life easier
-        setLastUpdated(
-            `${intl.formatMessage({
-                id: 'entityTable.data.lastUpdatedWithColon',
-            })} ${DateTime.now().toFormat(`tt ZZZZ`)}`
-        );
-    }, [intl, stats]);
 
     // Update the "timezone" string shown at the bottom
     useEffect(() => {
@@ -387,7 +376,7 @@ function DataByHourGraph({ id, stats = [] }: DataByHourGraphProps) {
                     type: 'category',
                 },
                 {
-                    data: [lastUpdated],
+                    data: [`Last Updated: ${updatedAt}`],
                     axisLabel: {
                         align: 'center',
                     },
@@ -466,7 +455,7 @@ function DataByHourGraph({ id, stats = [] }: DataByHourGraphProps) {
         entityType,
         formatter,
         intl,
-        lastUpdated,
+        updatedAt,
         legendConfig,
         longFormat,
         myChart,
