@@ -8,7 +8,6 @@ export const EntityTable: Record<string, string> = {
     'entityTable.data.entity': `Name`,
     'entityTable.data.connectorType': `Type`,
     'entityTable.data.lastUpdated': `Last Updated`,
-    'entityTable.data.lastUpdatedWithColon': `Last Updated:`,
     'entityTable.data.specTypeWithColon': `Type:`,
     'entityTable.data.lastPublished': `Published`,
     'entityTable.data.actions': `Actions`,

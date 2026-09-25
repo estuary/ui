@@ -2,8 +2,6 @@ import type { ReactNode } from 'react';
 
 import { Stack, Typography } from '@mui/material';
 
-import { FormattedMessage } from 'react-intl';
-
 import { CARD_AREA_HEIGHT } from 'src/utils/billing-utils';
 
 interface Props {
@@ -25,11 +23,7 @@ function EmptyGraphState({ header, message }: Props) {
             }}
         >
             <Typography variant="subtitle2" align="center">
-                {header ? (
-                    header
-                ) : (
-                    <FormattedMessage id="graphs.empty.header" />
-                )}
+                {header ? header : 'No information found.'}
             </Typography>
 
             <Typography component="div">{message}</Typography>

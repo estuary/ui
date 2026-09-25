@@ -137,13 +137,6 @@ interface BaseCatalogStats {
     ts: string;
 }
 
-export interface CatalogStats_Details extends BaseCatalogStats {
-    bytes_read?: number;
-    docs_read?: number;
-    bytes_written?: number;
-    docs_written?: number;
-}
-
 export interface CatalogStats_Dashboard extends BaseCatalogStats {
     bytes_written_by_me?: number;
     bytes_read_by_me?: number;

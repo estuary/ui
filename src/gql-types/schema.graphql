@@ -387,11 +387,177 @@ enum CapabilityBit {
   ViewSecret
 }
 
+"""
+Stats for one binding of a capture, keyed by the collection it writes to.
+"""
+type CaptureBindingStats {
+  """The collection name."""
+  collection: String!
+
+  """
+  The most recent publish timestamp of documents captured by this binding.
+  """
+  lastPublishedAt: DateTime
+
+  """Documents written to the collection, after combining."""
+  out: DocsAndBytes
+
+  """Documents from the connector, before combining."""
+  right: DocsAndBytes
+}
+
 type CardPaymentMethodDetails {
   brand: String
   expMonth: Int!
   expYear: Int!
   last4: String
+}
+
+"""
+A single stored reporting bucket. The stats for a single catalog name over a
+single window of the requested time grain.
+"""
+type CatalogStats {
+  """
+  The name of the catalog that this stats bucket is associated with.
+  The name is either a task, a collection, or a prefix that rolls up both.
+  """
+  catalogName: String!
+
+  """Time grain at which this bucket is aggregated over."""
+  grain: CatalogStatsGrain!
+
+  """
+  Combined totals across every task and collection contributing to the row.
+  """
+  statsSummary: CatalogStatsSummary!
+
+  """
+  Binding-level detail, present only on exact task rows. Prefix rollup
+  rows aggregate across tasks and carry none.
+  """
+  taskStats: CatalogTaskStats
+
+  """
+  Start of the window this bucket covers, always on a `grain` boundary:
+  the hour for `HOURLY`, midnight for `DAILY`, and day 1 at midnight for
+  `MONTHLY`. The window runs up to, but does not include, the next one.
+  """
+  timestamp: DateTime!
+}
+
+input CatalogStatsBy {
+  """Exclusive upper bound, which must fall on a `grain` boundary."""
+  end: DateTime!
+
+  """Time grain to retrieve aggregates stats for."""
+  grain: CatalogStatsGrain!
+
+  """
+  Exact catalog names. A prefix rollup is addressed by its own
+  trailing-slash name, such as `acmeCo/`. A minimum of of 1 name is
+  required. A maximum of 100 names are supported.
+  """
+  names: [String!]!
+
+  """Inclusive lower bound, which must fall on a `grain` boundary."""
+  start: DateTime!
+}
+
+type CatalogStatsConnection {
+  """A list of edges."""
+  edges: [CatalogStatsEdge!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+}
+
+"""An edge in a connection."""
+type CatalogStatsEdge {
+  """A cursor for use in pagination"""
+  cursor: String!
+
+  """The item at the end of the edge"""
+  node: CatalogStats!
+}
+
+"""Time grain at which a bucket aggregates."""
+enum CatalogStatsGrain {
+  DAILY
+  HOURLY
+  MONTHLY
+}
+
+"""
+Combined totals across every task and collection contributing to a bucket.
+
+A bucket's name is a task, a collection, or a prefix that rolls up both, so
+which counters are non-zero depends on what the name refers to. The `ByMe`
+pair counts what a task moved; the `FromMe` and `ToMe` pair counts what
+flowed through a collection.
+"""
+type CatalogStatsSummary {
+  """Total number of logged errors."""
+  errors: UInt64!
+
+  """Total number of shard failures."""
+  failures: UInt64!
+
+  """The most recent publish timestamp of documents in this collection."""
+  lastPublishedAt: DateTime
+
+  """
+  Documents a task read from the collections it sources from. Captures
+  read from no collection, so this covers materializations and
+  derivations.
+  """
+  readByMe: DocsAndBytes!
+
+  """Documents read out of a collection by the tasks that source from it."""
+  readFromMe: DocsAndBytes!
+
+  """Total number of transactions that have been successfully processed."""
+  txnCount: UInt64!
+
+  """
+  Cumulative number of metered seconds of task usage, which is what
+  usage billing is drawn from.
+  """
+  usageSeconds: UInt64!
+
+  """Total number of logged warnings."""
+  warnings: UInt64!
+
+  """
+  Documents a task wrote to the collections it produces. Materializations
+  write to an endpoint rather than a collection, so this covers captures
+  and derivations.
+  """
+  writtenByMe: DocsAndBytes!
+
+  """Documents written into a collection by the tasks that produce it."""
+  writtenToMe: DocsAndBytes!
+}
+
+"""
+Per-task-kind breakouts. A given row populates at most one of these, since a
+task is a capture, a derivation, or a materialization.
+"""
+type CatalogTaskStats {
+  """
+  List of stats for bindings of a capture task.
+  Each entry represents stats for a single binding.
+  """
+  capture: [CaptureBindingStats!]!
+
+  """Derivation stats."""
+  derive: DeriveStats
+
+  """
+  List of stats for bindings of a materialization task.
+  Each entry represents stats for a single binding.
+  """
+  materialize: [MaterializeBindingStats!]!
 }
 
 enum CatalogType {
@@ -788,6 +954,54 @@ The input/output is a string in RFC3339 format.
 """
 scalar DateTime
 
+"""
+Stats for a derivation. A derivation has a single output collection, so
+unlike captures and materializations there is one block rather than a list.
+"""
+type DeriveStats {
+  """
+  The most recent publish timestamp of documents written to the derived collection.
+  """
+  lastPublishedAt: DateTime
+
+  """Documents written to the derived collection, after combining."""
+  out: DocsAndBytes
+
+  """Documents published by the connector, before combining."""
+  published: DocsAndBytes
+
+  """List of metrics for the transforms in this derivation."""
+  transforms: [DeriveTransformStats!]!
+}
+
+"""
+Stats for one transform of a derivation. Unlike the capture and materialize
+breakouts, these are keyed by transform name, and the collection read is a
+separate field.
+"""
+type DeriveTransformStats {
+  """
+  Bytes behind across the transform's source journals. A historical row
+  that predates this counter reports zero, indistinguishable from a
+  transform that is genuinely caught up.
+  """
+  bytesBehind: UInt64!
+
+  """Input documents that were read by this transform."""
+  input: DocsAndBytes
+
+  """
+  The most recent publish timestamp from the source documents that were read by this transform.
+  """
+  lastSourcePublishedAt: DateTime
+
+  """The name of the collection that this transform sourced from."""
+  source: String!
+
+  """The transform name."""
+  transform: String!
+}
+
 """A capture binding that has changed as a result of a discover"""
 type DiscoverChange {
   """Whether the capture binding is disabled."""
@@ -802,6 +1016,143 @@ type DiscoverChange {
   target: Collection!
 }
 
+"""A count of documents and their cumulative size."""
+type DocsAndBytes {
+  """Cumulative total size of the documents, in bytes."""
+  bytesTotal: UInt64!
+
+  """The count of JSON documents."""
+  docsTotal: UInt64!
+}
+
+"""
+A draft change-set of Flow catalog specifications.
+Only its owner can access it; catalog edit permissions are checked when
+publishing.
+"""
+type Draft {
+  createdAt: DateTime!
+
+  """Description of this draft."""
+  detail: String
+
+  """
+  Errors found while validating, testing, or publishing this draft.
+  Staging and unstaging specifications do not clear these errors, so they
+  may describe an earlier version of the draft.
+  """
+  errors: [Error!]!
+  id: Id!
+
+  """Number of staged specifications."""
+  numSpecs: Int!
+
+  """Staged specifications, in catalog-name order."""
+  specs(after: String, first: Int): DraftSpecConnection!
+  updatedAt: DateTime!
+}
+
+type DraftConnection {
+  """A list of edges."""
+  edges: [DraftEdge!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+}
+
+"""An edge in a connection."""
+type DraftEdge {
+  """A cursor for use in pagination"""
+  cursor: String!
+
+  """The item at the end of the edge"""
+  node: Draft!
+}
+
+"""A proposed catalog specification of a draft."""
+type DraftSpec {
+  catalogName: Name!
+  catalogType: CatalogType
+
+  """Description of the staged change."""
+  detail: String
+
+  """
+  Publication precondition: publishing fails if the live specification's
+  `lastPubId` differs. The zero ID requires that no live specification
+  exists; null imposes no precondition.
+  """
+  expectPubId: Id
+
+  """
+  Whether the staged specification is textually identical to the published
+  one, so that a no-op can be told apart from a real edit. The comparison is
+  over the serialized specification, so a reordered document reads as changed.
+  False if no live specification exists or the caller lacks CatalogRead on it.
+  """
+  isUnchanged: Boolean!
+
+  """
+  Last publication ID which updated the live specification, or null if
+  it does not exist or the caller lacks CatalogRead on its name.
+  """
+  lastPubId: Id
+
+  """
+  A serialized catalog specification. Null, together with a null
+  `catalogType`, stages deletion of the specification when this draft is
+  published.
+  """
+  model: JSON
+  updatedAt: DateTime!
+}
+
+type DraftSpecConnection {
+  """A list of edges."""
+  edges: [DraftSpecEdge!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+}
+
+"""An edge in a connection."""
+type DraftSpecEdge {
+  """A cursor for use in pagination"""
+  cursor: String!
+
+  """The item at the end of the edge"""
+  node: DraftSpec!
+}
+
+input DraftSpecInput {
+  catalogName: Name!
+  catalogType: CatalogType
+
+  """
+  Description of the staged change. Omission or null clears the previous
+  description.
+  """
+  detail: String
+
+  """
+  Require the live specification's `lastPubId` to match when publishing.
+  When editing an existing specification, copy its `lastPubId` here to
+  prevent publication from overwriting intervening changes.
+  The zero ID requires that no live specification exists. Omitting this
+  field or passing null clears any previously staged precondition.
+  """
+  expectPubId: Id
+
+  """
+  The catalog specification to stage. Null, together with a null `catalogType`,
+  stages a deletion of the live specification instead.
+  
+  Both fields are required to be present. Omitting either is an error
+  rather than a deletion, so a partial input cannot silently become one.
+  """
+  model: JSON
+}
+
 type EffectiveAlertConfig {
   config: JSON!
   provenance: [FieldProvenance!]!
@@ -812,7 +1163,11 @@ A generic error that can be associated with a particular draft spec for a given 
 """
 type Error {
   catalogName: String!
+
+  """Description of the error."""
   detail: String!
+
+  """Location scope of the error within the draft."""
   scope: String
 }
 
@@ -1138,6 +1493,36 @@ type LockFailure {
   expected: Id!
 }
 
+"""
+Stats for one binding of a materialization, keyed by its source collection.
+"""
+type MaterializeBindingStats {
+  """
+  Bytes behind across the binding's source journals. A historical row
+  that predates this counter reports zero, indistinguishably from a
+  binding that is genuinely caught up.
+  """
+  bytesBehind: UInt64!
+
+  """The collection name."""
+  collection: String!
+
+  """
+  The most recent publish timestamp from the source documents that were
+  read by this binding.
+  """
+  lastSourcePublishedAt: DateTime
+
+  """Documents loaded from the endpoint."""
+  left: DocsAndBytes
+
+  """Documents stored to the endpoint."""
+  out: DocsAndBytes
+
+  """Documents read from the source collection."""
+  right: DocsAndBytes
+}
+
 type MutationRoot {
   """
   Adds a private link to a private data plane. The data-plane controller
@@ -1185,6 +1570,9 @@ type MutationRoot {
     validFor: String!
   ): CreateApiKeyResult!
   createBillingSetupIntent(tenant: String!): CreateBillingSetupIntentPayload!
+
+  """Create an empty private draft owned by the authenticated caller."""
+  createDraft(detail: String): Draft!
 
   """
   Create an invite link that grants access to a catalog prefix.
@@ -1242,6 +1630,12 @@ type MutationRoot {
   """
   deleteAlertSubscription(email: String!, prefix: Prefix!): AlertSubscription!
   deleteBillingPaymentMethod(paymentMethodId: String!, tenant: String!): BillingPaymentMethodPayload!
+
+  """
+  Discard a draft the caller owns, along with everything staged in it.
+  Returns the deleted ID. Nothing published is affected.
+  """
+  deleteDraft(id: Id!): Id!
 
   """
   Delete an invite link, revoking it so it can no longer be redeemed.
@@ -1370,6 +1764,14 @@ type MutationRoot {
   setSecret(catalogName: Name!, document: SecretDocument!): SetSecretResult!
 
   """
+  Stage specifications in a draft the caller owns, replacing all staged
+  fields under each name. Omitted `expectPubId` and `detail` are cleared.
+  The batch is atomic; returns the distinct staged names in catalog-name order.
+  Catalog edit permissions are checked when publishing.
+  """
+  stageDraftSpecs(draftId: Id!, specs: [DraftSpecInput!]!): [Name!]!
+
+  """
   Check storage health for a given catalog prefix and storage definition.
   
   This validates the inputs, verifies that the user has admin access to the catalog prefix,
@@ -1379,6 +1781,14 @@ type MutationRoot {
   health check results (both successes and failures) rather than erroring on failures.
   """
   testConnectionHealth(catalogPrefix: Prefix!, spec: JSON!): ConnectionHealthTestResult!
+
+  """
+  Drop staged specifications from a draft the caller owns, and return the
+  names actually dropped, in catalog-name order. This un-stages a pending
+  change; it does not delete anything published. To stage a deletion of a
+  live specification, use `stageDraftSpecs` with null `model` and `catalogType`.
+  """
+  unstageDraftSpecs(catalogNames: [Name!]!, draftId: Id!): [Name!]!
 
   """
   Creates or replaces the alert config at `catalogPrefixOrName`.
@@ -1733,6 +2143,12 @@ type QueryRoot {
   alerts(after: String, before: String, by: AlertsBy!, first: Int, last: Int): AlertConnection!
 
   """
+  Returns stored reporting buckets for the given catalog names, at the
+  given grain, over the half-open window `[start, end)`.
+  """
+  catalogStats(by: CatalogStatsBy!): CatalogStatsConnection!
+
+  """
   Returns information about a single connector. At least one parameter
   must be provided. If both are provided, the connector must match both
   the image name and id in order to be returned.
@@ -1779,6 +2195,10 @@ type QueryRoot {
   omitting it returns both.
   """
   dataPlanes(after: String, before: String, filter: DataPlanesFilter, first: Int, last: Int): DataPlaneConnection!
+  draft(id: Id!): Draft
+
+  """The caller's own drafts, in stable ID order."""
+  drafts(after: String, first: Int): DraftConnection!
 
   """
   Resolves the effective alert config at a single prefix or catalog name.
@@ -2361,6 +2781,9 @@ type TenantBilling {
   paymentMethods: [PaymentMethod!]!
   primaryPaymentMethod: PaymentMethod
 }
+
+"""A 64-bit unsigned integer, serialized as a decimal string."""
+scalar UInt64
 
 """
 A UUID is a unique 128-bit number, stored as 16 octets. UUIDs are parsed as

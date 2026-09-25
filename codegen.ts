@@ -37,6 +37,7 @@ const config: CodegenConfig = {
                     NaiveDate: 'string',
                     Name: 'string',
                     Prefix: 'string',
+                    UInt64: 'string',
                     Url: 'string',
                     UUID: 'string',
                 },

@@ -1,7 +1,7 @@
 import type { EChartsOption } from 'echarts';
 import type { Options } from 'pretty-bytes';
+import type { CatalogStatsDetails } from 'src/api/catalogStats';
 import type { DataByHourStatType } from 'src/components/graphs/types';
-import type { CatalogStats_Details } from 'src/types';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
@@ -20,6 +20,7 @@ import {
 import * as echarts from 'echarts/core';
 import { UniversalTransition } from 'echarts/features';
 import { CanvasRenderer } from 'echarts/renderers';
+import { debounce } from 'lodash';
 import { DateTime } from 'luxon';
 import prettyBytes from 'pretty-bytes';
 import { useIntl } from 'react-intl';
@@ -41,14 +42,15 @@ import { useDetailsUsageStore } from 'src/stores/DetailsUsage/useDetailsUsageSto
 
 interface DataByHourGraphProps {
     id: string;
-    stats: CatalogStats_Details[] | undefined;
+    stats?: CatalogStatsDetails[];
     createdAt?: string;
+    updatedAt: string;
 }
 
 // These are keys that are used all over. Not typing them as Echarts typing within
 //  dataset complained when I tried
 const TIME = 'timestamp';
-type Dimensions = keyof CatalogStats_Details;
+type Dimensions = keyof CatalogStatsDetails;
 
 // Graph styling
 const barMinHeight = 1;
@@ -65,7 +67,7 @@ const defaultDataFormat = (value: any, options: Options) => {
 //  not renaming as this is not 100% supporting of all the grains
 //  just hourly and daily as it required for details not (Q4 2024)
 // This handled monthly grain fine after updating "renderingTimezone" (Q1 2026)
-function DataByHourGraph({ id, stats = [] }: DataByHourGraphProps) {
+function DataByHourGraph({ id, stats = [], updatedAt }: DataByHourGraphProps) {
     const intl = useIntl();
     const theme = useTheme();
     const legendConfig = useLegendConfig();
@@ -81,7 +83,6 @@ function DataByHourGraph({ id, stats = [] }: DataByHourGraphProps) {
 
     const resizeObserver = useRef<ResizeObserver | null>(null);
     const [myChart, setMyChart] = useState<echarts.ECharts | null>(null);
-    const [lastUpdated, setLastUpdated] = useState<string>('');
     const [renderingTimezone, setRenderingTimezone] = useState<string>('');
 
     const renderingBytes = useMemo(() => statType === 'bytes', [statType]);
@@ -108,18 +109,16 @@ function DataByHourGraph({ id, stats = [] }: DataByHourGraphProps) {
                 // Save off chart into state
                 setMyChart(chart);
 
-                // Observing the element rather than the window: collapsing
-                // the navigation sidebar resizes this container without
-                // resizing the window, so the canvas kept whatever width it
-                // was initialised at and overflowed its card. This covers the
-                // window case too, so there is no listener alongside it —
-                // echarts' resize() has no no-op early-out, and each call
-                // forces two synchronous layouts.
-                resizeObserver.current = new ResizeObserver(() =>
-                    chart.resize()
+                // Observe both the chart element and the document body. Need to
+                // observe the chart because collapsing the navigation sidebar resizes
+                // this container without resizing the window. Need to observe the body
+                // to capture actual window resizes.
+                resizeObserver.current = new ResizeObserver(
+                    debounce(() => chart.resize(), 50)
                 );
 
                 resizeObserver.current.observe(chartDom);
+                resizeObserver.current.observe(document.body);
             }
         }
     }, [id, myChart]);
@@ -127,17 +126,6 @@ function DataByHourGraph({ id, stats = [] }: DataByHourGraphProps) {
     useUnmount(() => {
         resizeObserver.current?.disconnect();
     });
-
-    // Update the "last updated" string shown as an xAxis label
-    // Want to format with seconds to show more of a "ticking clock" to users
-    useEffect(() => {
-        // Made a string instead of passing value into message to make life easier
-        setLastUpdated(
-            `${intl.formatMessage({
-                id: 'entityTable.data.lastUpdatedWithColon',
-            })} ${DateTime.now().toFormat(`tt ZZZZ`)}`
-        );
-    }, [intl, stats]);
 
     // Update the "timezone" string shown at the bottom
     useEffect(() => {
@@ -161,38 +149,17 @@ function DataByHourGraph({ id, stats = [] }: DataByHourGraphProps) {
 
     getTimeZone;
 
-    // It kind of sucks to be checking the entityType and not just seeing what was returned
-    //  However, this prevents us from having to look through ALL the stats to decide what
-    //      data to display.
-    // Any typing because echarts does not like multiple
-    const scopedDataSet = useMemo<any>(() => {
-        if (entityType === 'collection') {
-            return stats.map((stat) => {
-                return {
-                    ...stat,
-                    [TIME]: stat.ts,
-                };
-            });
-        }
-
-        if (entityType === 'capture') {
-            return stats.map((stat) => {
-                return {
-                    docs_written: stat.docs_written,
-                    bytes_written: stat.bytes_written,
-                    [TIME]: stat.ts,
-                };
-            });
-        }
-
+    const scopedDataSet = useMemo(() => {
         return stats.map((stat) => {
             return {
-                docs_read: stat.docs_read,
-                bytes_read: stat.bytes_read,
-                [TIME]: stat.ts,
+                docs_read: stat.docsRead,
+                bytes_read: stat.bytesRead,
+                docs_written: stat.docsWritten,
+                bytes_written: stat.bytesWritten,
+                [TIME]: DateTime.fromSeconds(stat.timestamp).toISO(),
             };
         });
-    }, [entityType, stats]);
+    }, [stats]);
 
     // Function to format that handles both dimensions. This allows the tooltip
     //  formatter to not worry about dimensions and just pass them in here
@@ -387,7 +354,7 @@ function DataByHourGraph({ id, stats = [] }: DataByHourGraphProps) {
                     type: 'category',
                 },
                 {
-                    data: [lastUpdated],
+                    data: [`Last Updated: ${updatedAt}`],
                     axisLabel: {
                         align: 'center',
                     },
@@ -466,7 +433,7 @@ function DataByHourGraph({ id, stats = [] }: DataByHourGraphProps) {
         entityType,
         formatter,
         intl,
-        lastUpdated,
+        updatedAt,
         legendConfig,
         longFormat,
         myChart,
