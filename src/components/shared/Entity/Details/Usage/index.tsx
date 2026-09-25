@@ -21,8 +21,7 @@ interface Props {
 function Usage({ catalogName }: Props) {
     const entityType = useEntityType();
     const response = useDetailsStats(entityType, catalogName);
-
-    const { stats, fetching, error, updatedAt } = response;
+    const { data, fetching, error, updatedAt } = response;
     const updatedAtStr = updatedAt.toLocal().toFormat(`tt ZZZZ`);
 
     return (
@@ -38,7 +37,7 @@ function Usage({ catalogName }: Props) {
                 </Stack>
             }
         >
-            {fetching && !hasLength(stats) ? (
+            {fetching && !hasLength(data) ? (
                 <GraphLoadingState />
             ) : error ? (
                 checkErrorMessage(FAILED_TO_FETCH, error.message) ? (
@@ -49,11 +48,11 @@ function Usage({ catalogName }: Props) {
                 ) : (
                     <Error error={error} />
                 )
-            ) : hasLength(stats) ? (
+            ) : hasLength(data) ? (
                 <Stack direction="column" spacing={1}>
                     <DataByHourGraph
                         id="data-by-hour_entity-details"
-                        stats={stats}
+                        stats={data}
                         updatedAt={updatedAtStr}
                     />
                 </Stack>

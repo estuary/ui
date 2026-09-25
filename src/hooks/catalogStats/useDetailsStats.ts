@@ -1,9 +1,9 @@
-import type { CatalogStats } from 'src/api/gql/catalogStats';
-import type { CatalogStats_Details, Entity } from 'src/types';
+import type { CatalogStats, CatalogStatsDetails } from 'src/api/catalogStats';
+import type { Entity } from 'src/types';
 
 import { useMemo } from 'react';
 
-import { usePollCatalogStats } from 'src/hooks/catalogStats/useCatalogStats';
+import { useCatalogStats } from 'src/hooks/catalogStats/useCatalogStats';
 import { useDetailsUsageStore } from 'src/stores/DetailsUsage/useDetailsUsageStore';
 
 const STATS_POLL_INTERVAL_MS = 15000;
@@ -11,11 +11,10 @@ const STATS_POLL_INTERVAL_MS = 15000;
 export function useDetailsStats(entityType: Entity, catalogName: string) {
     const names = [catalogName];
     const range = useDetailsUsageStore((state) => state.range);
-    const { data, fetching, error, updatedAt } = usePollCatalogStats(
-        names,
-        range,
-        STATS_POLL_INTERVAL_MS
-    );
+
+    const { data, fetching, error, updatedAt } = useCatalogStats(names, range, {
+        pollingIntervalMs: STATS_POLL_INTERVAL_MS,
+    });
 
     const stats = useMemo(() => {
         const catalogData = data[catalogName] ?? [];
@@ -24,34 +23,34 @@ export function useDetailsStats(entityType: Entity, catalogName: string) {
         );
     }, [catalogName, entityType, data]);
 
-    return { stats, fetching, error, updatedAt };
+    return { data: stats, fetching, error, updatedAt };
 }
 
 function convertToDetailStats(
     entityType: Entity,
     stats: CatalogStats
-): CatalogStats_Details {
-    const details: CatalogStats_Details = {
-        catalog_name: stats.catalogName,
+): CatalogStatsDetails {
+    const details: CatalogStatsDetails = {
+        catalogName: stats.catalogName,
         grain: stats.grain,
-        ts: stats.timestamp,
+        timestamp: stats.timestamp,
     };
 
     // TODO (adrian): GraphQL API returns UInt64s for stats data.
     // Update graph support to use BigInt and remove these Number casts.
     if (entityType === 'capture') {
-        details.docs_written = Number(stats.writtenByMe.docsTotal);
-        details.bytes_written = Number(stats.writtenByMe.bytesTotal);
+        details.docsWritten = Number(stats.writtenByMe.docsTotal);
+        details.bytesWritten = Number(stats.writtenByMe.bytesTotal);
     }
     if (entityType === 'materialization') {
-        details.docs_read = Number(stats.readByMe.docsTotal);
-        details.bytes_read = Number(stats.readByMe.bytesTotal);
+        details.docsRead = Number(stats.readByMe.docsTotal);
+        details.bytesRead = Number(stats.readByMe.bytesTotal);
     }
     if (entityType === 'collection') {
-        details.docs_read = Number(stats.readFromMe.docsTotal);
-        details.bytes_read = Number(stats.readFromMe.bytesTotal);
-        details.docs_written = Number(stats.writtenToMe.docsTotal);
-        details.bytes_written = Number(stats.writtenToMe.bytesTotal);
+        details.docsRead = Number(stats.readFromMe.docsTotal);
+        details.bytesRead = Number(stats.readFromMe.bytesTotal);
+        details.docsWritten = Number(stats.writtenToMe.docsTotal);
+        details.bytesWritten = Number(stats.writtenToMe.bytesTotal);
     }
 
     return details;
