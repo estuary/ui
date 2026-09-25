@@ -1,101 +1,113 @@
-import type { CatalogStats } from 'src/api/gql/catalogStats';
-import type { DataByHourRange, DataGrains } from 'src/components/graphs/types';
+import type { CatalogStats, DocsAndBytes } from 'src/api/catalogStats';
+import type { DataByHourRange } from 'src/components/graphs/types';
 import type {
-    CatalogStatsBy,
     CatalogStatsGrain,
     CatalogStatsQuery,
 } from 'src/gql-types/graphql';
 
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 
 import { DateTime, Interval } from 'luxon';
-import { useInterval } from 'react-use';
-import { useQuery } from 'urql';
 
-import { CATALOG_STATS_QUERY, toCatalogStats } from 'src/api/gql/catalogStats';
-import { LUXON_GRAIN_SETTINGS } from 'src/services/luxon';
+import { CATALOG_STATS_QUERY } from 'src/api/gql/catalogStats';
+import { usePollingQuery } from 'src/api/gql/usePollingQuery';
+import { DataGrains } from 'src/components/graphs/types';
+import {
+    defaultQueryDateFormat,
+    LUXON_GRAIN_SETTINGS,
+} from 'src/services/luxon';
 
-const STATS_TIMESTAMP_FORMAT = `yyyy-MM-dd'T'HH:mm:ssZZ`;
+type CatalogStatsNode =
+    CatalogStatsQuery['catalogStats']['edges'][number]['node'];
+type GqlDocsAndBytes = CatalogStatsNode['statsSummary']['readByMe'];
 
+const STATS_TIMESTAMP_FORMAT = defaultQueryDateFormat;
+
+// maps GQL grain -> app grain
+const FROM_GQL_GRAIN_MAP: Record<CatalogStatsGrain, DataGrains> = {
+    HOURLY: DataGrains.hourly,
+    DAILY: DataGrains.daily,
+    MONTHLY: DataGrains.monthly,
+};
 // maps app grain -> GQL grain
-const GRAIN_MAP: Record<DataGrains, CatalogStatsGrain> = {
+const TO_GQL_GRAIN_MAP: Record<DataGrains, CatalogStatsGrain> = {
     hourly: 'HOURLY',
     daily: 'DAILY',
     monthly: 'MONTHLY',
 };
 
-export function usePollCatalogStats(
-    names: string[],
-    range: DataByHourRange,
-    intervalMs: number
-) {
-    const namesClean = names.filter((n) => !!n);
-    const by = toCatalogStatsBy(namesClean, range);
-    const [updatedAt, setUpdatedAt] = useState<DateTime>(DateTime.now());
+type CatalogStatsOpts = {
+    pollingIntervalMs?: number;
+};
 
-    const [{ data, error, fetching }, reexecuteQuery] = useQuery({
+export function useCatalogStats(
+    catalogNames: string[],
+    range: DataByHourRange,
+    opts: CatalogStatsOpts = {}
+) {
+    const { grain, startDate, endDate } = convertDateRange(range);
+    const start = startDate.toFormat(STATS_TIMESTAMP_FORMAT);
+    const end = endDate.toFormat(STATS_TIMESTAMP_FORMAT);
+    const { pollingIntervalMs } = opts;
+
+    const gqlGrain = TO_GQL_GRAIN_MAP[range.grain];
+    const names = catalogNames.filter(Boolean);
+    const hasNames = names.length > 0;
+
+    const { data, error, fetching, updatedAt } = usePollingQuery({
         query: CATALOG_STATS_QUERY,
+        pause: !hasNames,
         requestPolicy: 'network-only',
-        variables: { by },
-        pause: namesClean.length <= 0,
+        pollingIntervalMs,
+        variables: {
+            by: {
+                names,
+                grain: gqlGrain,
+                start,
+                end,
+            },
+        },
     });
 
     const stats = useMemo(() => {
-        return convertStatsResponse(range, data);
-    }, [range, data]);
-
-    useInterval(() => {
-        if (fetching || namesClean.length <= 0) {
-            return;
-        }
-
-        const by = toCatalogStatsBy(namesClean, range);
-        reexecuteQuery({
-            requestPolicy: 'network-only',
-            variables: { by },
-        });
-
-        setUpdatedAt(DateTime.now());
-    }, intervalMs);
+        return data ? convertStatsResponse(data, grain, start, end) : {};
+    }, [data, grain, start, end]);
 
     return { data: stats, fetching, error, updatedAt };
 }
 
-function toCatalogStatsBy(
-    names: string[],
-    range: DataByHourRange
-): CatalogStatsBy {
-    const { grain, start, end } = convertDateRange(range);
-
-    return {
-        names,
-        grain,
-        start: start.toFormat(STATS_TIMESTAMP_FORMAT),
-        end: end.toFormat(STATS_TIMESTAMP_FORMAT),
-    };
-}
-
 function convertDateRange(range: DataByHourRange) {
     const { relativeUnit, timeUnit } = LUXON_GRAIN_SETTINGS[range.grain];
-    const grain = GRAIN_MAP[range.grain] ?? 'HOURLY';
 
-    const end = DateTime.utc()
+    const endDate = DateTime.utc()
         .plus({ [timeUnit]: 1 })
         .startOf(timeUnit);
-    const start = end.minus({
+    const startDate = endDate.minus({
         [relativeUnit]: range.amount,
     });
 
-    return { grain, start, end };
+    return {
+        grain: range.grain,
+        startDate,
+        endDate,
+    };
 }
 
 function convertStatsResponse(
-    range: DataByHourRange,
-    data?: CatalogStatsQuery
+    data: CatalogStatsQuery,
+    grain: DataGrains,
+    start: string,
+    end: string
 ) {
-    const { relativeUnit } = LUXON_GRAIN_SETTINGS[range.grain];
-    const { start, end } = convertDateRange(range);
-    const interval = Interval.fromDateTimes(start, end).splitBy({
+    const startDate = DateTime.fromFormat(start, STATS_TIMESTAMP_FORMAT, {
+        zone: 'utc',
+    });
+    const endDate = DateTime.fromFormat(end, STATS_TIMESTAMP_FORMAT, {
+        zone: 'utc',
+    });
+
+    const { relativeUnit } = LUXON_GRAIN_SETTINGS[grain];
+    const interval = Interval.fromDateTimes(startDate, endDate).splitBy({
         [relativeUnit]: 1,
     });
 
@@ -104,8 +116,8 @@ function convertStatsResponse(
     const statsLookupMap =
         data?.catalogStats?.edges?.reduce(
             (acc, { node }) => {
-                const { catalogName, timestamp } = node;
                 const stat = toCatalogStats(node);
+                const { catalogName, timestamp } = stat;
 
                 acc[catalogName] ??= {};
                 acc[catalogName][timestamp] = stat;
@@ -120,15 +132,15 @@ function convertStatsResponse(
     Object.entries(statsLookupMap).forEach(
         ([catalogName, statsByTimestamp]) => {
             interval.map((i) => {
-                const timestamp = i.start?.toFormat(STATS_TIMESTAMP_FORMAT);
-                if (!timestamp) {
+                if (!i.start) {
                     return;
                 }
 
                 // find the matching stat, or fill with an empty record
+                const timestamp = i.start.toUnixInteger();
                 const stats =
                     statsByTimestamp[timestamp] ??
-                    emptyCatalogStats(catalogName, timestamp, range);
+                    emptyCatalogStats(catalogName, grain, timestamp);
 
                 statsByCatalogName[catalogName] ??= [];
                 statsByCatalogName[catalogName].push(stats);
@@ -139,15 +151,34 @@ function convertStatsResponse(
     return statsByCatalogName;
 }
 
+function toCatalogStats(node: CatalogStatsNode): CatalogStats {
+    return {
+        catalogName: node.catalogName,
+        grain: FROM_GQL_GRAIN_MAP[node.grain],
+        timestamp: DateTime.fromISO(node.timestamp).toUnixInteger(),
+        readByMe: toDocsAndBytes(node.statsSummary.readByMe),
+        readFromMe: toDocsAndBytes(node.statsSummary.readFromMe),
+        writtenByMe: toDocsAndBytes(node.statsSummary.writtenByMe),
+        writtenToMe: toDocsAndBytes(node.statsSummary.writtenToMe),
+    };
+}
+
+function toDocsAndBytes(dnb: GqlDocsAndBytes): DocsAndBytes {
+    return {
+        docsTotal: BigInt(dnb.docsTotal),
+        bytesTotal: BigInt(dnb.bytesTotal),
+    };
+}
+
 function emptyCatalogStats(
     catalogName: string,
-    timestamp: string,
-    range: DataByHourRange
+    grain: DataGrains,
+    timestamp: number
 ): CatalogStats {
     return {
         catalogName,
+        grain,
         timestamp,
-        grain: range.grain,
         readByMe: {
             docsTotal: BigInt(0),
             bytesTotal: BigInt(0),
