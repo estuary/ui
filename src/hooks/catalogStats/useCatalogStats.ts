@@ -41,23 +41,20 @@ type CatalogStatsOpts = {
 };
 
 export function useCatalogStats(
-    catalogNames: string[],
+    catalogNames: string | string[],
     range: DataByHourRange,
     opts: CatalogStatsOpts = {}
 ) {
+    const names = getCleanCatalogNames(catalogNames);
     const { grain, startDate, endDate } = convertDateRange(range);
+    const gqlGrain = TO_GQL_GRAIN_MAP[grain];
     const start = startDate.toFormat(STATS_TIMESTAMP_FORMAT);
     const end = endDate.toFormat(STATS_TIMESTAMP_FORMAT);
     const { pollingIntervalMs } = opts;
 
-    const gqlGrain = TO_GQL_GRAIN_MAP[range.grain];
-    const names = catalogNames.filter(Boolean);
-    const hasNames = names.length > 0;
-
     const { data, error, fetching, updatedAt } = usePollingQuery({
         query: CATALOG_STATS_QUERY,
-        pause: !hasNames,
-        requestPolicy: 'network-only',
+        pause: names.length <= 0,
         pollingIntervalMs,
         variables: {
             by: {
@@ -69,11 +66,19 @@ export function useCatalogStats(
         },
     });
 
-    const stats = useMemo(() => {
-        return data ? convertStatsResponse(data, grain, start, end) : {};
-    }, [data, grain, start, end]);
+    const stats = useMemo(
+        () => (data ? convertStatsResponse(data, grain, start, end) : {}),
+        [data, grain, start, end]
+    );
 
     return { data: stats, fetching, error, updatedAt };
+}
+
+function getCleanCatalogNames(catalogNames: string | string[]) {
+    const names: string[] = Array.isArray(catalogNames)
+        ? catalogNames
+        : [catalogNames];
+    return names.filter(Boolean);
 }
 
 function convertDateRange(range: DataByHourRange) {
@@ -105,7 +110,6 @@ function convertStatsResponse(
     const endDate = DateTime.fromFormat(end, STATS_TIMESTAMP_FORMAT, {
         zone: 'utc',
     });
-
     const { relativeUnit } = LUXON_GRAIN_SETTINGS[grain];
     const interval = Interval.fromDateTimes(startDate, endDate).splitBy({
         [relativeUnit]: 1,
@@ -114,24 +118,23 @@ function convertStatsResponse(
     // accumulate the query results into a two-layer mapping for more efficient lookups
     // maps [catalogName][timestamp] -> stat
     const statsLookupMap =
-        data?.catalogStats?.edges?.reduce(
-            (acc, { node }) => {
-                const stat = toCatalogStats(node);
-                const { catalogName, timestamp } = stat;
+        data?.catalogStats?.edges?.reduce<
+            Record<string, Record<number, CatalogStats>>
+        >((acc, { node }) => {
+            const stat = toCatalogStats(node);
+            const { catalogName, timestamp } = stat;
 
-                acc[catalogName] ??= {};
-                acc[catalogName][timestamp] = stat;
-                return acc;
-            },
-            {} as Record<string, Record<string, CatalogStats>>
-        ) ?? {};
+            acc[catalogName] ??= {};
+            acc[catalogName][timestamp] = stat;
+            return acc;
+        }, {}) ?? {};
 
     // for each catalogName in the response data, iterate through the full
     // interval and fill any holes with an empty stats record
     const statsByCatalogName: Record<string, CatalogStats[]> = {};
     Object.entries(statsLookupMap).forEach(
         ([catalogName, statsByTimestamp]) => {
-            interval.map((i) => {
+            interval.forEach((i) => {
                 if (!i.start) {
                     return;
                 }

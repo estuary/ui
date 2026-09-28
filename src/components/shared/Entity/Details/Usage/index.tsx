@@ -22,7 +22,7 @@ function Usage({ catalogName }: Props) {
     const entityType = useEntityType();
     const response = useDetailsStats(entityType, catalogName);
     const { data, fetching, error, updatedAt } = response;
-    const updatedAtStr = updatedAt.toLocal().toFormat(`tt ZZZZ`);
+    const updatedAtStr = updatedAt?.toLocal().toFormat(`tt ZZZZ`);
 
     return (
         <CardWrapper

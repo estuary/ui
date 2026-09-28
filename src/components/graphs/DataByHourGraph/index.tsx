@@ -44,7 +44,7 @@ interface DataByHourGraphProps {
     id: string;
     stats?: CatalogStatsDetails[];
     createdAt?: string;
-    updatedAt: string;
+    updatedAt?: string;
 }
 
 // These are keys that are used all over. Not typing them as Echarts typing within
@@ -366,6 +366,7 @@ function DataByHourGraph({ id, stats = [], updatedAt }: DataByHourGraphProps) {
                     },
                     position: 'top',
                     silent: true,
+                    show: !!updatedAt,
                 },
                 {
                     data: [renderingTimezone],

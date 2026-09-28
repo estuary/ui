@@ -9,12 +9,15 @@ import { useDetailsUsageStore } from 'src/stores/DetailsUsage/useDetailsUsageSto
 const STATS_POLL_INTERVAL_MS = 15000;
 
 export function useDetailsStats(entityType: Entity, catalogName: string) {
-    const names = [catalogName];
     const range = useDetailsUsageStore((state) => state.range);
 
-    const { data, fetching, error, updatedAt } = useCatalogStats(names, range, {
-        pollingIntervalMs: STATS_POLL_INTERVAL_MS,
-    });
+    const { data, fetching, error, updatedAt } = useCatalogStats(
+        catalogName,
+        range,
+        {
+            pollingIntervalMs: STATS_POLL_INTERVAL_MS,
+        }
+    );
 
     const stats = useMemo(() => {
         const catalogData = data[catalogName] ?? [];
