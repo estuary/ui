@@ -7,8 +7,6 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { useTheme } from '@mui/material';
 
-import { useShallow } from 'zustand/react/shallow';
-
 import { BarChart } from 'echarts/charts';
 import {
     DatasetComponent,
@@ -23,7 +21,6 @@ import { CanvasRenderer } from 'echarts/renderers';
 import { debounce } from 'lodash';
 import { DateTime } from 'luxon';
 import prettyBytes from 'pretty-bytes';
-import { useIntl } from 'react-intl';
 import { useUnmount } from 'react-use';
 import readable from 'readable-numbers';
 
@@ -63,22 +60,29 @@ const defaultDataFormat = (value: any, options: Options) => {
     return prettyBytes(value, options);
 };
 
+// Unit named in the caption under the chart, e.g. "hours in EDT". Monthly is
+// deliberately blank so the caption just reads "in EDT".
+const GRAIN_UNIT_LABEL: Record<DataGrains, string> = {
+    [DataGrains.hourly]: 'hours',
+    [DataGrains.daily]: 'days',
+    [DataGrains.monthly]: '',
+};
+
 // TODO (data graph) - need to rename this as it can handle multiple grains
 //  not renaming as this is not 100% supporting of all the grains
 //  just hourly and daily as it required for details not (Q4 2024)
 // This handled monthly grain fine after updating "renderingTimezone" (Q1 2026)
 function DataByHourGraph({ id, stats = [], updatedAt }: DataByHourGraphProps) {
-    const intl = useIntl();
     const theme = useTheme();
     const legendConfig = useLegendConfig();
     const tooltipConfig = useTooltipConfig();
     const entityType = useEntityType();
     const messages = useDataByHourGraphMessages();
 
-    const [range, statType] = useDetailsUsageStore(
-        useShallow((state) => [state.range, state.statType])
-    );
-    const { shortFormat, longFormat, getTimeZone, labelKey } =
+    const range = useDetailsUsageStore((state) => state.range);
+    const statType = useDetailsUsageStore((state) => state.statType);
+
+    const { shortFormat, longFormat, getTimeZone } =
         LUXON_GRAIN_SETTINGS[range.grain];
 
     const resizeObserver = useRef<ResizeObserver | null>(null);
@@ -130,24 +134,11 @@ function DataByHourGraph({ id, stats = [], updatedAt }: DataByHourGraphProps) {
     // Update the "timezone" string shown at the bottom
     useEffect(() => {
         setRenderingTimezone(
-            `${intl.formatMessage(
-                {
-                    id: 'detailsPanel.graph.timezone',
-                },
-                {
-                    relativeUnit:
-                        range.grain === DataGrains.monthly
-                            ? ''
-                            : intl.formatMessage(
-                                  { id: labelKey },
-                                  { range: '' }
-                              ),
-                }
-            )} ${getTimeZone(DateTime.now())}`
+            [GRAIN_UNIT_LABEL[range.grain], 'in', getTimeZone(DateTime.now())]
+                .filter(Boolean)
+                .join(' ')
         );
-    }, [getTimeZone, intl, labelKey, range.grain]);
-
-    getTimeZone;
+    }, [getTimeZone, range.grain]);
 
     const scopedDataSet = useMemo(() => {
         return stats.map((stat) => {
@@ -393,9 +384,7 @@ function DataByHourGraph({ id, stats = [], updatedAt }: DataByHourGraphProps) {
             yAxis: [
                 {
                     alignTicks: true,
-                    name: intl.formatMessage({
-                        id: renderingBytes ? 'data.data' : 'data.docs',
-                    }),
+                    name: renderingBytes ? 'Data' : 'Docs',
                     type: 'value',
                     position: 'left',
                     axisLabel: {
@@ -433,7 +422,6 @@ function DataByHourGraph({ id, stats = [], updatedAt }: DataByHourGraphProps) {
         docsWrittenSeries,
         entityType,
         formatter,
-        intl,
         updatedAt,
         legendConfig,
         longFormat,
