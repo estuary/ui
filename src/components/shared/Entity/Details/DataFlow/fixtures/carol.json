@@ -1,0 +1,73 @@
+{
+    "data": {
+        "liveSpecs": {
+            "edges": [
+                {
+                    "node": {
+                        "catalogName": "acmeCo/team/rollup",
+                        "userCapability": "read",
+                        "status": {
+                            "type": "OK",
+                            "summary": "Ok"
+                        },
+                        "liveSpec": {
+                            "catalogName": "acmeCo/team/rollup",
+                            "catalogType": "collection",
+                            "isDisabled": false,
+                            "readsFrom": {
+                                "pageInfo": {
+                                    "hasNextPage": false
+                                },
+                                "edges": [
+                                    {
+                                        "node": {
+                                            "catalogName": "acmeCo/orders-enriched",
+                                            "userCapability": null,
+                                            "status": null
+                                        }
+                                    }
+                                ]
+                            },
+                            "writesTo": null,
+                            "readBy": null,
+                            "writtenBy": null,
+                            "sourceCapture": null,
+                            "model": {
+                                "schema": {
+                                    "properties": {
+                                        "customer_id": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": ["customer_id"],
+                                    "type": "object"
+                                },
+                                "key": ["/customer_id"],
+                                "derive": {
+                                    "using": {
+                                        "sqlite": {}
+                                    },
+                                    "transforms": [
+                                        {
+                                            "name": "fromEnriched",
+                                            "source": "acmeCo/orders-enriched",
+                                            "shuffle": {
+                                                "key": ["/customer_id"]
+                                            },
+                                            "lambda": "SELECT $customer_id;"
+                                        }
+                                    ],
+                                    "shards": {
+                                        "flags": {
+                                            "enable-runtime-v2": "true"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            ]
+        }
+    }
+}

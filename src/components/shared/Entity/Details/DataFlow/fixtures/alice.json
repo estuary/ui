@@ -1,0 +1,945 @@
+{
+    "data": {
+        "liveSpecs": {
+            "edges": [
+                {
+                    "node": {
+                        "catalogName": "acmeCo/customers",
+                        "userCapability": "admin",
+                        "status": {
+                            "type": "OK",
+                            "summary": "Ok"
+                        },
+                        "liveSpec": {
+                            "catalogName": "acmeCo/customers",
+                            "catalogType": "collection",
+                            "isDisabled": false,
+                            "readsFrom": null,
+                            "writesTo": null,
+                            "readBy": {
+                                "pageInfo": {
+                                    "hasNextPage": false
+                                },
+                                "edges": [
+                                    {
+                                        "node": {
+                                            "catalogName": "acmeCo/orders-enriched",
+                                            "userCapability": "admin",
+                                            "status": {
+                                                "type": "OK",
+                                                "summary": "Ok"
+                                            }
+                                        }
+                                    }
+                                ]
+                            },
+                            "writtenBy": {
+                                "pageInfo": {
+                                    "hasNextPage": false
+                                },
+                                "edges": [
+                                    {
+                                        "node": {
+                                            "catalogName": "acmeCo/shop-ingest",
+                                            "userCapability": "admin",
+                                            "status": {
+                                                "type": "OK",
+                                                "summary": "listening for connections"
+                                            }
+                                        }
+                                    }
+                                ]
+                            },
+                            "sourceCapture": null,
+                            "model": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "string"
+                                        },
+                                        "name": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": ["id"],
+                                    "type": "object"
+                                },
+                                "key": ["/id"]
+                            }
+                        }
+                    }
+                },
+                {
+                    "node": {
+                        "catalogName": "acmeCo/customer-totals",
+                        "userCapability": "admin",
+                        "status": {
+                            "type": "OK",
+                            "summary": "Ok"
+                        },
+                        "liveSpec": {
+                            "catalogName": "acmeCo/customer-totals",
+                            "catalogType": "collection",
+                            "isDisabled": false,
+                            "readsFrom": {
+                                "pageInfo": {
+                                    "hasNextPage": false
+                                },
+                                "edges": [
+                                    {
+                                        "node": {
+                                            "catalogName": "acmeCo/orders-enriched",
+                                            "userCapability": "admin",
+                                            "status": {
+                                                "type": "OK",
+                                                "summary": "Ok"
+                                            }
+                                        }
+                                    }
+                                ]
+                            },
+                            "writesTo": null,
+                            "readBy": {
+                                "pageInfo": {
+                                    "hasNextPage": false
+                                },
+                                "edges": [
+                                    {
+                                        "node": {
+                                            "catalogName": "acmeCo/warehouse",
+                                            "userCapability": "admin",
+                                            "status": {
+                                                "type": "OK",
+                                                "summary": "Ok"
+                                            }
+                                        }
+                                    }
+                                ]
+                            },
+                            "writtenBy": null,
+                            "sourceCapture": null,
+                            "model": {
+                                "schema": {
+                                    "properties": {
+                                        "customer_id": {
+                                            "type": "string"
+                                        },
+                                        "total": {
+                                            "reduce": {
+                                                "strategy": "sum"
+                                            },
+                                            "type": "number"
+                                        }
+                                    },
+                                    "reduce": {
+                                        "strategy": "merge"
+                                    },
+                                    "required": ["customer_id"],
+                                    "type": "object"
+                                },
+                                "key": ["/customer_id"],
+                                "derive": {
+                                    "using": {
+                                        "sqlite": {}
+                                    },
+                                    "transforms": [
+                                        {
+                                            "name": "fromEnriched",
+                                            "source": "acmeCo/orders-enriched",
+                                            "shuffle": {
+                                                "key": ["/customer_id"]
+                                            },
+                                            "lambda": "SELECT $customer_id, $amount AS total;"
+                                        },
+                                        {
+                                            "name": "legacyCustomers",
+                                            "source": "acmeCo/customers",
+                                            "shuffle": {
+                                                "key": ["/id"]
+                                            },
+                                            "lambda": "SELECT $id AS customer_id, 0 AS total;",
+                                            "disable": true
+                                        }
+                                    ],
+                                    "shards": {
+                                        "flags": {
+                                            "enable-runtime-v2": "true"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "node": {
+                        "catalogName": "acmeCo/ops-export",
+                        "userCapability": "admin",
+                        "status": {
+                            "type": "TASK_DISABLED",
+                            "summary": "Task shards are disabled"
+                        },
+                        "liveSpec": {
+                            "catalogName": "acmeCo/ops-export",
+                            "catalogType": "materialization",
+                            "isDisabled": true,
+                            "readsFrom": {
+                                "pageInfo": {
+                                    "hasNextPage": false
+                                },
+                                "edges": [
+                                    {
+                                        "node": {
+                                            "catalogName": "acmeCo/order-dedupe",
+                                            "userCapability": "admin",
+                                            "status": {
+                                                "type": "OK",
+                                                "summary": "Ok"
+                                            }
+                                        }
+                                    },
+                                    {
+                                        "node": {
+                                            "catalogName": "acmeCo/orders",
+                                            "userCapability": "admin",
+                                            "status": {
+                                                "type": "OK",
+                                                "summary": "Ok"
+                                            }
+                                        }
+                                    }
+                                ]
+                            },
+                            "writesTo": null,
+                            "readBy": null,
+                            "writtenBy": null,
+                            "sourceCapture": null,
+                            "model": {
+                                "endpoint": {
+                                    "dekaf": {
+                                        "variant": "generic",
+                                        "config": {
+                                            "token": "fixture-token-2",
+                                            "strict_topic_names": false
+                                        }
+                                    }
+                                },
+                                "bindings": [
+                                    {
+                                        "resource": {
+                                            "topic_name": "order_dedupe"
+                                        },
+                                        "source": "acmeCo/order-dedupe",
+                                        "fields": {
+                                            "recommended": true
+                                        }
+                                    },
+                                    {
+                                        "resource": {
+                                            "topic_name": "orders"
+                                        },
+                                        "source": "acmeCo/orders",
+                                        "fields": {
+                                            "recommended": true
+                                        }
+                                    }
+                                ],
+                                "shards": {
+                                    "disable": true,
+                                    "flags": {
+                                        "enable-runtime-v2": "true"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "node": {
+                        "catalogName": "acmeCo/order-dedupe",
+                        "userCapability": "admin",
+                        "status": {
+                            "type": "OK",
+                            "summary": "Ok"
+                        },
+                        "liveSpec": {
+                            "catalogName": "acmeCo/order-dedupe",
+                            "catalogType": "collection",
+                            "isDisabled": false,
+                            "readsFrom": {
+                                "pageInfo": {
+                                    "hasNextPage": false
+                                },
+                                "edges": [
+                                    {
+                                        "node": {
+                                            "catalogName": "acmeCo/order-dedupe",
+                                            "userCapability": "admin",
+                                            "status": {
+                                                "type": "OK",
+                                                "summary": "Ok"
+                                            }
+                                        }
+                                    },
+                                    {
+                                        "node": {
+                                            "catalogName": "acmeCo/orders",
+                                            "userCapability": "admin",
+                                            "status": {
+                                                "type": "OK",
+                                                "summary": "Ok"
+                                            }
+                                        }
+                                    }
+                                ]
+                            },
+                            "writesTo": null,
+                            "readBy": {
+                                "pageInfo": {
+                                    "hasNextPage": false
+                                },
+                                "edges": [
+                                    {
+                                        "node": {
+                                            "catalogName": "acmeCo/ops-export",
+                                            "userCapability": "admin",
+                                            "status": {
+                                                "type": "TASK_DISABLED",
+                                                "summary": "Task shards are disabled"
+                                            }
+                                        }
+                                    },
+                                    {
+                                        "node": {
+                                            "catalogName": "acmeCo/order-dedupe",
+                                            "userCapability": "admin",
+                                            "status": {
+                                                "type": "OK",
+                                                "summary": "Ok"
+                                            }
+                                        }
+                                    }
+                                ]
+                            },
+                            "writtenBy": null,
+                            "sourceCapture": null,
+                            "model": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "string"
+                                        },
+                                        "seen": {
+                                            "type": "integer"
+                                        }
+                                    },
+                                    "required": ["id"],
+                                    "type": "object"
+                                },
+                                "key": ["/id"],
+                                "derive": {
+                                    "using": {
+                                        "sqlite": {}
+                                    },
+                                    "transforms": [
+                                        {
+                                            "name": "fromOrders",
+                                            "source": "acmeCo/orders",
+                                            "shuffle": {
+                                                "key": ["/id"]
+                                            },
+                                            "lambda": "SELECT $id, 1 AS seen;"
+                                        },
+                                        {
+                                            "name": "fromSelf",
+                                            "source": "acmeCo/order-dedupe",
+                                            "shuffle": {
+                                                "key": ["/id"]
+                                            },
+                                            "lambda": "SELECT NULL AS id WHERE FALSE;"
+                                        }
+                                    ],
+                                    "shards": {
+                                        "flags": {
+                                            "enable-runtime-v2": "true"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "node": {
+                        "catalogName": "acmeCo/orders",
+                        "userCapability": "admin",
+                        "status": {
+                            "type": "OK",
+                            "summary": "Ok"
+                        },
+                        "liveSpec": {
+                            "catalogName": "acmeCo/orders",
+                            "catalogType": "collection",
+                            "isDisabled": false,
+                            "readsFrom": null,
+                            "writesTo": null,
+                            "readBy": {
+                                "pageInfo": {
+                                    "hasNextPage": false
+                                },
+                                "edges": [
+                                    {
+                                        "node": {
+                                            "catalogName": "acmeCo/ops-export",
+                                            "userCapability": "admin",
+                                            "status": {
+                                                "type": "TASK_DISABLED",
+                                                "summary": "Task shards are disabled"
+                                            }
+                                        }
+                                    },
+                                    {
+                                        "node": {
+                                            "catalogName": "acmeCo/order-dedupe",
+                                            "userCapability": "admin",
+                                            "status": {
+                                                "type": "OK",
+                                                "summary": "Ok"
+                                            }
+                                        }
+                                    },
+                                    {
+                                        "node": {
+                                            "catalogName": "acmeCo/orders-enriched",
+                                            "userCapability": "admin",
+                                            "status": {
+                                                "type": "OK",
+                                                "summary": "Ok"
+                                            }
+                                        }
+                                    },
+                                    {
+                                        "node": {
+                                            "catalogName": "acmeCo/orders-split",
+                                            "userCapability": "admin",
+                                            "status": {
+                                                "type": "OK",
+                                                "summary": "Ok"
+                                            }
+                                        }
+                                    }
+                                ]
+                            },
+                            "writtenBy": {
+                                "pageInfo": {
+                                    "hasNextPage": false
+                                },
+                                "edges": [
+                                    {
+                                        "node": {
+                                            "catalogName": "acmeCo/shop-ingest",
+                                            "userCapability": "admin",
+                                            "status": {
+                                                "type": "OK",
+                                                "summary": "listening for connections"
+                                            }
+                                        }
+                                    }
+                                ]
+                            },
+                            "sourceCapture": null,
+                            "model": {
+                                "schema": {
+                                    "properties": {
+                                        "amount": {
+                                            "type": "number"
+                                        },
+                                        "customer_id": {
+                                            "type": "string"
+                                        },
+                                        "id": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": ["id"],
+                                    "type": "object"
+                                },
+                                "key": ["/id"]
+                            }
+                        }
+                    }
+                },
+                {
+                    "node": {
+                        "catalogName": "acmeCo/orders-enriched",
+                        "userCapability": "admin",
+                        "status": {
+                            "type": "OK",
+                            "summary": "Ok"
+                        },
+                        "liveSpec": {
+                            "catalogName": "acmeCo/orders-enriched",
+                            "catalogType": "collection",
+                            "isDisabled": false,
+                            "readsFrom": {
+                                "pageInfo": {
+                                    "hasNextPage": false
+                                },
+                                "edges": [
+                                    {
+                                        "node": {
+                                            "catalogName": "acmeCo/customers",
+                                            "userCapability": "admin",
+                                            "status": {
+                                                "type": "OK",
+                                                "summary": "Ok"
+                                            }
+                                        }
+                                    },
+                                    {
+                                        "node": {
+                                            "catalogName": "acmeCo/orders",
+                                            "userCapability": "admin",
+                                            "status": {
+                                                "type": "OK",
+                                                "summary": "Ok"
+                                            }
+                                        }
+                                    }
+                                ]
+                            },
+                            "writesTo": null,
+                            "readBy": {
+                                "pageInfo": {
+                                    "hasNextPage": false
+                                },
+                                "edges": [
+                                    {
+                                        "node": {
+                                            "catalogName": "acmeCo/customer-totals",
+                                            "userCapability": "admin",
+                                            "status": {
+                                                "type": "OK",
+                                                "summary": "Ok"
+                                            }
+                                        }
+                                    },
+                                    {
+                                        "node": {
+                                            "catalogName": "acmeCo/team/rollup",
+                                            "userCapability": "admin",
+                                            "status": {
+                                                "type": "OK",
+                                                "summary": "Ok"
+                                            }
+                                        }
+                                    }
+                                ]
+                            },
+                            "writtenBy": null,
+                            "sourceCapture": null,
+                            "model": {
+                                "schema": {
+                                    "properties": {
+                                        "amount": {
+                                            "type": "number"
+                                        },
+                                        "customer_id": {
+                                            "type": "string"
+                                        },
+                                        "id": {
+                                            "type": "string"
+                                        },
+                                        "name": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": ["id"],
+                                    "type": "object"
+                                },
+                                "key": ["/id"],
+                                "derive": {
+                                    "using": {
+                                        "sqlite": {}
+                                    },
+                                    "transforms": [
+                                        {
+                                            "name": "fromOrders",
+                                            "source": "acmeCo/orders",
+                                            "shuffle": {
+                                                "key": ["/customer_id"]
+                                            },
+                                            "lambda": "SELECT $id, $customer_id, $amount;"
+                                        },
+                                        {
+                                            "name": "fromCustomers",
+                                            "source": "acmeCo/customers",
+                                            "shuffle": {
+                                                "key": ["/id"]
+                                            },
+                                            "lambda": "SELECT NULL AS id WHERE FALSE;"
+                                        }
+                                    ],
+                                    "shards": {
+                                        "flags": {
+                                            "enable-runtime-v2": "true"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "node": {
+                        "catalogName": "acmeCo/orders-split",
+                        "userCapability": "admin",
+                        "status": {
+                            "type": "OK",
+                            "summary": "Ok"
+                        },
+                        "liveSpec": {
+                            "catalogName": "acmeCo/orders-split",
+                            "catalogType": "collection",
+                            "isDisabled": false,
+                            "readsFrom": {
+                                "pageInfo": {
+                                    "hasNextPage": false
+                                },
+                                "edges": [
+                                    {
+                                        "node": {
+                                            "catalogName": "acmeCo/orders",
+                                            "userCapability": "admin",
+                                            "status": {
+                                                "type": "OK",
+                                                "summary": "Ok"
+                                            }
+                                        }
+                                    }
+                                ]
+                            },
+                            "writesTo": null,
+                            "readBy": {
+                                "pageInfo": {
+                                    "hasNextPage": false
+                                },
+                                "edges": [
+                                    {
+                                        "node": {
+                                            "catalogName": "acmeCo/warehouse",
+                                            "userCapability": "admin",
+                                            "status": {
+                                                "type": "OK",
+                                                "summary": "Ok"
+                                            }
+                                        }
+                                    }
+                                ]
+                            },
+                            "writtenBy": null,
+                            "sourceCapture": null,
+                            "model": {
+                                "schema": {
+                                    "properties": {
+                                        "bucket": {
+                                            "type": "string"
+                                        },
+                                        "id": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": ["id"],
+                                    "type": "object"
+                                },
+                                "key": ["/id"],
+                                "derive": {
+                                    "using": {
+                                        "sqlite": {}
+                                    },
+                                    "transforms": [
+                                        {
+                                            "name": "bigOrders",
+                                            "source": "acmeCo/orders",
+                                            "shuffle": "any",
+                                            "priority": 2,
+                                            "readDelay": "1h",
+                                            "lambda": "SELECT $id, 'big' AS bucket WHERE $amount >= 100;"
+                                        },
+                                        {
+                                            "name": "smallOrders",
+                                            "source": {
+                                                "name": "acmeCo/orders",
+                                                "notBefore": "2026-01-01T00:00:00Z"
+                                            },
+                                            "shuffle": {
+                                                "key": ["/customer_id"]
+                                            },
+                                            "lambda": "SELECT $id, 'small' AS bucket WHERE $amount < 100;"
+                                        }
+                                    ],
+                                    "shards": {
+                                        "flags": {
+                                            "enable-runtime-v2": "true"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "node": {
+                        "catalogName": "acmeCo/shop-ingest",
+                        "userCapability": "admin",
+                        "status": {
+                            "type": "OK",
+                            "summary": "listening for connections"
+                        },
+                        "liveSpec": {
+                            "catalogName": "acmeCo/shop-ingest",
+                            "catalogType": "capture",
+                            "isDisabled": false,
+                            "readsFrom": null,
+                            "writesTo": {
+                                "pageInfo": {
+                                    "hasNextPage": false
+                                },
+                                "edges": [
+                                    {
+                                        "node": {
+                                            "catalogName": "acmeCo/customers",
+                                            "userCapability": "admin",
+                                            "status": {
+                                                "type": "OK",
+                                                "summary": "Ok"
+                                            }
+                                        }
+                                    },
+                                    {
+                                        "node": {
+                                            "catalogName": "acmeCo/orders",
+                                            "userCapability": "admin",
+                                            "status": {
+                                                "type": "OK",
+                                                "summary": "Ok"
+                                            }
+                                        }
+                                    }
+                                ]
+                            },
+                            "readBy": null,
+                            "writtenBy": null,
+                            "sourceCapture": null,
+                            "model": {
+                                "endpoint": {
+                                    "connector": {
+                                        "image": "ghcr.io/estuary/source-http-ingest:dev",
+                                        "config": {
+                                            "paths": ["/orders", "/customers"],
+                                            "sops": {
+                                                "age": [
+                                                    {
+                                                        "recipient": "age1z2qskpk8ww2rx5frxzykryufkfm9sj03v56m3qu54y0lgndytp3sdg24vs",
+                                                        "enc": "-----BEGIN AGE ENCRYPTED FILE-----\nYWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSAyWTZVeFE1YWZPUWJRTm5S\nQ2FNQXpRa2oyNkovdHYwV1J6clJmaURpOGhNCm5McGR1QVdFc0JzazFnRml2NE5i\nakhvMUdEU3JWMEs5R3Q1TzAyQVhldEEKLS0tIGFpeXpKUjF2YzJJa1JkNkxHUWtO\nd3gyT1FyYWZlWGZUdm52TlhINUtpb3cKHgNhudtiOj09mDN3sMVpm5gg34fbry/F\niS/xh8kdSnew43SoYxy5gHXKhWTx1i+TUuMWqCjPsc0ax0Y83zlDqQ==\n-----END AGE ENCRYPTED FILE-----\n"
+                                                    }
+                                                ],
+                                                "lastmodified": "2026-09-28T12:20:58Z",
+                                                "mac": "ENC[AES256_GCM,data:igPwut39cwVSL3jqV3l7IcaH78gt1NqS8ePNBIi6ZG0zq69arKgeh44GwePbnPqXC43aPLGNrQ68ZtazJxWicaTBVOOEk8Cq7G41lyQETpjTLdS60GpFx7l1PeWumE3/9b5lIfI0POW3nMj2QiAE4bIfbrLH3witzIFve7huqkU=,iv:v2GfprmXV61Yh8BZGZdihrcJGzM57tFR46MitybDHpw=,tag:jj9JeWfFAXGnNLLYCnD/+g==,type:str]",
+                                                "encrypted_suffix": "_sops",
+                                                "version": "3.11.0"
+                                            }
+                                        }
+                                    }
+                                },
+                                "bindings": [
+                                    {
+                                        "resource": {
+                                            "_meta": {
+                                                "path": ["/orders"]
+                                            },
+                                            "path": "/orders",
+                                            "stream": "/orders"
+                                        },
+                                        "target": "acmeCo/orders"
+                                    },
+                                    {
+                                        "resource": {
+                                            "_meta": {
+                                                "path": ["/customers"]
+                                            },
+                                            "path": "/customers",
+                                            "stream": "/customers"
+                                        },
+                                        "target": "acmeCo/customers"
+                                    }
+                                ],
+                                "shards": {
+                                    "flags": {
+                                        "enable-runtime-v2": "true"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "node": {
+                        "catalogName": "acmeCo/team/rollup",
+                        "userCapability": "admin",
+                        "status": {
+                            "type": "OK",
+                            "summary": "Ok"
+                        },
+                        "liveSpec": {
+                            "catalogName": "acmeCo/team/rollup",
+                            "catalogType": "collection",
+                            "isDisabled": false,
+                            "readsFrom": {
+                                "pageInfo": {
+                                    "hasNextPage": false
+                                },
+                                "edges": [
+                                    {
+                                        "node": {
+                                            "catalogName": "acmeCo/orders-enriched",
+                                            "userCapability": "admin",
+                                            "status": {
+                                                "type": "OK",
+                                                "summary": "Ok"
+                                            }
+                                        }
+                                    }
+                                ]
+                            },
+                            "writesTo": null,
+                            "readBy": null,
+                            "writtenBy": null,
+                            "sourceCapture": null,
+                            "model": {
+                                "schema": {
+                                    "properties": {
+                                        "customer_id": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": ["customer_id"],
+                                    "type": "object"
+                                },
+                                "key": ["/customer_id"],
+                                "derive": {
+                                    "using": {
+                                        "sqlite": {}
+                                    },
+                                    "transforms": [
+                                        {
+                                            "name": "fromEnriched",
+                                            "source": "acmeCo/orders-enriched",
+                                            "shuffle": {
+                                                "key": ["/customer_id"]
+                                            },
+                                            "lambda": "SELECT $customer_id;"
+                                        }
+                                    ],
+                                    "shards": {
+                                        "flags": {
+                                            "enable-runtime-v2": "true"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "node": {
+                        "catalogName": "acmeCo/warehouse",
+                        "userCapability": "admin",
+                        "status": {
+                            "type": "OK",
+                            "summary": "Ok"
+                        },
+                        "liveSpec": {
+                            "catalogName": "acmeCo/warehouse",
+                            "catalogType": "materialization",
+                            "isDisabled": false,
+                            "readsFrom": {
+                                "pageInfo": {
+                                    "hasNextPage": false
+                                },
+                                "edges": [
+                                    {
+                                        "node": {
+                                            "catalogName": "acmeCo/customer-totals",
+                                            "userCapability": "admin",
+                                            "status": {
+                                                "type": "OK",
+                                                "summary": "Ok"
+                                            }
+                                        }
+                                    },
+                                    {
+                                        "node": {
+                                            "catalogName": "acmeCo/orders-split",
+                                            "userCapability": "admin",
+                                            "status": {
+                                                "type": "OK",
+                                                "summary": "Ok"
+                                            }
+                                        }
+                                    }
+                                ]
+                            },
+                            "writesTo": null,
+                            "readBy": null,
+                            "writtenBy": null,
+                            "sourceCapture": null,
+                            "model": {
+                                "endpoint": {
+                                    "dekaf": {
+                                        "variant": "generic",
+                                        "config": {
+                                            "token": "fixture-token-1",
+                                            "strict_topic_names": false
+                                        }
+                                    }
+                                },
+                                "bindings": [
+                                    {
+                                        "resource": {
+                                            "_meta": {
+                                                "path": ["customer_totals"]
+                                            },
+                                            "topic_name": "customer_totals"
+                                        },
+                                        "source": "acmeCo/customer-totals",
+                                        "fields": {
+                                            "recommended": true
+                                        }
+                                    },
+                                    {
+                                        "resource": {
+                                            "_meta": {
+                                                "path": ["orders_split"]
+                                            },
+                                            "topic_name": "orders_split"
+                                        },
+                                        "source": "acmeCo/orders-split",
+                                        "fields": {
+                                            "recommended": true
+                                        }
+                                    }
+                                ],
+                                "shards": {
+                                    "flags": {
+                                        "enable-runtime-v2": "true"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            ]
+        }
+    }
+}

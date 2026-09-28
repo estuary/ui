@@ -307,6 +307,22 @@ const router = createBrowserRouter(
 
                             <Route
                                 path={
+                                    authenticatedRoutes.collections.details
+                                        .dataFlow.path
+                                }
+                                element={
+                                    <ErrorBoundary
+                                        FallbackComponent={ErrorImporting}
+                                    >
+                                        <Suspense fallback={null}>
+                                            <CollectionDetailsRoute tab="dataFlow" />
+                                        </Suspense>
+                                    </ErrorBoundary>
+                                }
+                            />
+
+                            <Route
+                                path={
                                     authenticatedRoutes.collections.details.ops
                                         .path
                                 }
@@ -473,6 +489,22 @@ const router = createBrowserRouter(
 
                             <Route
                                 path={
+                                    authenticatedRoutes.captures.details
+                                        .dataFlow.path
+                                }
+                                element={
+                                    <ErrorBoundary
+                                        FallbackComponent={ErrorImporting}
+                                    >
+                                        <Suspense fallback={null}>
+                                            <CaptureDetailsRoute tab="dataFlow" />
+                                        </Suspense>
+                                    </ErrorBoundary>
+                                }
+                            />
+
+                            <Route
+                                path={
                                     authenticatedRoutes.captures.details.ops
                                         .path
                                 }
@@ -614,6 +646,22 @@ const router = createBrowserRouter(
                                     >
                                         <Suspense fallback={null}>
                                             <MaterializationDetailsRoute tab="history" />
+                                        </Suspense>
+                                    </ErrorBoundary>
+                                }
+                            />
+
+                            <Route
+                                path={
+                                    authenticatedRoutes.materializations.details
+                                        .dataFlow.path
+                                }
+                                element={
+                                    <ErrorBoundary
+                                        FallbackComponent={ErrorImporting}
+                                    >
+                                        <Suspense fallback={null}>
+                                            <MaterializationDetailsRoute tab="dataFlow" />
                                         </Suspense>
                                     </ErrorBoundary>
                                 }

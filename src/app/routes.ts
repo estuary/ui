@@ -77,6 +77,11 @@ const captures = {
             path: 'history',
             fullPath: '/captures/details/history',
         },
+        dataFlow: {
+            title: 'Data flow',
+            path: 'data-flow',
+            fullPath: '/captures/details/data-flow',
+        },
         ops: {
             title: 'routeTitle.captureDetails.ops',
             path: 'ops',
@@ -127,6 +132,11 @@ const collections = {
             title: 'routeTitle.collectionDetails.history',
             path: 'history',
             fullPath: '/collections/details/history',
+        },
+        dataFlow: {
+            title: 'Data flow',
+            path: 'data-flow',
+            fullPath: '/collections/details/data-flow',
         },
         ops: {
             title: 'routeTitle.collectionDetails.ops',
@@ -199,6 +209,11 @@ const materializations = {
             title: 'routeTitle.materializationDetails.history',
             path: 'history',
             fullPath: '/materializations/details/history',
+        },
+        dataFlow: {
+            title: 'Data flow',
+            path: 'data-flow',
+            fullPath: '/materializations/details/data-flow',
         },
         ops: {
             title: 'routeTitle.materializationDetails.ops',

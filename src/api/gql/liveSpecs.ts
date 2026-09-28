@@ -10,6 +10,7 @@ const LiveSpecsQuery = graphql(`
                 node {
                     catalogName
                     liveSpec {
+                        liveSpecId
                         catalogType
                     }
                 }

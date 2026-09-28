@@ -1,7 +1,10 @@
+import type { NavigationTabProps } from 'src/components/shared/NavigationTabs/types';
+
 import { useCallback, useMemo } from 'react';
 
 import { useSearchParams } from 'react-router-dom';
 
+import { authenticatedRoutes } from 'src/app/routes';
 import AlertsAreActiveBadge from 'src/components/shared/AlertsAreActiveBadge';
 import NavigationTabs from 'src/components/shared/NavigationTabs';
 import useEntityShouldShowLogs from 'src/hooks/details/useEntityShouldShowLogs';
@@ -28,7 +31,7 @@ function DetailTabs() {
     );
 
     const tabProps = useMemo(() => {
-        const response = [
+        const response: NavigationTabProps[] = [
             {
                 labelMessageId: 'details.tabs.overview',
                 path: 'overview',
@@ -48,6 +51,10 @@ function DetailTabs() {
             {
                 labelMessageId: 'details.tabs.history',
                 path: 'history',
+            },
+            {
+                label: 'Data flow',
+                path: authenticatedRoutes.collections.details.dataFlow.path,
             },
         ];
 
