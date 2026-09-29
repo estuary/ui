@@ -1,9 +1,12 @@
 import type { PostgrestResponse } from '@supabase/postgrest-js';
+import type { DataByHourRange } from 'src/components/graphs/types';
 import type {
     CatalogStats,
     CatalogStats_Backlog,
     CatalogStats_Dashboard,
+    CatalogStats_Details,
     CatalogStats_LastPublished,
+    Entity,
 } from 'src/types';
 
 import { UTCDate } from '@date-fns/utc';
@@ -21,7 +24,10 @@ import { DateTime } from 'luxon';
 import pLimit from 'p-limit';
 
 import { supabaseClient } from 'src/context/GlobalProviders';
-import { defaultQueryDateFormat } from 'src/services/luxon';
+import {
+    defaultQueryDateFormat,
+    LUXON_GRAIN_SETTINGS,
+} from 'src/services/luxon';
 import { TABLES } from 'src/services/supabase';
 import { CHUNK_SIZE } from 'src/utils/misc-utils';
 
@@ -53,6 +59,27 @@ const DEFAULT_COLS = [
 const DEFAULT_QUERY = `${BASE_QUERY},${DEFAULT_COLS.join(',')}`;
 
 const DASHBOARD_QUERY = `${BASE_QUERY},bytes_written_by_me,bytes_read_by_me`;
+
+// Queries just for details panel
+const CAPTURE_QUERY = `
+    ${BASE_QUERY},
+    docs_written:docs_written_by_me,
+    bytes_written:bytes_written_by_me
+`;
+
+const COLLECTION_QUERY = `
+    ${BASE_QUERY},
+    bytes_read:bytes_read_from_me,
+    docs_read:docs_read_from_me,
+    bytes_written:bytes_written_to_me,
+    docs_written:docs_written_to_me
+`;
+
+const MATERIALIZATION_QUERY = `
+    ${BASE_QUERY},
+    docs_read:docs_read_by_me,
+    bytes_read:bytes_read_by_me
+`;
 
 // Per-binding readings live in the stats document rather than in dedicated
 // columns, so anything below binding granularity has to come out of the JSON.
@@ -186,6 +213,44 @@ const getStatsByName = async (names: string[], filter?: StatsFilter) => {
     return errors[0] ?? { data: response.flatMap((r) => r.data) };
 };
 
+// TODO(adrian): Remove this after gql stats is verified.
+const getStatsForDetails = (
+    catalogName: string,
+    entityType: Entity,
+    range: DataByHourRange
+) => {
+    const rangeSettings = LUXON_GRAIN_SETTINGS[range.grain];
+    const current = DateTime.utc().startOf(rangeSettings.timeUnit);
+    const past = current.minus({
+        [rangeSettings.relativeUnit]: range.amount - 1,
+    });
+
+    let query: string;
+    switch (entityType) {
+        case 'capture':
+            query = CAPTURE_QUERY;
+            break;
+        case 'materialization':
+            query = MATERIALIZATION_QUERY;
+            break;
+        case 'collection':
+            query = COLLECTION_QUERY;
+            break;
+        default:
+            query = DEFAULT_QUERY;
+    }
+
+    return supabaseClient
+        .from(TABLES.CATALOG_STATS)
+        .select(query)
+        .eq('catalog_name', catalogName)
+        .eq('grain', range.grain)
+        .gte('ts', past.toFormat(defaultQueryDateFormat))
+        .lte('ts', current.toFormat(defaultQueryDateFormat))
+        .order('ts', { ascending: true })
+        .returns<CatalogStats_Details[]>();
+};
+
 // `bytesBehind` is a gauge describing where a materialization stands right now,
 // so the newest reading is the only one worth showing, and hourly is the finest
 // grain available.
@@ -239,4 +304,5 @@ export {
     getMaterializationBacklog,
     getStatsByName,
     getStatsForDashboard,
+    getStatsForDetails,
 };

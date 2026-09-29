@@ -1,60 +1,100 @@
-import type { CatalogStats, CatalogStatsDetails } from 'src/api/catalogStats';
-import type { Entity } from 'src/types';
+import type { CatalogStatsDetails } from 'src/api/catalogStats';
+import type { DataGrains } from 'src/components/graphs/types';
+import type { CatalogStats_Details, Entity } from 'src/types';
 
-import { useMemo } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
-import { useCatalogStats } from 'src/hooks/catalogStats/useCatalogStats';
+import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
+import { find } from 'lodash';
+import { DateTime, Interval } from 'luxon';
+
+import { getStatsForDetails } from 'src/api/stats';
+import {
+    defaultQueryDateFormat,
+    LUXON_GRAIN_SETTINGS,
+} from 'src/services/luxon';
 import { useDetailsUsageStore } from 'src/stores/DetailsUsage/useDetailsUsageStore';
+import { hasLength } from 'src/utils/misc-utils';
 
 const STATS_POLL_INTERVAL_MS = 15000;
 
+/**
+ * The PostgREST-backed usage stats, kept alongside the GraphQL implementation
+ * while the migration is behind the `?gqlStats` flag (see `useGqlStatsEnabled`,
+ * switched on in `Usage`). It returns the same shape as `useDetailsStatsGql`
+ * so the chart renders both sources through one row type.
+ */
+// TODO (adrian): Replace this with useDetailsStatsGql once gql stats is verified in production.
 export function useDetailsStats(entityType: Entity, catalogName: string) {
     const range = useDetailsUsageStore((state) => state.range);
+    const { relativeUnit, timeUnit } = LUXON_GRAIN_SETTINGS[range.grain];
 
-    const { data, fetching, error, updatedAt } = useCatalogStats(
-        catalogName,
-        range,
+    const { data, error, isValidating } = useQuery(
+        hasLength(catalogName)
+            ? getStatsForDetails(catalogName, entityType, range)
+            : null,
         {
-            pollingIntervalMs: STATS_POLL_INTERVAL_MS,
+            revalidateOnMount: true,
+            refreshInterval: STATS_POLL_INTERVAL_MS,
         }
     );
 
-    const stats = useMemo(() => {
-        const catalogData = data[catalogName] ?? [];
-        return catalogData.map((stats) =>
-            convertToDetailStats(entityType, stats)
-        );
-    }, [catalogName, entityType, data]);
+    const stats = useMemo<CatalogStatsDetails[]>(() => {
+        if (!data || data.length === 0) {
+            return [];
+        }
 
-    return { data: stats, fetching, error, updatedAt };
+        // Server is in UTC so start with that.
+        const max = DateTime.utc().startOf(timeUnit);
+
+        // Subtracting 1 because the interval is inclusive of the minimum.
+        const min = max.minus({ [relativeUnit]: range.amount - 1 });
+
+        // Walk the whole interval so a bucket the server has no row for still
+        // renders as an explicit zero rather than a gap.
+        return Interval.fromDateTimes(min, max.plus({ [relativeUnit]: 1 }))
+            .splitBy({ [relativeUnit]: 1 })
+            .map((timeInterval) => {
+                const ts =
+                    timeInterval.start?.toFormat(defaultQueryDateFormat) ?? '';
+
+                return toCatalogStatsDetails(
+                    ts,
+                    range.grain,
+                    find(data, { ts })
+                );
+            });
+    }, [data, range.amount, range.grain, relativeUnit, timeUnit]);
+
+    // Mirrors `usePollingQuery`: stamped when a fetch settles without an
+    // error, so "Last Updated" means the same thing on both code paths.
+    const [updatedAt, setUpdatedAt] = useState<DateTime | null>(null);
+    const wasValidating = useRef(false);
+
+    useEffect(() => {
+        if (wasValidating.current && !isValidating && !error) {
+            setUpdatedAt(DateTime.now());
+        }
+        wasValidating.current = isValidating;
+    }, [error, isValidating]);
+
+    return { data: stats, fetching: isValidating, error, updatedAt };
 }
 
-function convertToDetailStats(
-    entityType: Entity,
-    stats: CatalogStats
+function toCatalogStatsDetails(
+    ts: string,
+    grain: DataGrains,
+    row: CatalogStats_Details | undefined
 ): CatalogStatsDetails {
-    const details: CatalogStatsDetails = {
-        catalogName: stats.catalogName,
-        grain: stats.grain,
-        timestamp: stats.timestamp,
+    return {
+        catalogName: row?.catalog_name ?? '',
+        grain,
+        timestamp: DateTime.fromFormat(ts, defaultQueryDateFormat, {
+            zone: 'utc',
+        }).toUnixInteger(),
+        bytesRead: row?.bytes_read ?? 0,
+        docsRead: row?.docs_read ?? 0,
+        bytesWritten: row?.bytes_written ?? 0,
+        docsWritten: row?.docs_written ?? 0,
     };
-
-    // TODO (adrian): GraphQL API returns UInt64s for stats data.
-    // Update graph support to use BigInt and remove these Number casts.
-    if (entityType === 'capture') {
-        details.docsWritten = Number(stats.writtenByMe.docsTotal);
-        details.bytesWritten = Number(stats.writtenByMe.bytesTotal);
-    }
-    if (entityType === 'materialization') {
-        details.docsRead = Number(stats.readByMe.docsTotal);
-        details.bytesRead = Number(stats.readByMe.bytesTotal);
-    }
-    if (entityType === 'collection') {
-        details.docsRead = Number(stats.readFromMe.docsTotal);
-        details.bytesRead = Number(stats.readFromMe.bytesTotal);
-        details.docsWritten = Number(stats.writtenToMe.docsTotal);
-        details.bytesWritten = Number(stats.writtenToMe.bytesTotal);
-    }
-
-    return details;
 }
