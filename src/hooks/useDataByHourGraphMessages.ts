@@ -1,48 +1,24 @@
 import { useMemo } from 'react';
 
-import { useIntl } from 'react-intl';
-
 import { useEntityType } from 'src/context/EntityContext';
 
 function useDataByHourGraphMessages() {
-    const intl = useIntl();
     const entityType = useEntityType();
 
     return useMemo(() => {
-        const dataMsg = intl.formatMessage({ id: 'data.data' });
-        const docsMsg = intl.formatMessage({ id: 'data.docs' });
-
+        // A collection is described by what flows through it; a task is
+        // described by what it moved itself.
         const isCollection = entityType === 'collection';
-        const readMessageKey = isCollection ? 'data.out' : 'data.read';
-        const writtenMessageKey = isCollection ? 'data.in' : 'data.written';
+        const read = isCollection ? 'Out' : 'Read';
+        const written = isCollection ? 'In' : 'Written';
 
         return {
-            dataWritten: intl.formatMessage(
-                { id: writtenMessageKey },
-                {
-                    type: dataMsg,
-                }
-            ),
-            dataRead: intl.formatMessage(
-                { id: readMessageKey },
-                {
-                    type: dataMsg,
-                }
-            ),
-            docsWritten: intl.formatMessage(
-                { id: writtenMessageKey },
-                {
-                    type: docsMsg,
-                }
-            ),
-            docsRead: intl.formatMessage(
-                { id: readMessageKey },
-                {
-                    type: docsMsg,
-                }
-            ),
+            dataWritten: `Data ${written}`,
+            dataRead: `Data ${read}`,
+            docsWritten: `Docs ${written}`,
+            docsRead: `Docs ${read}`,
         };
-    }, [entityType, intl]);
+    }, [entityType]);
 }
 
 export default useDataByHourGraphMessages;

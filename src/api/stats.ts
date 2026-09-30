@@ -213,6 +213,7 @@ const getStatsByName = async (names: string[], filter?: StatsFilter) => {
     return errors[0] ?? { data: response.flatMap((r) => r.data) };
 };
 
+// TODO(adrian): Remove this after gql stats is verified.
 const getStatsForDetails = (
     catalogName: string,
     entityType: Entity,
