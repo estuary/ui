@@ -69,7 +69,19 @@ function UrqlConfigProvider({ children }: BaseComponentProps) {
                         EffectiveAlertConfig: (_data) => null,
                         FieldProvenance: (_data) => null,
                         InviteLink: (data) => null,
+                        LiveSpec: (data) =>
+                            (data.liveSpecId as string | undefined) ?? null,
                         LiveSpecRef: (_data) => null,
+                        LiveSpecStatus: (_data) => null,
+                        // Status and publication value objects: no identity
+                        // of their own, embedded in the parent spec.
+                        AutoDiscoverFailure: (_data) => null,
+                        AutoDiscoverOutcome: (_data) => null,
+                        AutoDiscoverStatus: (_data) => null,
+                        ConnectorStatus: (_data) => null,
+                        Controller: (_data) => null,
+                        InferredSchemaStatus: (_data) => null,
+                        SpecPublicationHistoryItem: (_data) => null,
                         PrefixRef: (_data) => null,
                         RefreshTokenInfo: (_data) => null,
                         StorageMapping: (_data) => null,

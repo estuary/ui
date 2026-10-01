@@ -1,5 +1,6 @@
 import EntityAlerts from 'src/components/shared/Entity/Alerts';
 import { useDetailsPage } from 'src/components/shared/Entity/Details/context';
+import { DataFlow } from 'src/components/shared/Entity/Details/DataFlow';
 import History from 'src/components/shared/Entity/Details/History';
 import Status from 'src/components/shared/Entity/Details/Logs/Status';
 import Ops from 'src/components/shared/Entity/Details/Ops';
@@ -15,6 +16,9 @@ function RenderTab() {
 
         case 'history':
             return <History />;
+
+        case 'dataFlow':
+            return <DataFlow />;
 
         case 'alerts':
             return <EntityAlerts />;

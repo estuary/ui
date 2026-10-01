@@ -1,12 +1,18 @@
 import type { TabsProps } from '@mui/material';
 import type { ComponentType } from 'react';
 
-export interface NavigationTabProps<T = any> {
-    labelMessageId: string;
+interface NavigationTabBaseProps<T> {
     path: string;
     Wrapper?: ComponentType<React.PropsWithChildren<T>>;
     wrapperProps?: T;
 }
+
+// `label` is plain copy; `labelMessageId` is legacy react-intl.
+export type NavigationTabProps<T = any> = NavigationTabBaseProps<T> &
+    (
+        | { label: string; labelMessageId?: never }
+        | { labelMessageId: string; label?: never }
+    );
 
 export interface NavigationTabsProps {
     keyPrefix: string;
