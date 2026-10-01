@@ -8,11 +8,8 @@ import type { AppliedDirective } from 'src/types';
 import { isEmpty } from 'lodash';
 
 import { supabaseClient } from 'src/context/GlobalProviders';
-import { logRocketConsole } from 'src/services/shared';
 import { JOB_STATUS_COLUMNS, TABLES } from 'src/services/supabase';
 import { hasLength } from 'src/utils/misc-utils';
-
-export const CLICK_TO_ACCEPT_LATEST_VERSION = 'v3';
 
 export const jobStatusQuery = (data: JobStatusQueryData) => {
     return supabaseClient
@@ -63,64 +60,6 @@ export const DIRECTIVES: Directives = {
                 if (!stillNeeded()) {
                     return 'outdated';
                 }
-            }
-
-            // If it was success and passed all the other checks we're good
-            if (appliedDirective.job_status.type === 'success') {
-                return 'fulfilled';
-            }
-
-            // Catch all for edge cases like a "invalidClaim" status
-            return 'unfulfilled';
-        },
-    },
-    clickToAccept: {
-        token: 'd4a37dd7-1bf5-40e3-b715-60c4edd0f6dc',
-        queryFilter: (queryBuilder) => {
-            return queryBuilder;
-        },
-        generateUserClaim: (args: any[]) => {
-            return {
-                version: args[0],
-            };
-        },
-        calculateStatus: (appliedDirective?) => {
-            const stillNeeded = () => {
-                logRocketConsole(
-                    'clickToAccept:calculateStatus:stillNeeded',
-                    appliedDirective
-                );
-                return (
-                    appliedDirective?.user_claims?.version &&
-                    appliedDirective.user_claims.version !==
-                        CLICK_TO_ACCEPT_LATEST_VERSION
-                );
-            };
-
-            // If there is no directive to check it is unfulfilled
-            if (!appliedDirective || isEmpty(appliedDirective)) {
-                return 'unfulfilled';
-            }
-
-            // If directive already queued and ...
-            if (appliedDirective.job_status.type === 'queued') {
-                // no claim is there we can just use that directive again
-                if (!appliedDirective.user_claims) {
-                    return 'in progress';
-                }
-
-                // queued claim is outdate
-                if (stillNeeded()) {
-                    return 'outdated';
-                }
-
-                // queued claim is current
-                return 'waiting';
-            }
-
-            // If previous claim is outdate then we need a new directive
-            if (stillNeeded()) {
-                return 'outdated';
             }
 
             // If it was success and passed all the other checks we're good

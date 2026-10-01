@@ -82,19 +82,6 @@ export const Authentication: Record<string, string> = {
 
     'login.marketPlace.loggedOut': `To apply marketplace subscription, please login below.`,
 
-    // Legal
-    'legal.heading': `Legal Stuff`,
-    'legal.heading.outdated': `Updated Legal Stuff`,
-    'legal.message': `Please use the links below to open and review the documents before you continue.`,
-    'legal.message.outdated': `There have been changes to our legal documents you need to review. Please use the links below to view the documents before you continue.`,
-    'legal.docs.terms': `Terms of Service`,
-    'legal.docs.privacy': `Privacy Policy`,
-    'legal.docs.accept': 'I accept the {privacy} and {terms}',
-    'legal.docs.errorTitle': 'Please accept',
-    'legal.docs.errorMessage':
-        'Before you can continue using the application you must accept the listed documents.',
-    'legal.error.failedToFetch.message': `There was an issue while checking if you have accepted the latest {privacy} and {terms}.`,
-
     // Tenant
     'tenant.message.1': `The organization name will be used as a prefix for everything you create within Estuary. It will only be public if you share data with other organizations.`,
 
