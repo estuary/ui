@@ -2919,6 +2919,7 @@ export type TenantBillingInvoicesArgs = {
 export type TenantCreateInput = {
   /** Organization name as a single catalog token, without a trailing slash. */
   name: Scalars['String']['input'];
+  submittingUserAgreesToTerms: Scalars['Boolean']['input'];
   survey?: InputMaybe<Scalars['JSON']['input']>;
 };
 

@@ -1,23 +1,4 @@
-import type { SxProps, Theme } from '@mui/material';
-
-import {
-    chipClasses,
-    FormControl,
-    formControlLabelClasses,
-    FormLabel,
-    radioClasses,
-    RadioGroup,
-} from '@mui/material';
-
-import { OriginOption } from 'src/components/onboarding/Survey/OriginOption';
-
-const hiddenButAccessibleRadio: SxProps<Theme> = {
-    [`& .${radioClasses.root}, & .${radioClasses.root} input`]: {
-        position: 'fixed',
-        opacity: 0,
-        pointerEvents: 'none',
-    },
-};
+import { FormControl, FormLabel, MenuItem, Select } from '@mui/material';
 
 const originOptions = [
     'Google / Search Engine',
@@ -39,44 +20,35 @@ interface Props {
 
 export function OnboardingSurvey({ value, onChange }: Props) {
     return (
-        <FormControl component="fieldset" required>
-            <FormLabel
-                component="legend"
-                id="survey-radio-buttons-group-label"
-                required
-                sx={{ mb: 1, fontSize: 16 }}
-            >
+        <FormControl required fullWidth>
+            <FormLabel id="survey-label" required sx={{ mb: 1, fontSize: 20 }}>
                 Where did you hear about Estuary?
             </FormLabel>
 
-            <RadioGroup
-                aria-labelledby="survey-radio-buttons-group-label"
-                name="survey-radio-buttons-group"
+            <Select
+                labelId="survey-label"
+                id="survey-origin"
+                name="origin"
                 value={value}
-                onChange={(_event, selected) => onChange(selected)}
-                row
+                onChange={(event) => onChange(event.target.value)}
+                displayEmpty
+                size="small"
+                variant="outlined"
                 sx={{
-                    ...hiddenButAccessibleRadio,
-                    gap: 1,
-                    [`& .${formControlLabelClasses.root}`]: {
-                        ml: 0,
-                        mr: 0,
-                    },
-                    [`& .${chipClasses.root}`]: {
-                        p: 1,
-                    },
+                    'bgcolor': 'background.default',
+                    'borderRadius': 3,
+                    '& fieldset': { border: 'none' },
                 }}
             >
-                {originOptions.map((option, index) => {
-                    return (
-                        <OriginOption
-                            optionLabel={option}
-                            selected={value === option}
-                            key={`${option}-${index}`}
-                        />
-                    );
-                })}
-            </RadioGroup>
+                <MenuItem value="" disabled>
+                    Select an option
+                </MenuItem>
+                {originOptions.map((option) => (
+                    <MenuItem key={option} value={option}>
+                        {option}
+                    </MenuItem>
+                ))}
+            </Select>
         </FormControl>
     );
 }

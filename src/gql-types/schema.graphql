@@ -2791,6 +2791,7 @@ type TenantBilling {
 input TenantCreateInput {
   """Organization name as a single catalog token, without a trailing slash."""
   name: String!
+  submittingUserAgreesToTerms: Boolean!
   survey: JSON
 }
 

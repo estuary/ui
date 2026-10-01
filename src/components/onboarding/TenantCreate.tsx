@@ -4,12 +4,9 @@ import { useState } from 'react';
 
 import {
     Button,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogContentText,
-    DialogTitle,
+    Checkbox,
     FormControl,
+    FormControlLabel,
     FormLabel,
     Stack,
     TextField,
@@ -24,11 +21,14 @@ import { useTenantCreate } from 'src/api/gql/tenant';
 import Logo from 'src/components/navigation/Logo';
 import { OnboardingSurvey } from 'src/components/onboarding/Survey';
 import AlertBox from 'src/components/shared/AlertBox';
+import ExternalLink from 'src/components/shared/ExternalLink';
 import { supabaseClient } from 'src/context/GlobalProviders';
 import { fireGtmEvent } from 'src/services/gtm';
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
+import { getUrls } from 'src/utils/env-utils';
 
+const urls = getUrls();
 const NAME_TAKEN_MESSAGE = 'is already in use';
 const EVENT_NAME = 'Tenant:Create';
 
@@ -40,7 +40,7 @@ const TenantCreate = ({ mutate }: Props) => {
     const postHog = usePostHog();
     const [creation, createTenant] = useTenantCreate();
     const methods = useForm({
-        defaultValues: { name: '', origin: '' },
+        defaultValues: { name: '', origin: '', acceptedDocuments: false },
         mode: 'onChange',
         reValidateMode: 'onChange',
     });
@@ -51,69 +51,58 @@ const TenantCreate = ({ mutate }: Props) => {
         formState: { isSubmitting, isValid },
     } = methods;
 
-    const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
     const [serverError, setServerError] = useState<string | null>(null);
     const saving = isSubmitting || creation.data?.tenantCreate === true;
 
-    const submit = (confirmed = false) =>
-        handleSubmit(
-            async ({ name: requestedTenant, origin }) => {
-                setServerError(null);
+    const submit = handleSubmit(
+        async ({ name: requestedTenant, origin, acceptedDocuments }) => {
+            setServerError(null);
 
-                if (
-                    !confirmed &&
-                    requestedTenant.toLowerCase().includes('test')
-                ) {
-                    setConfirmDialogOpen(true);
-                    return;
-                }
+            const { data, error } = await createTenant({
+                input: {
+                    name: requestedTenant,
+                    submittingUserAgreesToTerms: acceptedDocuments,
+                    survey: { origin, details: '' },
+                },
+            });
 
-                setConfirmDialogOpen(false);
+            if (error || !data?.tenantCreate) {
+                const message =
+                    error?.message ?? 'Unable to create organization';
+                const tenantTaken = message.includes(NAME_TAKEN_MESSAGE);
 
-                const { data, error } = await createTenant({
-                    input: {
-                        name: requestedTenant,
-                        survey: { origin, details: '' },
-                    },
-                });
-
-                if (error || !data?.tenantCreate) {
-                    const message =
-                        error?.message ?? 'Unable to create organization';
-                    const tenantTaken = message.includes(NAME_TAKEN_MESSAGE);
-
-                    fireGtmEvent('RegisterFailed', {
-                        tenantAlreadyTaken: tenantTaken,
-                        tenant: requestedTenant,
-                        ignore_referrer: true,
-                    });
-                    postHog.capture(EVENT_NAME, {
-                        status: 'failure',
-                        tenantAlreadyTaken: tenantTaken,
-                        tenant: requestedTenant,
-                    });
-                    setServerError(message);
-                    return;
-                }
-
-                fireGtmEvent('Register', {
+                fireGtmEvent('RegisterFailed', {
+                    tenantAlreadyTaken: tenantTaken,
                     tenant: requestedTenant,
                     ignore_referrer: true,
                 });
                 postHog.capture(EVENT_NAME, {
-                    status: 'success',
+                    status: 'failure',
+                    tenantAlreadyTaken: tenantTaken,
                     tenant: requestedTenant,
                 });
-                await mutate?.();
-            },
-            (validationErrors) => {
-                setServerError(null);
-                logRocketEvent(CustomEvents.ONBOARDING, {
-                    nameMissing: !getValues('name'),
-                    surveyMissing: Boolean(validationErrors.origin),
-                });
+                setServerError(message);
+                return;
             }
-        );
+
+            fireGtmEvent('Register', {
+                tenant: requestedTenant,
+                ignore_referrer: true,
+            });
+            postHog.capture(EVENT_NAME, {
+                status: 'success',
+                tenant: requestedTenant,
+            });
+            await mutate?.();
+        },
+        (validationErrors) => {
+            setServerError(null);
+            logRocketEvent(CustomEvents.ONBOARDING, {
+                nameMissing: !getValues('name'),
+                surveyMissing: Boolean(validationErrors.origin),
+            });
+        }
+    );
 
     return (
         <>
@@ -142,11 +131,11 @@ const TenantCreate = ({ mutate }: Props) => {
             <form
                 noValidate
                 onSubmit={(event) => {
-                    if (saving || confirmDialogOpen) {
+                    if (saving) {
                         event.preventDefault();
                         return;
                     }
-                    void submit()(event);
+                    void submit(event);
                 }}
             >
                 <Stack
@@ -196,6 +185,19 @@ const TenantCreate = ({ mutate }: Props) => {
                                             field.onChange(value);
                                     }}
                                     variant="outlined"
+                                    helperText={
+                                        field.value
+                                            .toLowerCase()
+                                            .includes('test')
+                                            ? 'Organization names are permanent. Consider a name without the word "test".'
+                                            : ' '
+                                    }
+                                    slotProps={{
+                                        formHelperText: {
+                                            'sx': { color: 'warning.main' },
+                                            'aria-live': 'polite',
+                                        },
+                                    }}
                                     sx={{
                                         // 'maxWidth': 424,
                                         '& .MuiOutlinedInput-root': {
@@ -217,6 +219,43 @@ const TenantCreate = ({ mutate }: Props) => {
                             <OnboardingSurvey
                                 value={field.value}
                                 onChange={field.onChange}
+                            />
+                        )}
+                    />
+
+                    <Controller
+                        name="acceptedDocuments"
+                        control={control}
+                        rules={{ required: true }}
+                        render={({ field }) => (
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        name={field.name}
+                                        inputRef={field.ref}
+                                        checked={field.value}
+                                        onChange={(_event, checked) =>
+                                            field.onChange(checked)
+                                        }
+                                        disabled={saving}
+                                        required
+                                    />
+                                }
+                                label={
+                                    <>
+                                        I have read and accept the
+                                        <br />
+                                        <ExternalLink link={urls.privacyPolicy}>
+                                            Privacy Policy
+                                        </ExternalLink>{' '}
+                                        and{' '}
+                                        <ExternalLink
+                                            link={urls.termsOfService}
+                                        >
+                                            Terms of Service
+                                        </ExternalLink>
+                                    </>
+                                }
                             />
                         )}
                     />
@@ -245,41 +284,6 @@ const TenantCreate = ({ mutate }: Props) => {
                     </Toolbar>
                 </Stack>
             </form>
-
-            <Dialog
-                fullWidth
-                maxWidth="sm"
-                open={confirmDialogOpen}
-                onClose={() => setConfirmDialogOpen(false)}
-                aria-labelledby="confirm-organization-name-title"
-                aria-describedby="confirm-organization-name-description"
-            >
-                <DialogTitle id="confirm-organization-name-title">
-                    Organization names are permanent
-                </DialogTitle>
-                <DialogContent>
-                    <DialogContentText id="confirm-organization-name-description">
-                        Consider a name without the word &quot;test&quot;.
-                    </DialogContentText>
-                </DialogContent>
-                <DialogActions sx={{ justifyContent: 'space-between' }}>
-                    <Button
-                        onClick={() => setConfirmDialogOpen(false)}
-                        autoFocus
-                    >
-                        Go back
-                    </Button>
-                    <Button
-                        variant="contained"
-                        disabled={saving || !isValid}
-                        onClick={() => {
-                            void submit(true)();
-                        }}
-                    >
-                        {`Continue with "${getValues('name')}"`}
-                    </Button>
-                </DialogActions>
-            </Dialog>
         </>
     );
 };
