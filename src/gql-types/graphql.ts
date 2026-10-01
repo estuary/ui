@@ -2922,9 +2922,9 @@ export type TenantCreateInput = {
   /**
    * Version of the terms the submitting user has read and accepts, including the
    * [Privacy Policy](https://www.estuary.dev/privacy-policy/) and
-   * [Terms of Service](https://dashboard.estuary.dev/terms.html). Must be non-empty to create a tenant.
+   * [Terms of Service](https://dashboard.estuary.dev/terms.html). Must be a positive integer to create a tenant.
    */
-  submittingUserAgreesToTermsVersion: Scalars['String']['input'];
+  submittingUserAgreesToTermsVersion: Scalars['Int']['input'];
   survey?: InputMaybe<Scalars['JSON']['input']>;
 };
 
