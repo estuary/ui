@@ -23,6 +23,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { useTenantCreate } from 'src/api/gql/tenant';
 import Logo from 'src/components/navigation/Logo';
 import { OnboardingSurvey } from 'src/components/onboarding/Survey';
+import AlertBox from 'src/components/shared/AlertBox';
 import { supabaseClient } from 'src/context/GlobalProviders';
 import { fireGtmEvent } from 'src/services/gtm';
 import { logRocketEvent } from 'src/services/shared';
@@ -47,18 +48,17 @@ const TenantCreate = ({ mutate }: Props) => {
         control,
         getValues,
         handleSubmit,
-        setError,
-        clearErrors,
         formState: { isSubmitting, isValid },
     } = methods;
 
     const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
+    const [serverError, setServerError] = useState<string | null>(null);
     const saving = isSubmitting || creation.data?.tenantCreate === true;
 
     const submit = (confirmed = false) =>
         handleSubmit(
             async ({ name: requestedTenant, origin }) => {
-                clearErrors('root');
+                setServerError(null);
 
                 if (
                     !confirmed &&
@@ -92,10 +92,7 @@ const TenantCreate = ({ mutate }: Props) => {
                         tenantAlreadyTaken: tenantTaken,
                         tenant: requestedTenant,
                     });
-                    setError('root.server', { message });
-                    if (tenantTaken) {
-                        setError('name', { type: 'unavailable' });
-                    }
+                    setServerError(message);
                     return;
                 }
 
@@ -110,7 +107,7 @@ const TenantCreate = ({ mutate }: Props) => {
                 await mutate?.();
             },
             (validationErrors) => {
-                clearErrors('root');
+                setServerError(null);
                 logRocketEvent(CustomEvents.ONBOARDING, {
                     nameMissing: !getValues('name'),
                     surveyMissing: Boolean(validationErrors.origin),
@@ -163,6 +160,12 @@ const TenantCreate = ({ mutate }: Props) => {
                         mt: 5,
                     }}
                 >
+                    {serverError ? (
+                        <AlertBox severity="error" short>
+                            {serverError}
+                        </AlertBox>
+                    ) : null}
+
                     <Controller
                         name="name"
                         control={control}
