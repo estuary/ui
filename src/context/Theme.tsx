@@ -919,7 +919,7 @@ export const historyCompareBorder = `3px solid `;
 
 // If you have custom `sx` on your chip you'll need to import this
 //  and spread it into your custom styling. Or just style with `style`
-export const chipOutlinedStyling: SxProps<Theme> = {
+const chipOutlinedStyling: SxProps<Theme> = {
     [`&.${chipClasses.outlined}`]: {
         [`&.${chipClasses.colorPrimary}`]: {
             color: (theme) => theme.palette.text.primary,

@@ -2919,6 +2919,11 @@ export type TenantBillingInvoicesArgs = {
 export type TenantCreateInput = {
   /** Organization name as a single catalog token, without a trailing slash. */
   name: Scalars['String']['input'];
+  /**
+   * Whether the submitting user has read and accepts the
+   * [Privacy Policy](https://www.estuary.dev/privacy-policy/) and
+   * [Terms of Service](https://dashboard.estuary.dev/terms.html). Must be true to create a tenant.
+   */
   submittingUserAgreesToTerms: Scalars['Boolean']['input'];
   survey?: InputMaybe<Scalars['JSON']['input']>;
 };

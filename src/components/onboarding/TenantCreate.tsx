@@ -139,7 +139,7 @@ const TenantCreate = ({ mutate }: Props) => {
                 }}
             >
                 <Stack
-                    spacing={3}
+                    spacing={4}
                     sx={{
                         width: '100%',
                         display: 'flex',
@@ -190,7 +190,7 @@ const TenantCreate = ({ mutate }: Props) => {
                                             .toLowerCase()
                                             .includes('test')
                                             ? 'Organization names are permanent. Consider a name without the word "test".'
-                                            : ' '
+                                            : undefined
                                     }
                                     slotProps={{
                                         formHelperText: {
