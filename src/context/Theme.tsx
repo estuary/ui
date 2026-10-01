@@ -18,7 +18,6 @@ import {
     gridClasses,
     iconButtonClasses,
     ThemeProvider as MUIThemeProvider,
-    radioClasses,
     tableCellClasses,
     tableHeadClasses,
     tableRowClasses,
@@ -461,14 +460,6 @@ export const hiddenButAccessibleInput: SxProps<Theme> = {
     position: 'fixed',
     opacity: 0,
     pointerEvents: 'none',
-};
-
-export const hiddenButAccessibleRadio: SxProps<Theme> = {
-    [`& .${radioClasses.root}, & .${radioClasses.root} input`]: {
-        position: 'fixed',
-        opacity: 0,
-        pointerEvents: 'none',
-    },
 };
 
 // TODO need to consolidate lots of duplicated "rgba(247, 249, 252, 0.05)" values in the theme, but not today...

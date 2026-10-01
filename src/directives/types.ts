@@ -8,7 +8,6 @@ import type { KeyedMutator } from 'swr';
 // THESE MUST STAY IN SYNC WITH THE DB
 export interface Directives {
     acceptDemoTenant: DirectiveSettings<AcceptDemoTenantClaim>;
-    betaOnboard: DirectiveSettings<OnboardClaim>;
     clickToAccept: DirectiveSettings<ClickToAcceptClaim>;
 }
 
@@ -38,15 +37,7 @@ interface ClickToAcceptClaim {
     version: string;
 }
 
-interface OnboardClaim {
-    requestedTenant: string;
-    survey: any;
-}
-
-export type UserClaims =
-    | AcceptDemoTenantClaim
-    | ClickToAcceptClaim
-    | OnboardClaim;
+export type UserClaims = AcceptDemoTenantClaim | ClickToAcceptClaim;
 
 // TODO (V2 typing) - queryFilter should take in filter builder better
 interface DirectiveSettings<T> {

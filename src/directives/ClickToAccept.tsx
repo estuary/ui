@@ -15,7 +15,6 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import { useMount } from 'react-use';
 
 import { submitDirective } from 'src/api/directives';
-import RegistrationProgress from 'src/app/guards/RegistrationProgress';
 import AlertBox from 'src/components/shared/AlertBox';
 import ExternalLink from 'src/components/shared/ExternalLink';
 import Actions from 'src/directives/Actions';
@@ -129,12 +128,6 @@ const ClickToAccept = ({ directive, status, mutate }: DirectiveProps) => {
                     alignItems: 'center',
                 }}
             >
-                <RegistrationProgress
-                    step={1}
-                    loading={saving}
-                    status={status}
-                />
-
                 <HeaderMessage
                     isRegister
                     headerMessageId={

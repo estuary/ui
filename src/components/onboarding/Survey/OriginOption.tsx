@@ -1,14 +1,13 @@
-import type { OriginOptionProps } from 'src/directives/Onboard/Survey/types';
-
 import { Chip, FormControlLabel, Radio } from '@mui/material';
 
 import { chipOutlinedStyling } from 'src/context/Theme';
-import { useOnboardingStore_surveyResponse } from 'src/directives/Onboard/Store/hooks';
 
-function OriginOption({ optionLabel: option }: OriginOptionProps) {
-    const surveyResponse = useOnboardingStore_surveyResponse();
-    const currentOption = surveyResponse.origin === option;
+interface Props {
+    optionLabel: string;
+    selected: boolean;
+}
 
+export function OriginOption({ optionLabel: option, selected }: Props) {
     const labelId = `${option} label`;
     const inputId = `${option} input`;
 
@@ -21,18 +20,20 @@ function OriginOption({ optionLabel: option }: OriginOptionProps) {
             label={
                 <Chip
                     component="span"
-                    color={currentOption ? 'primary' : undefined}
+                    color={selected ? 'primary' : undefined}
                     id={labelId}
                     variant="outlined"
                     label={option}
                     sx={{
                         ...chipOutlinedStyling,
                         p: 0,
+                        boxShadow: selected
+                            ? (theme) =>
+                                  `inset 0 0 0 2px ${theme.palette.primary.main}, 0 2px 6px rgba(0, 0, 0, 0.16)`
+                            : 'none',
                     }}
                 />
             }
         />
     );
 }
-
-export default OriginOption;
