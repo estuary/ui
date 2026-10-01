@@ -31,6 +31,7 @@ import { getUrls } from 'src/utils/env-utils';
 const urls = getUrls();
 const NAME_TAKEN_MESSAGE = 'is already in use';
 const EVENT_NAME = 'Tenant:Create';
+const TERMS_VERSION = 'v1';
 
 interface Props {
     mutate: UserInfoStore['mutate'];
@@ -61,7 +62,9 @@ const TenantCreate = ({ mutate }: Props) => {
             const { data, error } = await createTenant({
                 input: {
                     name: requestedTenant,
-                    submittingUserAgreesToTerms: acceptedDocuments,
+                    submittingUserAgreesToTermsVersion: acceptedDocuments
+                        ? TERMS_VERSION
+                        : '',
                     survey: { origin, details: '' },
                 },
             });
