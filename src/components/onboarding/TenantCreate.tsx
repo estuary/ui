@@ -16,7 +16,9 @@ import {
 
 import { usePostHog } from '@posthog/react';
 import { Controller, useForm } from 'react-hook-form';
+import { useQuery } from 'urql';
 
+import { LEGAL_TERMS_QUERY } from 'src/api/gql/legalTerms';
 import { useTenantCreate } from 'src/api/gql/tenant';
 import Logo from 'src/components/navigation/Logo';
 import { OnboardingSurvey } from 'src/components/onboarding/Survey';
@@ -31,7 +33,6 @@ import { getUrls } from 'src/utils/env-utils';
 const urls = getUrls();
 const NAME_TAKEN_MESSAGE = 'is already in use';
 const EVENT_NAME = 'Tenant:Create';
-const TERMS_VERSION = 1;
 
 interface Props {
     mutate: UserInfoStore['mutate'];
@@ -40,8 +41,18 @@ interface Props {
 const TenantCreate = ({ mutate }: Props) => {
     const postHog = usePostHog();
     const [creation, createTenant] = useTenantCreate();
+    const [
+        { data: termsData, fetching: termsFetching, error: termsError },
+        refetchTerms,
+    ] = useQuery({
+        query: LEGAL_TERMS_QUERY,
+        variables: { type: 'MSA' },
+        requestPolicy: 'network-only',
+    });
+    const termsId = termsData?.legalTerms?.id;
+    const termsReady = Boolean(termsId && !termsFetching && !termsError);
     const methods = useForm({
-        defaultValues: { name: '', origin: '', acceptedDocuments: false },
+        defaultValues: { name: '', origin: '', acceptedDocuments: '' },
         mode: 'onChange',
         reValidateMode: 'onChange',
     });
@@ -49,24 +60,30 @@ const TenantCreate = ({ mutate }: Props) => {
         control,
         getValues,
         handleSubmit,
+        watch,
         formState: { isSubmitting, isValid },
     } = methods;
 
     const [serverError, setServerError] = useState<string | null>(null);
     const saving = isSubmitting || creation.data?.tenantCreate === true;
 
+    const acceptedTermsId = watch('acceptedDocuments');
+
     const submit = handleSubmit(
         async ({ name: requestedTenant, origin, acceptedDocuments }) => {
             setServerError(null);
 
+            if (!termsReady || acceptedDocuments !== termsId) {
+                setServerError(
+                    'Please read and accept the current terms before continuing.'
+                );
+                return;
+            }
+
             const { data, error } = await createTenant({
-                input: {
-                    name: requestedTenant,
-                    submittingUserAgreesToTermsVersion: acceptedDocuments
-                        ? TERMS_VERSION
-                        : 0,
-                    survey: { origin, details: '' },
-                },
+                name: requestedTenant,
+                submittingUserAgreesToTermsId: acceptedDocuments,
+                survey: { origin, details: '' },
             });
 
             if (error || !data?.tenantCreate) {
@@ -85,6 +102,7 @@ const TenantCreate = ({ mutate }: Props) => {
                     tenant: requestedTenant,
                 });
                 setServerError(message);
+                refetchTerms({ requestPolicy: 'network-only' });
                 return;
             }
 
@@ -226,6 +244,13 @@ const TenantCreate = ({ mutate }: Props) => {
                         )}
                     />
 
+                    {termsError || (!termsFetching && !termsId) ? (
+                        <AlertBox severity="error" short>
+                            Unable to load the current terms. Please reload the
+                            page to try again.
+                        </AlertBox>
+                    ) : null}
+
                     <Controller
                         name="acceptedDocuments"
                         control={control}
@@ -236,11 +261,16 @@ const TenantCreate = ({ mutate }: Props) => {
                                     <Checkbox
                                         name={field.name}
                                         inputRef={field.ref}
-                                        checked={field.value}
+                                        checked={Boolean(
+                                            termsReady &&
+                                                field.value === termsId
+                                        )}
                                         onChange={(_event, checked) =>
-                                            field.onChange(checked)
+                                            field.onChange(
+                                                checked ? (termsId ?? '') : ''
+                                            )
                                         }
-                                        disabled={saving}
+                                        disabled={saving || !termsReady}
                                         required
                                     />
                                 }
@@ -280,7 +310,12 @@ const TenantCreate = ({ mutate }: Props) => {
                             type="submit"
                             variant="contained"
                             loading={saving}
-                            disabled={saving || !isValid}
+                            disabled={
+                                saving ||
+                                !isValid ||
+                                !termsReady ||
+                                acceptedTermsId !== termsId
+                            }
                         >
                             Continue
                         </Button>
