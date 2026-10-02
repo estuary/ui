@@ -4,6 +4,7 @@ import { ErrorBoundary } from 'react-error-boundary';
 import {
     createBrowserRouter,
     createRoutesFromElements,
+    Navigate,
     Route,
     RouterProvider,
     Routes,
@@ -39,6 +40,7 @@ import EnterpriseLogin from 'src/pages/login/Enterprise';
 import MarketplaceCallback from 'src/pages/marketplace/Callback';
 import MarketplaceVerification from 'src/pages/marketplace/Verification';
 import { SSORequired } from 'src/pages/SSORequired';
+import { Terms } from 'src/pages/Terms';
 import { isProduction } from 'src/utils/env-utils';
 
 // Capture
@@ -145,6 +147,17 @@ const router = createBrowserRouter(
             <Route
                 path={unauthenticatedRoutes.marketplace.callback.fullPath}
                 element={<MarketplaceCallback />}
+            />
+
+            <Route
+                path={unauthenticatedRoutes.terms.path}
+                element={<Terms />}
+            />
+            <Route
+                path="/terms.html"
+                element={
+                    <Navigate to={unauthenticatedRoutes.terms.path} replace />
+                }
             />
 
             {/*Logout goes directly to login to make sure it isn't wrapped in RequireAuth and won't try to log the user back in*/}
