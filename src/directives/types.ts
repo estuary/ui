@@ -1,26 +1,15 @@
-import type {
-    PostgrestFilterBuilder,
-    PostgrestSingleResponse,
-} from '@supabase/postgrest-js';
+import type { PostgrestFilterBuilder } from '@supabase/postgrest-js';
 import type { AppliedDirective } from 'src/types';
-import type { KeyedMutator } from 'swr';
 
 // THESE MUST STAY IN SYNC WITH THE DB
 export interface Directives {
     acceptDemoTenant: DirectiveSettings<AcceptDemoTenantClaim>;
-    betaOnboard: DirectiveSettings<OnboardClaim>;
-    clickToAccept: DirectiveSettings<ClickToAcceptClaim>;
 }
 
 export type JobStatusQueryData = Pick<
     AppliedDirective<UserClaims>,
     'logs_token' | 'directive_id' | 'id'
 >;
-
-export interface ActionsProps {
-    primaryMessageId: string;
-    saving: boolean;
-}
 
 export type DirectiveStates =
     | 'unfulfilled'
@@ -34,19 +23,7 @@ interface AcceptDemoTenantClaim {
     tenant: string;
 }
 
-interface ClickToAcceptClaim {
-    version: string;
-}
-
-interface OnboardClaim {
-    requestedTenant: string;
-    survey: any;
-}
-
-export type UserClaims =
-    | AcceptDemoTenantClaim
-    | ClickToAcceptClaim
-    | OnboardClaim;
+export type UserClaims = AcceptDemoTenantClaim;
 
 // TODO (V2 typing) - queryFilter should take in filter builder better
 interface DirectiveSettings<T> {
@@ -61,11 +38,4 @@ interface DirectiveSettings<T> {
     // TODO (RegistrationProgress) - we need to know if a directive was used during the current session (this can be just in memory)
     //  so we need to store off if the user used something. That way we know which directive is which step in the process.
     // updatedThisSession: boolean;
-}
-
-export interface DirectiveProps {
-    directive: any;
-    status: DirectiveStates;
-    // TODO (typing) - should be JoinedAppliedDirective
-    mutate: KeyedMutator<PostgrestSingleResponse<any>>;
 }

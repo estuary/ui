@@ -14,7 +14,6 @@ export enum GlobalSearchParams {
     FORCED_SHARD_ENABLE = 'forcedEnable',
     GQL_STATS = 'gqlStats',
     GRANT_TOKEN = 'grantToken',
-    HIDDEN_SHOW_BETA = 'showBetaOnboard',
     HOME_PAGE_ERROR = 'homePageError',
     LAST_PUB_ID = 'lastPubId',
     LIVE_SPEC_ID = 'liveSpecId',
