@@ -28,6 +28,8 @@ interface Props {
     // Volumes for the selected range are in flight. Names and statuses come from
     // the spec and stay accurate throughout.
     volumesLoading: boolean;
+    // Stats failed, so the zero volumes on every row are not real readings.
+    volumesUnavailable?: boolean;
 }
 
 /**
@@ -44,6 +46,7 @@ export function BindingsCard({
     secondsBehindLoading = false,
     specLoading,
     volumesLoading,
+    volumesUnavailable = false,
 }: Props) {
     const entityType = useEntityType();
 
@@ -58,7 +61,7 @@ export function BindingsCard({
         sortKey,
         totalBytes,
         visibleRows,
-    } = useBindingsTableState(bindings);
+    } = useBindingsTableState(bindings, entityType !== 'materialization');
 
     return (
         <CardWrapper
@@ -75,27 +78,30 @@ export function BindingsCard({
                 <BindingsCardHeader
                     count={counts.all}
                     entityType={entityType}
+                    lagLoading={bytesBehindLoading || secondsBehindLoading}
                     loading={specLoading || volumesLoading}
                     range={range}
                     rows={sortedRows}
                     totalBytes={totalBytes}
+                    volumesUnavailable={volumesUnavailable}
                 />
             }
         >
             {error ? <Error error={error} /> : null}
 
-            <BindingsToolbar
-                counts={counts}
-                filter={filter}
-                searchLabel={getSearchLabel(entityType)}
-                setFilter={handlers.filter}
-            />
+            {!specLoading && counts.all === 0 ? null : (
+                <BindingsToolbar
+                    counts={counts}
+                    filter={filter}
+                    searchLabel={getSearchLabel(entityType)}
+                    setFilter={handlers.filter}
+                />
+            )}
 
             <BindingsTable
                 bytesBehindLoading={bytesBehindLoading}
                 entityType={entityType}
                 isFiltered={filter.query !== '' || filter.status !== 'all'}
-                totalBytes={totalBytes}
                 onClearFilter={handlers.resetFilter}
                 onPageChange={handlers.page}
                 onRowsPerPageChange={handlers.rowsPerPage}
@@ -110,6 +116,7 @@ export function BindingsCard({
                 totalBindings={counts.all}
                 visibleRows={visibleRows}
                 volumesLoading={volumesLoading}
+                volumesUnavailable={volumesUnavailable}
             />
         </CardWrapper>
     );

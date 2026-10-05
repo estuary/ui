@@ -1,6 +1,9 @@
 import type { Theme } from '@mui/material';
 import type { ComponentType, SVGProps } from 'react';
-import type { BindingStatus } from 'src/components/shared/Entity/Details/Overview/Bindings/types';
+import type {
+    BindingStatus,
+    BindingStatusVariant,
+} from 'src/components/shared/Entity/Details/Overview/Bindings/types';
 
 import { Stack, TableCell, Tooltip, Typography, useTheme } from '@mui/material';
 
@@ -10,31 +13,25 @@ import {
     WarningCircleSolid,
 } from 'iconoir-react';
 
+import {
+    BINDING_STATUS_LABELS,
+    getBindingStatusVariant,
+} from 'src/components/shared/Entity/Details/Overview/Bindings/shared';
 import { diminishedTextColor } from 'src/context/Theme';
 
 const ICON_SIZE = 14;
 
-// Three states, not two: a binding can be switched on yet moving nothing. A
-// task-wide connector failure is deliberately not one of them — that is a chip
-// in the card header, because painting every row red on a shared failure stops
-// this column telling rows apart.
-type StatusVariant = 'enabled' | 'disabled' | 'warning';
-
-// "Enabled" rather than "Active": the flag only says the binding is not
-// switched off, which is not a claim that data is flowing.
-const LABELS: Record<StatusVariant, string> = {
-    enabled: 'Enabled',
-    disabled: 'Disabled',
-    warning: 'No data',
-};
-
-const TOOLTIPS: Partial<Record<StatusVariant, string>> = {
-    warning: 'Enabled, but no documents were captured in the selected range.',
+const TOOLTIPS: Partial<Record<BindingStatusVariant, string>> = {
+    warning:
+        'Enabled, but no documents moved through it in the selected range.',
 };
 
 // A distinct icon per variant, not just a distinct colour, so the state reads
 // without relying on hue.
-const ICONS: Record<StatusVariant, ComponentType<SVGProps<SVGSVGElement>>> = {
+const ICONS: Record<
+    BindingStatusVariant,
+    ComponentType<SVGProps<SVGSVGElement>>
+> = {
     enabled: CheckCircleSolid,
     disabled: MinusCircleSolid,
     warning: WarningCircleSolid,
@@ -43,7 +40,7 @@ const ICONS: Record<StatusVariant, ComponentType<SVGProps<SVGSVGElement>>> = {
 const getVariantColors = (
     theme: Theme
 ): Record<
-    StatusVariant,
+    BindingStatusVariant,
     { background: string | undefined; icon: string; text: string }
 > => ({
     enabled: {
@@ -65,21 +62,15 @@ const getVariantColors = (
 
 interface Props {
     status: BindingStatus;
-    // Whether the binding moved anything in the selected range. Undefined
-    // while volumes are still loading, so the cell doesn't flash "no data"
-    // for a binding that turns out to be busy once stats arrive.
+    // Whether the binding moved anything in the selected range; undefined
+    // while volumes are still loading.
     hasVolume?: boolean;
 }
 
 export function StatusCell({ status, hasVolume }: Props) {
     const theme = useTheme();
 
-    const variant: StatusVariant =
-        status === 'disabled'
-            ? 'disabled'
-            : hasVolume === false
-              ? 'warning'
-              : 'enabled';
+    const variant = getBindingStatusVariant(status, hasVolume);
 
     const {
         background: backgroundColor,
@@ -121,7 +112,7 @@ export function StatusCell({ status, hasVolume }: Props) {
                     whiteSpace: 'nowrap',
                 }}
             >
-                {LABELS[variant]}
+                {BINDING_STATUS_LABELS[variant]}
             </Typography>
         </Stack>
     );

@@ -58,7 +58,7 @@ export const NeedsAttention: Story = {
 /**
  * A backfilling shard: non-primary but not a hard failure, so
  * `shardsHaveErrors`/`shardsHaveWarnings` both read false. The card still
- * moves up — see `useShardStatusNeedsAttention`.
+ * moves up — see `ShardAwareSectionOrder`.
  */
 export const Backfilling: Story = {
     render: () => (

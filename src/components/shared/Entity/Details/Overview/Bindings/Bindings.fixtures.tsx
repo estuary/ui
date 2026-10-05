@@ -103,6 +103,20 @@ const lastPublishedFor = (index: number, bytes: number): string | undefined => {
     return new Date(Date.now() - secondsAgo * 1000).toISOString();
 };
 
+// A failed stats request leaves the join with no intervals at all.
+export const buildCaptureRowsWithoutStats = (
+    streams: StreamFixture[]
+): BindingRow[] =>
+    buildBindingRows(
+        streams.map(([stream, _bytes, _docs, disable]) => ({
+            ...(disable ? { disable: true } : {}),
+            resource: { schema: 'public', stream },
+            target: `${PREFIX}/${stream}`,
+        })),
+        null,
+        'capture'
+    );
+
 // Built through the real join so the story exercises buildBindingRows rather
 // than hand-rolling row objects that could drift from it.
 export const buildCaptureRows = (streams: StreamFixture[]): BindingRow[] =>
@@ -115,15 +129,12 @@ export const buildCaptureRows = (streams: StreamFixture[]): BindingRow[] =>
         // One interval, because the fixture's numbers are the window totals.
         [
             {
-                capture: Object.fromEntries(
-                    streams.map(([stream, bytes, docs], index) => [
-                        `${PREFIX}/${stream}`,
-                        {
-                            out: { bytesTotal: bytes, docsTotal: docs },
-                            lastPublishedAt: lastPublishedFor(index, bytes),
-                        },
-                    ])
-                ),
+                capture: streams.map(([stream, bytes, docs], index) => ({
+                    collection: `${PREFIX}/${stream}`,
+                    out: { bytesTotal: String(bytes), docsTotal: String(docs) },
+                    lastPublishedAt: lastPublishedFor(index, bytes),
+                })),
+                materialize: [],
             },
         ],
         'capture'
@@ -140,25 +151,15 @@ export const buildMaterializationRows = (
         })),
         [
             {
-                materialize: Object.fromEntries(
-                    streams.map(([stream, bytes, docs], index) => [
-                        `${PREFIX}/${stream}`,
-                        // `out` is deliberately wrong here: if the table ever
-                        // reads it instead of `right`, these stories show 999 B.
-                        {
-                            out: { bytesTotal: 999, docsTotal: 999 },
-                            right: { bytesTotal: bytes * 16, docsTotal: docs },
-                            // A materialization stamps the source document it
-                            // processed, under a different key — if the join
-                            // ever reads the capture key here, Last data goes
-                            // blank across the whole materialization story.
-                            lastSourcePublishedAt: lastPublishedFor(
-                                index,
-                                bytes
-                            ),
-                        },
-                    ])
-                ),
+                capture: [],
+                materialize: streams.map(([stream, bytes, docs], index) => ({
+                    collection: `${PREFIX}/${stream}`,
+                    right: {
+                        bytesTotal: String(bytes * 16),
+                        docsTotal: String(docs),
+                    },
+                    lastSourcePublishedAt: lastPublishedFor(index, bytes),
+                })),
             },
         ],
         'materialization'
@@ -248,6 +249,9 @@ interface HarnessProps {
     volumesLoading?: boolean;
     // Renders the placeholder rows shown before the spec itself has resolved.
     specLoading?: boolean;
+    // Renders a failed stats request: the error banner over rows whose
+    // volumes are placeholder zeros.
+    statsFailed?: boolean;
 }
 
 // Renders the production `BindingsCard` itself; only the data fetch is replaced
@@ -257,6 +261,7 @@ export function BindingsHarness({
     entityType,
     range,
     specLoading = false,
+    statsFailed = false,
     volumesLoading = false,
 }: HarnessProps) {
     const storeRange = useDetailsUsageStore((state) => state.range);
@@ -265,9 +270,11 @@ export function BindingsHarness({
         <EntityContextProvider value={entityType}>
             <BindingsCard
                 bindings={bindings}
+                error={statsFailed ? { message: 'Failed to fetch' } : undefined}
                 range={range ?? storeRange}
                 specLoading={specLoading}
                 volumesLoading={volumesLoading}
+                volumesUnavailable={statsFailed}
             />
         </EntityContextProvider>
     );

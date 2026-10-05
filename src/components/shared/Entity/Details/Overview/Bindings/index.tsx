@@ -29,6 +29,7 @@ export function Bindings({ entityName, latestLiveSpec }: Props) {
         error,
         secondsBehindLoading,
         statsLoading,
+        volumesUnavailable,
     } = useBindings(entityName, entityType, latestLiveSpec);
 
     return (
@@ -40,6 +41,7 @@ export function Bindings({ entityName, latestLiveSpec }: Props) {
             secondsBehindLoading={secondsBehindLoading}
             specLoading={!latestLiveSpec}
             volumesLoading={statsLoading}
+            volumesUnavailable={volumesUnavailable}
         />
     );
 }

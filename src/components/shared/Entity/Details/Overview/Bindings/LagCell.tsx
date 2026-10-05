@@ -24,9 +24,8 @@ const TOOLTIPS: Record<LagKind, { none: string; value: string }> = {
 
 interface Props {
     kind: LagKind;
-    // The selected range's own load is irrelevant to this column — see the note
-    // on `BindingRow.bytesBehind` — but it still arrives after the spec, on the
-    // same backlog request the rest of the row's numbers wait on.
+    // Tracks the backlog request, not the stats request the row's other
+    // figures wait on — see `BindingRow.bytesBehind`.
     loading?: boolean;
     // Lets the table nudge padding to align with the card's own edge when this
     // is the last cell on the row, the same knob `LastDataCell` takes.

@@ -7,6 +7,7 @@ import { DataGrains } from 'src/components/graphs/types';
 import {
     BindingsHarness,
     buildCaptureRows,
+    buildCaptureRowsWithoutStats,
     buildLargeTaskStreams,
     buildMaterializationRows,
     buildMaterializationRowsWithBacklog,
@@ -108,8 +109,8 @@ export const Empty: Story = {
 
 /**
  * 12 bindings, so pagination kicks in and every status the table can show lands
- * on the first page. `job_openings` is disabled but carries a real bar; `eeoc`
- * is enabled with none.
+ * on the first page. `job_openings` is disabled but carries real volume;
+ * `eeoc` is enabled with none.
  */
 export const MixedStatusesOnePage: Story = {
     render: () => (
@@ -158,6 +159,20 @@ export const VolumesLoading: Story = {
             entityType="capture"
             range={{ amount: 30, grain: DataGrains.daily }}
             volumesLoading
+        />
+    ),
+};
+
+/**
+ * The stats request failed. Statuses read "Enabled" rather than "No data", and
+ * the volume columns show dashes rather than zeros.
+ */
+export const StatsFailed: Story = {
+    render: () => (
+        <BindingsHarness
+            bindings={buildCaptureRowsWithoutStats(CAPTURE_STREAMS)}
+            entityType="capture"
+            statsFailed
         />
     ),
 };

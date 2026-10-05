@@ -26,13 +26,14 @@ import {
     useTheme,
 } from '@mui/material';
 
-import { ArrowDown, FilterListCircle, Search } from 'iconoir-react';
+import { ArrowDown, EmptyPage, Search } from 'iconoir-react';
 
 import { LagCell } from 'src/components/shared/Entity/Details/Overview/Bindings/LagCell';
 import { LastDataCell } from 'src/components/shared/Entity/Details/Overview/Bindings/LastDataCell';
 import {
     BINDINGS_PER_PAGE_OPTIONS,
     DEFAULT_BINDINGS_PER_PAGE,
+    hasBindingVolume,
 } from 'src/components/shared/Entity/Details/Overview/Bindings/shared';
 import { StatusCell } from 'src/components/shared/Entity/Details/Overview/Bindings/StatusCell';
 import { VolumeCell } from 'src/components/shared/Entity/Details/Overview/Bindings/VolumeCell';
@@ -62,8 +63,8 @@ interface Column {
 // captures and materializations disagree on what that should be.
 const getBaseColumns = (volumeHeader: string): Column[] => [
     { header: 'Collection', sortKey: 'collection' },
-    // Unsortable: the filter chips above the table already order by status, and
-    // carry the counts too.
+    // Unsortable: the filter chips above the table already filter by status,
+    // and carry the counts too.
     { header: 'Status', width: 110 },
     { align: 'right', header: 'Docs', sortKey: 'docs', width: 90 },
     {
@@ -233,13 +234,12 @@ interface Props {
     // Every binding on the task, before filtering: `rows` is empty in both the
     // "no bindings" and "filter matched none" cases.
     totalBindings: number;
-    // Task total, for the share figure in each volume cell's tooltip.
-    totalBytes: number;
     // Rows on the current page; `rows` is the full filtered set, needed for the count.
     visibleRows: BindingRow[];
     // Volumes for the selected range are in flight. Names and statuses come
     // from the spec and stay accurate throughout.
     volumesLoading: boolean;
+    volumesUnavailable: boolean;
     // The spec itself hasn't resolved, so every column gets a placeholder row
     // rather than flashing the "no bindings" empty state first.
     specLoading: boolean;
@@ -264,9 +264,9 @@ export function BindingsTable({
     sortKey,
     specLoading,
     totalBindings,
-    totalBytes,
     visibleRows,
     volumesLoading,
+    volumesUnavailable,
 }: Props) {
     const theme = useTheme();
 
@@ -390,11 +390,6 @@ export function BindingsTable({
                             )
                         ) : visibleRows.length === 0 ? (
                             <TableRow>
-                                {/* Tracks the column count, which happens to
-                                    be 6 for both entity types — a capture
-                                    swaps `LAST_DATA_COLUMN` for a materialization's
-                                    two lag columns, one column net difference
-                                    against its extra source-stream column. */}
                                 <TableCell
                                     align="center"
                                     colSpan={columns.length}
@@ -410,7 +405,7 @@ export function BindingsTable({
                                         }}
                                     >
                                         {totalBindings === 0 ? (
-                                            <FilterListCircle
+                                            <EmptyPage
                                                 height={28}
                                                 width={28}
                                                 strokeWidth={1.5}
@@ -504,9 +499,9 @@ export function BindingsTable({
                                     <StatusCell
                                         status={row.status}
                                         hasVolume={
-                                            volumesLoading
+                                            volumesLoading || volumesUnavailable
                                                 ? undefined
-                                                : row.docs > 0 || row.bytes > 0
+                                                : hasBindingVolume(row)
                                         }
                                     />
 
@@ -515,7 +510,8 @@ export function BindingsTable({
                                         sx={{
                                             ...bodyCellSx,
                                             color:
-                                                row.docs === 0 &&
+                                                (row.docs === 0 ||
+                                                    volumesUnavailable) &&
                                                 !volumesLoading
                                                     ? diminishedTextColor[
                                                           theme.palette.mode
@@ -531,6 +527,8 @@ export function BindingsTable({
                                                     display: 'inline-block',
                                                 }}
                                             />
+                                        ) : volumesUnavailable ? (
+                                            <>&mdash;</>
                                         ) : (
                                             formatDocs(row.docs)
                                         )}
@@ -539,7 +537,7 @@ export function BindingsTable({
                                     <VolumeCell
                                         bytes={row.bytes}
                                         loading={volumesLoading}
-                                        totalBytes={totalBytes}
+                                        unavailable={volumesUnavailable}
                                     />
 
                                     {isCapture ? (

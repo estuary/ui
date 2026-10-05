@@ -1,3 +1,4 @@
+import type { SxProps, Theme } from '@mui/material';
 import type { Columns } from 'react-csv-downloader/dist/esm/lib/csv';
 import type { DataByHourRange } from 'src/components/graphs/types';
 import type { BindingRow } from 'src/components/shared/Entity/Details/Overview/Bindings/types';
@@ -17,36 +18,49 @@ import {
 import { Download } from 'iconoir-react';
 import CsvDownload from 'react-csv-downloader';
 
+import {
+    BINDING_STATUS_LABELS,
+    getBindingStatusVariant,
+    hasBindingVolume,
+} from 'src/components/shared/Entity/Details/Overview/Bindings/shared';
 import { RangeChip } from 'src/components/shared/Entity/Details/Overview/RangeChip';
 import { formatBytes } from 'src/components/tables/cells/stats/shared';
 import {
     generateFileName,
     tableExportSeparator,
 } from 'src/components/tables/shared';
-import {
-    cardHeaderSx_emphasized,
-    diminishedTextColor,
-} from 'src/context/Theme';
+import { diminishedTextColor } from 'src/context/Theme';
 import { BINDING_TERMS } from 'src/settings/entity';
+
+const headingSx: SxProps<Theme> = {
+    fontSize: 16,
+    fontWeight: 600,
+};
 
 interface Props {
     count: number;
     entityType: Entity;
+    // The lag columns load separately from `loading`; until they land an
+    // export would write them blank, which reads the same as "no reading".
+    lagLoading: boolean;
     loading: boolean;
     // The window the figures cover, so an export always matches what the
     // header and table are currently showing.
     range: DataByHourRange;
     rows: BindingRow[];
     totalBytes: number;
+    volumesUnavailable: boolean;
 }
 
 export function BindingsCardHeader({
     count,
     entityType,
+    lagLoading,
     loading,
     range,
     rows,
     totalBytes,
+    volumesUnavailable,
 }: Props) {
     const theme = useTheme();
 
@@ -66,7 +80,15 @@ export function BindingsCardHeader({
                 id: 'bytes',
                 displayName: isCapture ? 'Data written' : 'Data read',
             },
-            { id: 'lastData', displayName: 'Last data' },
+            ...(isCapture
+                ? [{ id: 'lastData', displayName: 'Last data' }]
+                : [
+                      { id: 'bytesBehind', displayName: 'Bytes behind' },
+                      {
+                          id: 'secondsBehind',
+                          displayName: 'Time behind (seconds)',
+                      },
+                  ]),
         ],
         [isCapture]
     );
@@ -76,13 +98,25 @@ export function BindingsCardHeader({
             rows.map((row) => ({
                 ...(isCapture ? { sourceStream: row.resourcePath } : {}),
                 collection: row.collection,
-                status: row.status,
-                docs: row.docs,
-                bytes: row.bytes,
-                lastData: row.lastPublishedAt ?? '',
+                status: BINDING_STATUS_LABELS[
+                    getBindingStatusVariant(
+                        row.status,
+                        volumesUnavailable ? undefined : hasBindingVolume(row)
+                    )
+                ],
+                docs: volumesUnavailable ? '' : row.docs,
+                bytes: volumesUnavailable ? '' : row.bytes,
+                ...(isCapture
+                    ? { lastData: row.lastPublishedAt ?? '' }
+                    : {
+                          bytesBehind: row.bytesBehind ?? '',
+                          secondsBehind: row.secondsBehind ?? '',
+                      }),
             })),
-        [isCapture, rows]
+        [isCapture, rows, volumesUnavailable]
     );
+
+    const exportDisabled = loading || lagLoading || rows.length === 0;
 
     const [termSingular, termPlural] = BINDING_TERMS[entityType];
     const heading = termPlural.charAt(0).toUpperCase() + termPlural.slice(1);
@@ -101,7 +135,7 @@ export function BindingsCardHeader({
             }}
         >
             <Stack direction="row" spacing={1} sx={{ alignItems: 'baseline' }}>
-                <Typography component="span" sx={cardHeaderSx_emphasized}>
+                <Typography component="span" sx={headingSx}>
                     {heading}
                 </Typography>
 
@@ -123,14 +157,18 @@ export function BindingsCardHeader({
                             sx={{ display: 'inline-block' }}
                         />
                     ) : (
-                        `${count} ${unit} · ${formatBytes(totalBytes)} ${verb}`
+                        `${count} ${unit}${
+                            volumesUnavailable
+                                ? ''
+                                : ` · ${formatBytes(totalBytes)} ${verb}`
+                        }`
                     )}
                 </Typography>
 
                 <CsvDownload
                     columns={exportColumns}
                     datas={exportData}
-                    disabled={loading || rows.length === 0}
+                    disabled={exportDisabled}
                     filename={generateFileName(termPlural.replaceAll(' ', '_'))}
                     separator={tableExportSeparator}
                 >
@@ -138,7 +176,7 @@ export function BindingsCardHeader({
                         <span>
                             <IconButton
                                 aria-label="Download CSV"
-                                disabled={loading || rows.length === 0}
+                                disabled={exportDisabled}
                                 size="small"
                             >
                                 <Download height={16} width={16} />

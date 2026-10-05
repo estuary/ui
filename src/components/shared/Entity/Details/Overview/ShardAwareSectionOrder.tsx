@@ -1,7 +1,8 @@
 import type { ReactNode } from 'react';
 import type { ShardEntityTypes } from 'src/stores/ShardDetail/types';
 
-import { useShardStatusNeedsAttention } from 'src/hooks/details/useShardStatusNeedsAttention';
+import { errorMain, warningMain } from 'src/context/Theme';
+import { useShardDetail_readDictionary } from 'src/stores/ShardDetail/hooks';
 
 interface Props {
     shardInformation: ReactNode;
@@ -27,7 +28,18 @@ export function ShardAwareSectionOrder({
     taskSections,
     taskTypes,
 }: Props) {
-    const needsAttention = useShardStatusNeedsAttention(taskName, taskTypes);
+    const { compositeColor } = useShardDetail_readDictionary(
+        taskName,
+        taskTypes
+    );
+
+    // Compared against the colour rather than `shardsHaveErrors` /
+    // `shardsHaveWarnings`: those only populate from the FAILED branch's
+    // inferred-schema check (see `getEverythingForDictionary` in
+    // `stores/ShardDetail/Store.ts`), so an IDLE, STANDBY or BACKFILL shard
+    // would leave both flags false and never surface here.
+    const needsAttention =
+        compositeColor === errorMain || compositeColor === warningMain;
 
     return (
         <>

@@ -3,6 +3,9 @@ import type {
     BindingRow,
     BindingsFilterState,
     BindingSortKey,
+    BindingStatus,
+    BindingStatusVariant,
+    BindingTaskStats,
     BindingVolume,
 } from 'src/components/shared/Entity/Details/Overview/Bindings/types';
 import type {
@@ -10,13 +13,7 @@ import type {
     MaterializationTimeLag,
 } from 'src/hooks/details/shared';
 import type { LiveSpecBinding } from 'src/hooks/useLiveSpecs';
-import type {
-    CaptureBindingStats,
-    Entity,
-    MaterializeBindingStats,
-    SortDirection,
-    TaskStats,
-} from 'src/types';
+import type { Entity, SortDirection } from 'src/types';
 
 import { getCollectionName } from 'src/utils/workflow-utils';
 
@@ -138,42 +135,25 @@ const getResourcePath = (
 };
 
 /**
- * Per-binding volume, read from the field the task's own total is accumulated
- * from: `out` for a capture, `right` for a materialization.
- *
- * Getting this wrong is quiet rather than loud — `taskStats.materialize[c].out`
- * exists and is summed, but counts documents *out of the combiner* after
- * reduction, so a column built on it would not add up to the "data read" figure
- * the usage graph reports beside it.
- *   https://github.com/estuary/flow/blob/master/ops-catalog/catalog-stats.ts
+ * One interval's per-binding figures, read from whichever fields the entity
+ * records them in. Freshness differs too: a capture stamps the document it
+ * published, a materialization the *source* document it processed.
  */
-const readVolume = (
-    stats: CaptureBindingStats | MaterializeBindingStats | undefined,
+const readIntervalBindings = (
+    taskStats: BindingTaskStats,
     entityType: Entity
-) => {
-    const volume =
-        entityType === 'materialization'
-            ? (stats as MaterializeBindingStats | undefined)?.right
-            : (stats as CaptureBindingStats | undefined)?.out;
-
-    return {
-        docs: volume?.docsTotal ?? 0,
-        bytes: volume?.bytesTotal ?? 0,
-    };
-};
-
-/**
- * Per-binding freshness, from whichever field the entity records it in: a
- * capture stamps the document it published, a materialization stamps the
- * *source* document it processed.
- */
-const readLastPublishedAt = (
-    stats: CaptureBindingStats | MaterializeBindingStats | undefined,
-    entityType: Entity
-): string | null =>
-    (entityType === 'materialization'
-        ? (stats as MaterializeBindingStats | undefined)?.lastSourcePublishedAt
-        : (stats as CaptureBindingStats | undefined)?.lastPublishedAt) ?? null;
+) =>
+    entityType === 'materialization'
+        ? taskStats.materialize.map((binding) => ({
+              collection: binding.collection,
+              volume: binding.right,
+              lastPublishedAt: binding.lastSourcePublishedAt ?? null,
+          }))
+        : taskStats.capture.map((binding) => ({
+              collection: binding.collection,
+              volume: binding.out,
+              lastPublishedAt: binding.lastPublishedAt ?? null,
+          }));
 
 /**
  * Per-collection figures over a window, accumulated across its intervals.
@@ -190,7 +170,7 @@ const readLastPublishedAt = (
  * and reporting that would put a time beside a zero.
  */
 const accumulateBindingStats = (
-    taskStatsByInterval: TaskStats[] | null | undefined,
+    taskStatsByInterval: BindingTaskStats[] | null | undefined,
     entityType: Entity
 ): Map<string, BindingVolume> => {
     const totals = new Map<string, BindingVolume>();
@@ -200,22 +180,15 @@ const accumulateBindingStats = (
     }
 
     for (const interval of taskStatsByInterval) {
-        const byCollection =
-            entityType === 'materialization'
-                ? interval.materialize
-                : interval.capture;
-
-        if (!byCollection) {
-            continue;
-        }
-
-        for (const [collection, stats] of Object.entries(byCollection)) {
-            const { bytes, docs } = readVolume(stats, entityType);
+        for (const binding of readIntervalBindings(interval, entityType)) {
+            const { collection } = binding;
+            // UInt64 arrives as a string; these totals sit well inside the
+            // range a double holds exactly.
+            const bytes = Number(binding.volume?.bytesTotal ?? 0);
+            const docs = Number(binding.volume?.docsTotal ?? 0);
 
             const lastPublishedAt =
-                docs > 0 || bytes > 0
-                    ? readLastPublishedAt(stats, entityType)
-                    : null;
+                docs > 0 || bytes > 0 ? binding.lastPublishedAt : null;
 
             const running = totals.get(collection);
 
@@ -223,10 +196,13 @@ const accumulateBindingStats = (
                 running.bytes += bytes;
                 running.docs += docs;
 
+                // Parsed, not compared as strings: fractional-second
+                // precision varies, so `…:00.5Z` sorts before `…:00Z`.
                 if (
                     lastPublishedAt &&
                     (!running.lastPublishedAt ||
-                        lastPublishedAt > running.lastPublishedAt)
+                        Date.parse(lastPublishedAt) >
+                            Date.parse(running.lastPublishedAt))
                 ) {
                     running.lastPublishedAt = lastPublishedAt;
                 }
@@ -248,7 +224,7 @@ const accumulateBindingStats = (
  */
 export const buildBindingRows = (
     specBindings: LiveSpecBinding[] | undefined,
-    taskStatsByInterval: TaskStats[] | null | undefined,
+    taskStatsByInterval: BindingTaskStats[] | null | undefined,
     entityType: Entity
 ): BindingRow[] => {
     if (!specBindings || specBindings.length === 0) {
@@ -324,18 +300,28 @@ export const attachBacklogReadings = (
     }));
 };
 
-/**
- * Which of two independent query failures `useBindings` should surface.
- *
- * A failed backlog fetch leaves every row's `bytesBehind`/`secondsBehind` at
- * `null` — the same shape as "caught up" — so dropping that error would render
- * those columns as quietly current. The stats error still takes precedence when
- * both are present: it blanks every column, not just the two lag ones.
- */
-export const combineBindingsError = (
-    statsError: unknown,
-    backlogError: unknown
-): unknown => statsError ?? backlogError;
+// "Enabled" rather than "Active": the flag only says the binding is not
+// switched off, which is not a claim that data is flowing.
+export const BINDING_STATUS_LABELS: Record<BindingStatusVariant, string> = {
+    enabled: 'Enabled',
+    disabled: 'Disabled',
+    warning: 'No data',
+};
+
+// `hasVolume` is undefined while volumes are still loading, so an enabled
+// binding doesn't flash "no data" before its stats arrive.
+export const getBindingStatusVariant = (
+    status: BindingStatus,
+    hasVolume: boolean | undefined
+): BindingStatusVariant =>
+    status === 'disabled'
+        ? 'disabled'
+        : hasVolume === false
+          ? 'warning'
+          : 'enabled';
+
+export const hasBindingVolume = (row: BindingRow): boolean =>
+    row.docs > 0 || row.bytes > 0;
 
 export const countBindings = (rows: BindingRow[]): BindingCounts => {
     const enabled = rows.filter((row) => row.status === 'enabled').length;
@@ -421,9 +407,12 @@ export const sortBindings = (
     });
 };
 
+// `resourcePath` is only a visible column for captures, so a materialization
+// search must not match on it.
 export const filterBindings = (
     rows: BindingRow[],
-    { query, status }: BindingsFilterState
+    { query, status }: BindingsFilterState,
+    searchResourcePath: boolean
 ): BindingRow[] => {
     const trimmedQuery = query.trim().toLowerCase();
 
@@ -442,7 +431,8 @@ export const filterBindings = (
 
         return (
             row.collection.toLowerCase().includes(trimmedQuery) ||
-            row.resourcePath.toLowerCase().includes(trimmedQuery)
+            (searchResourcePath &&
+                row.resourcePath.toLowerCase().includes(trimmedQuery))
         );
     });
 };

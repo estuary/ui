@@ -428,11 +428,6 @@ export const cardHeaderSx: SxProps<Theme> = {
     fontWeight: 300,
 };
 
-export const cardHeaderSx_emphasized: SxProps<Theme> = {
-    fontSize: 16,
-    fontWeight: 600,
-};
-
 export const tableAlternateRowsSx: SxProps<Theme> = {
     '& tr:nth-of-type(even)': {
         backgroundColor: (theme) => theme.palette.action.hover,

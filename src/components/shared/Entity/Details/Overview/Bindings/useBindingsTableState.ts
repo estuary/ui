@@ -47,7 +47,8 @@ interface BindingsTableState {
  * wiring the page uses.
  */
 export function useBindingsTableState(
-    bindings: BindingRow[]
+    bindings: BindingRow[],
+    searchResourcePath: boolean
 ): BindingsTableState {
     const [filter, setFilter] = useState<BindingsFilterState>(DEFAULT_FILTER);
     // Volume descending: alphabetical only helps if you already know the name,
@@ -62,8 +63,8 @@ export function useBindingsTableState(
     // Split from the sort below so that changing sort does not re-filter, and
     // changing the filter does not re-walk rows the sort already ordered.
     const filteredRows = useMemo(
-        () => filterBindings(bindings, filter),
-        [bindings, filter]
+        () => filterBindings(bindings, filter, searchResourcePath),
+        [bindings, filter, searchResourcePath]
     );
 
     const sortedRows = useMemo(

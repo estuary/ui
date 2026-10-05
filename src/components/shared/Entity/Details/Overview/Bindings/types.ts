@@ -1,6 +1,14 @@
+import type { CatalogTaskStatsQuery } from 'src/gql-types/graphql';
+
 export type BindingStatus = 'enabled' | 'disabled';
 
-// Status is absent: the filter chips above the table already order by it.
+// What the Status column shows. Three states, not two: a binding can be switched
+// on yet moving nothing. A task-wide connector failure is deliberately not one
+// of them — that surfaces in Shard Information, because painting every row red
+// on a shared failure stops this column telling rows apart.
+export type BindingStatusVariant = BindingStatus | 'warning';
+
+// Status is absent: the filter chips above the table already filter by it.
 export type BindingSortKey =
     | 'bytes'
     | 'bytesBehind'
@@ -15,8 +23,8 @@ export interface BindingRow {
     // same collection twice, so the row key also folds in the binding index.
     collection: string;
     index: number;
-    // Human-readable endpoint resource, e.g. `public.orders`. Captures only:
-    // for a materialization the binding *is* the collection.
+    // Human-readable endpoint resource, e.g. `public.orders`. Only shown for
+    // captures: for a materialization the binding *is* the collection.
     resourcePath: string;
     status: BindingStatus;
     docs: number;
@@ -57,3 +65,8 @@ export interface BindingsFilterState {
     query: string;
     status: BindingStatus | 'all';
 }
+
+// One interval's per-binding breakdown, as `CATALOG_TASK_STATS_QUERY` returns it.
+export type BindingTaskStats = NonNullable<
+    CatalogTaskStatsQuery['catalogStats']['edges'][number]['node']['taskStats']
+>;

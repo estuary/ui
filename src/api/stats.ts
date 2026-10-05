@@ -1,7 +1,5 @@
 import type { PostgrestResponse } from '@supabase/postgrest-js';
-import type { DataByHourRange } from 'src/components/graphs/types';
 import type {
-    BindingStatsResponse,
     CatalogStats,
     CatalogStats_Backlog,
     CatalogStats_Dashboard,
@@ -23,10 +21,7 @@ import { DateTime } from 'luxon';
 import pLimit from 'p-limit';
 
 import { supabaseClient } from 'src/context/GlobalProviders';
-import {
-    defaultQueryDateFormat,
-    LUXON_GRAIN_SETTINGS,
-} from 'src/services/luxon';
+import { defaultQueryDateFormat } from 'src/services/luxon';
 import { TABLES } from 'src/services/supabase';
 import { CHUNK_SIZE } from 'src/utils/misc-utils';
 
@@ -191,21 +186,6 @@ const getStatsByName = async (names: string[], filter?: StatsFilter) => {
     return errors[0] ?? { data: response.flatMap((r) => r.data) };
 };
 
-// The same window `useCatalogStats` queries for the usage chart, so the
-// bindings table and the chart agree.
-const getRangeBounds = (range: DataByHourRange) => {
-    const rangeSettings = LUXON_GRAIN_SETTINGS[range.grain];
-    const current = DateTime.utc().startOf(rangeSettings.timeUnit);
-    const past = current.minus({
-        [rangeSettings.relativeUnit]: range.amount - 1,
-    });
-
-    return {
-        current: current.toFormat(defaultQueryDateFormat),
-        past: past.toFormat(defaultQueryDateFormat),
-    };
-};
-
 // `bytesBehind` is a gauge describing where a materialization stands right now,
 // so the newest reading is the only one worth showing, and hourly is the finest
 // grain available.
@@ -243,27 +223,6 @@ const getCollectionsLastPublished = (collectionNames: string[]) => {
         .returns<CatalogStats_LastPublished[]>();
 };
 
-// Per-binding stats live only inside `flow_document`, attached to task rows by
-// `taskStats` in
-// https://github.com/estuary/flow/blob/master/ops-catalog/catalog-stats.ts
-// Callers sum `taskStats` across the returned rows.
-//
-// Only the `taskStats` subtree is selected: it carries an entry per binding on
-// every row, so a wide range on a large task is megabytes even so.
-const getBindingStats = (catalogName: string, range: DataByHourRange) => {
-    const { current, past } = getRangeBounds(range);
-
-    return supabaseClient
-        .from(TABLES.CATALOG_STATS)
-        .select(`catalog_name,grain,ts,taskStats:flow_document->taskStats`)
-        .eq('catalog_name', catalogName)
-        .eq('grain', range.grain)
-        .gte('ts', past)
-        .lte('ts', current)
-        .order('ts', { ascending: true })
-        .returns<BindingStatsResponse[]>();
-};
-
 const getStatsForDashboard = (tenant: string) => {
     return supabaseClient
         .from(TABLES.CATALOG_STATS)
@@ -276,7 +235,6 @@ const getStatsForDashboard = (tenant: string) => {
 };
 
 export {
-    getBindingStats,
     getCollectionsLastPublished,
     getMaterializationBacklog,
     getStatsByName,
