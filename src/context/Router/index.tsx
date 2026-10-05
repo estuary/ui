@@ -230,7 +230,10 @@ const routes: RouteObject[] = [
                             },
 
                             {
-                                path: `${authenticatedRoutes.collections.path}/*`,
+                                // Splat handled by the `*` child below rather
+                                // than a `path: 'collections/*'` parent, per
+                                // react-router's v7_relativeSplatPath guidance.
+                                path: authenticatedRoutes.collections.path,
                                 children: [
                                     // Check details first as collections create
                                     // opens as dialog meaning we include the
@@ -477,37 +480,26 @@ const routes: RouteObject[] = [
                                             .path,
                                         element: suspended(<AdminApi />),
                                     },
-                                    // TODO (routing cleanup): the `billing/*`
-                                    // subtree below produces /admin/billing and
-                                    // /admin/billing/billing, and is duplicated
-                                    // by the standalone billing route that
-                                    // follows it. Preserved verbatim during the
-                                    // data-router migration; worth pruning.
                                     {
-                                        path: `${authenticatedRoutes.admin.billing.path}/*`,
+                                        path: authenticatedRoutes.admin.billing
+                                            .path,
                                         children: [
+                                            {
+                                                index: true,
+                                                element: lazyElement(
+                                                    <AdminBilling />
+                                                ),
+                                            },
                                             {
                                                 path: authenticatedRoutes.admin
                                                     .billing.addPayment.path,
-                                                element: suspended(
+                                                element: lazyElement(
                                                     <AdminBilling
                                                         showAddPayment
                                                     />
                                                 ),
                                             },
-                                            {
-                                                path: authenticatedRoutes.admin
-                                                    .billing.path,
-                                                element: suspended(
-                                                    <AdminBilling />
-                                                ),
-                                            },
                                         ],
-                                    },
-                                    {
-                                        path: authenticatedRoutes.admin.billing
-                                            .path,
-                                        element: lazyElement(<AdminBilling />),
                                     },
                                     {
                                         path: authenticatedRoutes.admin.settings
