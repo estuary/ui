@@ -92,9 +92,6 @@ test.describe.serial.only('Admin:', () => {
                     .getByRole('columnheader', { name: 'Storage Prefix' })
                     .first()
             ).toBeVisible();
-            await expect(
-                page.getByRole('columnheader', { name: 'Last Updated' }).first()
-            ).toBeVisible();
         });
 
         test('Data Planes Table', async () => {

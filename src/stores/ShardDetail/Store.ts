@@ -152,6 +152,9 @@ const getEverythingForDictionary = (
             case SHARD_LABELS.HOSTNAME:
                 response.hostname = label.value;
                 break;
+            case SHARD_LABELS.RUNTIME_V2:
+                response.runtimeV2 = label.value === 'true';
+                break;
             default:
                 if (label.name?.startsWith(PORT_PROTO_PREFIX)) {
                     response.portProtocol = label.value;

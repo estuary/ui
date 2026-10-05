@@ -221,7 +221,7 @@ const copyAdvancedOption = (elem: Layout, schema: JsonSchema) => {
     }
 };
 
-export const isRequiredField = (propName: string, rootSchema?: JsonSchema) => {
+const isRequiredField = (propName: string, rootSchema?: JsonSchema) => {
     const requiredFields = rootSchema?.required;
 
     return includes(requiredFields, propName);
@@ -326,7 +326,7 @@ interface CategoryUiSchema {
     type: string;
     elements: CategoryUiSchema_Elements[];
 }
-export const generateCategoryUiSchema = (uiSchema: any) => {
+const generateCategoryUiSchema = (uiSchema: any) => {
     const basicElements: CategoryUiSchema_Elements[] = [];
     const advancedElements: CategoryUiSchema_Elements[] = [];
 
@@ -412,7 +412,7 @@ const createLayout = (layoutType: string): Layout => ({
 /**
  * Creates a IControlObject with the given label referencing the given ref
  */
-export const createControlElement = (ref: string): ControlElement => ({
+const createControlElement = (ref: string): ControlElement => ({
     type: 'Control',
     scope: ref,
 });
@@ -811,7 +811,7 @@ export const getDereffedSchema = async (val: any) => {
     return response;
 };
 
-export const derefSchema = async (schema: any) => {
+const derefSchema = async (schema: any) => {
     try {
         // Removing for now as oneOf with discriminators will mess up when the
         //  oneOf options use $ref

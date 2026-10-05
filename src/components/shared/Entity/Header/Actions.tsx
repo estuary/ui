@@ -11,7 +11,6 @@ import { useFormStateStore_status } from 'src/stores/FormState/hooks';
 import { FormStatus } from 'src/stores/FormState/types';
 
 function HeaderActions({
-    expressWorkflow,
     GenerateButton,
     PrimaryButtonComponent,
     SecondaryButtonComponent,
@@ -27,10 +26,6 @@ function HeaderActions({
 
     const PrimaryButton = PrimaryButtonComponent ?? EntitySaveButton;
     const SecondaryButton = SecondaryButtonComponent ?? EntityTestButton;
-
-    if (expressWorkflow && saved) {
-        return null;
-    }
 
     return (
         <Stack

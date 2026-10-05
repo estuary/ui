@@ -10,7 +10,6 @@ export interface Directives {
     acceptDemoTenant: DirectiveSettings<AcceptDemoTenantClaim>;
     betaOnboard: DirectiveSettings<OnboardClaim>;
     clickToAccept: DirectiveSettings<ClickToAcceptClaim>;
-    storageMappings: DirectiveSettings<StorageMappingsClaim>;
 }
 
 export type JobStatusQueryData = Pick<
@@ -31,32 +30,26 @@ export type DirectiveStates =
     | 'outdated'
     | 'errored';
 
-export interface AcceptDemoTenantClaim {
+interface AcceptDemoTenantClaim {
     tenant: string;
 }
 
-export interface ClickToAcceptClaim {
+interface ClickToAcceptClaim {
     version: string;
 }
 
-export interface OnboardClaim {
+interface OnboardClaim {
     requestedTenant: string;
     survey: any;
-}
-
-export interface StorageMappingsClaim {
-    addStore: object;
-    catalogPrefix: string;
 }
 
 export type UserClaims =
     | AcceptDemoTenantClaim
     | ClickToAcceptClaim
-    | OnboardClaim
-    | StorageMappingsClaim;
+    | OnboardClaim;
 
 // TODO (V2 typing) - queryFilter should take in filter builder better
-export interface DirectiveSettings<T> {
+interface DirectiveSettings<T> {
     token: string;
     queryFilter: (
         queryBuilder: any //PostgrestFilterBuilder<any, any, any>

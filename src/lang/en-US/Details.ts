@@ -13,7 +13,6 @@ export const Details: Record<string, string> = {
     'details.tabs.ops': `Logs`,
 
     'details.history.noPublications': `No publications were found.`,
-    'details.history.diffFailed': `Unable to get specs to compare.`,
     'details.history.title': `Change History`,
     'details.history.list.title': `Changes`,
 
@@ -91,10 +90,8 @@ export const Details: Record<string, string> = {
     'detailsPanel.details.relatedEntity.link': `View details for {catalogName}`,
     'detailsPanel.details.relatedEntity.failed': `failed to find`,
 
-    'detailsPanel.graph.timezone': `{relativeUnit} in`,
     'detailsPanel.graph.syncDelay': `Reporting can be delayed by up to {reportingDelay} for this materialization`,
     'detailsPanel.graph.syncDelay.default': `Reporting can be delayed due to update delay for this materialization`,
-    'detailsPanel.graph.syncDelay.tooltip': `Reporting can be delayed by up to 2x the set update delay in the configuration.`,
 
     'detailsPanel.status.taskDisabled.message': `Task is disabled`,
 };

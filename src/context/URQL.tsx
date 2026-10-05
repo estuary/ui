@@ -10,6 +10,7 @@ import { requestPolicyExchange } from '@urql/exchange-request-policy';
 import { Client, fetchExchange, Provider } from 'urql';
 
 import { useUserStore } from 'src/context/User/useUserContextStore';
+import { getGqlUrl } from 'src/utils/env-utils';
 import { getAuthHeader } from 'src/utils/misc-utils';
 
 function invalidateQuery(
@@ -32,7 +33,7 @@ function UrqlConfigProvider({ children }: BaseComponentProps) {
 
     const gqlClient = useMemo(() => {
         return new Client({
-            url: import.meta.env.VITE_GQL_URL,
+            url: getGqlUrl(),
             preferGetMethod: false,
             exchanges: [
                 // WARNING - order is important on exchanges
@@ -52,17 +53,35 @@ function UrqlConfigProvider({ children }: BaseComponentProps) {
                     //         alerts: relayPagination(),
                     //     },
                     // },
+                    // Migration: replace these null keys with real keys — `id`
+                    // where the schema has one, otherwise a natural key
+                    // (catalogPrefix, token, catalogName, ...). A null key
+                    // embeds the object in its parent query result, so
+                    // mutation results never merge into other cached queries.
+                    // Keep null only for value objects with no identity
+                    // (EffectiveAlertConfig, FieldProvenance). Queries and
+                    // mutations must select the key fields.
                     keys: {
-                        // TODO (gql caching)  - see GRAPHQL.md
                         Alert: (_data) => null,
+                        AlertConfig: (_data) => null,
                         AlertSubscription: (_data) => null,
                         AlertTypeInfo: (_data) => null,
+                        EffectiveAlertConfig: (_data) => null,
+                        FieldProvenance: (_data) => null,
                         InviteLink: (data) => null,
                         LiveSpecRef: (_data) => null,
                         PrefixRef: (_data) => null,
-                        StorageMapping: (data) => null,
-                        DataPlane: (data) => null,
+                        RefreshTokenInfo: (_data) => null,
+                        StorageMapping: (_data) => null,
+                        DataPlane: (_data) => null,
+                        CatalogStats: (_data) => null,
+                        CatalogStatsSummary: (_data) => null,
+                        DocsAndBytes: (_data) => null,
                     },
+                    // Normalization only merges update results into entities
+                    // already in the cache. Creates and deletes need updaters
+                    // here: a new entity does not join cached lists and a
+                    // deleted one is not evicted on its own.
                     updates: {
                         Mutation: {
                             createInviteLink(_result, _args, cache) {
@@ -70,6 +89,9 @@ function UrqlConfigProvider({ children }: BaseComponentProps) {
                             },
                             deleteInviteLink(_result, _args, cache) {
                                 invalidateQuery(cache, 'inviteLinks');
+                            },
+                            updateAlertConfig(_result, _args, cache) {
+                                invalidateQuery(cache, 'alertConfigs');
                             },
                             createAlertSubscription(_result, _args, cache) {
                                 invalidateQuery(cache, 'alertSubscriptions');
@@ -79,6 +101,18 @@ function UrqlConfigProvider({ children }: BaseComponentProps) {
                             },
                             updateAlertSubscription(_result, _args, cache) {
                                 invalidateQuery(cache, 'alertSubscriptions');
+                            },
+                            createRefreshToken(_result, _args, cache) {
+                                invalidateQuery(cache, 'refreshTokens');
+                            },
+                            revokeRefreshToken(_result, _args, cache) {
+                                invalidateQuery(cache, 'refreshTokens');
+                            },
+                            createStorageMapping(_result, _args, cache) {
+                                invalidateQuery(cache, 'storageMappings');
+                            },
+                            updateStorageMapping(_result, _args, cache) {
+                                invalidateQuery(cache, 'storageMappings');
                             },
                         },
                     },

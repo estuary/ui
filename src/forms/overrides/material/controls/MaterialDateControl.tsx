@@ -38,7 +38,7 @@ import { CustomMuiInputText } from 'src/forms/overrides/material/controls/MuiInp
 // This is pretty customized
 //  Look at MaterialDateTimeControl for extra notes
 //  as this is based on that but made to support Date Picker
-export const CustomMaterialDateControl = (props: ControlProps) => {
+const CustomMaterialDateControl = (props: ControlProps) => {
     const { data, id, visible, enabled, path, handleChange, label } = props;
 
     const { state, buttonRef, events } = useDatePickerState(

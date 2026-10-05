@@ -29,7 +29,7 @@ import {
 import { useTenantStore } from 'src/stores/Tenant';
 import { TableStatuses } from 'src/types';
 
-export const columns: TableColumns[] = [
+const columns: TableColumns[] = [
     {
         field: 'description',
         headerIntlKey: 'admin.billing.table.line_items.label.description',
@@ -50,8 +50,6 @@ export const columns: TableColumns[] = [
     },
 ];
 
-// TODO (billing): Use the getStatsForBillingHistoryTable query function as the primary source of data for this view
-//   when a database table containing historic billing data is available.
 function BillingLineItemsTable() {
     const intl = useIntl();
 

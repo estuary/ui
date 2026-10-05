@@ -7,7 +7,6 @@ import RefreshButton from 'src/components/shared/Entity/Details/Logs/Status/Refr
 import SectionFormatter from 'src/components/shared/Entity/Details/Logs/Status/SectionFormatter';
 import SectionViews from 'src/components/shared/Entity/Details/Logs/Status/SectionViews';
 import ServerError from 'src/components/shared/Entity/Details/Logs/Status/ServerError';
-import UnderDev from 'src/components/shared/UnderDev';
 import { useUserInfoSummaryStore } from 'src/context/UserInfoSummary/useUserInfoSummaryStore';
 
 export default function Status() {
@@ -23,8 +22,6 @@ export default function Status() {
 
     return (
         <Stack spacing={2} style={{ marginTop: 40 }}>
-            <UnderDev />
-
             <Stack
                 direction="row"
                 spacing={4}

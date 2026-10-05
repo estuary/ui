@@ -8,7 +8,7 @@ import { useStore } from 'zustand';
 
 import invariableStores from 'src/context/Zustand/invariableStores';
 
-export const ZustandContext = createReactContext<any | null>(null);
+const ZustandContext = createReactContext<any | null>(null);
 
 export const ZustandProvider = ({ children }: ZustandProviderProps) => {
     return (

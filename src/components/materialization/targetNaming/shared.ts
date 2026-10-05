@@ -9,10 +9,10 @@ export const SCHEMA_TEMPLATE_STRING = '{{schema}}';
 export const TABLE_TEMPLATE_STRING = '{{table}}';
 
 // Match i18n keys defaults.schema / defaults.table in CommonMessages.ts
-export const EXAMPLE_SCHEMA_DEFAULT = 'anvils';
-export const EXAMPLE_TABLE_DEFAULT = 'orders';
+const EXAMPLE_SCHEMA_DEFAULT = 'anvils';
+const EXAMPLE_TABLE_DEFAULT = 'orders';
 
-export const VALID_STRATEGY_KEYS: StrategyKey[] = [
+const VALID_STRATEGY_KEYS: StrategyKey[] = [
     'matchSourceStructure',
     'singleSchema',
     'prefixTableNames',
@@ -48,7 +48,7 @@ export function hasSchemaTemplate(
     );
 }
 
-export function hasValidSchemaTemplate(
+function hasValidSchemaTemplate(
     s: TargetNamingStrategy | null | undefined
 ): s is Extract<TargetNamingStrategy, { schemaTemplate?: string }> & {
     schemaTemplate: string;
@@ -71,7 +71,7 @@ export function hasTableTemplate(
     );
 }
 
-export function hasValidTableTemplate(
+function hasValidTableTemplate(
     s: TargetNamingStrategy | null | undefined
 ): s is TargetNamingStrategy & { tableTemplate: string } {
     return (

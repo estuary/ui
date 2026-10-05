@@ -22,7 +22,7 @@ export interface AlertDetailsWrapperProps {
     short?: boolean;
 }
 
-export interface AlertDetailsProps extends AlertDetailsWrapperProps {
+interface AlertDetailsProps extends AlertDetailsWrapperProps {
     detail: AlertDetail;
 }
 

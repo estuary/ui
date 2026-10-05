@@ -6,7 +6,7 @@ import { graphql } from 'src/gql-types';
 
 const DEFAULT_LINKS: any[] = [];
 
-export const INVITE_LINKS_PAGE_SIZE = 10;
+const INVITE_LINKS_PAGE_SIZE = 10;
 
 const INVITE_LINKS_QUERY = graphql(`
     query InviteLinks($first: Int, $after: String) {

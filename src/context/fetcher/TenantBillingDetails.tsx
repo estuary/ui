@@ -10,7 +10,7 @@ import { useUserInfoSummaryStore } from 'src/context/UserInfoSummary/useUserInfo
 import { useTenantsDetailsForPayment } from 'src/hooks/useTenants';
 import { useEntitiesStore_tenantsWithAdmin } from 'src/stores/Entities/hooks';
 
-export interface TenantContextData {
+interface TenantContextData {
     tenantBillingDetails: TenantPaymentDetails[] | null;
 }
 const TenantContext = createContext<TenantContextData>({

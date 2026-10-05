@@ -1,11 +1,58 @@
 import type { DataPlaneNode } from 'src/api/gql/dataPlanes';
 import type { CloudProvider } from 'src/utils/cloudRegions';
 
-import { useCallback } from 'react';
+import { useCallback, useMemo, useSyncExternalStore } from 'react';
 
-import { gql, useClient, useQuery } from 'urql';
+import { useClient, useQuery } from 'urql';
 
+import { useAllPages } from 'src/api/gql/useAllPages';
+import { graphql } from 'src/gql-types';
 import { useTenantStore } from 'src/stores/Tenant';
+
+const COLLECTION_DATA_SUFFIX = 'collection-data/';
+
+let storageMappingsVersion = 0;
+const storageMappingsListeners = new Set<() => void>();
+
+function subscribeToStorageMappings(listener: () => void) {
+    storageMappingsListeners.add(listener);
+
+    return () => {
+        storageMappingsListeners.delete(listener);
+    };
+}
+
+function getStorageMappingsVersion() {
+    return storageMappingsVersion;
+}
+
+function notifyStorageMappingsChanged() {
+    storageMappingsVersion += 1;
+    storageMappingsListeners.forEach((listener) => listener());
+}
+
+function useStorageMappingsVersion() {
+    return useSyncExternalStore(
+        subscribeToStorageMappings,
+        getStorageMappingsVersion,
+        getStorageMappingsVersion
+    );
+}
+
+function stripCollectionDataSuffix(
+    prefix: string | null | undefined
+): string | null | undefined {
+    if (
+        prefix !== COLLECTION_DATA_SUFFIX &&
+        !prefix?.endsWith(`/${COLLECTION_DATA_SUFFIX}`)
+    ) {
+        return prefix;
+    }
+
+    const base = prefix.slice(0, -COLLECTION_DATA_SUFFIX.length);
+
+    return base || null;
+}
 
 // Public types
 export interface FragmentStore {
@@ -58,30 +105,23 @@ interface ServerFragmentStore {
     account_tenant_id?: string | null;
 }
 
+// Shape of the storage mapping `spec` field, which the schema types as JSON.
+// The server omits `data_planes` from the JSON when the list is empty
+// (serde `skip_serializing_if`), so reads must treat it as optional. Writes
+// always include it.
+interface StorageMappingSpec {
+    stores: ServerFragmentStore[];
+    data_planes?: string[];
+}
+
 interface StorageMappingVariables {
     catalogPrefix: string;
-    spec: {
-        stores: ServerFragmentStore[];
-        data_planes: string[];
-    };
+    spec: StorageMappingSpec;
     detail?: string;
 }
 
-interface CreateStorageMappingResult {
-    created: boolean;
-    catalogPrefix: string;
-}
-
-interface UpdateStorageMappingResult {
-    republish: boolean;
-    catalogPrefix: string;
-}
-
 // GraphQL Mutations
-const CREATE_STORAGE_MAPPING = gql<
-    { createStorageMapping: CreateStorageMappingResult | null },
-    StorageMappingVariables
->`
+const CREATE_STORAGE_MAPPING = graphql(`
     mutation CreateStorageMapping(
         $catalogPrefix: Prefix!
         $spec: JSON!
@@ -95,12 +135,9 @@ const CREATE_STORAGE_MAPPING = gql<
             catalogPrefix
         }
     }
-`;
+`);
 
-const UPDATE_STORAGE_MAPPING = gql<
-    { updateStorageMapping: UpdateStorageMappingResult | null },
-    StorageMappingVariables
->`
+const UPDATE_STORAGE_MAPPING = graphql(`
     mutation UpdateStorageMapping(
         $catalogPrefix: Prefix!
         $spec: JSON!
@@ -115,20 +152,9 @@ const UPDATE_STORAGE_MAPPING = gql<
             republish
         }
     }
-`;
+`);
 
-const TEST_CONNECTION_HEALTH = gql<
-    {
-        testConnectionHealth: {
-            results: {
-                fragmentStore: ServerFragmentStore;
-                dataPlaneName: string;
-                error: string | null;
-            }[];
-        } | null;
-    },
-    StorageMappingVariables
->`
+const TEST_CONNECTION_HEALTH = graphql(`
     mutation TestConnectionHealth($catalogPrefix: Prefix!, $spec: JSON!) {
         testConnectionHealth(catalogPrefix: $catalogPrefix, spec: $spec) {
             results {
@@ -138,26 +164,16 @@ const TEST_CONNECTION_HEALTH = gql<
             }
         }
     }
-`;
+`);
 
-interface StorageMappingsQueryResponse {
-    storageMappings: {
-        edges: {
-            cursor: string;
-            node: {
-                catalogPrefix: string;
-                spec: {
-                    data_planes: string[];
-                    stores: ServerFragmentStore[];
-                };
-            };
-        }[];
-    };
-}
-
-const QUERY = gql<StorageMappingsQueryResponse, { underPrefix: string }>`
-    query StorageMappingQuery($underPrefix: Prefix!) {
-        storageMappings(by: { underPrefix: $underPrefix }) {
+// The server caps each page at its DEFAULT_PAGE_SIZE (50); useAllPages walks
+// every page so consumers see the complete mapping list.
+const QUERY = graphql(`
+    query StorageMappingQuery($prefix: String!, $after: String) {
+        storageMappings(
+            filter: { catalogPrefix: { startsWith: $prefix } }
+            after: $after
+        ) {
             edges {
                 cursor
                 node {
@@ -165,9 +181,44 @@ const QUERY = gql<StorageMappingsQueryResponse, { underPrefix: string }>`
                     spec
                 }
             }
+            pageInfo {
+                ...PageInfoFields
+            }
         }
     }
-`;
+`);
+
+// Number of storage mappings fetched per page in the settings table.
+const STORAGE_MAPPINGS_PAGE_SIZE = 10;
+
+const TABLE_QUERY = graphql(`
+    query StorageMappingsTable($prefix: String!, $first: Int, $after: String) {
+        storageMappings(
+            filter: { catalogPrefix: { startsWith: $prefix } }
+            first: $first
+            after: $after
+        ) {
+            edges {
+                cursor
+                node {
+                    catalogPrefix
+                    spec
+                }
+            }
+            pageInfo {
+                ...PageInfoFields
+            }
+        }
+    }
+`);
+
+// Row shape consumed by the settings table. `spec` is the raw server-side
+// storage definition (stores + data plane assignments), matching what the
+// table renders directly without the client-side FragmentStore mapping.
+export interface StorageMappingTableRow {
+    catalogPrefix: string;
+    spec: StorageMappingSpec;
+}
 
 // Maps cloud provider names to storage provider variants (for GraphQL mutations)
 const CLOUD_TO_STORAGE_PROVIDER: Record<CloudProvider, StorageProvider> = {
@@ -228,19 +279,6 @@ function fromServerStore(store: ServerFragmentStore): FragmentStore {
 
 export function useStorageMappingService() {
     const client = useClient();
-    const tenant = useTenantStore((state) => state.selectedTenant);
-
-    const refetchMappings = useCallback(() => {
-        if (tenant) {
-            client
-                .query(
-                    QUERY,
-                    { underPrefix: tenant },
-                    { requestPolicy: 'network-only' }
-                )
-                .toPromise();
-        }
-    }, [client, tenant]);
 
     const testConnection = useCallback(
         async (
@@ -268,7 +306,7 @@ export function useStorageMappingService() {
                 result.data?.testConnectionHealth?.results.map((r) => ({
                     fragmentStore: fromServerStore(r.fragmentStore),
                     dataPlaneName: r.dataPlaneName,
-                    error: r.error,
+                    error: r.error ?? null,
                 })) ?? []
             );
         },
@@ -276,9 +314,7 @@ export function useStorageMappingService() {
     );
 
     const create = useCallback(
-        async (
-            input: StorageMappingInput
-        ): Promise<CreateStorageMappingResult> => {
+        async (input: StorageMappingInput) => {
             const result = await client.mutation(CREATE_STORAGE_MAPPING, {
                 catalogPrefix: input.catalogPrefix,
                 detail: input.detail,
@@ -286,7 +322,7 @@ export function useStorageMappingService() {
                     stores: input.spec.fragmentStores.map(toServerStore),
                     data_planes: input.spec.dataPlanes,
                 },
-            });
+            } satisfies StorageMappingVariables);
 
             if (result.error) {
                 throw new Error(
@@ -302,16 +338,14 @@ export function useStorageMappingService() {
                 );
             }
 
-            refetchMappings();
+            notifyStorageMappingsChanged();
             return result.data.createStorageMapping;
         },
-        [client, refetchMappings]
+        [client]
     );
 
     const update = useCallback(
-        async (
-            input: StorageMappingInput
-        ): Promise<UpdateStorageMappingResult> => {
+        async (input: StorageMappingInput) => {
             const result = await client.mutation(UPDATE_STORAGE_MAPPING, {
                 catalogPrefix: input.catalogPrefix,
                 detail: input.detail,
@@ -319,7 +353,7 @@ export function useStorageMappingService() {
                     stores: input.spec.fragmentStores.map(toServerStore),
                     data_planes: input.spec.dataPlanes,
                 },
-            });
+            } satisfies StorageMappingVariables);
 
             if (result.error) {
                 throw new Error(
@@ -335,10 +369,10 @@ export function useStorageMappingService() {
                 );
             }
 
-            refetchMappings();
+            notifyStorageMappingsChanged();
             return result.data.updateStorageMapping;
         },
-        [client, refetchMappings]
+        [client]
     );
 
     return {
@@ -348,27 +382,86 @@ export function useStorageMappingService() {
     };
 }
 
+// Fetches every storage mapping the user can read. Consumers rely on the
+// list being complete: the edit dialog resolves its clicked row from it, and
+// PrefixCard's duplicate/coverage validators reject prefixes based on it.
 export function useStorageMappings() {
     const tenant = useTenantStore((state) => state.selectedTenant);
+    const refreshVersion = useStorageMappingsVersion();
 
-    const [{ data, fetching, error }] = useQuery({
-        query: QUERY,
-        variables: { underPrefix: tenant },
+    const { data, loading, error } = useAllPages(QUERY, {
+        variables: { prefix: tenant },
+        getConnection: (d) => d.storageMappings,
+        transform: (node): StorageMapping => {
+            const spec = node.spec as StorageMappingSpec;
+
+            return {
+                catalogPrefix: node.catalogPrefix,
+                spec: {
+                    fragmentStores: (spec.stores ?? []).map((store) => ({
+                        ...fromServerStore(store),
+                        storagePrefix: stripCollectionDataSuffix(store.prefix),
+                    })),
+                    dataPlanes: spec.data_planes ?? [],
+                },
+            };
+        },
         pause: !tenant,
+        resetKey: refreshVersion,
     });
 
-    const storageMappings: StorageMapping[] =
-        data?.storageMappings.edges.map((edge) => ({
-            catalogPrefix: edge.node.catalogPrefix,
-            spec: {
-                fragmentStores: edge.node.spec.stores.map(fromServerStore),
-                dataPlanes: edge.node.spec.data_planes ?? [],
-            },
-        })) ?? [];
+    // Graphcache can publish an active-page refetch before the mutation
+    // notification restarts the full traversal. Keep the last occurrence of
+    // each prefix so that transient overlap cannot duplicate a mapping.
+    const storageMappings = useMemo(
+        () =>
+            Array.from(
+                new Map(data.map((sm) => [sm.catalogPrefix, sm])).values()
+            ),
+        [data]
+    );
 
     return {
         storageMappings,
-        loading: fetching,
+        loading,
         error,
+    };
+}
+
+const EMPTY_ROWS: StorageMappingTableRow[] = [];
+
+// Cursor-paginated storage mappings for the admin settings table. Forward
+// pagination only; pair with useCursorPagination for backwards navigation.
+export function usePaginatedStorageMappings(
+    prefix: string,
+    afterCursor?: string
+) {
+    const [{ fetching, data, error }] = useQuery({
+        query: TABLE_QUERY,
+        variables: {
+            prefix,
+            first: STORAGE_MAPPINGS_PAGE_SIZE,
+            after: afterCursor,
+        },
+        pause: !prefix,
+    });
+
+    const storageMappings = useMemo<StorageMappingTableRow[]>(
+        () =>
+            data?.storageMappings.edges.map((edge) => ({
+                catalogPrefix: edge.node.catalogPrefix,
+                spec: edge.node.spec as StorageMappingSpec,
+            })) ?? EMPTY_ROWS,
+        [data]
+    );
+
+    const pageInfo = data?.storageMappings.pageInfo ?? null;
+
+    return {
+        storageMappings,
+        fetching,
+        error,
+        pageInfo,
+        pageSize: STORAGE_MAPPINGS_PAGE_SIZE,
     };
 }

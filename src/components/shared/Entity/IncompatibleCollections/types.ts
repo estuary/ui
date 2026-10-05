@@ -1,6 +1,6 @@
 import type { EvolutionRequest } from 'src/api/evolutions';
 
-export interface AffectedMaterialization {
+interface AffectedMaterialization {
     name: string;
     fields: {
         field: string;
@@ -15,7 +15,7 @@ export interface IncompatibleCollections {
     affected_materializations?: AffectedMaterialization[];
 }
 
-export type RequiresRecreation =
+type RequiresRecreation =
     // The collection key in the draft differs from that of the live spec.
     | 'keyChange'
     // One or more collection partition fields in the draft differs from that of the live spec.

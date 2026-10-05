@@ -1,28 +1,14 @@
-import { useIntl } from 'react-intl';
-
 import AlertBox from 'src/components/shared/AlertBox';
 import { useEntityType } from 'src/context/EntityContext';
-import { ENTITY_SETTINGS } from 'src/settings/entity';
+import { BINDING_TERMS } from 'src/settings/entity';
 
 function EvolvedAlert() {
     const entityType = useEntityType();
-    const intl = useIntl();
+    const [, bindingTermPlural] = BINDING_TERMS[entityType];
 
     return (
         <AlertBox short severity="success">
-            {intl.formatMessage(
-                { id: 'workflows.collectionSelector.evolvedCollections.alert' },
-                {
-                    itemType: intl.formatMessage(
-                        {
-                            id: ENTITY_SETTINGS[entityType].bindingTermId,
-                        },
-                        {
-                            count: 0,
-                        }
-                    ),
-                }
-            )}
+            {`Reversioned ${bindingTermPlural} will backfill on their own`}
         </AlertBox>
     );
 }

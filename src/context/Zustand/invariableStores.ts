@@ -69,9 +69,6 @@ const invariableStores = {
     [SelectTableStoreNames.COLLECTION]: createSelectableTableStore(
         SelectTableStoreNames.COLLECTION
     ),
-    [SelectTableStoreNames.DATA_PLANE]: createSelectableTableStore(
-        SelectTableStoreNames.DATA_PLANE
-    ),
     [SelectTableStoreNames.ENTITY_SELECTOR]: createSelectableTableStore(
         SelectTableStoreNames.ENTITY_SELECTOR
     ),
@@ -80,9 +77,6 @@ const invariableStores = {
     ),
     [SelectTableStoreNames.MATERIALIZATION]: createSelectableTableStore(
         SelectTableStoreNames.MATERIALIZATION
-    ),
-    [SelectTableStoreNames.REFRESH_TOKENS]: createSelectableTableStore(
-        SelectTableStoreNames.REFRESH_TOKENS
     ),
 
     // Shard Detail Store
@@ -94,9 +88,6 @@ const invariableStores = {
     ),
     [ShardDetailStoreNames.COLLECTION]: createShardDetailStore(
         ShardDetailStoreNames.COLLECTION
-    ),
-    [SelectTableStoreNames.STORAGE_MAPPINGS]: createSelectableTableStore(
-        SelectTableStoreNames.STORAGE_MAPPINGS
     ),
 
     // Transformation Create

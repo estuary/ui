@@ -16,15 +16,17 @@ import { logRocketEvent } from 'src/services/shared';
 if (
     !import.meta.env.VITE_SUPABASE_URL ||
     !import.meta.env.VITE_SUPABASE_ANON_KEY ||
-    !import.meta.env.VITE_GQL_URL
+    !import.meta.env.VITE_ESTUARY_API_URL
 ) {
     throw new Error(
-        'Missing at least 1 environment config: [VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY, VITE_GQL_URL]'
+        'Missing at least 1 environment config: [VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY, VITE_ESTUARY_API_URL]'
     );
 }
 
-// Put global initializing code early. The LogRocket one _MUST_ be done
-//  before the `createClient` call made below for Supabase
+// Put global initializing code early. LogRocket must init before the
+//  `createClient` call below: LogRocket instruments network calls at init,
+//  so a Supabase client created first would make requests LogRocket never
+//  records or sanitizes.
 initLogRocket();
 
 // PostHog's init is in `ui/src/context/PostHog.tsx`

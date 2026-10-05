@@ -1,0 +1,6 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "tags": ["-lintignore"],
+  "project": ["src/**/*.{ts,tsx}"],
+  "ignore": ["src/gql-types/**", "playwright-tests/**"]
+}

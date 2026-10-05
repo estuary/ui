@@ -1,7 +1,6 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # local stuff
-/.vscode
 /.claude
 
 # dependencies
@@ -52,3 +51,4 @@ storybook-static
 
 .playwright-mcp/
 .mcp.json
+AGENTS.md

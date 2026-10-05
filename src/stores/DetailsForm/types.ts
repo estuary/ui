@@ -22,7 +22,7 @@ export interface DataPlaneOption {
     cidrBlocks?: string[] | null;
 }
 
-export interface ConnectorMetadata {
+interface ConnectorMetadata {
     connectorId: string;
     iconPath: string;
     id: string;

@@ -1,6 +1,6 @@
 import { Snackbar } from '@mui/material';
 
-import { FormattedMessage } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 import AlertBox from 'src/components/shared/AlertBox';
 
@@ -20,16 +20,8 @@ function LoginNotifications({ notificationMessage, notificationTitle }: Props) {
                 }}
                 autoHideDuration={10000}
             >
-                <AlertBox
-                    severity="error"
-                    short
-                    title={
-                        notificationTitle ? (
-                            <FormattedMessage id={notificationTitle} />
-                        ) : undefined
-                    }
-                >
-                    <FormattedMessage id={notificationMessage} />
+                <AlertBox severity="error" short title={notificationTitle}>
+                    {notificationMessage}
                 </AlertBox>
             </Snackbar>
         );
@@ -38,4 +30,27 @@ function LoginNotifications({ notificationMessage, notificationTitle }: Props) {
     }
 }
 
-export default LoginNotifications;
+/** @deprecated Prefer the named `LoginNotifications` export */
+function LoginNotificationsWrapper({
+    notificationMessage,
+    notificationTitle,
+}: Props) {
+    const intl = useIntl();
+
+    return (
+        <LoginNotifications
+            notificationMessage={
+                notificationMessage
+                    ? intl.formatMessage({ id: notificationMessage })
+                    : undefined
+            }
+            notificationTitle={
+                notificationTitle
+                    ? intl.formatMessage({ id: notificationTitle })
+                    : undefined
+            }
+        />
+    );
+}
+
+export default LoginNotificationsWrapper;

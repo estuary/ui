@@ -66,6 +66,29 @@ export const copyEncryptedEndpointConfig = (
     return response;
 };
 
+// Merge a config's `sops.overlay` onto the plaintext `data` extracted from its
+//  encrypted body. A missing or non-object overlay is a no-op, so configs which
+//  predate the overlay feature are unmodified.
+export const applyOverlay = (data: any, overlay: any): any => {
+    if (!isPlainObject(overlay)) {
+        return data;
+    }
+
+    const result: Record<string, any> = isPlainObject(data) ? { ...data } : {};
+
+    Object.entries(overlay).forEach(([key, value]) => {
+        if (value === null) {
+            delete result[key];
+        } else if (isPlainObject(value)) {
+            result[key] = applyOverlay(result[key], value);
+        } else {
+            result[key] = value;
+        }
+    });
+
+    return result;
+};
+
 export const parseEncryptedEndpointConfig = (
     endpointConfig: { [key: string]: any },
     endpointSchema: Schema,
@@ -75,17 +98,24 @@ export const parseEncryptedEndpointConfig = (
     //      bad data and we just need to be safe.
     if (endpointConfig.sops) {
         const {
-            sops: { encrypted_suffix },
+            sops: { encrypted_suffix, overlay },
             ...encryptedEndpointConfig
         } = endpointConfig;
 
         // Generate template and populate data
         const endpointConfigTemplate = createJSONFormDefaults(endpointSchema);
-        endpointConfigTemplate.data = copyEncryptedEndpointConfig(
+        const data = copyEncryptedEndpointConfig(
             encryptedEndpointConfig,
             encrypted_suffix,
             overrideJsonFormDefaults
         );
+
+        // The `sops.overlay` property holds overrides for "nonsensitive" fields
+        //  not covered by the SOPS MAC. We need to merge these in so the form
+        //  renders the correct values and a save preserves them. The UI doesn't
+        //  check non-sensitivity since that would be a lot of work and isn't
+        //  really necessary, the runtime checks nonsensitivity at decrypt time.
+        endpointConfigTemplate.data = applyOverlay(data, overlay);
 
         return endpointConfigTemplate;
     } else {

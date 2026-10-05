@@ -43,12 +43,17 @@ export interface Bindings {
 export interface ResourceConfig extends JsonFormsData {
     // errors: any[];
     meta: {
-        bindingIndex: number;
-        builtBindingIndex: number;
+        // The *Index fields locate this binding in five different bindings arrays.
+        // -1 means the binding is not present in that array. When cross-referencing
+        // server errors back to the client UI, use the index that matches the array
+        // the error came from. All five are kept in sync during hydration and by
+        // setRelatedBindingIndices.
+        bindingIndex: number; // client resource config order; the drafted spec's bindings
+        builtBindingIndex: number; // the drafted built spec's bindings; -1 when disabled
         collectionName: string;
-        liveBindingIndex: number;
-        liveBuiltBindingIndex: number;
-        validatedBindingIndex: number;
+        liveBindingIndex: number; // the live (published) spec's bindings; -1 when not previously bound
+        liveBuiltBindingIndex: number; // the live built spec's bindings; -1 when the validation response has no matching resourcePath
+        validatedBindingIndex: number; // the validation response's bindings, matched by resourcePath; -1 when disabled
         added?: boolean;
         disable?: boolean;
         onIncompatibleSchemaChange?: string;

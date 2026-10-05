@@ -13,9 +13,7 @@ import { mockDeep } from 'vitest-mock-extended';
 import AppProviders from 'src/context';
 import ThemeProvider from 'src/context/Theme';
 
-export const generateMockUserMetadata = (
-    username: string
-): User['user_metadata'] => {
+const generateMockUserMetadata = (username: string): User['user_metadata'] => {
     return mockDeep<User['user_metadata']>({
         avatar_url: `https://example.org/avatar/${username}`,
         email: `${username}@example.org`,
@@ -31,7 +29,7 @@ export const generateMockUserMetadata = (
     });
 };
 
-export const generateMockUser = (username: string): User => {
+const generateMockUser = (username: string): User => {
     return mockDeep<User>({
         email: `${username}@example.org`,
         user_metadata: generateMockUserMetadata(username),
@@ -96,7 +94,7 @@ export const generateMockBinding = (
     });
 };
 
-export interface AllTheProvidersProps {
+interface AllTheProvidersProps {
     children: ReactElement;
 }
 export const AllTheProviders = ({ children }: AllTheProvidersProps) => {

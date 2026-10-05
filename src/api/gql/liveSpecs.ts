@@ -1,33 +1,8 @@
-import { gql } from 'urql';
-
 import { useAllPages } from 'src/api/gql/useAllPages';
+import { graphql } from 'src/gql-types';
 import { useTenantStore } from 'src/stores/Tenant';
 
-interface LiveSpecsQueryResponse {
-    liveSpecs: {
-        edges: {
-            cursor: string;
-            node: {
-                catalogName: string;
-                liveSpec: {
-                    catalogType: string;
-                };
-            };
-        }[];
-        pageInfo: {
-            hasNextPage: boolean;
-            endCursor: string;
-        };
-    };
-}
-
-const LiveSpecsQuery = gql<
-    LiveSpecsQueryResponse,
-    {
-        prefix: string;
-        after?: string;
-    }
->`
+const LiveSpecsQuery = graphql(`
     query LiveSpecsQuery($prefix: Prefix!, $after: String) {
         liveSpecs(by: { prefix: $prefix }, first: 100, after: $after) {
             edges {
@@ -45,7 +20,7 @@ const LiveSpecsQuery = gql<
             }
         }
     }
-`;
+`);
 
 export function useLiveSpecs() {
     const selectedTenant = useTenantStore((state) => state.selectedTenant);

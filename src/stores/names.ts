@@ -14,7 +14,7 @@ export enum EditorStoreNames {
     MATERIALIZATION = 'materialization_editor_store',
 }
 
-export enum EndpointConfigStoreNames {
+enum EndpointConfigStoreNames {
     GENERAL = 'general-endpoint-config',
 }
 
@@ -39,13 +39,10 @@ export enum SelectTableStoreNames {
     ACCESS_GRANTS_PREFIXES = 'AccessGrants-Prefixes',
     CAPTURE = 'Captures-Table',
     COLLECTION = 'Collections-Table',
-    DATA_PLANE = 'Data-Plane-Table',
     ENTITY_SELECTOR = 'Entity-Selector-Table',
     CONNECTOR = 'Connectors-Table',
     MATERIALIZATION = 'Materializations-Table',
     PREFIX_ALERTS = 'Prefix-Alert-Table',
-    REFRESH_TOKENS = 'Refresh-Tokens-Table',
-    STORAGE_MAPPINGS = 'Storage-Mappings-Table',
 }
 
 export enum ShardDetailStoreNames {

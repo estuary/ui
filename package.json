@@ -42,7 +42,12 @@
         "build-storybook": "storybook build",
         "codegen": "graphql-codegen",
         "codegen:local": "LOCAL=true graphql-codegen",
-        "codegen:check": "graphql-codegen --check"
+        "codegen:check": "graphql-codegen --check",
+        "knip": "knip",
+        "demo": "bash ./scripts/demo-tunnel/demo-tunnel.sh start",
+        "demo:stop": "bash ./scripts/demo-tunnel/demo-tunnel.sh stop",
+        "demo:status": "bash ./scripts/demo-tunnel/demo-tunnel.sh status",
+        "demo:restart": "bash ./scripts/demo-tunnel/demo-tunnel.sh restart"
     },
     "dependencies": {
         "@date-fns/utc": "^2.1.1",
@@ -52,7 +57,7 @@
         "@dnd-kit/utilities": "^3.2.1",
         "@emotion/react": "^11.11.1",
         "@emotion/styled": "^11.11.0",
-        "@estuary/flow-web": "file:__inline-deps__/estuary-flow-web-20260429-110235.tgz",
+        "@estuary/flow-web": "file:__inline-deps__/estuary-flow-web-20260713-143059.tgz",
         "@jsonforms/core": "^3.7.0",
         "@jsonforms/material-renderers": "^3.7.0",
         "@jsonforms/react": "^3.7.0",
@@ -131,6 +136,7 @@
     "devDependencies": {
         "@graphql-codegen/cli": "^6.2.1",
         "@graphql-codegen/client-preset": "^5.2.4",
+        "@graphql-codegen/plugin-helpers": "^6.2.1",
         "@graphql-codegen/schema-ast": "^5.0.1",
         "@ianvs/prettier-plugin-sort-imports": "^4.4.1",
         "@storybook/addon-a11y": "^10.3.4",
@@ -157,6 +163,7 @@
         "eslint-plugin-storybook": "^10.3.4",
         "eslint-plugin-unused-imports": "^4.3.0",
         "jsdom": "^24.0.0",
+        "knip": "^6.23.0",
         "licensee": "^11.1.1",
         "msw": "^2.0.11",
         "prettier": "^3.5.3",
@@ -180,7 +187,8 @@
         "msw": {
             "path-to-regexp": "^8.0.0"
         },
-        "react-is": "^18.3.1"
+        "react-is": "^18.3.1",
+        "@types/node": "^22"
     },
     "browserslist": {
         "production": [

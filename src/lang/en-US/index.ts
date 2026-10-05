@@ -1,6 +1,5 @@
 import { AccessGrants } from 'src/lang/en-US/AccessGrants';
 import { AdminPage } from 'src/lang/en-US/AdminPage';
-import { AgentSkills } from 'src/lang/en-US/AgentSkills';
 import { Alerts } from 'src/lang/en-US/Alerts';
 import { Authentication } from 'src/lang/en-US/Authentication';
 import { Captures } from 'src/lang/en-US/Captures';
@@ -14,7 +13,6 @@ import { EntityTable } from 'src/lang/en-US/EntityTable';
 import { Errors } from 'src/lang/en-US/Errors';
 import { Fetchers } from 'src/lang/en-US/Fetchers';
 import { GeneratedModules } from 'src/lang/en-US/GeneratedModules';
-import { Graphs } from 'src/lang/en-US/Graphs';
 import { HomePage } from 'src/lang/en-US/HomePage';
 import { JsonForms } from 'src/lang/en-US/JsonForms';
 import { Materializations } from 'src/lang/en-US/Materializations';
@@ -32,7 +30,6 @@ import { Workflows } from 'src/lang/en-US/Workflows';
 // Since we only set messages as strings we can just use this and be safe
 const enUSMessages: Record<string, string> = {
     ...AccessGrants,
-    ...AgentSkills,
     ...Alerts,
     ...AdminPage,
     ...Captures,
@@ -45,7 +42,6 @@ const enUSMessages: Record<string, string> = {
     ...EntityTable,
     ...Errors,
     ...Fetchers,
-    ...Graphs,
     ...HomePage,
     ...JsonForms,
     ...Authentication,

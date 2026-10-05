@@ -6,8 +6,6 @@ import { Box, Stack, Typography } from '@mui/material';
 
 import { useShallow } from 'zustand/react/shallow';
 
-import { useIntl } from 'react-intl';
-
 import { isBeforeTrialInterval } from 'src/components/materialization/shared';
 import TrialOnlyPrefixAlert from 'src/components/materialization/TrialOnlyPrefixAlert';
 import { useEntityType } from 'src/context/EntityContext';
@@ -22,8 +20,6 @@ export default function SectionWrapper({
     children,
     collection,
 }: SectionWrapperProps) {
-    const intl = useIntl();
-
     const entityType = useEntityType();
 
     const bindingSourceBackfillRecommended =
@@ -53,9 +49,7 @@ export default function SectionWrapper({
         <Box sx={{ mb: 4, mt: 3 }}>
             <Stack spacing={1}>
                 <Typography component="div" variant="formSectionHeader">
-                    {intl.formatMessage({
-                        id: 'workflows.collectionSelector.manualBackfill.header',
-                    })}
+                    Backfill
                 </Typography>
 
                 {entityType === 'materialization' ? (

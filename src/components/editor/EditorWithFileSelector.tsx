@@ -2,7 +2,7 @@ import type { MonacoEditorProps } from 'src/components/editor/MonacoEditor/types
 
 import MonacoEditor from 'src/components/editor/MonacoEditor';
 
-export interface Props extends MonacoEditorProps {
+interface Props extends MonacoEditorProps {
     height?: number;
 }
 

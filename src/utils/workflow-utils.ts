@@ -54,7 +54,7 @@ export const getCollectionNameProp = (entityType: Entity) => {
     return entityType === 'materialization' ? 'source' : 'target';
 };
 
-export const getCollectionNameDirectly = (binding: any) => {
+const getCollectionNameDirectly = (binding: any) => {
     // Check if we're dealing with a FullSource or just a string
     return Object.hasOwn(binding ?? {}, 'name') ? binding.name : binding;
 };
@@ -67,7 +67,7 @@ export const getCollectionName = (binding: any) => {
     return getCollectionNameDirectly(scopedBinding);
 };
 
-export const isValidIndex = (index: number) => index > -1;
+const isValidIndex = (index: number) => index > -1;
 
 export const getBindingIndex = (
     existingBindings: any[],

@@ -1,14 +1,13 @@
 import DataPlanesTable from 'src/components/tables/DataPlanes';
-import TableTitle from 'src/components/tables/DataPlanes/TableTitle';
-import { DataPlaneScopeContextProvider } from 'src/context/DataPlaneScopeContext';
+import { StandAloneTableTitle } from 'src/components/tables/EntityTable/StandAloneTableTitle';
 
-function DataPlanes() {
+const docsUrl = 'https://docs.estuary.dev/reference/allow-ip-addresses/';
+
+export function DataPlanes() {
     return (
-        <DataPlaneScopeContextProvider>
-            <TableTitle />
+        <>
+            <StandAloneTableTitle title="Data Planes" docsUrl={docsUrl} />
             <DataPlanesTable />
-        </DataPlaneScopeContextProvider>
+        </>
     );
 }
-
-export default DataPlanes;

@@ -27,7 +27,7 @@ type MuiColorId =
     | 'warning';
 
 // The hex string additions correspond to sample_grey[500] | sample_grey[300].
-export type StatusColorHex = SemanticColor | '#C4D3E9' | '#E1E9F4';
+type StatusColorHex = SemanticColor | '#C4D3E9' | '#E1E9F4';
 
 export interface StatusColor {
     hex: StatusColorHex;

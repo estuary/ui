@@ -1,4 +1,4 @@
-type PrefixedName_ErrorStates =
+export type PrefixedName_ErrorStates =
     | 'missing'
     | 'invalid'
     | 'unclean'
@@ -20,6 +20,7 @@ export interface PrefixedNameProps {
     allowEndSlash?: boolean;
     defaultPrefix?: boolean;
     disabled?: boolean;
+    fixedPrefix?: boolean;
     hideErrorMessage?: boolean;
     onChange?: PrefixedName_Change;
     onNameChange?: PrefixedName_Change;

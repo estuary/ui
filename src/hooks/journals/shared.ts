@@ -18,11 +18,41 @@ import { CustomEvents } from 'src/services/types';
 import { INCREMENT } from 'src/utils/dataPlane-utils';
 import { journalStatusIsError } from 'src/utils/misc-utils';
 
+// Gazette packs message flags into the low 10 bits of a v1 UUID's clock-sequence
+// field, which is the fourth hyphen-delimited group. ACK_TXN marks a document as
+// the acknowledgement of a committed transaction: runtime bookkeeping rather than
+// collection data, so it should not be shown to users.
+//
+// The flag is what we test because the acknowledgement body differs by runtime
+// version. Runtime v1 writes the collection's ack template, `{"_meta":{"uuid":...,
+// "ack":true}}`, while runtime v2 writes `{"_meta":{"uuid":...},"is_ack":true,...}`.
+// Only the UUID is common to both, and `is_ack` sits in the user's own namespace
+// where a real document could legitimately carry it.
+//
+// See `build` and `parse` in crates/proto-gazette/src/uuid.rs of estuary/flow.
+const ACK_TXN = 0x2;
+const FLAGS_MASK = 0x3ff;
+const MESSAGE_UUID =
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-([0-9a-f]{4})-[0-9a-f]{12}$/i;
+
+export const hasAckTxnFlag = (uuid: string): boolean => {
+    const match = MESSAGE_UUID.exec(uuid);
+
+    // Show, rather than hide, a document whose UUID we cannot interpret.
+    if (match === null) {
+        return false;
+    }
+
+    const flags = Number.parseInt(match[1], 16) & FLAGS_MASK;
+
+    return (flags & ACK_TXN) !== 0;
+};
+
 function isJournalRecord(val: any): val is JournalRecord {
     return val?._meta?.uuid;
 }
 
-export async function* streamAsyncIterator<T>(stream: ReadableStream<T>) {
+async function* streamAsyncIterator<T>(stream: ReadableStream<T>) {
     // Get a lock on the stream
     const reader = stream.getReader();
 
@@ -43,7 +73,7 @@ export async function* streamAsyncIterator<T>(stream: ReadableStream<T>) {
     }
 }
 
-export async function readAllDocuments<T>(stream: ReadableStream<T>) {
+async function readAllDocuments<T>(stream: ReadableStream<T>) {
     const accum: T[] = [];
 
     for await (const item of streamAsyncIterator(stream)) {
@@ -64,7 +94,6 @@ export async function loadDocuments({
         console.warn('Cannot load documents without client and journal');
         return {
             documents: [],
-            tooFewDocuments: false,
             tooManyBytes: false,
         };
     }
@@ -151,10 +180,7 @@ export async function loadDocuments({
             range: [readStart, readEnd],
             allDocs: allDocs
                 .filter(isJournalRecord)
-                .filter(
-                    (record) =>
-                        !(record._meta as unknown as { ack: boolean }).ack
-                ),
+                .filter((record) => !hasAckTxnFlag(record._meta.uuid)),
         };
     };
 
@@ -211,13 +237,6 @@ export async function loadDocuments({
             range,
             status,
         },
-        // TODO (journals)
-        // This feels weird to me as we stop fetching after a certain document count.
-        //  So this should also be checking documents?.length ?? 0 < documentCount. However,
-        //  that is checking something slightly different. So I wonder if we need a third boolean
-        //  to store if we got the amount of docs we wanted AND store if we are still on a single
-        //  read meaning we have not processed _that_ much data.
-        tooFewDocuments: documentCount ? start <= 0 : false,
         tooManyBytes: head - start >= maxBytes,
     };
 }

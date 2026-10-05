@@ -14,6 +14,20 @@ export const defaultDataPlaneSuffix = ((): string => {
     }
 })();
 
+// Base URL for the Estuary API. Endpoint paths live at each call site so the
+// host is configured in exactly one place.
+export const requireEstuaryApiUrl = (): string => {
+    const estuaryApiUrl = import.meta.env.VITE_ESTUARY_API_URL;
+
+    if (estuaryApiUrl) {
+        return estuaryApiUrl;
+    } else {
+        throw new Error('Missing Estuary API base URL: VITE_ESTUARY_API_URL');
+    }
+};
+
+export const getGqlUrl = (): string => `${requireEstuaryApiUrl()}/api/graphql`;
+
 export const getLoginSettings = () => {
     const showEmail = import.meta.env.VITE_SHOW_EMAIL_LOGIN === ENABLED;
     const showSSO = import.meta.env.VITE_SHOW_SSO === ENABLED;
@@ -134,32 +148,6 @@ export const getMarketplaceSettings = () => {
     }
 };
 
-export const getTaskAuthorizationSettings = () => {
-    const taskAuthorizationEndpoint = import.meta.env
-        .VITE_TASK_AUTHORIZATION_URL;
-
-    if (taskAuthorizationEndpoint) {
-        return { taskAuthorizationEndpoint };
-    } else {
-        throw new Error(
-            'Missing endpoint to access data plane information for tasks: VITE_TASK_AUTHORIZATION_URL'
-        );
-    }
-};
-
-export const getCollectionAuthorizationSettings = () => {
-    const collectionAuthorizationEndpoint = import.meta.env
-        .VITE_COLLECTION_AUTHORIZATION_URL;
-
-    if (collectionAuthorizationEndpoint) {
-        return { collectionAuthorizationEndpoint };
-    } else {
-        throw new Error(
-            'Missing endpoint to access data plane information for collections: VITE_COLLECTION_AUTHORIZATION_URL'
-        );
-    }
-};
-
 export const getGoogleTageManagerSettings = () => {
     const settings = {
         enabled: import.meta.env.VITE_GOOGLE_TAG_MANAGER_ENABLED === ENABLED,
@@ -179,17 +167,4 @@ export const getDocsSettings = () => {
     };
 
     return settings;
-};
-
-export const getEntityStatusSettings = () => {
-    const entityStatusBaseEndpoint = import.meta.env
-        .VITE_ENTITY_STATUS_BASE_URL;
-
-    if (entityStatusBaseEndpoint) {
-        return { entityStatusBaseEndpoint };
-    } else {
-        throw new Error(
-            'Missing endpoint to access entity status: VITE_ENTITY_STATUS_BASE_URL'
-        );
-    }
 };

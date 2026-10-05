@@ -1,6 +1,9 @@
 import type { Schema } from 'src/types';
 
-import { copyEncryptedEndpointConfig } from 'src/utils/sops-utils';
+import {
+    applyOverlay,
+    copyEncryptedEndpointConfig,
+} from 'src/utils/sops-utils';
 
 describe('copyEncryptedEndpointConfig', () => {
     const sopsSuffix = '_sops';
@@ -107,5 +110,63 @@ describe('copyEncryptedEndpointConfig', () => {
                 copyEncryptedEndpointConfig(inputSpec, '_sops', false)
             ).toMatchSnapshot();
         });
+    });
+});
+
+describe('applyOverlay', () => {
+    test('merges an overlay leaf alongside an existing sibling', () => {
+        expect(
+            applyOverlay(
+                { advanced: { slot_name: 'flow_slot' } },
+                { advanced: { backfill_chunk_size: 50000 } }
+            )
+        ).toEqual({
+            advanced: { slot_name: 'flow_slot', backfill_chunk_size: 50000 },
+        });
+    });
+
+    test('overlay value supersedes an existing (stale) main-config value', () => {
+        expect(
+            applyOverlay(
+                { advanced: { feature_flags: 'old_value' } },
+                { advanced: { feature_flags: 'new_value' } }
+            )
+        ).toEqual({ advanced: { feature_flags: 'new_value' } });
+    });
+
+    test('populates an overlay field absent from the extracted data', () => {
+        expect(
+            applyOverlay({ address: 'db:5432' }, { advanced: { size: 1 } })
+        ).toEqual({ address: 'db:5432', advanced: { size: 1 } });
+    });
+
+    test('a nested null clears a field (RFC 7396)', () => {
+        expect(applyOverlay({ a: 1, b: 2 }, { b: null })).toEqual({ a: 1 });
+    });
+
+    test('a nested array replaces the existing value wholesale', () => {
+        expect(applyOverlay({ a: [1, 2, 3] }, { a: [4] })).toEqual({
+            a: [4],
+        });
+    });
+
+    test('an empty overlay is a no-op', () => {
+        expect(applyOverlay({ a: { b: 1 } }, {})).toEqual({ a: { b: 1 } });
+    });
+
+    test('a missing, null, or non-object overlay leaves the data unchanged', () => {
+        const data = { advanced: { slot_name: 'flow_slot' } };
+
+        expect(applyOverlay(data, undefined)).toEqual(data);
+        expect(applyOverlay(data, null)).toEqual(data);
+        expect(applyOverlay(data, 'not an object')).toEqual(data);
+        expect(applyOverlay(data, [1, 2, 3])).toEqual(data);
+    });
+
+    test('does not mutate the extracted data', () => {
+        const data = { advanced: { slot_name: 'flow_slot' } };
+        applyOverlay(data, { advanced: { size: 1 } });
+
+        expect(data).toEqual({ advanced: { slot_name: 'flow_slot' } });
     });
 });

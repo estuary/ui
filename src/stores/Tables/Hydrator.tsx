@@ -18,7 +18,7 @@ interface TableHydratorProps extends BaseComponentProps {
     disableQueryParamHack?: boolean;
 }
 
-export const TableHydrator = ({
+const TableHydrator = ({
     children,
     disableMultiSelect,
     query,

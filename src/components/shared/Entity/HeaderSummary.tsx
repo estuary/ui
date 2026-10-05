@@ -3,7 +3,7 @@ import type { BaseComponentProps } from 'src/types';
 
 import { Box, Typography } from '@mui/material';
 
-import { FormattedMessage } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 import AlertBox from 'src/components/shared/AlertBox';
 
@@ -23,7 +23,7 @@ function HeaderSummary({ severity, title, children }: Props) {
                         component="span"
                         sx={{ fontSize: 18, fontWeight: 500 }}
                     >
-                        <FormattedMessage id={title} />
+                        {title}
                     </Typography>
                 }
             >
@@ -33,4 +33,13 @@ function HeaderSummary({ severity, title, children }: Props) {
     );
 }
 
-export default HeaderSummary;
+/** @deprecated Prefer the named `HeaderSummary` export */
+function HeaderSummaryWrapper({ title, ...props }: Props) {
+    const intl = useIntl();
+
+    return (
+        <HeaderSummary {...props} title={intl.formatMessage({ id: title })} />
+    );
+}
+
+export default HeaderSummaryWrapper;

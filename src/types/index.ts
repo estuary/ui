@@ -79,7 +79,7 @@ export interface StorageMappingDictionary {
     [prefix: string]: StorageMapping;
 }
 
-export interface StorageMappingStore {
+interface StorageMappingStore {
     provider: string;
     bucket: string;
     prefix: string;
@@ -95,7 +95,7 @@ export interface StorageMappingsQuery {
 }
 
 // TODO (marketplace) we may expand these in the future
-export type TenantPaymentProviders = 'external' | 'stripe';
+type TenantPaymentProviders = 'external' | 'stripe';
 
 export interface TenantPaymentDetails {
     gcm_account_id: string | null;
@@ -137,16 +137,50 @@ interface BaseCatalogStats {
     ts: string;
 }
 
-export interface CatalogStats_Details extends BaseCatalogStats {
-    bytes_read?: number;
-    docs_read?: number;
-    bytes_written?: number;
-    docs_written?: number;
-}
-
 export interface CatalogStats_Dashboard extends BaseCatalogStats {
     bytes_written_by_me?: number;
     bytes_read_by_me?: number;
+}
+
+// The slice of `catalog_stats.flow_document` that describes a materialization's
+// bindings. The keys of `materialize` are source collection names.
+//
+// `bytesBehind` is how much of that collection the binding has yet to read, and
+// `lastSourcePublishedAt` is the publication timestamp of the newest source
+// document it has processed. Bindings with nothing left to read omit
+// `bytesBehind` rather than reporting zero.
+export interface CatalogStats_Backlog extends BaseCatalogStats {
+    flow_document: {
+        taskStats?: {
+            materialize?: {
+                [collectionName: string]: {
+                    // A u64 in the stats protocol, so it may arrive as a number
+                    // or as a string depending on the producer's JSON encoding.
+                    bytesBehind?: number | string;
+                    lastSourcePublishedAt?: string;
+                };
+            };
+            // Metered uptime, which a task reports on its own schedule. It can be
+            // the only thing in a row, which is how a row comes to exist without
+            // describing any bindings.
+            interval?: {
+                uptimeSeconds: number;
+                usageRate?: number;
+            };
+        };
+    };
+}
+
+// A collection's own stats row, where `lastPublishedAt` is the publication
+// timestamp of the newest document written to it. It reduces by maximizing, so
+// the newest row that carries the field holds the latest publication within that
+// row's time grain.
+export interface CatalogStats_LastPublished extends BaseCatalogStats {
+    flow_document: {
+        statsSummary?: {
+            lastPublishedAt?: string;
+        };
+    };
 }
 
 export interface Directive {
@@ -187,7 +221,7 @@ export interface Grant_UserExt extends BaseGrant {
     user_id: string;
 }
 
-export interface LiveSpecsExtBareMinimum {
+interface LiveSpecsExtBareMinimum {
     catalog_name: string;
     id: string;
     spec_type: Entity;
@@ -307,7 +341,7 @@ export interface OpsLogFlowDocument {
     fields?: Schema;
 }
 
-export interface Meta {
+interface Meta {
     uuid: string;
 }
 
@@ -325,11 +359,6 @@ export interface UserDetails {
     emailVerified: boolean;
     avatar: string;
     usedSSO: boolean;
-}
-
-export interface RefreshTokenData {
-    id: string;
-    secret: string;
 }
 
 export interface BindingMetadata {

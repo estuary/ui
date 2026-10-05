@@ -17,7 +17,7 @@ import {
 import { TableStatuses } from 'src/types';
 import { invoiceId } from 'src/utils/billing-utils';
 
-export const columns: TableColumns[] = [
+const columns: TableColumns[] = [
     {
         field: 'date_start',
         headerIntlKey: 'admin.billing.table.history.label.date_start',
@@ -41,8 +41,6 @@ export const columns: TableColumns[] = [
     },
 ];
 
-// TODO (billing): Use the getStatsForBillingHistoryTable query function as the primary source of data for this view
-//   when a database table containing historic billing data is available.
 function BillingHistoryTable() {
     const intl = useIntl();
 

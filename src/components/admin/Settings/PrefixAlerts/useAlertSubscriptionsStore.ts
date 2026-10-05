@@ -1,53 +1,125 @@
 import type { PostgrestError } from '@supabase/postgrest-js';
 import type { ReducedAlertSubscription } from 'src/api/types';
+import type {
+    AlertConfigOptions,
+    SubscriptionMetadata,
+    SubscriptionMetadataDictionary,
+} from 'src/components/admin/Settings/PrefixAlerts/types';
+import type { PrefixedName_ErrorStates } from 'src/components/inputs/PrefixedName/types';
 import type { AlertTypeInfo } from 'src/gql-types/graphql';
-import type { CombinedError } from 'urql';
+import type { Schema } from 'src/types';
+import type { WithRequiredProperty } from 'src/types/utils';
 
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
 import produce from 'immer';
+import { isEmpty, omit } from 'lodash';
+import { type CombinedError } from 'urql';
 
+import {
+    appendWithForwardSlash,
+    hasOwnProperty,
+    sortByAlertType,
+} from 'src/utils/misc-utils';
+import { bundleSubscriptionsByPrefix } from 'src/utils/notification-utils';
 import { devtoolsOptions } from 'src/utils/store-utils';
+import { validateCatalogName } from 'src/validation';
 
 interface AlertSubscriptionState {
-    alertTypes: AlertTypeInfo[];
-    emailErrorsExist: boolean;
-    initializationError: CombinedError | PostgrestError | null | undefined;
-    prefixErrorsExist: boolean;
-    saveErrors: (CombinedError | PostgrestError | null | undefined)[];
-    subscription: Pick<
-        ReducedAlertSubscription,
-        'alertTypes' | 'catalogPrefix' | 'email'
-    >;
+    addTemplatedSubscription: () => void;
+    alertTypeOptions: AlertTypeInfo[];
+    alertTypeOptionsFetching: boolean;
+    catalogPrefix: string;
+    duplicatePrefixExists: boolean;
+    initializationErrors: (CombinedError | PostgrestError)[];
+    initializeAlertTypeOptions: (
+        values: AlertTypeInfo[],
+        fetching: boolean
+    ) => void;
+    initializeGlobalPrefixSettings: (
+        targetConfigs: WithRequiredProperty<AlertConfigOptions, 'standard'>
+    ) => void;
+    isEditFlow: boolean;
+    markSubscriptionForDeletion: (subscriptionId: string) => void;
+    mutableSubscriptionMetadata: SubscriptionMetadata;
+    prefixErrors: PrefixedName_ErrorStates[];
+    serverErrors: (CombinedError | PostgrestError)[];
+    subscriptionMetadata: SubscriptionMetadataDictionary;
     resetState: () => void;
-    setAlertTypes: (values: AlertTypeInfo[], initialize?: boolean) => void;
-    setEmailErrorsExist: (
-        value: AlertSubscriptionState['emailErrorsExist']
+    setEmailErrorsExist: (value: boolean, subscriptionId: string) => void;
+    setGlobalPrefixSettings: (
+        alertCondition: Schema,
+        targetSetting: string
     ) => void;
-    setInitializationError: (
-        value: AlertSubscriptionState['initializationError']
+    setInitializationErrors: (
+        values: (CombinedError | PostgrestError | null | undefined)[]
     ) => void;
-    setSaveErrors: (value: AlertSubscriptionState['saveErrors']) => void;
-    setSubscribedEmail: (value: string) => void;
-    setSubscribedPrefix: (value: string, errors: string | null) => void;
+    setIsEditFlow: (value: AlertSubscriptionState['isEditFlow']) => void;
+    setServerErrors: (
+        values: (CombinedError | PostgrestError | null | undefined)[],
+        override?: boolean
+    ) => void;
+    setSingleAlertType: (
+        value: string,
+        selected: boolean,
+        catalogPrefix?: string,
+        id?: string
+    ) => void;
+    setSubscribedEmail: (value: string, subscriptionId: string) => void;
+    setSubscribedPrefix: (value: string) => void;
+    setSubscriptionMetadata: (value: ReducedAlertSubscription[]) => void;
+    toggleSubscriptionViewingStatus: (subscriptionId: string) => void;
 }
+
+const getImmutableSubscriptionIndex = (
+    state: AlertSubscriptionState | Partial<AlertSubscriptionState>,
+    subscriptionId: string
+): number => {
+    if (
+        !state.catalogPrefix ||
+        !subscriptionId ||
+        !hasOwnProperty(state, 'subscriptionMetadata') ||
+        isEmpty(state.subscriptionMetadata) ||
+        !hasOwnProperty(state.subscriptionMetadata, state.catalogPrefix)
+    ) {
+        return -1;
+    }
+
+    return state.subscriptionMetadata[
+        state.catalogPrefix
+    ].subscriptions.findIndex(
+        (subscription) => subscription.id === subscriptionId
+    );
+};
 
 const getInitialState = (): Pick<
     AlertSubscriptionState,
-    | 'alertTypes'
-    | 'emailErrorsExist'
-    | 'initializationError'
-    | 'prefixErrorsExist'
-    | 'saveErrors'
-    | 'subscription'
+    | 'alertTypeOptions'
+    | 'alertTypeOptionsFetching'
+    | 'catalogPrefix'
+    | 'duplicatePrefixExists'
+    | 'initializationErrors'
+    | 'isEditFlow'
+    | 'mutableSubscriptionMetadata'
+    | 'prefixErrors'
+    | 'serverErrors'
+    | 'subscriptionMetadata'
 > => ({
-    alertTypes: [],
-    emailErrorsExist: false,
-    initializationError: null,
-    prefixErrorsExist: false,
-    saveErrors: [],
-    subscription: { alertTypes: [], catalogPrefix: '', email: '' },
+    alertTypeOptions: [],
+    alertTypeOptionsFetching: false,
+    catalogPrefix: '',
+    duplicatePrefixExists: false,
+    initializationErrors: [],
+    isEditFlow: false,
+    mutableSubscriptionMetadata: {
+        configs: { effective: {}, standard: null },
+        explicitConfigRef: null,
+        subscriptions: [],
+    },
+    prefixErrors: [],
+    serverErrors: [],
+    subscriptionMetadata: {},
 });
 
 const name = 'estuary.alert-subscriptions-store';
@@ -57,67 +129,440 @@ const useAlertSubscriptionsStore = create<AlertSubscriptionState>()(
         return {
             ...getInitialState(),
 
-            resetState: () => set(getInitialState(), false, 'state reset'),
-
-            setAlertTypes: (values, initialize) =>
+            addTemplatedSubscription: () =>
                 set(
                     produce((state: AlertSubscriptionState) => {
-                        if (initialize) {
-                            state.alertTypes = values;
-                        } else {
-                            state.subscription.alertTypes = values.map(
-                                ({ alertType: name }) => name
-                            );
+                        if (
+                            !state.catalogPrefix ||
+                            state.alertTypeOptions.length === 0
+                        ) {
+                            return;
                         }
+
+                        const templatedSubscription = {
+                            alertTypes: state.alertTypeOptions
+                                .filter(
+                                    (option) =>
+                                        option.isDefault || option.isSystem
+                                )
+                                .map(({ alertType }) => alertType),
+                            catalogPrefix: state.catalogPrefix,
+                            email: '',
+                            id: crypto.randomUUID(),
+                            viewing: true,
+                        };
+
+                        state.mutableSubscriptionMetadata.subscriptions = [
+                            templatedSubscription,
+                            ...state.mutableSubscriptionMetadata.subscriptions,
+                        ];
                     }),
                     false,
-                    'alert types set'
+                    'templated subscription added'
                 ),
 
-            setEmailErrorsExist: (value) =>
+            initializeAlertTypeOptions: (values, fetching) =>
                 set(
                     produce((state: AlertSubscriptionState) => {
-                        state.emailErrorsExist = value;
+                        state.alertTypeOptions = [...values].sort(
+                            (first, second) =>
+                                sortByAlertType(
+                                    {
+                                        isSystemAlert: first.isSystem,
+                                        value: first.displayName,
+                                    },
+                                    {
+                                        isSystemAlert: second.isSystem,
+                                        value: second.displayName,
+                                    },
+                                    'asc'
+                                )
+                        );
+                        state.alertTypeOptionsFetching = fetching;
+                    }),
+                    false,
+                    'alert type options initialized'
+                ),
+
+            initializeGlobalPrefixSettings: (targetConfigs) =>
+                set(
+                    produce((state: AlertSubscriptionState) => {
+                        state.mutableSubscriptionMetadata.configs =
+                            targetConfigs;
+
+                        state.mutableSubscriptionMetadata.explicitConfigRef =
+                            targetConfigs.standard;
+                    }),
+                    false,
+                    'global prefix settings initialized'
+                ),
+
+            markSubscriptionForDeletion: (subscriptionId) =>
+                set(
+                    produce((state: AlertSubscriptionState) => {
+                        const immutableSubscriptionIndex =
+                            getImmutableSubscriptionIndex(
+                                state,
+                                subscriptionId
+                            );
+
+                        // If the alert subscription does not exist in the database,
+                        // it can be removed entirely from the array of mutable subscriptions.
+                        if (immutableSubscriptionIndex === -1) {
+                            state.mutableSubscriptionMetadata.subscriptions =
+                                state.mutableSubscriptionMetadata.subscriptions.filter(
+                                    (subscription) =>
+                                        subscription.id !== subscriptionId
+                                );
+
+                            return;
+                        }
+
+                        // If the alert subscription does exist in the database,
+                        // the subscription metadata should be preserved in the
+                        // array of mutable subscriptions with it marked for deletion
+                        // via the corresponding GraphQL endpoint.
+                        const mutableSubscriptionIndex =
+                            state.mutableSubscriptionMetadata.subscriptions.findIndex(
+                                (subscription) =>
+                                    subscription.id === subscriptionId
+                            );
+
+                        state.mutableSubscriptionMetadata.subscriptions[
+                            mutableSubscriptionIndex
+                        ].deleted = true;
+                    }),
+                    false,
+                    'mark subscription for deletion'
+                ),
+
+            resetState: () =>
+                set(
+                    produce((state: AlertSubscriptionState) => {
+                        return {
+                            ...getInitialState(),
+                            subscriptionMetadata: state.subscriptionMetadata,
+                        };
+                    }),
+                    false,
+                    'state reset'
+                ),
+
+            setEmailErrorsExist: (value, subscriptionId) =>
+                set(
+                    produce((state: AlertSubscriptionState) => {
+                        const subscriptionIndex =
+                            state.mutableSubscriptionMetadata.subscriptions.findIndex(
+                                (subscription) =>
+                                    subscription.id === subscriptionId
+                            );
+
+                        if (subscriptionIndex === -1) {
+                            return;
+                        }
+
+                        state.mutableSubscriptionMetadata.subscriptions[
+                            subscriptionIndex
+                        ].emailErrorsExist = value;
                     }),
                     false,
                     'email errors exist set'
                 ),
 
-            setInitializationError: (value) =>
+            setGlobalPrefixSettings: (alertCondition, targetSetting) =>
                 set(
                     produce((state: AlertSubscriptionState) => {
-                        state.initializationError = value;
+                        if (targetSetting.length === 0) {
+                            return;
+                        }
+
+                        const alertConditionEmpty = isEmpty(alertCondition);
+
+                        if (
+                            state.mutableSubscriptionMetadata.configs.standard
+                        ) {
+                            const settingConfigKeys = hasOwnProperty(
+                                state.mutableSubscriptionMetadata.configs
+                                    .standard,
+                                targetSetting
+                            )
+                                ? Object.keys(
+                                      state.mutableSubscriptionMetadata.configs
+                                          .standard[targetSetting]
+                                  )
+                                : [];
+
+                            if (
+                                alertConditionEmpty &&
+                                settingConfigKeys.length > 1 &&
+                                settingConfigKeys.includes('condition')
+                            ) {
+                                state.mutableSubscriptionMetadata.configs.standard[
+                                    targetSetting
+                                ] = omit(
+                                    state.mutableSubscriptionMetadata.configs
+                                        .standard[targetSetting],
+                                    'condition'
+                                );
+                            } else if (
+                                alertConditionEmpty &&
+                                ((settingConfigKeys.length === 1 &&
+                                    settingConfigKeys.includes('condition')) ||
+                                    settingConfigKeys.length === 0)
+                            ) {
+                                state.mutableSubscriptionMetadata.configs.standard =
+                                    omit(
+                                        state.mutableSubscriptionMetadata
+                                            .configs.standard,
+                                        targetSetting
+                                    ) ?? {};
+                            } else {
+                                const existingConfig =
+                                    state.mutableSubscriptionMetadata.configs
+                                        .standard ?? {};
+
+                                state.mutableSubscriptionMetadata.configs.standard =
+                                    {
+                                        ...existingConfig,
+                                        [targetSetting]: {
+                                            ...state.mutableSubscriptionMetadata
+                                                .configs.standard[
+                                                targetSetting
+                                            ],
+                                            condition: alertCondition,
+                                        },
+                                    };
+                            }
+
+                            return;
+                        }
+
+                        if (!alertConditionEmpty) {
+                            state.mutableSubscriptionMetadata.configs.standard =
+                                {
+                                    [targetSetting]: {
+                                        condition: alertCondition,
+                                    },
+                                };
+                        }
                     }),
                     false,
-                    'initialization error set'
+                    'global prefix settings set'
                 ),
 
-            setSaveErrors: (value) =>
+            setInitializationErrors: (values) =>
                 set(
                     produce((state: AlertSubscriptionState) => {
-                        state.saveErrors = value;
+                        state.initializationErrors = values.filter(
+                            (error) =>
+                                error !== null && typeof error !== 'undefined'
+                        );
                     }),
                     false,
-                    'save errors set'
+                    'initialization errors set'
                 ),
 
-            setSubscribedEmail: (value) =>
+            setIsEditFlow: (value) =>
                 set(
                     produce((state: AlertSubscriptionState) => {
-                        state.subscription.email = value;
+                        state.isEditFlow = value;
+                    }),
+                    false,
+                    'edit workflow flag set'
+                ),
+
+            setServerErrors: (values, override) =>
+                set(
+                    produce((state: AlertSubscriptionState) => {
+                        const filteredErrors = values.filter(
+                            (error) =>
+                                error !== null && typeof error !== 'undefined'
+                        );
+
+                        state.serverErrors = override
+                            ? filteredErrors
+                            : state.serverErrors.concat(filteredErrors);
+                    }),
+                    false,
+                    'server errors set'
+                ),
+
+            setSingleAlertType: (value, selected, catalogPrefix, id) =>
+                set(
+                    produce((state: AlertSubscriptionState) => {
+                        if (!catalogPrefix) {
+                            return;
+                        }
+
+                        const systemAlertTypes = state.alertTypeOptions
+                            .filter(({ isSystem }) => isSystem)
+                            .map(({ alertType }) => alertType);
+
+                        if (
+                            systemAlertTypes.some(
+                                (alertType) => alertType === value
+                            )
+                        ) {
+                            return;
+                        }
+
+                        const targetSubscriptions =
+                            state.mutableSubscriptionMetadata.subscriptions;
+
+                        const targetIndex = targetSubscriptions.findIndex(
+                            (subscription) => subscription.id === id
+                        );
+
+                        if (targetIndex === -1) {
+                            const baseAlertTypes = state.alertTypeOptions
+                                .filter(
+                                    ({ alertType, isDefault, isSystem }) =>
+                                        isSystem ||
+                                        (isDefault && alertType !== value)
+                                )
+                                .map(({ alertType }) => alertType);
+
+                            state.mutableSubscriptionMetadata.subscriptions = [
+                                ...targetSubscriptions,
+                                {
+                                    alertTypes: [...baseAlertTypes, value],
+                                    catalogPrefix,
+                                    email: '',
+                                    id: id ?? crypto.randomUUID(),
+                                    viewing: true,
+                                },
+                            ];
+
+                            return;
+                        }
+
+                        const { alertTypes: previousAlertTypes } =
+                            state.mutableSubscriptionMetadata.subscriptions[
+                                targetIndex
+                            ];
+
+                        state.mutableSubscriptionMetadata.subscriptions[
+                            targetIndex
+                        ].alertTypes = selected
+                            ? [...previousAlertTypes, value]
+                            : previousAlertTypes.filter(
+                                  (alertType) => alertType !== value
+                              );
+                    }),
+                    false,
+                    'single alert type set'
+                ),
+
+            setSubscribedEmail: (value, subscriptionId) =>
+                set(
+                    produce((state: AlertSubscriptionState) => {
+                        const subscriptionIndex =
+                            state.mutableSubscriptionMetadata.subscriptions.findIndex(
+                                (subscription) =>
+                                    subscription.id === subscriptionId
+                            );
+
+                        if (subscriptionIndex === -1) {
+                            return;
+                        }
+
+                        state.mutableSubscriptionMetadata.subscriptions[
+                            subscriptionIndex
+                        ].email = value;
                     }),
                     false,
                     'subscribed email set'
                 ),
 
-            setSubscribedPrefix: (value, errors) =>
+            setSubscribedPrefix: (value) =>
                 set(
                     produce((state: AlertSubscriptionState) => {
-                        state.subscription.catalogPrefix = value;
-                        state.prefixErrorsExist = Boolean(errors);
+                        const formattedValue = appendWithForwardSlash(value);
+
+                        // Reset mutable subscription metadata state whenever the
+                        // stored prefix meaningfully diverges from the prefix input,
+                        // preserving templated subscriptions when the prefix input
+                        // does not have existing subscribers.
+                        const formattedPreviousPrefix = appendWithForwardSlash(
+                            state.catalogPrefix
+                        );
+
+                        if (formattedPreviousPrefix !== formattedValue) {
+                            state.mutableSubscriptionMetadata = {
+                                ...getInitialState()
+                                    .mutableSubscriptionMetadata,
+                                subscriptions:
+                                    formattedValue.length > 0 &&
+                                    hasOwnProperty(
+                                        state.subscriptionMetadata,
+                                        formattedValue
+                                    )
+                                        ? state.subscriptionMetadata[
+                                              formattedValue
+                                          ].subscriptions
+                                        : state.mutableSubscriptionMetadata.subscriptions
+                                              .filter(
+                                                  ({ email }) =>
+                                                      email.length === 0
+                                              )
+                                              .map((subscription) => ({
+                                                  ...subscription,
+                                                  catalogPrefix: formattedValue,
+                                              })),
+                            };
+                        }
+
+                        // Update the stored catalog prefix.
+                        state.catalogPrefix = value;
+
+                        // Validate the prefix and store validation errors.
+                        state.prefixErrors =
+                            validateCatalogName(value, false, true) ?? [];
+
+                        state.duplicatePrefixExists =
+                            !state.isEditFlow &&
+                            Object.keys(state.subscriptionMetadata).includes(
+                                formattedValue
+                            );
                     }),
                     false,
                     'subscribed prefix set'
+                ),
+
+            setSubscriptionMetadata: (value) =>
+                set(
+                    produce((state: AlertSubscriptionState) => {
+                        state.subscriptionMetadata =
+                            bundleSubscriptionsByPrefix(value);
+                    }),
+                    false,
+                    'subscription metadata set'
+                ),
+
+            toggleSubscriptionViewingStatus: (subscriptionId) =>
+                set(
+                    produce((state: AlertSubscriptionState) => {
+                        const subscriptionIndex =
+                            state.mutableSubscriptionMetadata.subscriptions.findIndex(
+                                (subscription) =>
+                                    subscription.id === subscriptionId
+                            );
+
+                        if (subscriptionIndex === -1) {
+                            return;
+                        }
+
+                        const previousValue =
+                            state.mutableSubscriptionMetadata.subscriptions[
+                                subscriptionIndex
+                            ].viewing;
+
+                        state.mutableSubscriptionMetadata.subscriptions[
+                            subscriptionIndex
+                        ].viewing = !previousValue;
+                    }),
+                    false,
+                    'subscription viewing status toggled'
                 ),
         };
     }, devtoolsOptions(name))

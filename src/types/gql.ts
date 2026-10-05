@@ -1,7 +1,12 @@
-import type { AlertType, AlertTypeInfo } from 'src/gql-types/graphql';
+import type {
+    AlertConfigsFilter,
+    AlertType,
+    AlertTypeInfo,
+} from 'src/gql-types/graphql';
 import type { ShardEntityTypes } from 'src/stores/ShardDetail/types';
+import type { Schema } from 'src/types/index';
 
-export interface AlertDetailsRecipients {
+interface AlertDetailsRecipients {
     email: string;
     full_name?: string;
 }
@@ -26,7 +31,7 @@ export interface AlertNodeEdge {
     node: AlertNode;
 }
 
-export interface LiveSpecNode {
+interface LiveSpecNode {
     activeAlerts?: AlertNode[];
     alertHistory?: {
         edges: AlertNodeEdge[];
@@ -36,14 +41,14 @@ export interface LiveSpecNode {
 
 // PAGINATION
 
-export interface PageInfo {
+interface PageInfo {
     hasNextPage: boolean;
     hasPreviousPage: boolean;
     startCursor: string;
     endCursor: string;
 }
 
-export type PageInfoReverse = Pick<
+type PageInfoReverse = Pick<
     PageInfo,
     'hasNextPage' | 'hasPreviousPage' | 'startCursor' | 'endCursor'
 >;
@@ -61,7 +66,7 @@ export interface AlertsVariables {
 
 // TODO (typing) - we need more versions of pagination
 //  as some endpoints only support before/last (AlertHistory)
-export interface PaginationVariables {
+interface PaginationVariables {
     before?: string | undefined;
     after?: string | undefined;
     first?: number | undefined;
@@ -72,7 +77,7 @@ export type WithPagination<T> = T & PaginationVariables;
 
 // QUERY RESPONSES
 
-export type DefaultAlertingQueryResponse = {
+type DefaultAlertingQueryResponse = {
     alerts: {
         edges: {
             node: AlertNode;
@@ -96,6 +101,12 @@ export interface ActiveAlertCountQueryResponse {
 export type AlertHistoryForTaskQueryResponse = DefaultAlertingQueryResponse;
 export type AlertingOverviewQueryResponse = AlertHistoryForTaskQueryResponse;
 
+export interface AlertConfigQueryInput {
+    after?: string;
+    filter?: AlertConfigsFilter;
+    first?: number;
+}
+
 export interface AlertHistoryQueryResponse {
     liveSpecs: {
         edges: {
@@ -104,24 +115,18 @@ export interface AlertHistoryQueryResponse {
     };
 }
 
-export interface AuthRolesNode {
-    prefix: string;
-    userCapability: string;
-}
-export interface AuthRolesQueryResponse {
-    prefixes: {
-        edges: {
-            node: AuthRolesNode;
-        }[];
-        pageInfo?: Pick<PageInfo, 'hasNextPage' | 'endCursor'>;
-    };
-}
-
 export interface AlertSubscription extends BaseFields {
     alertTypes: string[];
     catalogPrefix: string;
     destination: string;
     email: string;
+}
+
+// This interface is used for the upsert alert config mutation.
+export interface AlertConfigMutationInput {
+    catalogPrefixOrName: string;
+    config: Schema;
+    detail?: string;
 }
 
 // This interface is used for create and update alert subscription mutations.

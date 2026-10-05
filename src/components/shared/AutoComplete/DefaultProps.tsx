@@ -25,7 +25,7 @@ const autoCompleteDefaults: AutocompleteProps<any, any, false, false, 'div'> = {
     size: 'small',
 };
 
-export const autoCompleteDefaults_Virtual: AutocompleteProps<
+const autoCompleteDefaults_Virtual: AutocompleteProps<
     any,
     any,
     false,

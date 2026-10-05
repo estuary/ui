@@ -133,7 +133,9 @@ type AlertConfigEntryEdge {
 
 """
 Optional filter for the `alertConfigs` query. When omitted, all accessible
-rows are returned.
+rows are returned. A filter only narrows those results; the caller's
+catalog-read scope is enforced independently, so it can never widen what a
+caller may see.
 """
 input AlertConfigsFilter {
   """Filter on the `catalog_prefix_or_name` column."""
@@ -315,6 +317,30 @@ input AzurePrivateLinkInput {
   serviceName: String!
 }
 
+type BillingAddress {
+  city: String
+  country: String
+  line1: String
+  line2: String
+  postalCode: String
+  state: String
+}
+
+input BillingAddressInput {
+  city: String
+  country: String
+  line1: String
+  line2: String
+  postalCode: String
+  state: String
+}
+
+type BillingContact {
+  address: BillingAddress
+  email: String
+  name: String
+}
+
 type BillingPaymentMethodPayload {
   paymentMethods: [PaymentMethod!]!
   primaryPaymentMethod: PaymentMethod
@@ -341,15 +367,43 @@ enum Capability {
 enum CapabilityBit {
   Assume
   CatalogRead
+  CreateApiKey
   CreateGrant
   CreateInviteLink
+  CreateServiceAccount
+  DecryptSecret
   Delegate
   DeleteGrant
+  EditBilling
+  EditSecret
   JournalAppend
   JournalRead
   ModifyDataPlanePrivateNetworking
+  QueryServiceAccounts
+  RevokeApiKey
   SpecEdit
+  ViewBilling
   ViewDataPlanePrivateNetworking
+  ViewSecret
+}
+
+"""
+Stats for one binding of a capture, keyed by the collection it writes to.
+"""
+type CaptureBindingStats {
+  """The collection name."""
+  collection: String!
+
+  """
+  The most recent publish timestamp of documents captured by this binding.
+  """
+  lastPublishedAt: DateTime
+
+  """Documents written to the collection, after combining."""
+  out: DocsAndBytes
+
+  """Documents from the connector, before combining."""
+  right: DocsAndBytes
 }
 
 type CardPaymentMethodDetails {
@@ -357,6 +411,153 @@ type CardPaymentMethodDetails {
   expMonth: Int!
   expYear: Int!
   last4: String
+}
+
+"""
+A single stored reporting bucket. The stats for a single catalog name over a
+single window of the requested time grain.
+"""
+type CatalogStats {
+  """
+  The name of the catalog that this stats bucket is associated with.
+  The name is either a task, a collection, or a prefix that rolls up both.
+  """
+  catalogName: String!
+
+  """Time grain at which this bucket is aggregated over."""
+  grain: CatalogStatsGrain!
+
+  """
+  Combined totals across every task and collection contributing to the row.
+  """
+  statsSummary: CatalogStatsSummary!
+
+  """
+  Binding-level detail, present only on exact task rows. Prefix rollup
+  rows aggregate across tasks and carry none.
+  """
+  taskStats: CatalogTaskStats
+
+  """
+  Start of the window this bucket covers, always on a `grain` boundary:
+  the hour for `HOURLY`, midnight for `DAILY`, and day 1 at midnight for
+  `MONTHLY`. The window runs up to, but does not include, the next one.
+  """
+  timestamp: DateTime!
+}
+
+input CatalogStatsBy {
+  """Exclusive upper bound, which must fall on a `grain` boundary."""
+  end: DateTime!
+
+  """Time grain to retrieve aggregates stats for."""
+  grain: CatalogStatsGrain!
+
+  """
+  Exact catalog names. A prefix rollup is addressed by its own
+  trailing-slash name, such as `acmeCo/`. A minimum of 1 name is
+  required. A maximum of 100 names are supported.
+  """
+  names: [String!]!
+
+  """Inclusive lower bound, which must fall on a `grain` boundary."""
+  start: DateTime!
+}
+
+type CatalogStatsConnection {
+  """A list of edges."""
+  edges: [CatalogStatsEdge!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+}
+
+"""An edge in a connection."""
+type CatalogStatsEdge {
+  """A cursor for use in pagination"""
+  cursor: String!
+
+  """The item at the end of the edge"""
+  node: CatalogStats!
+}
+
+"""Time grain at which a bucket aggregates."""
+enum CatalogStatsGrain {
+  DAILY
+  HOURLY
+  MONTHLY
+}
+
+"""
+Combined totals across every task and collection contributing to a bucket.
+
+A bucket's name is a task, a collection, or a prefix that rolls up both, so
+which counters are non-zero depends on what the name refers to. The `ByMe`
+pair counts what a task moved; the `FromMe` and `ToMe` pair counts what
+flowed through a collection.
+"""
+type CatalogStatsSummary {
+  """Total number of logged errors."""
+  errors: UInt64!
+
+  """Total number of shard failures."""
+  failures: UInt64!
+
+  """The most recent publish timestamp of documents in this collection."""
+  lastPublishedAt: DateTime
+
+  """
+  Documents a task read from the collections it sources from. Captures
+  read from no collection, so this covers materializations and
+  derivations.
+  """
+  readByMe: DocsAndBytes!
+
+  """Documents read out of a collection by the tasks that source from it."""
+  readFromMe: DocsAndBytes!
+
+  """Total number of transactions that have been successfully processed."""
+  txnCount: UInt64!
+
+  """
+  Cumulative number of metered seconds of task usage, which is what
+  usage billing is drawn from.
+  """
+  usageSeconds: UInt64!
+
+  """Total number of logged warnings."""
+  warnings: UInt64!
+
+  """
+  Documents a task wrote to the collections it produces. Materializations
+  write to an endpoint rather than a collection, so this covers captures
+  and derivations.
+  """
+  writtenByMe: DocsAndBytes!
+
+  """Documents written into a collection by the tasks that produce it."""
+  writtenToMe: DocsAndBytes!
+}
+
+"""
+Per-task-kind breakouts. A given row populates at most one of these, since a
+task is a capture, a derivation, or a materialization.
+"""
+type CatalogTaskStats {
+  """
+  List of stats for bindings of a capture task.
+  Each entry represents stats for a single binding.
+  """
+  capture: [CaptureBindingStats!]!
+
+  """Derivation stats."""
+  derive: DeriveStats
+
+  """
+  List of stats for bindings of a materialization task.
+  Each entry represents stats for a single binding.
+  """
+  materialize: [MaterializeBindingStats!]!
 }
 
 enum CatalogType {
@@ -577,14 +778,33 @@ type Controller {
   updatedAt: DateTime!
 }
 
+type CreateApiKeyResult {
+  id: Id!
+
+  """
+  The bearer credential, returned exactly once. Present it as an
+  `Authorization: Bearer` token or exchange it at `POST /api/v1/auth/token`.
+  """
+  secret: Sensitive!
+
+  """
+  The owning account in its post-mint state, so the new token merges into
+  client caches without a follow-up query.
+  """
+  serviceAccount: ServiceAccount!
+}
+
 type CreateBillingSetupIntentPayload {
-  clientSecret: String!
+  clientSecret: Sensitive!
 }
 
 """Result of creating a storage mapping."""
 type CreateStorageMappingResult {
   """The catalog prefix for which the storage mapping was created."""
-  catalogPrefix: Prefix!
+  catalogPrefix: Prefix! @deprecated(reason: "Use storageMapping.catalogPrefix instead.")
+
+  """The newly created storage mapping."""
+  storageMapping: StorageMapping!
 }
 
 """A data plane where tasks execute and collections are stored."""
@@ -614,6 +834,9 @@ type DataPlane {
   """CIDR blocks for this data-plane."""
   cidrBlocks: [String!]!
 
+  """Whether this data plane is closed to new selection."""
+  closed: Boolean!
+
   """Cloud provider where this data-plane is hosted."""
   cloudProvider: DataPlaneCloudProvider!
 
@@ -629,6 +852,12 @@ type DataPlane {
   """GCP service account email for this data-plane."""
   gcpServiceAccountEmail: String
 
+  """
+  Unique id of this data-plane, as referenced by a `LiveSpec`'s
+  `dataPlaneId`.
+  """
+  id: Id!
+
   """Whether this is a public data-plane."""
   isPublic: Boolean!
 
@@ -636,11 +865,11 @@ type DataPlane {
   name: String!
 
   """
-  Configured private link endpoints for this data-plane. Replacing this
-  list (via `updateDataPlanePrivateLinks`) triggers reconvergence by the
-  data-plane controller on its next poll. Returns an empty list to
-  callers that lack the `ViewDataPlanePrivateNetworking` capability on
-  this data plane.
+  Configured private links for this data-plane, each with its
+  controller-observed provisioning status. Mutating links (via
+  `addDataPlanePrivateLink` and friends) triggers reconvergence by the
+  data-plane controller. Returns an empty list to callers that lack the
+  `ViewDataPlanePrivateNetworking` capability on this data plane.
   """
   privateLinks: [PrivateLink!]!
 
@@ -685,6 +914,34 @@ type DataPlaneEdge {
   node: DataPlane!
 }
 
+"""
+Filter for the `dataPlanes` query. Each field is optional and only
+narrows results. A filter cannot show data planes the caller cannot read.
+"""
+input DataPlanesFilter {
+  """Filter on the `closed` flag."""
+  closed: BoolFilter
+
+  """
+  Match data planes by id, such as a `LiveSpec`'s `dataPlaneId`.
+  Unknown or unauthorized ids are silently dropped.
+  """
+  id: IdFilter
+
+  """
+  Filter on the `public` flag, which is derived from the data plane's
+  name prefix (`ops/dp/public/` vs `ops/dp/private/`).
+  """
+  public: BoolFilter
+
+  """
+  Match data planes by tenant. Only data planes whose name prefix matches the tenant are returned.
+  All public data planes are considered to match all tenants. Unknown tenants are ignored and only
+  public data planes are returned.
+  """
+  tenant: StringFilter
+}
+
 input DateFilter {
   gt: NaiveDate
   lt: NaiveDate
@@ -696,6 +953,54 @@ Implement the DateTime<Utc> scalar
 The input/output is a string in RFC3339 format.
 """
 scalar DateTime
+
+"""
+Stats for a derivation. A derivation has a single output collection, so
+unlike captures and materializations there is one block rather than a list.
+"""
+type DeriveStats {
+  """
+  The most recent publish timestamp of documents written to the derived collection.
+  """
+  lastPublishedAt: DateTime
+
+  """Documents written to the derived collection, after combining."""
+  out: DocsAndBytes
+
+  """Documents published by the connector, before combining."""
+  published: DocsAndBytes
+
+  """List of metrics for the transforms in this derivation."""
+  transforms: [DeriveTransformStats!]!
+}
+
+"""
+Stats for one transform of a derivation. Unlike the capture and materialize
+breakouts, these are keyed by transform name, and the collection read is a
+separate field.
+"""
+type DeriveTransformStats {
+  """
+  Bytes behind across the transform's source journals. A historical row
+  that predates this counter reports zero, indistinguishable from a
+  transform that is genuinely caught up.
+  """
+  bytesBehind: UInt64!
+
+  """Input documents that were read by this transform."""
+  input: DocsAndBytes
+
+  """
+  The most recent publish timestamp from the source documents that were read by this transform.
+  """
+  lastSourcePublishedAt: DateTime
+
+  """The name of the collection that this transform sourced from."""
+  source: String!
+
+  """The transform name."""
+  transform: String!
+}
 
 """A capture binding that has changed as a result of a discover"""
 type DiscoverChange {
@@ -711,6 +1016,143 @@ type DiscoverChange {
   target: Collection!
 }
 
+"""A count of documents and their cumulative size."""
+type DocsAndBytes {
+  """Cumulative total size of the documents, in bytes."""
+  bytesTotal: UInt64!
+
+  """The count of JSON documents."""
+  docsTotal: UInt64!
+}
+
+"""
+A draft change-set of Flow catalog specifications.
+Only its owner can access it; catalog edit permissions are checked when
+publishing.
+"""
+type Draft {
+  createdAt: DateTime!
+
+  """Description of this draft."""
+  detail: String
+
+  """
+  Errors found while validating, testing, or publishing this draft.
+  Staging and unstaging specifications do not clear these errors, so they
+  may describe an earlier version of the draft.
+  """
+  errors: [Error!]!
+  id: Id!
+
+  """Number of staged specifications."""
+  numSpecs: Int!
+
+  """Staged specifications, in catalog-name order."""
+  specs(after: String, first: Int): DraftSpecConnection!
+  updatedAt: DateTime!
+}
+
+type DraftConnection {
+  """A list of edges."""
+  edges: [DraftEdge!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+}
+
+"""An edge in a connection."""
+type DraftEdge {
+  """A cursor for use in pagination"""
+  cursor: String!
+
+  """The item at the end of the edge"""
+  node: Draft!
+}
+
+"""A proposed catalog specification of a draft."""
+type DraftSpec {
+  catalogName: Name!
+  catalogType: CatalogType
+
+  """Description of the staged change."""
+  detail: String
+
+  """
+  Publication precondition: publishing fails if the live specification's
+  `lastPubId` differs. The zero ID requires that no live specification
+  exists; null imposes no precondition.
+  """
+  expectPubId: Id
+
+  """
+  Whether the staged specification is textually identical to the published
+  one, so that a no-op can be told apart from a real edit. The comparison is
+  over the serialized specification, so a reordered document reads as changed.
+  False if no live specification exists or the caller lacks CatalogRead on it.
+  """
+  isUnchanged: Boolean!
+
+  """
+  Last publication ID which updated the live specification, or null if
+  it does not exist or the caller lacks CatalogRead on its name.
+  """
+  lastPubId: Id
+
+  """
+  A serialized catalog specification. Null, together with a null
+  `catalogType`, stages deletion of the specification when this draft is
+  published.
+  """
+  model: JSON
+  updatedAt: DateTime!
+}
+
+type DraftSpecConnection {
+  """A list of edges."""
+  edges: [DraftSpecEdge!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+}
+
+"""An edge in a connection."""
+type DraftSpecEdge {
+  """A cursor for use in pagination"""
+  cursor: String!
+
+  """The item at the end of the edge"""
+  node: DraftSpec!
+}
+
+input DraftSpecInput {
+  catalogName: Name!
+  catalogType: CatalogType
+
+  """
+  Description of the staged change. Omission or null clears the previous
+  description.
+  """
+  detail: String
+
+  """
+  Require the live specification's `lastPubId` to match when publishing.
+  When editing an existing specification, copy its `lastPubId` here to
+  prevent publication from overwriting intervening changes.
+  The zero ID requires that no live specification exists. Omitting this
+  field or passing null clears any previously staged precondition.
+  """
+  expectPubId: Id
+
+  """
+  The catalog specification to stage. Null, together with a null `catalogType`,
+  stages a deletion of the live specification instead.
+  
+  Both fields are required to be present. Omitting either is an error
+  rather than a deletion, so a partial input cannot silently become one.
+  """
+  model: JSON
+}
+
 type EffectiveAlertConfig {
   config: JSON!
   provenance: [FieldProvenance!]!
@@ -721,7 +1163,11 @@ A generic error that can be associated with a particular draft spec for a given 
 """
 type Error {
   catalogName: String!
+
+  """Description of the error."""
   detail: String!
+
+  """Location scope of the error within the draft."""
   scope: String
 }
 
@@ -747,6 +1193,11 @@ input GCPPrivateServiceConnectInput {
 }
 
 scalar Id
+
+input IdFilter {
+  """Match any id in this non-empty set."""
+  in: [Id!]
+}
 
 """Status of the inferred schema"""
 type InferredSchemaStatus {
@@ -826,6 +1277,11 @@ type InviteLinkEdge {
   node: InviteLink!
 }
 
+"""
+Composable filter for the `inviteLinks` query. Every field is optional and
+only narrows the result set; the caller's admin scope is enforced
+independently, so a filter can never widen what a caller may see.
+"""
 input InviteLinksFilter {
   catalogPrefix: PrefixFilter
   singleUse: BoolFilter
@@ -1037,13 +1493,86 @@ type LockFailure {
   expected: Id!
 }
 
+"""
+Stats for one binding of a materialization, keyed by its source collection.
+"""
+type MaterializeBindingStats {
+  """
+  Bytes behind across the binding's source journals. A historical row
+  that predates this counter reports zero, indistinguishably from a
+  binding that is genuinely caught up.
+  """
+  bytesBehind: UInt64!
+
+  """The collection name."""
+  collection: String!
+
+  """
+  The most recent publish timestamp from the source documents that were
+  read by this binding.
+  """
+  lastSourcePublishedAt: DateTime
+
+  """Documents loaded from the endpoint."""
+  left: DocsAndBytes
+
+  """Documents stored to the endpoint."""
+  out: DocsAndBytes
+
+  """Documents read from the source collection."""
+  right: DocsAndBytes
+}
+
 type MutationRoot {
+  """
+  Adds a private link to a private data plane. The data-plane controller
+  converges to provision it on its next poll; the returned link starts
+  `pending`. Requires `ModifyDataPlanePrivateNetworking` on the data plane.
+  """
+  addDataPlanePrivateLink(config: PrivateLinkConfigInput!, dataPlaneName: String!): PrivateLink!
+
+  """
+  Add a user_grant to a service account.
+  
+  The caller must have CreateGrant on BOTH the account's catalog name and
+  the granted prefix. Adding a grant is grant creation, so the account
+  anchor gates on that same capability, while the per-prefix check
+  prevents a caller from extending an account's access beyond what they
+  could grant anyone. (Human-user grant creation still lives in
+  PostgREST; when it migrates to GraphQL it should gate on this same
+  CreateGrant capability.)
+  """
+  addServiceAccountGrant(capability: Capability!, catalogName: Name!, prefix: Prefix!): ServiceAccount!
+
   """
   Creates a new alert subscription. Returns an error if there is already
   an existing subscription for the same prefix and email address.
   """
   createAlertSubscription(alertTypes: [AlertType!], detail: String, email: String!, prefix: Prefix!): AlertSubscription!
+
+  """
+  Mint a credential for a service account.
+  
+  The credential is a multi-use refresh token owned by the account: its
+  secret never rotates and its validity window of `valid_for` slides with
+  use, like any refresh token. Returns the token id and the bearer secret,
+  which is returned exactly once and cannot be retrieved again. Present it
+  as an `Authorization: Bearer` credential or exchange it for a 1-hour
+  access token via `POST /api/v1/auth/token`.
+  
+  The caller must have CreateApiKey on the account's catalog name.
+  """
+  createApiKey(
+    catalogName: Name!
+    detail: String!
+
+    """ISO 8601 duration for token validity (e.g. P90D, P1Y)"""
+    validFor: String!
+  ): CreateApiKeyResult!
   createBillingSetupIntent(tenant: String!): CreateBillingSetupIntentPayload!
+
+  """Create an empty private draft owned by the authenticated caller."""
+  createDraft(detail: String): Draft!
 
   """
   Create an invite link that grants access to a catalog prefix.
@@ -1052,6 +1581,38 @@ type MutationRoot {
   Share the returned token with the intended recipient out-of-band.
   """
   createInviteLink(capability: Capability!, catalogPrefix: Prefix!, detail: String, singleUse: Boolean! = true): InviteLink!
+
+  """
+  Create a refresh token for the authenticated user.
+  
+  Service-account callers are rejected: their API keys are administered
+  via createApiKey and revokeApiKey.
+  """
+  createRefreshToken(
+    detail: String = null
+    multiUse: Boolean! = true
+
+    """
+    ISO 8601 duration for token validity (e.g. P90D); must be greater than zero and at most one year
+    """
+    validFor: String! = "P90D"
+  ): RefreshTokenResult!
+
+  """
+  Create a service account homed at the specified catalog name, seeded
+  with the given user_grants.
+  
+  `catalogName` is a management anchor: admins of a prefix covering it
+  may manage the account. It determines who may manage the account, not
+  what the account may access. Access is determined solely by the
+  account's user_grants, which may span multiple prefixes.
+  
+  The caller must have CreateServiceAccount on the catalog name AND
+  CreateGrant on each granted prefix. Creates an auth.users row, an
+  internal.service_accounts row, and a user_grants row per requested
+  grant.
+  """
+  createServiceAccount(catalogName: Name!, grants: [UserGrantInput!]!): ServiceAccount!
 
   """
   Create a storage mapping for the given catalog prefix.
@@ -1071,6 +1632,12 @@ type MutationRoot {
   deleteBillingPaymentMethod(paymentMethodId: String!, tenant: String!): BillingPaymentMethodPayload!
 
   """
+  Discard a draft the caller owns, along with everything staged in it.
+  Returns the deleted ID. Nothing published is affected.
+  """
+  deleteDraft(id: Id!): Id!
+
+  """
   Delete an invite link, revoking it so it can no longer be redeemed.
   
   The caller must have admin capability on the invite link's catalog prefix.
@@ -1078,11 +1645,131 @@ type MutationRoot {
   deleteInviteLink(token: UUID!): Boolean!
 
   """
+  Delete a secret by name, or every secret under a prefix.
+  
+  Exactly one of `catalogName` or `prefix` must be given; the prefix form
+  is how a recursive delete is expressed. Requires `EditSecret` covering
+  the name or prefix.
+  
+  Returns the names actually deleted, in catalog-name order. Deleting a
+  secret that does not exist is an idempotent no-op that returns an empty
+  list.
+  
+  Tasks referencing a deleted secret keep running: resolution happens when
+  a connector starts, so the dangling reference surfaces at the next start
+  or publication rather than here.
+  """
+  deleteSecret(catalogName: Name, prefix: Prefix): [Name!]!
+
+  """
   Redeem an invite link token, granting the caller access to the associated
   catalog prefix with the specified capability.
   """
   redeemInviteLink(token: UUID!): RedeemInviteLinkResult!
+
+  """
+  Remove ALL user_grants from a service account, stripping its access in
+  one call and returning the account with `grants: []`.
+  
+  The caller must manage the service account (CreateServiceAccount on its
+  catalog name). As with removeServiceAccountGrant, no capability on the
+  grants' prefixes is required: removal only narrows access, so a manager
+  may clear grants to prefixes they don't themselves administer. Clearing
+  an account that already has no grants is an idempotent no-op.
+  """
+  removeAllServiceAccountGrants(catalogName: Name!): ServiceAccount!
+
+  """
+  Removes a private link by id. The controller tears down its endpoint on
+  the next converge. Requires `ModifyDataPlanePrivateNetworking` on the
+  owning data plane. Returns the removed link id.
+  """
+  removeDataPlanePrivateLink(id: Id!): Id!
+
+  """
+  Remove a user_grant from a service account, returning the account in its
+  post-removal state.
+  
+  The caller must have CreateServiceAccount on the catalog name. Unlike addServiceAccountGrant, no capability on the
+  grant's prefix is required: removal only ever narrows the account's
+  access, so managers may remove ANY grant — including grants to
+  prefixes they don't themselves administer.
+  
+  Removal is idempotent: removing a grant the account doesn't hold is a
+  no-op that returns the unchanged account rather than an error.
+  """
+  removeServiceAccountGrant(catalogName: Name!, prefix: Prefix!): ServiceAccount!
+
+  """
+  Revoke ALL of a service account's API keys at once — the credential kill
+  switch — returning the account with no active keys.
+  
+  The caller must have RevokeApiKey on the account's catalog name.
+  Like revokeApiKey, each key is made inert by zeroing its
+  `valid_for` interval (preserving the audit trail) rather than deleted;
+  already-revoked keys are skipped. A service account's user_id only ever
+  owns its own minted credentials, so this targets exactly those. An
+  account with no active keys is an idempotent no-op.
+  """
+  revokeAllApiKeys(catalogName: Name!): ServiceAccount!
+
+  """
+  Revoke a service-account token, returning the owning account in its
+  post-revocation state.
+  
+  The caller must have RevokeApiKey on the owning service account's
+  catalog name. The account is resolved from the token id.
+  
+  Rather than deleting the row, we zero its `valid_for` interval, which
+  makes the token inert (it fails the exchange's expiry check and is
+  excluded from listings) while preserving the audit trail. Revocation is
+  idempotent: revoking an already-inert token is a no-op that still returns
+  the account. Only an id that maps to no service-account token errors.
+  """
+  revokeApiKey(id: Id!): ServiceAccount!
+
+  """
+  Revoke a refresh token owned by the authenticated user.
+  
+  Rather than deleting the row, we zero its `valid_for` interval, which
+  marks the token as expired/invalid while preserving the audit trail.
+  Already-zeroed (revoked) tokens are treated as not found.
+  
+  Service-account callers are rejected: their API keys are administered
+  via createApiKey and revokeApiKey.
+  """
+  revokeRefreshToken(id: Id!): Boolean!
+  setBillingContact(address: BillingAddressInput!, email: String!, name: String!, tenant: String!): SetBillingContactPayload!
   setBillingPaymentMethod(paymentMethodId: String!, tenant: String!): BillingPaymentMethodPayload!
+
+  """
+  Set a secret to a pre-wrapped document.
+  
+  Wrapping and setting are separable steps: `document` is the output of
+  config-encryption's `/secret/encrypt?name=…` route, which the caller
+  invokes first.
+  
+  Requires `EditSecret` on a prefix covering `catalogName`. The document
+  must be an object whose `name` equals `catalogName` — the cryptographic
+  binding that keeps a wrapped document from being cloned under another
+  name, since sops MACs `name` even though it is stored in the clear.
+  
+  Setting is idempotent on the document's identity: re-applying a stored
+  document leaves `secretId` alone and reports `changed: false`. Any other
+  change mints a new `secretId`. A document whose embedded `sops.lastmodified`
+  predates the stored one is rejected rather than applied, guarding
+  against a stale re-apply; ties are allowed, because the timestamp has
+  second granularity.
+  """
+  setSecret(catalogName: Name!, document: SecretDocument!): SetSecretResult!
+
+  """
+  Stage specifications in a draft the caller owns, replacing all staged
+  fields under each name. Omitted `expectPubId` and `detail` are cleared.
+  The batch is atomic; returns the distinct staged names in catalog-name order.
+  Catalog edit permissions are checked when publishing.
+  """
+  stageDraftSpecs(draftId: Id!, specs: [DraftSpecInput!]!): [Name!]!
 
   """
   Check storage health for a given catalog prefix and storage definition.
@@ -1094,6 +1781,14 @@ type MutationRoot {
   health check results (both successes and failures) rather than erroring on failures.
   """
   testConnectionHealth(catalogPrefix: Prefix!, spec: JSON!): ConnectionHealthTestResult!
+
+  """
+  Drop staged specifications from a draft the caller owns, and return the
+  names actually dropped, in catalog-name order. This un-stages a pending
+  change; it does not delete anything published. To stage a deletion of a
+  live specification, use `stageDraftSpecs` with null `model` and `catalogType`.
+  """
+  unstageDraftSpecs(catalogNames: [Name!]!, draftId: Id!): [Name!]!
 
   """
   Creates or replaces the alert config at `catalogPrefixOrName`.
@@ -1119,18 +1814,14 @@ type MutationRoot {
   updateAlertSubscription(alertTypes: [AlertType!], detail: String, email: String!, prefix: Prefix!): AlertSubscription!
 
   """
-  Replaces the configured private link endpoints on a private data plane.
-  
-  The provided list overwrites the entire `private_links` column; partial
-  updates are intentionally not supported. The data-plane controller
-  converges to the new configuration on its next poll. Returns the desired
-  private links state. The `*LinkEndpoints` provisioning results are not echoed here:
-  they lag this write until the controller converges, so callers needing them re-query `dataPlanes`.
-  
-  Requires the `ModifyDataPlanePrivateNetworking` capability on the
-  private data-plane name.
+  Replaces the configuration of an existing private link by id. A changed
+  config resets the observed status to `pending` and re-triggers convergence:
+  the desired-edit trigger clears the observation columns and bumps the
+  link's internal generation, so a converge already in flight against the
+  previous configuration cannot later stamp this link with a stale status.
+  Requires `ModifyDataPlanePrivateNetworking` on the owning data plane.
   """
-  updateDataPlanePrivateLinks(dataPlaneName: String!, privateLinks: [PrivateLinkInput!]!): [PrivateLink!]!
+  updateDataPlanePrivateLink(config: PrivateLinkConfigInput!, id: Id!): PrivateLink!
 
   """
   Update an existing storage mapping for the given catalog prefix.
@@ -1201,6 +1892,23 @@ type PendingConfigUpdateStatus {
 scalar Prefix
 
 input PrefixFilter {
+  """
+  Match values exactly equal to any entry in this set. The set must hold
+  between 1 and 100 entries: an empty `in` is rejected during input
+  validation rather than silently matching nothing (or everything), and
+  the upper bound keeps this caller-controlled set from driving unbounded
+  work — every entry is narrowed against the caller's authorized prefixes
+  in memory and bound into a SQL `= ANY(...)` on each request.
+  `startsWith` and `in` are mutually exclusive: a resolver rejects a
+  filter that sets both, so a prefix scope is always either a subtree
+  (`startsWith`) or an exact set (`in`), never a mix.
+  """
+  in: [String!]
+
+  """
+  Match values that start with this prefix — a subtree match, e.g.
+  `acmeCo/` matches `acmeCo/`, `acmeCo/team/`, and so on.
+  """
   startsWith: String
 }
 
@@ -1249,25 +1957,99 @@ input PrefixesBy {
 }
 
 """
-Private link configuration for a customer-owned data plane: AWS
-PrivateLink, Azure Private Link, or GCP Private Service Connect.
+A configured private link and its controller-observed provisioning status.
 """
-union PrivateLink = AWSPrivateLink | AzurePrivateLink | GCPPrivateServiceConnect
+type PrivateLink {
+  """
+  The link configuration (AWS PrivateLink, Azure Private Link, or GCP PSC).
+  Its variant (`AWSPrivateLink`/`AzurePrivateLink`/`GCPPrivateServiceConnect`)
+  is the link's cloud provider.
+  """
+  config: PrivateLinkConfig!
+
+  """
+  Provider-specific provisioning details (DNS entries, IPs) once
+  provisioned; opaque JSON exported by the data-plane controller.
+  """
+  details: JSON
+
+  """Failure detail when `status` is `failed`."""
+  error: String
+
+  """Stable identifier of this private link."""
+  id: Id!
+
+  """When the controller last observed this link's status."""
+  observedAt: DateTime
+
+  """Controller-observed provisioning status."""
+  status: PrivateLinkProvisioningStatus!
+}
 
 """
 Private link configuration for a customer-owned data plane: AWS
 PrivateLink, Azure Private Link, or GCP Private Service Connect.
 """
-input PrivateLinkInput {
+union PrivateLinkConfig = AWSPrivateLink | AzurePrivateLink | GCPPrivateServiceConnect
+
+"""
+Private link configuration for a customer-owned data plane: AWS
+PrivateLink, Azure Private Link, or GCP Private Service Connect.
+"""
+input PrivateLinkConfigInput {
   aws: AWSPrivateLinkInput
   azure: AzurePrivateLinkInput
   gcp: GCPPrivateServiceConnectInput
+}
+
+"""Controller-observed provisioning status of a configured private link."""
+enum PrivateLinkProvisioningStatus {
+  """Provisioning failed; see `error`."""
+  FAILED
+
+  """Not yet provisioned for the current configuration."""
+  PENDING
+
+  """Provisioned; `details` describes the endpoint."""
+  PROVISIONED
 }
 
 """Filter connectors by their protocol (capture or materialization)."""
 input ProtocolFilter {
   """Match connectors that have at least one version with this protocol."""
   eq: ConnectorProto!
+}
+
+"""A public data plane, as visible to unauthenticated callers."""
+type PublicDataPlane {
+  """Cloud provider where this data-plane is hosted."""
+  cloudProvider: DataPlaneCloudProvider!
+
+  """Name of this data-plane under the catalog namespace."""
+  name: String!
+
+  """
+  Cloud region where this data-plane is hosted.
+  For example: "us-east-1" (AWS), "us-central1" (GCP), "eastus" (Azure).
+  """
+  region: String!
+}
+
+type PublicDataPlaneConnection {
+  """A list of edges."""
+  edges: [PublicDataPlaneEdge!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+}
+
+"""An edge in a connection."""
+type PublicDataPlaneEdge {
+  """A cursor for use in pagination"""
+  cursor: String!
+
+  """The item at the end of the edge"""
+  node: PublicDataPlane!
 }
 
 """Summary of a publication that was attempted by a controller."""
@@ -1342,9 +2124,9 @@ type QueryRoot {
   Lists alert-config rows visible to the caller.
   
   Results are limited to readable prefixes and sorted by
-  `catalog_prefix_or_name`. `filter.catalogPrefixOrName.startsWith` can
-  narrow the results further. Passing a full catalog name returns at
-  most one exact-name row.
+  `catalog_prefix_or_name`. `filter.catalogPrefixOrName` narrows further,
+  by subtree (`startsWith`) or an exact set (`in`) — not both. Passing a
+  full catalog name returns at most one exact-name row.
   """
   alertConfigs(after: String, filter: AlertConfigsFilter, first: Int): AlertConfigEntryConnection!
 
@@ -1359,6 +2141,12 @@ type QueryRoot {
   prefixes.
   """
   alerts(after: String, before: String, by: AlertsBy!, first: Int, last: Int): AlertConnection!
+
+  """
+  Returns stored reporting buckets for the given catalog names, at the
+  given grain, over the half-open window `[start, end)`.
+  """
+  catalogStats(by: CatalogStatsBy!): CatalogStatsConnection!
 
   """
   Returns information about a single connector. At least one parameter
@@ -1400,14 +2188,29 @@ type QueryRoot {
   
   Results are paginated and sorted by data_plane_name.
   Only data planes the user has at least read capability to are returned.
+  
+  `filter.closed.eq` restricts results to data planes whose `closed`
+  flag matches it; omitting it returns both open and closed planes.
+  `filter.public.eq` restricts results to public or private planes;
+  omitting it returns both.
   """
-  dataPlanes(after: String, before: String, first: Int, last: Int): DataPlaneConnection!
+  dataPlanes(after: String, before: String, filter: DataPlanesFilter, first: Int, last: Int): DataPlaneConnection!
+  draft(id: Id!): Draft
+
+  """The caller's own drafts, in stable ID order."""
+  drafts(after: String, first: Int): DraftConnection!
+
+  """
+  Resolves the effective alert config at a single prefix or catalog name.
+  """
+  effectiveAlertConfig(catalogPrefixOrName: String!): EffectiveAlertConfig!
 
   """
   List invite links the caller has admin access to.
   
   Returns invite links under all prefixes where the caller has admin
-  capability, optionally narrowed by a prefix filter.
+  capability, optionally narrowed by a prefix filter — a subtree
+  (`startsWith`) or an exact set (`in`), not both.
   """
   inviteLinks(after: String, filter: InviteLinksFilter, first: Int): InviteLinkConnection!
 
@@ -1425,12 +2228,37 @@ type QueryRoot {
   prefixes(after: String, by: PrefixesBy!, first: Int): PrefixRefConnection!
 
   """
+  Returns all public data planes.
+  
+  This query requires no authentication. It exposes only the name, cloud
+  provider, and region of public data planes, so that account-creation
+  flows can offer a data-plane selection before the user has signed up.
+  Closed planes are always excluded: this query drives new selection,
+  which is exactly what closing a plane retires it from.
+  
+  Results are paginated and sorted by name.
+  """
+  publicDataPlanes(after: String, before: String, first: Int, last: Int): PublicDataPlaneConnection!
+
+  """List refresh tokens owned by the authenticated user."""
+  refreshTokens(after: String, first: Int): RefreshTokenInfoConnection!
+
+  """
+  List secrets the caller may view, in catalog-name order.
+  
+  Requires `ViewSecret` on a prefix covering each returned name.
+  """
+  secrets(after: String, filter: SecretsFilter, first: Int): SecretConnection!
+  serviceAccounts(after: String, first: Int): ServiceAccountConnection!
+
+  """
   Returns storage mappings accessible to the current user.
   
-  Requires at least read capability to the queried prefixes.
+  Returns mappings under every prefix where the caller has catalog-read
+  capability. The optional `filter` narrows those authorized results.
   Results are paginated and sorted by catalog_prefix.
   """
-  storageMappings(after: String, before: String, by: StorageMappingsBy!, first: Int, last: Int): StorageMappingConnection!
+  storageMappings(after: String, before: String, by: StorageMappingsBy @deprecated(reason: "Prefer `filter: { catalogPrefix }`: `startsWith` replaces `underPrefix` and `in` replaces `exactPrefixes`. `by` is retained only for existing clients."), filter: StorageMappingsFilter, first: Int, last: Int): StorageMappingConnection!
   tenant(name: String!): Tenant
 }
 
@@ -1441,6 +2269,43 @@ type RedeemInviteLinkResult {
 
   """The catalog prefix that was granted."""
   catalogPrefix: Prefix!
+}
+
+type RefreshTokenInfo {
+  createdAt: DateTime!
+  detail: String
+
+  """
+  True once the token's validity window has elapsed
+  (now is past `updated_at + valid_for`).
+  """
+  expired: Boolean!
+  id: Id!
+  multiUse: Boolean!
+  updatedAt: DateTime!
+  uses: Int!
+}
+
+type RefreshTokenInfoConnection {
+  """A list of edges."""
+  edges: [RefreshTokenInfoEdge!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+}
+
+"""An edge in a connection."""
+type RefreshTokenInfoEdge {
+  """A cursor for use in pagination"""
+  cursor: String!
+
+  """The item at the end of the edge"""
+  node: RefreshTokenInfo!
+}
+
+type RefreshTokenResult {
+  id: Id!
+  secret: Sensitive!
 }
 
 type RepublishRequested {
@@ -1459,6 +2324,131 @@ type RepublishRequested {
   Informational only, timestamp of when the controller observed the `Republish` request.
   """
   receivedAt: DateTime!
+}
+
+"""
+A secret, as named in a task's `secrets` stanza.
+
+This is the *reference* to a secret, never its decrypted content.
+Listing a secret therefore requires `ViewSecret`, while decrypting
+one requires `DecryptSecret`.
+"""
+type Secret {
+  catalogName: Name!
+
+  """
+  Lifecycle identity of the secret's current document. Every change to the
+  document mints a new `secretId`, and ids are time-ordered, so comparing
+  two observations of a secret also tells you which is newer.
+  """
+  secretId: Id!
+}
+
+type SecretConnection {
+  """A list of edges."""
+  edges: [SecretEdge!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+}
+
+"""
+The sops-wrapped document of a secret, as returned by config-encryption's
+`/secret/encrypt` route. It is opaque to the control plane, which holds no
+grant on the KMS key that wraps it and so can neither decrypt the document
+nor verify its MAC. Provide it verbatim, exactly as config-encryption
+returned it.
+"""
+scalar SecretDocument
+
+"""An edge in a connection."""
+type SecretEdge {
+  """A cursor for use in pagination"""
+  cursor: String!
+
+  """The item at the end of the edge"""
+  node: Secret!
+}
+
+"""
+Optional filter for the `secrets` query. When omitted, every secret the
+caller may view is returned. A filter only narrows those results.
+"""
+input SecretsFilter {
+  """Filter on the secret's catalog name."""
+  catalogName: PrefixFilter
+}
+
+"""
+A secret returned by the API, such as a bearer credential. The value is serialized as a string, but clients must treat it as sensitive: redact it from logs and UIs, and never pass it to a language model.
+"""
+scalar Sensitive
+
+type ServiceAccount {
+  apiKeys: [ServiceAccountApiKey!]!
+  catalogName: Name!
+  createdAt: DateTime!
+
+  """
+  Email of the user who created the account. Null if that user has no
+  email on file.
+  """
+  createdByEmail: String
+  grants: [UserGrant!]!
+  lastUsedAt: DateTime
+}
+
+"""
+A service-account credential: a multi-use refresh token owned by the account
+and minted by an administrator. The secret itself is returned only once at
+creation (see [`CreateApiKeyResult`]).
+"""
+type ServiceAccountApiKey {
+  createdAt: DateTime!
+
+  """
+  Email of the user who minted the token. Null if that user has no email
+  on file.
+  """
+  createdByEmail: String
+  detail: String
+  expiresAt: DateTime!
+  id: Id!
+  lastUsedAt: DateTime
+}
+
+type ServiceAccountConnection {
+  """A list of edges."""
+  edges: [ServiceAccountEdge!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+}
+
+"""An edge in a connection."""
+type ServiceAccountEdge {
+  """A cursor for use in pagination"""
+  cursor: String!
+
+  """The item at the end of the edge"""
+  node: ServiceAccount!
+}
+
+type SetBillingContactPayload {
+  contact: BillingContact!
+}
+
+"""Outcome of `setSecret`."""
+type SetSecretResult {
+  """
+  Whether the document changed. False when the provided document was
+  structurally identical to the stored one, in which case `secret.secretId`
+  is the id the secret already had.
+  """
+  changed: Boolean!
+
+  """The secret in its post-set state."""
+  secret: Secret!
 }
 
 """The shape of a connector status, which matches that of an ops::Log."""
@@ -1747,16 +2737,37 @@ type StorageMappingEdge {
 input StorageMappingsBy {
   """
   Fetch storage mappings by exact catalog prefixes.
-  At least one of `exactPrefixes` or `underPrefix` must be provided.
+  Exactly one of `exactPrefixes` or `underPrefix` must be provided.
   """
   exactPrefixes: [Prefix!]
 
   """
   Fetch all storage mappings under this prefix pattern.
   For example, "acmeCo/" returns mappings for "acmeCo/", "acmeCo/team-a/", etc.
-  At least one of `exactPrefixes` or `underPrefix` must be provided.
+  Exactly one of `exactPrefixes` or `underPrefix` must be provided.
   """
   underPrefix: Prefix
+}
+
+"""
+Composable filter for the `storageMappings` query. Every field is optional
+and only narrows the result set; the caller's catalog-read scope is enforced
+independently, so a filter can never widen what a caller may see.
+"""
+input StorageMappingsFilter {
+  """
+  Narrow by catalog prefix. `startsWith` matches a whole subtree —
+  mappings for `acmeCo/`, `acmeCo/team-a/`, etc. — like the deprecated
+  `by: { underPrefix }`. `in` matches an exact set of prefixes, like
+  `by: { exactPrefixes }`. The two are alternative query modes and are
+  mutually exclusive. Either way, results compose with (never widen past)
+  the caller's authorized read prefixes.
+  """
+  catalogPrefix: PrefixFilter
+}
+
+input StringFilter {
+  eq: String
 }
 
 type Tenant {
@@ -1765,10 +2776,14 @@ type Tenant {
 }
 
 type TenantBilling {
+  contact: BillingContact!
   invoices(after: String, before: String, filter: InvoiceFilter, first: Int, last: Int): InvoiceConnection!
   paymentMethods: [PaymentMethod!]!
   primaryPaymentMethod: PaymentMethod
 }
+
+"""A 64-bit unsigned integer, serialized as a decimal string."""
+scalar UInt64
 
 """
 A UUID is a unique 128-bit number, stored as 16 octets. UUIDs are parsed as
@@ -1792,12 +2807,15 @@ type UpdateAlertConfigResult {
 """Result of updating a storage mapping."""
 type UpdateStorageMappingResult {
   """The catalog prefix for which the storage mapping was updated."""
-  catalogPrefix: Prefix!
+  catalogPrefix: Prefix! @deprecated(reason: "Use storageMapping.catalogPrefix instead.")
 
   """
   Whether a republish is required because the primary storage bucket changed.
   """
   republish: Boolean!
+
+  """The updated storage mapping."""
+  storageMapping: StorageMapping!
 }
 
 """
@@ -1809,4 +2827,23 @@ type UsBankAccountPaymentMethodDetails {
   accountHolderType: String
   bankName: String
   last4: String
+}
+
+"""
+A user_grant held by a service account: the prefix it may act on and the
+capability it holds there. An account's access is the union of its grants,
+which may span multiple prefixes independent of its catalog_name anchor.
+"""
+type UserGrant {
+  capability: Capability!
+  createdAt: DateTime!
+  detail: String
+  prefix: Prefix!
+  updatedAt: DateTime!
+}
+
+"""A user_grant to seed a service account with at creation time."""
+input UserGrantInput {
+  capability: Capability!
+  prefix: Prefix!
 }

@@ -17,7 +17,7 @@ import { useEntityStatusStore_recentHistory } from 'src/stores/EntityStatus/hook
 import { useEntityStatusStore } from 'src/stores/EntityStatus/Store';
 import { TableStatuses } from 'src/types';
 
-export const columns: TableColumns[] = [
+const columns: TableColumns[] = [
     {
         field: null,
         headerIntlKey: 'data.event',

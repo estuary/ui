@@ -2,13 +2,9 @@ import { useState } from 'react';
 
 import { Button } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 import AlertSubscriptionDialog from 'src/components/admin/Settings/PrefixAlerts/Dialog';
 
 function AlertGenerateButton() {
-    const intl = useIntl();
-
     const [open, setOpen] = useState(false);
 
     return (
@@ -21,7 +17,7 @@ function AlertGenerateButton() {
                     setOpen(true);
                 }}
             >
-                {intl.formatMessage({ id: 'alerts.config.cta.addAlertMethod' })}
+                Create New
             </Button>
 
             <AlertSubscriptionDialog

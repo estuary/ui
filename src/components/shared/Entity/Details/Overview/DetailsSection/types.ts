@@ -13,3 +13,11 @@ export interface ConnectorSectionProps {
 export interface StatusSectionProps {
     entityName: DetailsSectionProps['entityName'];
 }
+
+export interface BacklogSectionProps {
+    entityName: DetailsSectionProps['entityName'];
+}
+
+export interface TimeLagSectionProps {
+    entityName: DetailsSectionProps['entityName'];
+}

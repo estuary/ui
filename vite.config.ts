@@ -140,6 +140,7 @@ export default defineConfig({
         deps: {
             inline: ['@estuary/flow-web'],
         },
+        include: ['src/**/*.{test,spec}.?(c|m)[jt]s?(x)'],
         exclude: [
             '**/playwright-tests/**',
 
@@ -188,9 +189,6 @@ export default defineConfig({
 
         // Quality Control
         checker({
-            eslint: {
-                lintCommand: 'lint',
-            },
             typescript: {
                 tsconfigPath: './tsconfig.json',
             },

@@ -3,7 +3,7 @@ import { MonacoEditorSkeleton } from 'src/components/editor/MonacoEditor/EditorS
 import EmptySQLEditor from 'src/components/transformation/create/Config/SQLEditor/Empty';
 import useDraftSpecEditor from 'src/hooks/useDraftSpecEditor';
 
-export interface Props {
+interface Props {
     entityName: string;
     editorHeight?: number;
 }

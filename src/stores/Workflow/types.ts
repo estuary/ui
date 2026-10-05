@@ -16,13 +16,9 @@ export interface WorkflowState
         StoreWithCollections {
     catalogName: CatalogName;
     connectorMetadata: ConnectorTagData | null;
-    customerId: string;
-    redirectUrl: string;
     resetState: () => void;
     setCatalogName: (segments: Partial<CatalogName>) => void;
     setConnectorMetadata: (value: WorkflowState['connectorMetadata']) => void;
-    setCustomerId: (value: WorkflowState['customerId']) => void;
-    setRedirectUrl: (value: WorkflowState['redirectUrl']) => void;
     setStorageMappingPrefix: (
         value: WorkflowState['storageMappingPrefix']
     ) => void;

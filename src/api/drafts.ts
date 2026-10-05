@@ -13,7 +13,7 @@ const createEntityDraft = (entityName: string) => {
     });
 };
 
-export interface DraftsQuery_ByCatalogName {
+interface DraftsQuery_ByCatalogName {
     id: string;
     detail: string;
     updated_at: string;

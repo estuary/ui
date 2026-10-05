@@ -1,6 +1,6 @@
 import type { BaseComponentProps } from 'src/types';
 
-import { Box, Paper, Toolbar, useMediaQuery, useTheme } from '@mui/material';
+import { Box, Paper, useMediaQuery, useTheme } from '@mui/material';
 
 import PageContainer from 'src/components/shared/PageContainer';
 import OnLoadSpinner from 'src/context/OnLoadSpinner/OnLoadSpinner';
@@ -16,7 +16,6 @@ const FullPageWrapper = ({ children, fullWidth }: Props) => {
 
     return (
         <PageContainer hideBackground>
-            <Toolbar />
             <Box
                 sx={{
                     width: '100%',

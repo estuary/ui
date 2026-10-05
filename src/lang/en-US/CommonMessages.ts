@@ -3,7 +3,6 @@ export const CommonMessages: Record<string, string> = {
     // Misc
     'company': `Estuary`,
     'productName': `Estuary`,
-    'expressFlowIntegration': `Powered by Estuary`,
     'spec': `data flow specification`,
 
     'common.browserTitle': `Estuary`,
@@ -32,7 +31,6 @@ export const CommonMessages: Record<string, string> = {
     'common.optionsMissing': `No options`,
     'common.noData': `No data to display`,
     'common.loggedOut': `You have been logged out. Please log back in.`,
-    'common.missing': `N/A`,
     'common.none': `none`,
     'common.noUnDo': `This action cannot be undone.`,
     'common.version': `version`,
@@ -89,7 +87,6 @@ export const CommonMessages: Record<string, string> = {
     // Not 100% sure on this approach yet. Like keeping all this together.
     //  However, when translating it can lead to extra translations. Also, this
     //  is just how react-intl handles it and we might end up rolling our own.
-    'terms.bindings.plural': `{count, plural, one {binding} other {bindings}}`,
     'terms.collections.plural': `{count, plural, one {collection} other {collections}}`,
     'terms.destinations.plural': `{count, plural, one {materialization} other {materializations}}`,
     'terms.sources.plural': `{count, plural, one {capture} other {captures}}`,

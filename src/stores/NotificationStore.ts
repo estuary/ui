@@ -23,7 +23,7 @@ export interface NotificationState {
     clearNotificationHistory: () => void;
 }
 
-export const useNotificationStore = create<NotificationState>()(
+const useNotificationStore = create<NotificationState>()(
     devtools(
         (set) => ({
             clearNotificationHistory: () =>

@@ -10,7 +10,7 @@ function AccessToken() {
     const session = useUserStore((state) => state.session);
 
     return (
-        <Box sx={{ p: 2 }}>
+        <Box sx={{ py: 2 }}>
             <Stack direction="row" spacing={1} sx={{ mb: 0.5 }}>
                 <Typography
                     sx={{

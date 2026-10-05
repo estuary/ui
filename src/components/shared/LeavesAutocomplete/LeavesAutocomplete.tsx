@@ -1,3 +1,5 @@
+import type { TextFieldVariants } from '@mui/material';
+
 import { useMemo, useState } from 'react';
 
 import { Autocomplete, Box, Link, TextField, Typography } from '@mui/material';
@@ -20,6 +22,7 @@ interface LeavesAutocompleteProps {
     error?: boolean;
     errorMessage?: string;
     helperText?: string;
+    textFieldVariant?: TextFieldVariants;
 }
 
 // Insert <wbr> after each "/" so the browser only wraps at path boundaries
@@ -54,6 +57,7 @@ export function LeavesAutocomplete({
     error = false,
     errorMessage,
     helperText,
+    textFieldVariant,
 }: LeavesAutocompleteProps) {
     const [isOpen, setIsOpen] = useState(false);
 
@@ -104,7 +108,9 @@ export function LeavesAutocomplete({
             onInputChange={(_event, newInputValue, _reason) =>
                 onChange(replaceWhitespacesWithUnderscores(newInputValue))
             }
-            onChange={(_event, newValue) => onChange(newValue ?? '')}
+            onChange={(_event, newValue) => {
+                onChange(newValue ?? '');
+            }}
             onClose={() => setIsOpen(false)}
             onBlur={() => {
                 setIsOpen(false);
@@ -124,12 +130,20 @@ export function LeavesAutocomplete({
                     error={error}
                     // single space string to make sure helper text is present and taking up minHeight defined below
                     helperText={displayMessage ?? ' '}
-                    FormHelperTextProps={{
-                        // reserved space for two lines of helper text
-                        // and prevent layout shift when text appears
-                        sx: { minHeight: '3.4em' },
+                    slotProps={{
+                        formHelperText: {
+                            // reserved space for two lines of helper text
+                            // and prevent layout shift when text appears
+                            sx: { minHeight: '3.4em' },
+                        },
                     }}
                     size="small"
+                    sx={{
+                        '.MuiInputBase-root': {
+                            borderRadius: 3,
+                        },
+                    }}
+                    variant={textFieldVariant}
                 />
             )}
             renderOption={({ key, ...props }, option, state) => {
