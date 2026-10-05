@@ -12,6 +12,7 @@ export const DATA_PLANES_QUERY = graphql(`
                     cloudProvider
                     region
                     isPublic
+                    closed
                     fqdn
                     cidrBlocks
                     awsIamUserArn

@@ -72,8 +72,11 @@ function UrqlConfigProvider({ children }: BaseComponentProps) {
                         LiveSpecRef: (_data) => null,
                         PrefixRef: (_data) => null,
                         RefreshTokenInfo: (_data) => null,
-                        StorageMapping: (data) => null,
-                        DataPlane: (data) => null,
+                        StorageMapping: (_data) => null,
+                        DataPlane: (_data) => null,
+                        CatalogStats: (_data) => null,
+                        CatalogStatsSummary: (_data) => null,
+                        DocsAndBytes: (_data) => null,
                     },
                     // Normalization only merges update results into entities
                     // already in the cache. Creates and deletes need updaters

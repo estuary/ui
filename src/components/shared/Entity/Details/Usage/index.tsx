@@ -1,18 +1,12 @@
 import { Stack } from '@mui/material';
 
-import { FormattedMessage } from 'react-intl';
-
 import DetailsRange from 'src/components/filters/DetailsRange';
-import DataByHourGraph from 'src/components/graphs/DataByHourGraph';
 import StatTypeSelector from 'src/components/graphs/DataByHourGraph/StatTypeSelector';
-import EmptyGraphState from 'src/components/graphs/states/Empty';
-import GraphLoadingState from 'src/components/graphs/states/Loading';
 import CardWrapper from 'src/components/shared/CardWrapper';
 import DelayWarning from 'src/components/shared/Entity/Details/Usage/DelayWarning';
-import Error from 'src/components/shared/Error';
-import useDetailsStats from 'src/hooks/useDetailsStats';
-import { checkErrorMessage, FAILED_TO_FETCH } from 'src/services/shared';
-import { hasLength } from 'src/utils/misc-utils';
+import { UsageChart } from 'src/components/shared/Entity/Details/Usage/UsageChart';
+import { useEntityType } from 'src/context/EntityContext';
+import { useDetailsStats } from 'src/hooks/catalogStats/useDetailsStats';
 
 interface Props {
     catalogName: string;
@@ -20,7 +14,11 @@ interface Props {
 }
 
 function Usage({ catalogName }: Props) {
-    const { isValidating, stats, error } = useDetailsStats(catalogName);
+    const entityType = useEntityType();
+    const { data, error, fetching, updatedAt } = useDetailsStats(
+        entityType,
+        catalogName
+    );
 
     return (
         <CardWrapper
@@ -35,34 +33,12 @@ function Usage({ catalogName }: Props) {
                 </Stack>
             }
         >
-            {isValidating && !stats ? (
-                <GraphLoadingState />
-            ) : error ? (
-                checkErrorMessage(FAILED_TO_FETCH, error.message) ? (
-                    <EmptyGraphState
-                        header={
-                            <FormattedMessage id="entityTable.networkFailed.header" />
-                        }
-                        message={
-                            <FormattedMessage id="entityTable.networkFailed.message" />
-                        }
-                    />
-                ) : (
-                    <Error error={error} />
-                )
-            ) : hasLength(stats) ? (
-                <DataByHourGraph
-                    id="data-by-hour_entity-details"
-                    stats={stats}
-                />
-            ) : (
-                <EmptyGraphState
-                    message={
-                        <FormattedMessage id="graphs.entityDetails.empty.message" />
-                    }
-                />
-            )}
-
+            <UsageChart
+                data={data}
+                error={error}
+                fetching={fetching}
+                updatedAt={updatedAt}
+            />
             <DelayWarning />
         </CardWrapper>
     );

@@ -12,6 +12,7 @@ export enum GlobalSearchParams {
     DIFF_VIEW_MODIFIED = 'diff_m',
     DRAFT_ID = 'draftId',
     FORCED_SHARD_ENABLE = 'forcedEnable',
+    GQL_STATS = 'gqlStats',
     GRANT_TOKEN = 'grantToken',
     HIDDEN_SHOW_BETA = 'showBetaOnboard',
     HOME_PAGE_ERROR = 'homePageError',
