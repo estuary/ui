@@ -187,7 +187,6 @@ After authentication, a set of guards run before the main content renders (`src/
 | Guard            | Purpose                                              |
 | ---------------- | ---------------------------------------------------- |
 | `UserGuard`      | Ensure we have user and identifies user to LogRocket |
-| `LegalGuard`     | Checks legal agreement acceptance                    |
 | `AnalyticsGuard` | Initializes PostHog user identification              |
 | `GrantGuard`     | Processes access grant tokens from URL               |
 | `TenantGuard`    | Ensures user has a valid tenant; redirects if not    |

@@ -1,6 +1,5 @@
 export interface AuthFile {
     email: string;
-    legalDone: boolean;
     tenant: string | null;
 }
 
