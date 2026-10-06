@@ -370,6 +370,7 @@ enum CapabilityBit {
   CreateApiKey
   CreateGrant
   CreateInviteLink
+  CreateSandbox
   CreateServiceAccount
   DecryptSecret
   Delegate
@@ -574,6 +575,24 @@ enum ChargeStatus {
 }
 
 scalar Collection
+
+"""A command run in a sandbox."""
+type Command {
+  command: String!
+
+  """
+  Null until the command exits (crashed commands may not record their exit code)
+  """
+  exitCode: Int
+  id: Id!
+  requestedAt: DateTime!
+
+  """Poll stderr with this `path` and `sandboxFileRead`."""
+  stderrPath: String!
+
+  """Poll stdout with this `path` and `sandboxFileRead`."""
+  stdoutPath: String!
+}
 
 """Result of checking storage health for a catalog prefix."""
 type ConnectionHealthTestResult {
@@ -1176,6 +1195,54 @@ type FieldProvenance {
   source: String
 }
 
+type FileRead {
+  base64: String!
+  offset: Int!
+  utf8: String!
+}
+
+"""
+A flattened fragment store. Fields which don't apply to the
+store's `provider` are null.
+"""
+type FragmentStore {
+  """
+  Azure tenant ID which owns the storage account. Null for non-Azure stores.
+  """
+  accountTenantId: String
+
+  """Bucket into which data is stored. Null for Azure stores."""
+  bucket: String
+
+  """Azure container name. Null for non-Azure stores."""
+  containerName: String
+
+  """
+  Address of the S3-compatible storage endpoint. Null for non-Custom stores.
+  """
+  endpoint: String
+
+  """Optional prefix of keys written to the store."""
+  prefix: String
+
+  """Storage provider of this store."""
+  provider: FragmentStoreProvider!
+
+  """AWS region of the bucket. Null for GCS, Azure, and Custom stores."""
+  region: String
+
+  """Azure storage account name. Null for non-Azure stores."""
+  storageAccountName: String
+}
+
+"""Storage provider of a fragment store."""
+enum FragmentStoreProvider {
+  AZURE
+  CUSTOM
+  GCS
+  S3
+}
+
 type GCPPrivateServiceConnect {
   allPorts: Boolean!
   dnsRecordNames: [String!]!
@@ -1356,6 +1423,16 @@ type JobStatus {
   type: StatusType!
 }
 
+type LegalTerms {
+  id: Id!
+  text: String!
+}
+
+enum LegalTermsType {
+  """Master Services Agreement."""
+  MSA
+}
+
 type LiveSpec {
   builtSpec: JSON
   catalogName: String!
@@ -1414,7 +1491,14 @@ type LiveSpecRef {
   """
   liveSpec: LiveSpec
 
-  """The complete history of publications of this spec"""
+  """
+  The change to this specification recorded by the given publication,
+  or null if no accessible matching record exists. This is an exact lookup,
+  not the specification as of a publication that did not change it.
+  """
+  publicationForId(id: Id!): SpecPublicationHistoryItem
+
+  """The complete history of publications of this spec."""
   publicationHistory(after: String, before: String, first: Int, last: Int): SpecPublicationHistoryItemConnection
 
   """Returns the status of the live spec."""
@@ -1739,6 +1823,22 @@ type MutationRoot {
   via createApiKey and revokeApiKey.
   """
   revokeRefreshToken(id: Id!): Boolean!
+  sandboxCancel(catalogName: Name!, id: Id!): Boolean!
+
+  """Returns after flowctl is installed."""
+  sandboxCreate(catalogName: Name!): Sandbox!
+  sandboxDelete(catalogName: Name!): Boolean!
+
+  """
+  Returns once the command has started - read its output by polling `sandboxFileRead`.
+  """
+  sandboxExecute(catalogName: Name!, command: String!, stdin: String): Command!
+
+  """
+  Restore the sandbox to its baseline, discarding all changes, past
+  commands, and their output.
+  """
+  sandboxReset(catalogName: Name!): Boolean!
   setBillingContact(address: BillingAddressInput!, email: String!, name: String!, tenant: String!): SetBillingContactPayload!
   setBillingPaymentMethod(paymentMethodId: String!, tenant: String!): BillingPaymentMethodPayload!
 
@@ -1750,18 +1850,15 @@ type MutationRoot {
   invokes first.
   
   Requires `EditSecret` on a prefix covering `catalogName`. The document
-  must be an object whose `name` equals `catalogName` — the cryptographic
-  binding that keeps a wrapped document from being cloned under another
-  name, since sops MACs `name` even though it is stored in the clear.
+  must be an object whose `name` equals `catalogName`.
   
-  Setting is idempotent on the document's identity: re-applying a stored
+  Setting is idempotent on the document's value: re-applying a
   document leaves `secretId` alone and reports `changed: false`. Any other
   change mints a new `secretId`. A document whose embedded `sops.lastmodified`
   predates the stored one is rejected rather than applied, guarding
-  against a stale re-apply; ties are allowed, because the timestamp has
-  second granularity.
+  against a stale re-apply.
   """
-  setSecret(catalogName: Name!, document: SecretDocument!): SetSecretResult!
+  setSecret(catalogName: Name!, document: JSON!): SetSecretResult!
 
   """
   Stage specifications in a draft the caller owns, replacing all staged
@@ -1770,6 +1867,19 @@ type MutationRoot {
   Catalog edit permissions are checked when publishing.
   """
   stageDraftSpecs(draftId: Id!, specs: [DraftSpecInput!]!): [Name!]!
+
+  """
+  Create a tenant for the authenticated user. Users with an existing direct
+  tenant-admin grant cannot provision another tenant.
+  """
+  tenantCreate(
+    """Organization name as a single catalog token, without a trailing slash."""
+    name: String!
+
+    """ID of the latest MSA terms the submitting user has read and accepts."""
+    submittingUserAgreesToTermsId: Id!
+    survey: JSON
+  ): Boolean!
 
   """
   Check storage health for a given catalog prefix and storage definition.
@@ -2214,6 +2324,9 @@ type QueryRoot {
   """
   inviteLinks(after: String, filter: InviteLinksFilter, first: Int): InviteLinkConnection!
 
+  """Returns the latest legal terms of the given type."""
+  legalTerms(type: LegalTermsType!): LegalTerms
+
   """
   Returns a paginated list of live specs under the given prefix and
   matching the given type.
@@ -2242,6 +2355,18 @@ type QueryRoot {
 
   """List refresh tokens owned by the authenticated user."""
   refreshTokens(after: String, first: Int): RefreshTokenInfoConnection!
+  sandbox(catalogName: Name!): Sandbox
+  sandboxFileRead(
+    catalogName: Name!
+
+    """Max 1 MiB"""
+    limit: Int
+
+    """Byte offset"""
+    offset: Int! = 0
+    path: String!
+  ): FileRead!
+  sandboxes: [Sandbox!]!
 
   """
   List secrets the caller may view, in catalog-name order.
@@ -2326,6 +2451,20 @@ type RepublishRequested {
   receivedAt: DateTime!
 }
 
+"""A persistent Linux VM that runs the user's shell commands."""
+type Sandbox {
+  catalogName: Name!
+
+  """Commands started in this sandbox"""
+  commands: [Command!]
+  createdAt: DateTime!
+
+  """
+  False until a new sandbox reaches its baseline state (flowctl installed).
+  """
+  ready: Boolean!
+}
+
 """
 A secret, as named in a task's `secrets` stanza.
 
@@ -2351,15 +2490,6 @@ type SecretConnection {
   """Information to aid in pagination."""
   pageInfo: PageInfo!
 }
-
-"""
-The sops-wrapped document of a secret, as returned by config-encryption's
-`/secret/encrypt` route. It is opaque to the control plane, which holds no
-grant on the KMS key that wraps it and so can neither decrypt the document
-nor verify its MAC. Provide it verbatim, exactly as config-encryption
-returned it.
-"""
-scalar SecretDocument
 
 """An edge in a connection."""
 type SecretEdge {
@@ -2555,12 +2685,20 @@ type SourceCaptureStatus {
 
 type SpecPublicationHistoryItem {
   """
+  Type of the published catalog specification, if recorded.
+  This may be null for a deletion.
+  """
+  catalogType: CatalogType
+
+  """
   Description of the publication, including any automated model updates
   performed as part of the publication
   """
   detail: String
 
-  """The live spec model that was published"""
+  """
+  Catalog specification published by this publication, or null for a deletion.
+  """
   model: JSON
 
   """The id of the publication"""
@@ -2706,11 +2844,19 @@ type StorageMapping {
   """The catalog prefix this storage mapping applies to."""
   catalogPrefix: Prefix!
 
+  """
+  Data planes which may be used by tasks or collections under this mapping.
+  """
+  dataPlanes: [DataPlane!]!
+
   """Optional description of this storage mapping."""
   detail: String
 
+  """Stores for journal fragments under this mapping."""
+  fragmentStores: [FragmentStore!]!
+
   """The storage definition containing stores and data plane assignments."""
-  spec: JSON!
+  spec: JSON! @deprecated(reason: "Deprecated in favor of `dataPlanes` and `fragmentStores` fields.")
 
   """The current user's capability to this storage mapping's prefix."""
   userCapability: Capability!
@@ -2773,6 +2919,7 @@ input StringFilter {
 type Tenant {
   billing: TenantBilling!
   name: String!
+  sensitive: Boolean!
 }
 
 type TenantBilling {

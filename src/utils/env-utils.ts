@@ -44,16 +44,14 @@ export const getLoginSettings = () => {
 // TODO (refactor) We should switch this to a provider
 export const getUrls = () => {
     const privacyPolicy = import.meta.env.VITE_URLS_PRIVACY_POLICY;
-    const termsOfService = import.meta.env.VITE_URLS_TERMS_OF_SERVICE;
 
-    if (privacyPolicy && termsOfService) {
+    if (privacyPolicy) {
         return {
             privacyPolicy,
-            termsOfService,
         };
     } else {
         throw new Error(
-            'Missing Privacy or TOS environmental settings: [VITE_URLS_PRIVACY_POLICY, VITE_URLS_TERMS_OF_SERVICE]'
+            'Missing privacy policy environmental setting: VITE_URLS_PRIVACY_POLICY'
         );
     }
 };
