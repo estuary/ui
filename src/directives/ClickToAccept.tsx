@@ -16,6 +16,7 @@ import { useMount } from 'react-use';
 
 import { submitDirective } from 'src/api/directives';
 import RegistrationProgress from 'src/app/guards/RegistrationProgress';
+import { unauthenticatedRoutes } from 'src/app/routes';
 import AlertBox from 'src/components/shared/AlertBox';
 import ExternalLink from 'src/components/shared/ExternalLink';
 import Actions from 'src/directives/Actions';
@@ -177,7 +178,7 @@ const ClickToAccept = ({ directive, status, mutate }: DirectiveProps) => {
                         {intl.formatMessage({ id: 'legal.docs.privacy' })}
                     </ExternalLink>
 
-                    <ExternalLink link={urls.termsOfService}>
+                    <ExternalLink link={unauthenticatedRoutes.terms.path}>
                         {intl.formatMessage({ id: 'legal.docs.terms' })}
                     </ExternalLink>
                 </Stack>
