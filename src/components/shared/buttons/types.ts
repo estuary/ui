@@ -25,4 +25,7 @@ export interface ButtonWithPopperProps extends BaseComponentProps {
 
 export interface CopyToClipboardButtonProps extends BaseComponentProps {
     writeValue: string;
+    // Only the icon-only form needs this. With children the label is the
+    // button's text; without them there is nothing to announce.
+    label?: string;
 }

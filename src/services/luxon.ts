@@ -1,4 +1,5 @@
 import type { DateTimeUnit, DurationObjectUnits, ToRelativeUnit } from 'luxon';
+import type { DataByHourRange } from 'src/components/graphs/types';
 
 import { DateTime, Duration } from 'luxon';
 
@@ -64,6 +65,32 @@ export const LUXON_GRAIN_SETTINGS: {
                 .setLocale(navigator.language ?? 'en-US')
                 .toLocaleString({ month: 'short' }),
     },
+};
+
+// How a selected range is worded, as a message descriptor for the range picker.
+export const getRangeLabelDescriptor = (range: DataByHourRange) => {
+    const { relativeUnit, selectedLabelKey } =
+        LUXON_GRAIN_SETTINGS[range.grain];
+
+    return {
+        id:
+            selectedLabelKey ??
+            `detailsPanel.recentUsage.filter.label.${relativeUnit}`,
+        values: { range: range.amount },
+    };
+};
+
+/**
+ * The same wording as `getRangeLabelDescriptor`, as a plain string.
+ *
+ * Both exist only while the range picker is still on react-intl; fold this one
+ * into that caller and drop the descriptor once it migrates.
+ */
+export const getRangeLabel = (range: DataByHourRange): string => {
+    const { relativeUnit, selectedLabelKey } =
+        LUXON_GRAIN_SETTINGS[range.grain];
+
+    return selectedLabelKey ? 'Year' : `${range.amount} ${relativeUnit}`;
 };
 
 // Spells out a duration in whole units, leaving out the units that are zero.

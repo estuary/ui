@@ -1,6 +1,7 @@
 import type { CatalogStats, DocsAndBytes } from 'src/api/catalogStats';
 import type { DataByHourRange } from 'src/components/graphs/types';
 import type {
+    CatalogStatsBy,
     CatalogStatsGrain,
     CatalogStatsQuery,
 } from 'src/gql-types/graphql';
@@ -46,24 +47,16 @@ export function useCatalogStats(
     opts: CatalogStatsOpts = {}
 ) {
     const names = getCleanCatalogNames(catalogNames);
-    const { grain, startDate, endDate } = convertDateRange(range);
-    const gqlGrain = TO_GQL_GRAIN_MAP[grain];
-    const start = startDate.toFormat(STATS_TIMESTAMP_FORMAT);
-    const end = endDate.toFormat(STATS_TIMESTAMP_FORMAT);
+    const { grain } = range;
+    const by = toCatalogStatsBy(names, range);
+    const { start, end } = by;
     const { pollingIntervalMs } = opts;
 
     const { data, error, fetching, updatedAt } = usePollingQuery({
         query: CATALOG_STATS_QUERY,
         pause: names.length <= 0,
         pollingIntervalMs,
-        variables: {
-            by: {
-                names,
-                grain: gqlGrain,
-                start,
-                end,
-            },
-        },
+        variables: { by },
     });
 
     const stats = useMemo(
@@ -72,6 +65,22 @@ export function useCatalogStats(
     );
 
     return { data: stats, fetching, error, updatedAt };
+}
+
+// Exported so other `catalogStats` queries cover exactly the window the usage
+// chart does.
+export function toCatalogStatsBy(
+    names: string[],
+    range: DataByHourRange
+): CatalogStatsBy {
+    const { startDate, endDate } = convertDateRange(range);
+
+    return {
+        names,
+        grain: TO_GQL_GRAIN_MAP[range.grain],
+        start: startDate.toFormat(STATS_TIMESTAMP_FORMAT),
+        end: endDate.toFormat(STATS_TIMESTAMP_FORMAT),
+    };
 }
 
 function getCleanCatalogNames(catalogNames: string | string[]) {
