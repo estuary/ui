@@ -34,9 +34,6 @@ interface Props {
 
 /**
  * The bindings card: heading, filter toolbar and table.
- *
- * Split from the data fetch so the Storybook harness renders this exact tree
- * from fixtures rather than a rebuilt copy free to disagree with the page.
  */
 export function BindingsCard({
     bindings,

@@ -12,9 +12,6 @@ interface Props {
 
 /**
  * The bindings of a capture or materialization, as a full-width section.
- *
- * The fetch lives here and the markup in `BindingsCard`, so Storybook can render
- * the same card from fixtures.
  */
 export function Bindings({ entityName, latestLiveSpec }: Props) {
     const entityType = useEntityType();

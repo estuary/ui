@@ -42,9 +42,6 @@ interface BindingsTableState {
 
 /**
  * Filter, sort and paging state for the bindings table.
- *
- * A hook rather than inline state so the Storybook harness shares the exact
- * wiring the page uses.
  */
 export function useBindingsTableState(
     bindings: BindingRow[],
