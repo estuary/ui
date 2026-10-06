@@ -1,8 +1,11 @@
+import type { TypographyProps } from '@mui/material';
 import type { ReactNode } from 'react';
 
 import { useEffect } from 'react';
 
-import { Box, CircularProgress, Link, Typography } from '@mui/material';
+import CheckIcon from '@mui/icons-material/Check';
+import LinkIcon from '@mui/icons-material/Link';
+import { Box, CircularProgress, IconButton, Link, Typography } from '@mui/material';
 
 import Markdown from 'markdown-to-jsx';
 import { useLocation } from 'react-router-dom';
@@ -11,14 +14,50 @@ import { useQuery } from 'urql';
 import { LEGAL_TERMS_QUERY } from 'src/api/gql/legalTerms';
 import Error from 'src/components/shared/Error';
 import { useUpdateHelmet } from 'src/context/UpdateHelmet';
+import { useCopyToClipboard } from 'src/hooks/useCopyToClipboard';
 
 const SUBSECTION_INDENT = '2em';
+
+function TermsHeading({
+    id,
+    children,
+    ...props
+}: TypographyProps & { component: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' }) {
+    const { isCopied, handleCopy } = useCopyToClipboard('TermsHeading');
+    const label = isCopied ? 'Link copied' : 'Copy link to this section';
+
+    return (
+        <Typography id={id} {...props}>
+            {id ? (
+                <IconButton
+                    className="heading-anchor"
+                    onClick={() => {
+                        const url = new URL(window.location.href);
+                        url.hash = encodeURIComponent(id);
+                        handleCopy(url.href);
+                    }}
+                    aria-label={label}
+                    title={label}
+                    color="inherit"
+                    size="small"
+                >
+                    {isCopied ? (
+                        <CheckIcon fontSize="inherit" />
+                    ) : (
+                        <LinkIcon fontSize="inherit" />
+                    )}
+                </IconButton>
+            ) : null}
+            {children}
+        </Typography>
+    );
+}
 
 const markdownOptions = {
     disableParsingRawHTML: true,
     overrides: {
         h1: {
-            component: Typography,
+            component: TermsHeading,
             props: {
                 variant: 'h4',
                 component: 'h1',
@@ -27,7 +66,7 @@ const markdownOptions = {
             },
         },
         h2: {
-            component: Typography,
+            component: TermsHeading,
             props: {
                 variant: 'h5',
                 component: 'h2',
@@ -35,7 +74,7 @@ const markdownOptions = {
             },
         },
         h3: {
-            component: Typography,
+            component: TermsHeading,
             props: {
                 variant: 'body1',
                 component: 'h3',
@@ -43,12 +82,20 @@ const markdownOptions = {
             },
         },
         h4: {
-            component: Typography,
+            component: TermsHeading,
             props: {
                 variant: 'body1',
                 component: 'h4',
                 fontWeight: 700,
             },
+        },
+        h5: {
+            component: TermsHeading,
+            props: { component: 'h5', variant: 'body1', fontWeight: 700 },
+        },
+        h6: {
+            component: TermsHeading,
+            props: { component: 'h6', variant: 'body1', fontWeight: 700 },
         },
         strong: {
             component: Box,
@@ -118,6 +165,24 @@ export function Terms() {
                 'mx': 'auto',
                 'px': 3,
                 'py': 6,
+                '& :is(h1, h2, h3, h4, h5, h6)': {
+                    position: 'relative',
+                    '&:hover > .heading-anchor, &:focus-within > .heading-anchor':
+                        { opacity: 1 },
+                },
+                '& .heading-anchor': {
+                    position: 'absolute',
+                    right: '100%',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    pr: '0.2em',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    height: '1.5em',
+                    fontSize: '1rem',
+                    opacity: 0,
+                    '@media (hover: none)': { opacity: 1 },
+                },
                 // Subsection titles run in to the start of the paragraph that
                 // follows them: the title floats left at body text size and
                 // indents that paragraph's first line, one step per level.
