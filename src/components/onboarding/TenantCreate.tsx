@@ -296,6 +296,7 @@ const TenantCreate = ({ mutate }: Props) => {
                                     }
                                     displayEmpty
                                     size="small"
+                                    variant="outlined"
                                     sx={{
                                         'bgcolor': 'background.default',
                                         'borderRadius': 3,
