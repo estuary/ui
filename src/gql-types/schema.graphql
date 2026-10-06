@@ -1873,6 +1873,9 @@ type MutationRoot {
   tenant-admin grant cannot provision another tenant.
   """
   tenantCreate(
+    """Full catalog name of an open public data plane to use by default."""
+    dataPlane: String!
+
     """Organization name as a single catalog token, without a trailing slash."""
     name: String!
 

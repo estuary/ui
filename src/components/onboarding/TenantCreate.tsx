@@ -7,7 +7,10 @@ import {
     Checkbox,
     FormControl,
     FormControlLabel,
+    FormHelperText,
     FormLabel,
+    MenuItem,
+    Select,
     Stack,
     TextField,
     Toolbar,
@@ -19,6 +22,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { useQuery } from 'urql';
 
 import { LEGAL_TERMS_QUERY } from 'src/api/gql/legalTerms';
+import { usePublicDataPlanes } from 'src/api/gql/publicDataPlanes';
 import { useTenantCreate } from 'src/api/gql/tenant';
 import { unauthenticatedRoutes } from 'src/app/routes';
 import Logo from 'src/components/navigation/Logo';
@@ -42,6 +46,11 @@ interface Props {
 const TenantCreate = ({ mutate }: Props) => {
     const postHog = usePostHog();
     const [creation, createTenant] = useTenantCreate();
+    const {
+        data: dataPlanes,
+        loading: dataPlanesLoading,
+        error: dataPlanesError,
+    } = usePublicDataPlanes();
     const [
         { data: termsData, fetching: termsFetching, error: termsError },
         refetchTerms,
@@ -53,7 +62,12 @@ const TenantCreate = ({ mutate }: Props) => {
     const termsId = termsData?.legalTerms?.id;
     const termsReady = Boolean(termsId && !termsFetching && !termsError);
     const methods = useForm({
-        defaultValues: { name: '', origin: '', acceptedDocuments: '' },
+        defaultValues: {
+            name: '',
+            dataPlane: '',
+            origin: '',
+            acceptedDocuments: '',
+        },
         mode: 'onChange',
         reValidateMode: 'onChange',
     });
@@ -69,10 +83,25 @@ const TenantCreate = ({ mutate }: Props) => {
     const saving = isSubmitting || creation.data?.tenantCreate === true;
 
     const acceptedTermsId = watch('acceptedDocuments');
+    const selectedDataPlane = watch('dataPlane');
+    const dataPlaneReady =
+        !dataPlanesLoading &&
+        !dataPlanesError &&
+        dataPlanes.some((plane) => plane.name === selectedDataPlane);
 
     const submit = handleSubmit(
-        async ({ name: requestedTenant, origin, acceptedDocuments }) => {
+        async ({
+            name: requestedTenant,
+            dataPlane,
+            origin,
+            acceptedDocuments,
+        }) => {
             setServerError(null);
+
+            if (!dataPlaneReady) {
+                setServerError('Please select an available data plane.');
+                return;
+            }
 
             if (!termsReady || acceptedDocuments !== termsId) {
                 setServerError(
@@ -83,6 +112,7 @@ const TenantCreate = ({ mutate }: Props) => {
 
             const { data, error } = await createTenant({
                 name: requestedTenant,
+                dataPlane,
                 submittingUserAgreesToTermsId: acceptedDocuments,
                 survey: { origin, details: '' },
             });
@@ -234,6 +264,80 @@ const TenantCreate = ({ mutate }: Props) => {
                     />
 
                     <Controller
+                        name="dataPlane"
+                        control={control}
+                        rules={{ required: true }}
+                        render={({ field: { ref, ...field } }) => (
+                            <FormControl required fullWidth>
+                                <FormLabel
+                                    id="data-plane-label"
+                                    sx={{ mb: 1, fontSize: 20 }}
+                                >
+                                    Data plane
+                                </FormLabel>
+                                <Select
+                                    {...field}
+                                    inputRef={ref}
+                                    labelId="data-plane-label"
+                                    id="data-plane"
+                                    value={
+                                        dataPlanes.some(
+                                            (plane) =>
+                                                plane.name === field.value
+                                        )
+                                            ? field.value
+                                            : ''
+                                    }
+                                    disabled={
+                                        saving ||
+                                        dataPlanesLoading ||
+                                        Boolean(dataPlanesError) ||
+                                        !dataPlanes.length
+                                    }
+                                    displayEmpty
+                                    size="small"
+                                    sx={{
+                                        'bgcolor': 'background.default',
+                                        'borderRadius': 3,
+                                        '& fieldset': { border: 'none' },
+                                    }}
+                                >
+                                    <MenuItem value="" disabled>
+                                        {dataPlanesLoading
+                                            ? 'Loading data planes…'
+                                            : 'Select a data plane'}
+                                    </MenuItem>
+                                    {dataPlanes.map((plane) => (
+                                        <MenuItem
+                                            key={plane.name}
+                                            value={plane.name}
+                                        >
+                                            {plane.cloudProvider} —{' '}
+                                            {plane.region}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                                <FormHelperText>
+                                    Choose where your organization’s data
+                                    processing runs.
+                                </FormHelperText>
+                            </FormControl>
+                        )}
+                    />
+
+                    {dataPlanesError ? (
+                        <AlertBox severity="error" short>
+                            Unable to load data planes. Please reload the page
+                            to try again.
+                        </AlertBox>
+                    ) : !dataPlanesLoading && !dataPlanes.length ? (
+                        <AlertBox severity="error" short>
+                            No data planes are currently available. Please try
+                            again later.
+                        </AlertBox>
+                    ) : null}
+
+                    <Controller
                         name="origin"
                         control={control}
                         rules={{ required: true }}
@@ -316,6 +420,7 @@ const TenantCreate = ({ mutate }: Props) => {
                             disabled={
                                 saving ||
                                 !isValid ||
+                                !dataPlaneReady ||
                                 !termsReady ||
                                 acceptedTermsId !== termsId
                             }

@@ -166,8 +166,20 @@ export const inituser = async (
         // Create Tenant
         await page.getByLabel('Organization Name').fill(newTenant);
 
+        // Choose an available data plane.
+        await page.getByRole('combobox', { name: 'Data plane' }).click();
+        await page
+            .getByRole('option')
+            .filter({ hasNotText: 'Select a data plane' })
+            .first()
+            .click();
+
         // Tell how we heard
-        await page.getByRole('combobox').click();
+        await page
+            .getByRole('combobox', {
+                name: 'Where did you hear about Estuary?',
+            })
+            .click();
         await page.getByRole('option', { name: 'Other' }).click();
 
         // Agree to Legal
