@@ -1,0 +1,230 @@
+import type { TypographyProps } from '@mui/material';
+import type { ComponentPropsWithoutRef } from 'react';
+
+import { useEffect } from 'react';
+
+import CheckIcon from '@mui/icons-material/Check';
+import LinkIcon from '@mui/icons-material/Link';
+import {
+    Box,
+    CircularProgress,
+    IconButton,
+    Link,
+    Typography,
+} from '@mui/material';
+
+import Markdown from 'markdown-to-jsx';
+import { useLocation } from 'react-router-dom';
+import { useQuery } from 'urql';
+
+import { LEGAL_TERMS_QUERY } from 'src/api/gql/legalTerms';
+import Error from 'src/components/shared/Error';
+import { useUpdateHelmet } from 'src/context/UpdateHelmet';
+import { useCopyToClipboard } from 'src/hooks/useCopyToClipboard';
+
+const SUBSECTION_INDENT = '2em';
+
+function TermsHeading({
+    id,
+    children,
+    ...props
+}: TypographyProps & { component: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' }) {
+    const { isCopied, handleCopy } = useCopyToClipboard('TermsHeading');
+    const label = isCopied ? 'Link copied' : 'Copy link to this section';
+
+    return (
+        <Typography id={id} {...props}>
+            {id ? (
+                <IconButton
+                    className="heading-anchor"
+                    onClick={() => {
+                        const url = new URL(window.location.href);
+                        url.hash = encodeURIComponent(id);
+                        handleCopy(url.href);
+                    }}
+                    aria-label={label}
+                    title={label}
+                    color="inherit"
+                    size="small"
+                >
+                    {isCopied ? (
+                        <CheckIcon fontSize="inherit" />
+                    ) : (
+                        <LinkIcon fontSize="inherit" />
+                    )}
+                </IconButton>
+            ) : null}
+            {children}
+        </Typography>
+    );
+}
+
+const markdownOptions = {
+    disableParsingRawHTML: true,
+    overrides: {
+        h1: {
+            component: TermsHeading,
+            props: {
+                variant: 'h4',
+                component: 'h1',
+                gutterBottom: true,
+                align: 'center',
+            },
+        },
+        h2: {
+            component: TermsHeading,
+            props: {
+                variant: 'h5',
+                component: 'h2',
+                sx: { mt: 4, mb: 1 },
+            },
+        },
+        h3: {
+            component: TermsHeading,
+            props: {
+                variant: 'body1',
+                component: 'h3',
+                fontWeight: 700,
+            },
+        },
+        h4: {
+            component: TermsHeading,
+            props: {
+                variant: 'body1',
+                component: 'h4',
+                fontWeight: 700,
+            },
+        },
+        h5: {
+            component: TermsHeading,
+            props: { component: 'h5', variant: 'body1', fontWeight: 700 },
+        },
+        h6: {
+            component: TermsHeading,
+            props: { component: 'h6', variant: 'body1', fontWeight: 700 },
+        },
+        strong: {
+            component: Box,
+            props: {
+                component: 'strong',
+                sx: { fontWeight: 'inherit', textDecoration: 'underline' },
+            },
+        },
+        p: {
+            component: Typography,
+            props: { paragraph: true },
+        },
+        a: {
+            component: ({
+                href,
+                children,
+                ...props
+            }: ComponentPropsWithoutRef<'a'>) => {
+                const openInNewTab = /^https?:\/\//i.test(href ?? '');
+
+                return (
+                    <Link
+                        {...props}
+                        href={href}
+                        target={openInNewTab ? '_blank' : undefined}
+                        rel={openInNewTab ? 'noopener noreferrer' : undefined}
+                    >
+                        {children}
+                    </Link>
+                );
+            },
+        },
+    },
+};
+
+export function Terms() {
+    const { updateTitle } = useUpdateHelmet();
+    const { hash } = useLocation();
+
+    useEffect(() => {
+        updateTitle('Estuary | Master Services Agreement');
+    }, [updateTitle]);
+
+    const [{ data, fetching, error }] = useQuery({
+        query: LEGAL_TERMS_QUERY,
+        variables: { type: 'MSA' },
+    });
+
+    const text = data?.legalTerms?.text;
+
+    useEffect(() => {
+        if (fetching || error || !text || !hash) return;
+
+        let id: string;
+        try {
+            id = decodeURIComponent(hash.slice(1));
+        } catch {
+            return;
+        }
+
+        // The browser's initial fragment scroll happens before the terms load.
+        document.getElementById(id)?.scrollIntoView();
+    }, [text, fetching, error, hash]);
+
+    return (
+        <Box
+            sx={{
+                'maxWidth': 860,
+                'mx': 'auto',
+                'px': 3,
+                'py': 6,
+                '& :is(h1, h2, h3, h4, h5, h6)': {
+                    'position': 'relative',
+                    '&:hover > .heading-anchor, &:focus-within > .heading-anchor':
+                        { opacity: 1 },
+                },
+                '& .heading-anchor': {
+                    'position': 'absolute',
+                    'right': '100%',
+                    'top': '50%',
+                    'transform': 'translateY(-50%)',
+                    'pr': '0.2em',
+                    'display': 'inline-flex',
+                    'alignItems': 'center',
+                    'height': '1.5em',
+                    'fontSize': '1rem',
+                    'opacity': 0,
+                    '@media (hover: none)': { opacity: 1 },
+                },
+                // Subsection titles run in to the start of the paragraph that
+                // follows them: the title floats left at body text size and
+                // indents that paragraph's first line, one step per level.
+                '& h3, & h4': {
+                    float: 'left',
+                    clear: 'left',
+                    m: 0,
+                    mr: '0.4em',
+                },
+                '& h3': { ml: SUBSECTION_INDENT },
+                // Nested items indent as a whole block, aligned with their title.
+                '& h4, & h4 + p': { ml: `calc(2 * ${SUBSECTION_INDENT})` },
+                '& h4 + p': { mb: 1 },
+                '& table': { borderCollapse: 'collapse', mb: 2 },
+                '& th, & td': {
+                    border: 1,
+                    borderColor: 'divider',
+                    px: 1.5,
+                    py: 1,
+                    textAlign: 'left',
+                },
+            }}
+        >
+            {fetching ? (
+                <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                    <CircularProgress />
+                </Box>
+            ) : error ? (
+                <Error error={error} condensed />
+            ) : text ? (
+                <Markdown options={markdownOptions}>{text}</Markdown>
+            ) : (
+                <Typography>The terms are not available.</Typography>
+            )}
+        </Box>
+    );
+}
