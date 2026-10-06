@@ -370,6 +370,7 @@ enum CapabilityBit {
   CreateApiKey
   CreateGrant
   CreateInviteLink
+  CreateSandbox
   CreateServiceAccount
   DecryptSecret
   Delegate
@@ -574,6 +575,24 @@ enum ChargeStatus {
 }
 
 scalar Collection
+
+"""A command run in a sandbox."""
+type Command {
+  command: String!
+
+  """
+  Null until the command exits (crashed commands may not record their exit code)
+  """
+  exitCode: Int
+  id: Id!
+  requestedAt: DateTime!
+
+  """Poll stderr with this `path` and `sandboxFileRead`."""
+  stderrPath: String!
+
+  """Poll stdout with this `path` and `sandboxFileRead`."""
+  stdoutPath: String!
+}
 
 """Result of checking storage health for a catalog prefix."""
 type ConnectionHealthTestResult {
@@ -1176,6 +1195,54 @@ type FieldProvenance {
   source: String
 }
 
+type FileRead {
+  base64: String!
+  offset: Int!
+  utf8: String!
+}
+
+"""
+A flattened fragment store. Fields which don't apply to the
+store's `provider` are null.
+"""
+type FragmentStore {
+  """
+  Azure tenant ID which owns the storage account. Null for non-Azure stores.
+  """
+  accountTenantId: String
+
+  """Bucket into which data is stored. Null for Azure stores."""
+  bucket: String
+
+  """Azure container name. Null for non-Azure stores."""
+  containerName: String
+
+  """
+  Address of the S3-compatible storage endpoint. Null for non-Custom stores.
+  """
+  endpoint: String
+
+  """Optional prefix of keys written to the store."""
+  prefix: String
+
+  """Storage provider of this store."""
+  provider: FragmentStoreProvider!
+
+  """AWS region of the bucket. Null for GCS, Azure, and Custom stores."""
+  region: String
+
+  """Azure storage account name. Null for non-Azure stores."""
+  storageAccountName: String
+}
+
+"""Storage provider of a fragment store."""
+enum FragmentStoreProvider {
+  AZURE
+  CUSTOM
+  GCS
+  S3
+}
+
 type GCPPrivateServiceConnect {
   allPorts: Boolean!
   dnsRecordNames: [String!]!
@@ -1364,7 +1431,6 @@ type LegalTerms {
 enum LegalTermsType {
   """Master Services Agreement."""
   MSA
-  PRIVACY_POLICY
 }
 
 type LiveSpec {
@@ -1757,6 +1823,22 @@ type MutationRoot {
   via createApiKey and revokeApiKey.
   """
   revokeRefreshToken(id: Id!): Boolean!
+  sandboxCancel(catalogName: Name!, id: Id!): Boolean!
+
+  """Returns after flowctl is installed."""
+  sandboxCreate(catalogName: Name!): Sandbox!
+  sandboxDelete(catalogName: Name!): Boolean!
+
+  """
+  Returns once the command has started - read its output by polling `sandboxFileRead`.
+  """
+  sandboxExecute(catalogName: Name!, command: String!, stdin: String): Command!
+
+  """
+  Restore the sandbox to its baseline, discarding all changes, past
+  commands, and their output.
+  """
+  sandboxReset(catalogName: Name!): Boolean!
   setBillingContact(address: BillingAddressInput!, email: String!, name: String!, tenant: String!): SetBillingContactPayload!
   setBillingPaymentMethod(paymentMethodId: String!, tenant: String!): BillingPaymentMethodPayload!
 
@@ -2273,6 +2355,18 @@ type QueryRoot {
 
   """List refresh tokens owned by the authenticated user."""
   refreshTokens(after: String, first: Int): RefreshTokenInfoConnection!
+  sandbox(catalogName: Name!): Sandbox
+  sandboxFileRead(
+    catalogName: Name!
+
+    """Max 1 MiB"""
+    limit: Int
+
+    """Byte offset"""
+    offset: Int! = 0
+    path: String!
+  ): FileRead!
+  sandboxes: [Sandbox!]!
 
   """
   List secrets the caller may view, in catalog-name order.
@@ -2355,6 +2449,20 @@ type RepublishRequested {
   Informational only, timestamp of when the controller observed the `Republish` request.
   """
   receivedAt: DateTime!
+}
+
+"""A persistent Linux VM that runs the user's shell commands."""
+type Sandbox {
+  catalogName: Name!
+
+  """Commands started in this sandbox"""
+  commands: [Command!]
+  createdAt: DateTime!
+
+  """
+  False until a new sandbox reaches its baseline state (flowctl installed).
+  """
+  ready: Boolean!
 }
 
 """
@@ -2736,11 +2844,19 @@ type StorageMapping {
   """The catalog prefix this storage mapping applies to."""
   catalogPrefix: Prefix!
 
+  """
+  Data planes which may be used by tasks or collections under this mapping.
+  """
+  dataPlanes: [DataPlane!]!
+
   """Optional description of this storage mapping."""
   detail: String
 
+  """Stores for journal fragments under this mapping."""
+  fragmentStores: [FragmentStore!]!
+
   """The storage definition containing stores and data plane assignments."""
-  spec: JSON!
+  spec: JSON! @deprecated(reason: "Deprecated in favor of `dataPlanes` and `fragmentStores` fields.")
 
   """The current user's capability to this storage mapping's prefix."""
   userCapability: Capability!

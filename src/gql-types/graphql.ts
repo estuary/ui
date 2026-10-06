@@ -391,6 +391,7 @@ export type CapabilityBit =
   | 'CreateApiKey'
   | 'CreateGrant'
   | 'CreateInviteLink'
+  | 'CreateSandbox'
   | 'CreateServiceAccount'
   | 'DecryptSecret'
   | 'Delegate'
@@ -567,6 +568,20 @@ export type ChargeStatus =
   | 'FAILED'
   | 'PENDING'
   | 'SUCCEEDED';
+
+/** A command run in a sandbox. */
+export type Command = {
+  __typename?: 'Command';
+  command: Scalars['String']['output'];
+  /** Null until the command exits (crashed commands may not record their exit code) */
+  exitCode?: Maybe<Scalars['Int']['output']>;
+  id: Scalars['Id']['output'];
+  requestedAt: Scalars['DateTime']['output'];
+  /** Poll stderr with this `path` and `sandboxFileRead`. */
+  stderrPath: Scalars['String']['output'];
+  /** Poll stdout with this `path` and `sandboxFileRead`. */
+  stdoutPath: Scalars['String']['output'];
+};
 
 /** Result of checking storage health for a catalog prefix. */
 export type ConnectionHealthTestResult = {
@@ -1099,6 +1114,44 @@ export type FieldProvenance = {
   source?: Maybe<Scalars['String']['output']>;
 };
 
+export type FileRead = {
+  __typename?: 'FileRead';
+  base64: Scalars['String']['output'];
+  offset: Scalars['Int']['output'];
+  utf8: Scalars['String']['output'];
+};
+
+/**
+ * A flattened fragment store. Fields which don't apply to the
+ * store's `provider` are null.
+ */
+export type FragmentStore = {
+  __typename?: 'FragmentStore';
+  /** Azure tenant ID which owns the storage account. Null for non-Azure stores. */
+  accountTenantId?: Maybe<Scalars['String']['output']>;
+  /** Bucket into which data is stored. Null for Azure stores. */
+  bucket?: Maybe<Scalars['String']['output']>;
+  /** Azure container name. Null for non-Azure stores. */
+  containerName?: Maybe<Scalars['String']['output']>;
+  /** Address of the S3-compatible storage endpoint. Null for non-Custom stores. */
+  endpoint?: Maybe<Scalars['String']['output']>;
+  /** Optional prefix of keys written to the store. */
+  prefix?: Maybe<Scalars['String']['output']>;
+  /** Storage provider of this store. */
+  provider: FragmentStoreProvider;
+  /** AWS region of the bucket. Null for GCS, Azure, and Custom stores. */
+  region?: Maybe<Scalars['String']['output']>;
+  /** Azure storage account name. Null for non-Azure stores. */
+  storageAccountName?: Maybe<Scalars['String']['output']>;
+};
+
+/** Storage provider of a fragment store. */
+export type FragmentStoreProvider =
+  | 'AZURE'
+  | 'CUSTOM'
+  | 'GCS'
+  | 'S3';
+
 export type GcpPrivateServiceConnect = {
   __typename?: 'GCPPrivateServiceConnect';
   allPorts: Scalars['Boolean']['output'];
@@ -1274,8 +1327,7 @@ export type LegalTerms = {
 
 export type LegalTermsType =
   /** Master Services Agreement. */
-  | 'MSA'
-  | 'PRIVACY_POLICY';
+  | 'MSA';
 
 export type LiveSpec = {
   __typename?: 'LiveSpec';
@@ -1667,6 +1719,17 @@ export type MutationRoot = {
    * via createApiKey and revokeApiKey.
    */
   revokeRefreshToken: Scalars['Boolean']['output'];
+  sandboxCancel: Scalars['Boolean']['output'];
+  /** Returns after flowctl is installed. */
+  sandboxCreate: Sandbox;
+  sandboxDelete: Scalars['Boolean']['output'];
+  /** Returns once the command has started - read its output by polling `sandboxFileRead`. */
+  sandboxExecute: Command;
+  /**
+   * Restore the sandbox to its baseline, discarding all changes, past
+   * commands, and their output.
+   */
+  sandboxReset: Scalars['Boolean']['output'];
   setBillingContact: SetBillingContactPayload;
   setBillingPaymentMethod: BillingPaymentMethodPayload;
   /**
@@ -1887,6 +1950,34 @@ export type MutationRootRevokeApiKeyArgs = {
 
 export type MutationRootRevokeRefreshTokenArgs = {
   id: Scalars['Id']['input'];
+};
+
+
+export type MutationRootSandboxCancelArgs = {
+  catalogName: Scalars['Name']['input'];
+  id: Scalars['Id']['input'];
+};
+
+
+export type MutationRootSandboxCreateArgs = {
+  catalogName: Scalars['Name']['input'];
+};
+
+
+export type MutationRootSandboxDeleteArgs = {
+  catalogName: Scalars['Name']['input'];
+};
+
+
+export type MutationRootSandboxExecuteArgs = {
+  catalogName: Scalars['Name']['input'];
+  command: Scalars['String']['input'];
+  stdin?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type MutationRootSandboxResetArgs = {
+  catalogName: Scalars['Name']['input'];
 };
 
 
@@ -2302,6 +2393,9 @@ export type QueryRoot = {
   publicDataPlanes: PublicDataPlaneConnection;
   /** List refresh tokens owned by the authenticated user. */
   refreshTokens: RefreshTokenInfoConnection;
+  sandbox?: Maybe<Sandbox>;
+  sandboxFileRead: FileRead;
+  sandboxes: Array<Sandbox>;
   /**
    * List secrets the caller may view, in catalog-name order.
    *
@@ -2434,6 +2528,19 @@ export type QueryRootRefreshTokensArgs = {
 };
 
 
+export type QueryRootSandboxArgs = {
+  catalogName: Scalars['Name']['input'];
+};
+
+
+export type QueryRootSandboxFileReadArgs = {
+  catalogName: Scalars['Name']['input'];
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: Scalars['Int']['input'];
+  path: Scalars['String']['input'];
+};
+
+
 export type QueryRootSecretsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   filter?: InputMaybe<SecretsFilter>;
@@ -2521,6 +2628,17 @@ export type RepublishRequested = {
   reason: Scalars['String']['output'];
   /** Informational only, timestamp of when the controller observed the `Republish` request. */
   receivedAt: Scalars['DateTime']['output'];
+};
+
+/** A persistent Linux VM that runs the user's shell commands. */
+export type Sandbox = {
+  __typename?: 'Sandbox';
+  catalogName: Scalars['Name']['output'];
+  /** Commands started in this sandbox */
+  commands?: Maybe<Array<Command>>;
+  createdAt: Scalars['DateTime']['output'];
+  /** False until a new sandbox reaches its baseline state (flowctl installed). */
+  ready: Scalars['Boolean']['output'];
 };
 
 /**
@@ -2858,9 +2976,16 @@ export type StorageMapping = {
   __typename?: 'StorageMapping';
   /** The catalog prefix this storage mapping applies to. */
   catalogPrefix: Scalars['Prefix']['output'];
+  /** Data planes which may be used by tasks or collections under this mapping. */
+  dataPlanes: Array<DataPlane>;
   /** Optional description of this storage mapping. */
   detail?: Maybe<Scalars['String']['output']>;
-  /** The storage definition containing stores and data plane assignments. */
+  /** Stores for journal fragments under this mapping. */
+  fragmentStores: Array<FragmentStore>;
+  /**
+   * The storage definition containing stores and data plane assignments.
+   * @deprecated Deprecated in favor of `dataPlanes` and `fragmentStores` fields.
+   */
   spec: Scalars['JSON']['output'];
   /** The current user's capability to this storage mapping's prefix. */
   userCapability: Capability;
