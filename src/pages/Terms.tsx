@@ -5,6 +5,7 @@ import { useEffect } from 'react';
 import { Box, CircularProgress, Link, Typography } from '@mui/material';
 
 import Markdown from 'markdown-to-jsx';
+import { useLocation } from 'react-router-dom';
 import { useQuery } from 'urql';
 
 import { LEGAL_TERMS_QUERY } from 'src/api/gql/legalTerms';
@@ -83,6 +84,7 @@ const markdownOptions = {
 
 export function Terms() {
     const { updateTitle } = useUpdateHelmet();
+    const { hash } = useLocation();
 
     useEffect(() => {
         updateTitle('Estuary | Master Services Agreement');
@@ -94,6 +96,21 @@ export function Terms() {
     });
 
     const text = data?.legalTerms?.text;
+
+    useEffect(() => {
+        if (fetching || error || !text || !hash) return;
+
+        let id: string;
+        try {
+            id = decodeURIComponent(hash.slice(1));
+        } catch {
+            return;
+        }
+
+        // The browser's initial fragment scroll happens before the terms load.
+        document.getElementById(id)?.scrollIntoView();
+    }, [text, fetching, error, hash]);
+
     return (
         <Box
             sx={{
