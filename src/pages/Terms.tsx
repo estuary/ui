@@ -1,11 +1,17 @@
 import type { TypographyProps } from '@mui/material';
-import type { ReactNode } from 'react';
+import type { ComponentPropsWithoutRef } from 'react';
 
 import { useEffect } from 'react';
 
 import CheckIcon from '@mui/icons-material/Check';
 import LinkIcon from '@mui/icons-material/Link';
-import { Box, CircularProgress, IconButton, Link, Typography } from '@mui/material';
+import {
+    Box,
+    CircularProgress,
+    IconButton,
+    Link,
+    Typography,
+} from '@mui/material';
 
 import Markdown from 'markdown-to-jsx';
 import { useLocation } from 'react-router-dom';
@@ -99,7 +105,10 @@ const markdownOptions = {
         },
         strong: {
             component: Box,
-            props: { component: 'span', sx: { textDecoration: 'underline' } },
+            props: {
+                component: 'strong',
+                sx: { fontWeight: 'inherit', textDecoration: 'underline' },
+            },
         },
         p: {
             component: Typography,
@@ -109,22 +118,21 @@ const markdownOptions = {
             component: ({
                 href,
                 children,
-            }: {
-                href?: string;
-                children: ReactNode;
-            }) => (
-                <Link
-                    href={href}
-                    target={href?.startsWith('#') ? undefined : '_blank'}
-                    rel={
-                        href?.startsWith('#')
-                            ? undefined
-                            : 'noopener noreferrer'
-                    }
-                >
-                    {children}
-                </Link>
-            ),
+                ...props
+            }: ComponentPropsWithoutRef<'a'>) => {
+                const openInNewTab = /^https?:\/\//i.test(href ?? '');
+
+                return (
+                    <Link
+                        {...props}
+                        href={href}
+                        target={openInNewTab ? '_blank' : undefined}
+                        rel={openInNewTab ? 'noopener noreferrer' : undefined}
+                    >
+                        {children}
+                    </Link>
+                );
+            },
         },
     },
 };
@@ -166,21 +174,21 @@ export function Terms() {
                 'px': 3,
                 'py': 6,
                 '& :is(h1, h2, h3, h4, h5, h6)': {
-                    position: 'relative',
+                    'position': 'relative',
                     '&:hover > .heading-anchor, &:focus-within > .heading-anchor':
                         { opacity: 1 },
                 },
                 '& .heading-anchor': {
-                    position: 'absolute',
-                    right: '100%',
-                    top: '50%',
-                    transform: 'translateY(-50%)',
-                    pr: '0.2em',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    height: '1.5em',
-                    fontSize: '1rem',
-                    opacity: 0,
+                    'position': 'absolute',
+                    'right': '100%',
+                    'top': '50%',
+                    'transform': 'translateY(-50%)',
+                    'pr': '0.2em',
+                    'display': 'inline-flex',
+                    'alignItems': 'center',
+                    'height': '1.5em',
+                    'fontSize': '1rem',
+                    'opacity': 0,
                     '@media (hover: none)': { opacity: 1 },
                 },
                 // Subsection titles run in to the start of the paragraph that
