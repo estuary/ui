@@ -1,10 +1,11 @@
-import { Box, Typography } from '@mui/material';
+import { Box, Typography, useTheme } from '@mui/material';
 
 import { QuoteSolid } from 'iconoir-react';
 
 import flashpackLogo from 'src/images/flashpackLogo.png';
 
 export function CustomerQuote() {
+    const theme = useTheme();
     return (
         <Box
             sx={{
@@ -64,7 +65,10 @@ export function CustomerQuote() {
                             width: 36,
                             height: 36,
                             objectFit: 'contain',
-                            filter: 'invert(1)',
+                            filter:
+                                theme.palette.mode === 'dark'
+                                    ? 'invert(1)'
+                                    : 'none',
                         }}
                     />
                     Flashpack

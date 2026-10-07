@@ -14,13 +14,14 @@ const originOptions = [
 ];
 
 interface Props {
+    disabled?: boolean;
     value: string;
     onChange: (value: string) => void;
 }
 
-export function OnboardingSurvey({ value, onChange }: Props) {
+export function OnboardingSurvey({ disabled, value, onChange }: Props) {
     return (
-        <FormControl required fullWidth>
+        <FormControl disabled={disabled} required fullWidth>
             <FormLabel id="survey-label" required sx={{ mb: 1, fontSize: 20 }}>
                 Where did you hear about Estuary?
             </FormLabel>

@@ -1,16 +1,10 @@
-import type { UserInfoStore } from 'src/context/UserInfoSummary/types';
-
 import { Grid, useMediaQuery, useTheme } from '@mui/material';
 
 import FullPageWrapper from 'src/app/FullPageWrapper';
 import { CustomerQuote } from 'src/components/onboarding/CustomerQuote';
-import TenantCreate from 'src/components/onboarding/TenantCreate';
+import { TenantCreate } from 'src/components/onboarding/TenantCreate';
 
-interface Props {
-    grantsMutate: UserInfoStore['mutate'];
-}
-
-function OnboardGuard({ grantsMutate }: Props) {
+export function OnboardingPage() {
     const theme = useTheme();
     const aboveMd = useMediaQuery(theme.breakpoints.up('md'));
 
@@ -28,11 +22,9 @@ function OnboardGuard({ grantsMutate }: Props) {
                     </Grid>
                 ) : null}
                 <Grid size={{ xs: 12, md: 6 }}>
-                    <TenantCreate mutate={grantsMutate} />
+                    <TenantCreate />
                 </Grid>
             </Grid>
         </FullPageWrapper>
     );
 }
-
-export default OnboardGuard;

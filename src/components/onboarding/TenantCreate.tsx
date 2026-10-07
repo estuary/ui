@@ -1,5 +1,3 @@
-import type { UserInfoStore } from 'src/context/UserInfoSummary/types';
-
 import { useState } from 'react';
 
 import {
@@ -30,6 +28,7 @@ import { OnboardingSurvey } from 'src/components/onboarding/Survey';
 import AlertBox from 'src/components/shared/AlertBox';
 import ExternalLink from 'src/components/shared/ExternalLink';
 import { supabaseClient } from 'src/context/GlobalProviders';
+import { useUserInfoSummaryStore } from 'src/context/UserInfoSummary/useUserInfoSummaryStore';
 import { fireGtmEvent } from 'src/services/gtm';
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
@@ -39,11 +38,8 @@ const urls = getUrls();
 const NAME_TAKEN_MESSAGE = 'is already in use';
 const EVENT_NAME = 'Tenant:Create';
 
-interface Props {
-    mutate: UserInfoStore['mutate'];
-}
-
-const TenantCreate = ({ mutate }: Props) => {
+export const TenantCreate = () => {
+    const refreshUserInfo = useUserInfoSummaryStore((state) => state.mutate);
     const postHog = usePostHog();
     const [creation, createTenant] = useTenantCreate();
     const {
@@ -145,7 +141,7 @@ const TenantCreate = ({ mutate }: Props) => {
                 status: 'success',
                 tenant: requestedTenant,
             });
-            await mutate?.();
+            await refreshUserInfo?.();
         },
         (validationErrors) => {
             setServerError(null);
@@ -228,9 +224,11 @@ const TenantCreate = ({ mutate }: Props) => {
                                     autoComplete="organization"
                                     autoFocus
                                     required
+                                    disabled={saving}
                                     size="small"
                                     onChange={(event) => {
                                         const value = event.target.value
+                                            .normalize('NFD')
                                             .replace(/\s/g, '_')
                                             .replace(/[^a-zA-Z0-9._-]/g, '');
                                         if (value !== field.value)
@@ -344,6 +342,7 @@ const TenantCreate = ({ mutate }: Props) => {
                         rules={{ required: true }}
                         render={({ field }) => (
                             <OnboardingSurvey
+                                disabled={saving}
                                 value={field.value}
                                 onChange={field.onChange}
                             />
@@ -434,5 +433,3 @@ const TenantCreate = ({ mutate }: Props) => {
         </>
     );
 };
-
-export default TenantCreate;
