@@ -20,7 +20,7 @@ export function DataPlaneRow({
 }) {
     const intl = useIntl();
     return (
-        <Stack direction="row" spacing={1} alignItems="center">
+        <Stack direction="row" spacing={1} alignItems="center" flexGrow={1}>
             <Box
                 sx={{
                     'display': 'flex',
