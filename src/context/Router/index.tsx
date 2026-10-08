@@ -39,6 +39,7 @@ import BasicLogin from 'src/pages/login/Basic';
 import EnterpriseLogin from 'src/pages/login/Enterprise';
 import MarketplaceCallback from 'src/pages/marketplace/Callback';
 import MarketplaceVerification from 'src/pages/marketplace/Verification';
+import { McpAuthReq } from 'src/pages/McpAuthReq';
 import { SSORequired } from 'src/pages/SSORequired';
 import { Terms } from 'src/pages/Terms';
 import { isProduction } from 'src/utils/env-utils';
@@ -213,6 +214,11 @@ const router = createBrowserRouter(
                     <Route
                         path={authenticatedRoutes.dataPlaneAuth.path}
                         element={<DataPlaneAuthReq />}
+                    />
+
+                    <Route
+                        path={authenticatedRoutes.mcpAuth.path}
+                        element={<McpAuthReq />}
                     />
 
                     <Route
