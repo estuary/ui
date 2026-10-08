@@ -17,7 +17,6 @@ import { beforeEach, describe, expect, test, vi } from 'vitest';
 import PaymentMethods from 'src/components/admin/Billing/PaymentMethods';
 import PricingTierDetails from 'src/components/admin/Billing/PricingTierDetails';
 import UrqlConfigProvider from 'src/context/URQL';
-import enUSMessages from 'src/lang/en-US';
 import { fireGtmEvent } from 'src/services/gtm';
 import { graphql, HttpResponse, server } from 'src/test/server/test-server';
 import { getGqlUrl } from 'src/utils/env-utils';
@@ -114,7 +113,7 @@ const view = (showAddPayment = false) => (
     </>
 );
 const wrapper = ({ children }: { children: ReactNode }) => (
-    <IntlProvider locale="en" messages={enUSMessages}>
+    <IntlProvider locale="en">
         <UrqlConfigProvider>{children}</UrqlConfigProvider>
     </IntlProvider>
 );

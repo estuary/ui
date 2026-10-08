@@ -5,7 +5,6 @@ import { Box, Button, Dialog, DialogTitle, useTheme } from '@mui/material';
 import { usePostHog } from '@posthog/react';
 import { Elements } from '@stripe/react-stripe-js';
 import { Plus } from 'iconoir-react';
-import { useIntl } from 'react-intl';
 import { useMountedState } from 'react-use';
 import { useMutation } from 'urql';
 
@@ -37,7 +36,6 @@ function AddPaymentMethod({
     stripePromise,
     tenant,
 }: Props) {
-    const intl = useIntl();
     const isMounted = useMountedState();
     const [, setPrimary] = useMutation(SET_BILLING_PAYMENT_METHOD);
     const postHog = usePostHog();
@@ -62,9 +60,7 @@ function AddPaymentMethod({
                     sx={{ whiteSpace: 'nowrap' }}
                     variant="contained"
                 >
-                    {intl.formatMessage({
-                        id: 'admin.billing.paymentMethods.cta.addPaymentMethod',
-                    })}
+                    Add Payment Method
                 </Button>
             </Box>
 
@@ -76,11 +72,7 @@ function AddPaymentMethod({
                 onClose={() => setOpen(false)}
                 data-private
             >
-                <DialogTitle>
-                    {intl.formatMessage({
-                        id: 'admin.billing.addPaymentMethods.title',
-                    })}
-                </DialogTitle>
+                <DialogTitle>Add a payment method</DialogTitle>
                 {enable ? (
                     <Elements
                         stripe={stripePromise}
