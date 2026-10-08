@@ -1422,14 +1422,9 @@ export type LiveSpecRef = {
   /** Returns the status of the live spec. */
   status?: Maybe<LiveSpecStatus>;
   /**
-   * The current user's capability to the referent. Null indicates no access.
-   * A query can obtain a reference to a catalog spec that the user has no
-   * access to, which happens in scenarios where a LiveSpec that the user
-   * does have access to references a spec in a different catalog namespace
-   * that the user cannot access. It can also happen simply by listing by
-   * name, and passing a name that the user cannot access. In either case,
-   * the result would be `userCapability: null`, and all other fields on the
-   * LiveSpecRef would also be null.
+   * The current user's legacy capability to the referent, retained for compatibility.
+   * Authorization is evaluated independently using the CatalogRead capability bit.
+   * @deprecated Legacy capability reporting does not reflect effective permissions.
    */
   userCapability?: Maybe<Capability>;
 };
