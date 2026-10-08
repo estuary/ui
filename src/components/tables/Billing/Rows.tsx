@@ -3,8 +3,6 @@ import type { InvoiceId } from 'src/utils/billing-utils';
 
 import { TableCell, TableRow, Typography } from '@mui/material';
 
-import { FormattedMessage } from 'react-intl';
-
 import DataVolume from 'src/components/tables/cells/billing/DataVolume';
 import TimeStamp from 'src/components/tables/cells/billing/TimeStamp';
 import MonetaryValue from 'src/components/tables/cells/MonetaryValue';
@@ -25,6 +23,13 @@ function Row({ row, isSelected }: RowProps) {
     const setSelectedInvoice = useBillingStore(
         (state) => state.setSelectedInvoice
     );
+    const taskUsage = row.extra?.task_usage_hours ?? 0;
+    const hourLabel =
+        new Intl.PluralRules(navigator.language || 'en-US').select(
+            taskUsage
+        ) === 'one'
+            ? 'Hour'
+            : 'Hours';
 
     return (
         <TableRow
@@ -47,12 +52,7 @@ function Row({ row, isSelected }: RowProps) {
             <DataVolume volumeInGB={row.extra?.processed_data_gb ?? 0} />
 
             <TableCell>
-                <Typography>
-                    <FormattedMessage
-                        id="admin.billing.graph.taskHoursByMonth.formatValue"
-                        values={{ taskUsage: row.extra?.task_usage_hours ?? 0 }}
-                    />
-                </Typography>
+                <Typography>{`${taskUsage} ${hourLabel}`}</Typography>
             </TableCell>
 
             <MonetaryValue amount={row.subtotal} />

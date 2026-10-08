@@ -16,7 +16,6 @@ import {
 } from '@mui/material';
 
 import { loadStripe } from '@stripe/stripe-js';
-import { FormattedMessage } from 'react-intl';
 
 import {
     deleteTenantPaymentMethod,
@@ -38,31 +37,31 @@ import { useBillingStore } from 'src/stores/Billing';
 import { useTenantStore } from 'src/stores/Tenant';
 import { getColumnKeyList } from 'src/utils/table-utils';
 
-const columns: TableColumns[] = [
+const columns: (TableColumns & { header: string })[] = [
     {
         field: 'type',
-        headerIntlKey: 'admin.billing.paymentMethods.table.label.cardType',
+        header: 'Type',
         width: 200,
     },
     {
         field: 'name',
-        headerIntlKey: 'admin.billing.paymentMethods.table.label.name',
+        header: 'Name',
     },
     {
         field: 'last_four_digits',
-        headerIntlKey: 'admin.billing.paymentMethods.table.label.lastFour',
+        header: 'Last 4 Digits',
     },
     {
         field: 'details',
-        headerIntlKey: 'admin.billing.paymentMethods.table.label.details',
+        header: 'Details',
     },
     {
         field: 'primary',
-        headerIntlKey: 'admin.billing.paymentMethods.table.label.primary',
+        header: 'Primary',
     },
     {
         field: 'actions',
-        headerIntlKey: 'admin.billing.paymentMethods.table.label.actions',
+        header: 'Actions',
     },
 ];
 
@@ -167,7 +166,9 @@ const PaymentMethods = ({ showAddPayment }: AdminBillingProps) => {
             {setupIntentSecret === INTENT_SECRET_ERROR ? (
                 <AlertBox short severity="error">
                     <Typography component="div">
-                        <FormattedMessage id="admin.billing.paymentMethods.cta.addPaymentMethod.error" />
+                        There was an issue attempting to get a token from
+                        Stripe. You cannot currently add a payment method. Try
+                        again and if the issue persists please contact support.
                     </Typography>
                 </AlertBox>
             ) : null}
@@ -185,12 +186,14 @@ const PaymentMethods = ({ showAddPayment }: AdminBillingProps) => {
                             fontWeight: '400',
                         }}
                     >
-                        <FormattedMessage id="admin.billing.paymentMethods.header" />
+                        Payment Information
                     </Typography>
 
                     {serverErrored ? null : (
                         <Typography>
-                            <FormattedMessage id="admin.billing.paymentMethods.description" />
+                            Enter your payment information. You won&apos;t be
+                            charged until your account usage exceeds free tier
+                            limits.
                         </Typography>
                     )}
                 </Box>
@@ -210,7 +213,8 @@ const PaymentMethods = ({ showAddPayment }: AdminBillingProps) => {
             {serverErrored ? (
                 <AlertBox short severity="error">
                     <Typography component="div">
-                        <FormattedMessage id="admin.billing.error.paymentMethodsError" />
+                        There was an error connecting with our payment provider.
+                        Please try again later.
                     </Typography>
                 </AlertBox>
             ) : (
@@ -232,11 +236,7 @@ const PaymentMethods = ({ showAddPayment }: AdminBillingProps) => {
                                         key={`${column.field}-${index}`}
                                         width={column.width ?? 'auto'}
                                     >
-                                        {column.headerIntlKey ? (
-                                            <FormattedMessage
-                                                id={column.headerIntlKey}
-                                            />
-                                        ) : null}
+                                        {column.header}
                                     </TableCell>
                                 ))}
                             </TableRow>
@@ -275,7 +275,7 @@ const PaymentMethods = ({ showAddPayment }: AdminBillingProps) => {
                                         <Typography
                                             sx={{ textAlign: 'center' }}
                                         >
-                                            <FormattedMessage id="admin.billing.paymentMethods.table.emptyTableDefault.message" />
+                                            No payment methods available.
                                         </Typography>
                                     </TableCell>
                                 </TableRow>

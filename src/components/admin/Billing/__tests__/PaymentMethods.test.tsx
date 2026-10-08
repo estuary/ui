@@ -1,11 +1,9 @@
 import { act, render, screen, waitFor } from '@testing-library/react';
-import { IntlProvider } from 'react-intl';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
 import { getSetupIntentSecret, getTenantPaymentMethods } from 'src/api/billing';
 import PaymentMethods from 'src/components/admin/Billing/PaymentMethods';
 import PricingTierDetails from 'src/components/admin/Billing/PricingTierDetails';
-import enUSMessages from 'src/lang/en-US';
 import { useBillingStore } from 'src/stores/Billing';
 
 const tenant = vi.hoisted(() => ({ selectedTenant: 'acme/' }));
@@ -66,12 +64,12 @@ describe('billing payment status', () => {
             .getState()
             .setPaymentMethodStatus('acme/', [{ id: 'prior-card' }]);
         const view = () => (
-            <IntlProvider locale="en" messages={enUSMessages}>
+            <>
                 <div data-testid="pricing">
                     <PricingTierDetails />
                 </div>
                 <PaymentMethods />
-            </IntlProvider>
+            </>
         );
         const { rerender } = render(view());
         const pricing = screen.getByTestId('pricing');

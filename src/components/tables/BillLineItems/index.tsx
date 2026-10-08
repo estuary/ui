@@ -13,7 +13,6 @@ import {
 } from '@mui/material';
 
 import { CreditCard, Download } from 'iconoir-react';
-import { useIntl } from 'react-intl';
 
 import { getTenantInvoice } from 'src/api/billing';
 import { INVOICE_ROW_HEIGHT } from 'src/components/admin/Billing/shared';
@@ -48,8 +47,6 @@ const columns: TableColumns[] = [
 ];
 
 function BillingLineItemsTable() {
-    const intl = useIntl();
-
     const selectedTenant = useTenantStore((state) => state.selectedTenant);
 
     const { invoices, selectedInvoice, isLoading } = useBillingInvoices();
@@ -84,9 +81,7 @@ function BillingLineItemsTable() {
         <>
             <TableContainer component={Box}>
                 <Table
-                    aria-label={intl.formatMessage({
-                        id: 'admin.billing.table.line_items.title',
-                    })}
+                    aria-label="Invoice Details"
                     size="small"
                     stickyHeader
                     sx={{
@@ -136,9 +131,7 @@ function BillingLineItemsTable() {
                                 variant="outlined"
                                 size="small"
                             >
-                                {intl.formatMessage({
-                                    id: 'admin.billing.table.line_items.tooltip.download_pdf',
-                                })}
+                                {'Download invoice PDF'}
                             </Button>
                             {stripeInvoice?.status === 'open' ? (
                                 <Button
@@ -148,9 +141,7 @@ function BillingLineItemsTable() {
                                     variant="outlined"
                                     size="small"
                                 >
-                                    {intl.formatMessage({
-                                        id: 'admin.billing.table.line_items.tooltip.pay_invoice',
-                                    })}
+                                    {'Pay Invoice'}
                                 </Button>
                             ) : stripeInvoice?.status === 'paid' ? (
                                 <Button
@@ -160,9 +151,7 @@ function BillingLineItemsTable() {
                                     variant="outlined"
                                     size="small"
                                 >
-                                    {intl.formatMessage({
-                                        id: 'admin.billing.table.line_items.tooltip.invoice_paid',
-                                    })}
+                                    {'Invoice Paid'}
                                 </Button>
                             ) : (
                                 <Button
@@ -172,9 +161,7 @@ function BillingLineItemsTable() {
                                     variant="outlined"
                                     size="small"
                                 >
-                                    {intl.formatMessage({
-                                        id: 'admin.billing.table.line_items.tooltip.pay_invoice',
-                                    })}
+                                    {'Pay Invoice'}
                                 </Button>
                             )}
                         </Box>

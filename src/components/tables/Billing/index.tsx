@@ -4,8 +4,6 @@ import { useMemo } from 'react';
 
 import { Box, Table, TableContainer } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 import Rows from 'src/components/tables/Billing/Rows';
 import EntityTableBody from 'src/components/tables/EntityTable/TableBody';
 import EntityTableHeader from 'src/components/tables/EntityTable/TableHeader';
@@ -39,8 +37,6 @@ const columns: TableColumns[] = [
 ];
 
 function BillingHistoryTable() {
-    const intl = useIntl();
-
     const {
         invoices: billingHistory,
         selectedInvoice,
@@ -64,9 +60,7 @@ function BillingHistoryTable() {
     return (
         <TableContainer component={Box}>
             <Table
-                aria-label={intl.formatMessage({
-                    id: 'entityTable.title',
-                })}
+                aria-label="Entity Table"
                 size="small"
                 sx={{
                     ...getTableHeaderWithoutHeaderColor(),
