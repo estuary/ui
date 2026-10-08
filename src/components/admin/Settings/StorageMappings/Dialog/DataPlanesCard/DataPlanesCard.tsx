@@ -1,15 +1,15 @@
 import type { DataPlaneNode } from 'src/api/gql/dataPlanes';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
-import { Collapse, Stack } from '@mui/material';
+import { Collapse } from '@mui/material';
 
-import { Flipped, Flipper } from 'react-flip-toolkit';
 import { useIntl } from 'react-intl';
 
 import { DataPlaneRow } from 'src/components/admin/Settings/StorageMappings/Dialog/DataPlanesCard/DataPlaneRow';
 import { DataPlaneSelector } from 'src/components/admin/Settings/StorageMappings/Dialog/DataPlanesCard/DataPlaneSelector';
 import { CardTitle } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/CardTitle';
+import { List, ListItem } from 'src/components/shared/List';
 import { useDataPlanes } from 'src/hooks/dataPlanes/useDataPlanes';
 
 interface DataPlanesCardProps {
@@ -45,12 +45,6 @@ export function DataPlanesCard({
     );
 
     const [selectorIsOpen, setSelectorIsOpen] = useState(false);
-
-    // Track incoming prop changes to enable enter/exit animations
-    const [prevSelected, setPrevSelected] = useState(selectedDps);
-    const [incomingNames, setIncomingNames] = useState<Set<string>>(new Set());
-    const [outgoingDps, setOutgoingDps] = useState<DataPlaneNode[]>([]);
-    const outgoingNames = useMemo(() => names(outgoingDps), [outgoingDps]);
 
     const [unselectedDps, hasMoreOptions] = useMemo(() => {
         const selectedNames = names(selectedDps);
@@ -95,48 +89,6 @@ export function DataPlanesCard({
         [selectedDps, onRemove]
     );
 
-    const onExitAnimationComplete = useCallback((dataPlaneName: string) => {
-        setOutgoingDps((prev) =>
-            prev.filter((dp) => dp.name !== dataPlaneName)
-        );
-    }, []);
-
-    // Detect changes to the prop during render
-    if (prevSelected !== selectedDps) {
-        setPrevSelected(selectedDps);
-        const prevNames = names(prevSelected);
-        const nextNames = names(selectedDps);
-
-        // Snapshot removed items for exit animation
-        const removed = prevSelected.filter((dp) => !nextNames.has(dp.name));
-        if (removed.length > 0) {
-            setOutgoingDps((prev) => [...prev, ...removed]);
-        }
-
-        // Detect additions for enter animation
-        const added = selectedDps.filter((dp) => !prevNames.has(dp.name));
-        if (added.length > 0) {
-            setIncomingNames(names(added));
-        }
-    }
-
-    // Render list: current prop items + items still animating out
-    const renderList = useMemo(() => {
-        const selectedNames = names(selectedDps);
-        return [
-            ...selectedDps,
-            ...outgoingDps.filter((dp) => !selectedNames.has(dp.name)),
-        ];
-    }, [selectedDps, outgoingDps]);
-
-    // Items mount with Collapse `in={false}`, then this clears incomingIds
-    // on the next frame so they transition to `in={true}` and animate open.
-    useEffect(() => {
-        if (incomingNames.size === 0) return;
-        const frame = requestAnimationFrame(() => setIncomingNames(new Set()));
-        return () => cancelAnimationFrame(frame);
-    }, [incomingNames]);
-
     return (
         <>
             <CardTitle
@@ -149,40 +101,18 @@ export function DataPlanesCard({
                 onAction={() => setSelectorIsOpen(true)}
                 actionDisabled={effectiveSelectorIsOpen || !hasMoreOptions}
             />
-            <Flipper
-                flipKey={`${renderList.length}-${renderList
-                    .map((dp) => dp.name)
-                    .join(',')}`}
-            >
-                <Stack spacing={1}>
-                    {renderList.map((dp, index) => {
-                        const name = dp.name;
-                        const visible =
-                            !outgoingNames.has(name) &&
-                            !incomingNames.has(name);
-                        return (
-                            <Flipped key={name} flipId={name}>
-                                <Collapse
-                                    in={visible}
-                                    onExited={() =>
-                                        onExitAnimationComplete(name)
-                                    }
-                                    unmountOnExit
-                                >
-                                    <DataPlaneRow
-                                        dataPlane={dp}
-                                        isDefault={name === defaultDp?.name}
-                                        handleSetDefault={() =>
-                                            onSelectDefault(index)
-                                        }
-                                        handleRemove={() => handleRemove(index)}
-                                    />
-                                </Collapse>
-                            </Flipped>
-                        );
-                    })}
-                </Stack>
-            </Flipper>
+            <List spacing={1}>
+                {selectedDps.map((dp, index) => (
+                    <ListItem key={dp.name}>
+                        <DataPlaneRow
+                            dataPlane={dp}
+                            isDefault={dp.name === defaultDp?.name}
+                            handleSetDefault={() => onSelectDefault(index)}
+                            handleRemove={() => handleRemove(index)}
+                        />
+                    </ListItem>
+                ))}
+            </List>
             <Collapse in={effectiveSelectorIsOpen}>
                 <DataPlaneSelector
                     options={availableOptions}
