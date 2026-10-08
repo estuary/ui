@@ -1,6 +1,9 @@
 import type { ProtocolStatus } from 'data-plane-gateway/types/gen/broker/protocol/broker';
 import type { Align } from 'react-window';
-import type { FetchMoreLogsFunction } from 'src/components/tables/Logs/types';
+import type {
+    FetchMoreLogsFunction,
+    LogLevelFilter,
+} from 'src/components/tables/Logs/types';
 import type {
     LoadDocumentsOffsets,
     UseOpsLogsDocs,
@@ -24,6 +27,14 @@ export interface JournalDataLogsState extends StoreWithHydration {
 
     tailNewLogs: boolean;
     setTailNewLogs: (val: JournalDataLogsState['tailNewLogs']) => void;
+
+    // Not cleared by resetState so the choice survives switching tabs
+    levelFilter: LogLevelFilter;
+    setLevelFilter: (val: JournalDataLogsState['levelFilter']) => void;
+
+    // Bytes read since the last chunk that had a line matching levelFilter
+    bytesScannedWithoutMatch: number;
+    resetBytesScannedWithoutMatch: () => void;
 
     fetchMoreLogs: FetchMoreLogsFunction;
     allowFetchingMore: boolean;
