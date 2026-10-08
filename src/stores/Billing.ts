@@ -1,4 +1,3 @@
-import type { InvoiceId } from 'src/utils/billing-utils';
 import type { NamedSet } from 'zustand/middleware';
 
 import { create } from 'zustand';
@@ -11,9 +10,6 @@ import { hasLength } from 'src/utils/misc-utils';
 import { devtoolsOptions } from 'src/utils/store-utils';
 
 interface BillingState {
-    selectedInvoiceId: InvoiceId | null;
-    setSelectedInvoice: (value: InvoiceId) => void;
-
     paymentMethodStatus: { tenant: string; exists: boolean } | null;
     setPaymentMethodStatus: (
         tenant: string,
@@ -23,18 +19,7 @@ interface BillingState {
 
 const getInitialState = (set: NamedSet<BillingState>): BillingState => {
     return {
-        selectedInvoiceId: null,
         paymentMethodStatus: null,
-
-        setSelectedInvoice: (value) => {
-            set(
-                produce((state: BillingState) => {
-                    state.selectedInvoiceId = value;
-                }),
-                false,
-                'Selected Month Set'
-            );
-        },
 
         setPaymentMethodStatus: (tenant, value) => {
             set(

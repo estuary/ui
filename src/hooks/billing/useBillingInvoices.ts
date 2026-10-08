@@ -1,5 +1,6 @@
 import type { Invoice, InvoiceLineItem } from 'src/api/billing';
 import type { TenantBillingInvoicesQuery } from 'src/gql-types/graphql';
+import type { InvoiceId } from 'src/utils/billing-utils';
 
 import { useMemo } from 'react';
 import useConstant from 'use-constant';
@@ -17,13 +18,12 @@ import {
     TENANT_BILLING_INVOICES_QUERY,
 } from 'src/api/gql/billing';
 import { useAllPages } from 'src/api/gql/useAllPages';
-import { useBillingStore } from 'src/stores/Billing';
 import { useTenantStore } from 'src/stores/Tenant';
 import { invoiceId, stripTimeFromDate } from 'src/utils/billing-utils';
 
 export interface UseBillingInvoicesResult {
     invoices: Invoice[];
-    // The invoice currently shown in the line-item/detail views: the stored
+    // The invoice currently shown in the line-item/detail views: the requested
     // selection if it still exists in this tenant's data, otherwise the newest
     // invoice. Falling back this way means an org switch self-corrects without
     // anyone resetting state.
@@ -72,11 +72,10 @@ const isVisible = (invoice: Invoice, { start, end }: DateWindow): boolean => {
 };
 
 // Read every page before applying the window: older manual invoices must remain visible.
-export function useBillingInvoices(): UseBillingInvoicesResult {
+export function useBillingInvoices(
+    selectedInvoiceId: InvoiceId | null = null
+): UseBillingInvoicesResult {
     const selectedTenant = useTenantStore((state) => state.selectedTenant);
-    const selectedInvoiceId = useBillingStore(
-        (state) => state.selectedInvoiceId
-    );
 
     const dateWindow = useConstant<DateWindow>(() => {
         const end = endOfMonth(new Date());
