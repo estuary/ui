@@ -16,13 +16,13 @@ import {
 } from '@mui/material';
 
 import { loadStripe } from '@stripe/stripe-js';
+import { useMutation } from 'urql';
 
 import {
-    deleteTenantPaymentMethod,
-    getSetupIntentSecret,
-    getTenantPaymentMethods,
-    setTenantPrimaryPaymentMethod,
-} from 'src/api/billing';
+    CREATE_BILLING_SETUP_INTENT,
+    DELETE_BILLING_PAYMENT_METHOD,
+    SET_BILLING_PAYMENT_METHOD,
+} from 'src/api/gql/billing';
 import AddPaymentMethod from 'src/components/admin/Billing/AddPaymentMethod';
 import { PaymentMethod } from 'src/components/admin/Billing/PaymentMethodRow';
 import {
@@ -31,9 +31,9 @@ import {
 } from 'src/components/admin/Billing/shared';
 import AlertBox from 'src/components/shared/AlertBox';
 import TableLoadingRows from 'src/components/tables/Loading';
+import { useBillingPaymentMethods } from 'src/hooks/billing/useBillingPaymentMethods';
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
-import { useBillingStore } from 'src/stores/Billing';
 import { useTenantStore } from 'src/stores/Tenant';
 import { getColumnKeyList } from 'src/utils/table-utils';
 
@@ -65,95 +65,93 @@ const columns: (TableColumns & { header: string })[] = [
     },
 ];
 
-const PaymentMethods = ({ showAddPayment }: AdminBillingProps) => {
+function PaymentMethods({ showAddPayment }: AdminBillingProps) {
+    const tenant = useTenantStore((state) => state.selectedTenant);
+    // Remount dialog and action state when the selected tenant changes.
+    return (
+        <TenantPaymentMethods
+            key={tenant}
+            tenant={tenant}
+            showAddPayment={showAddPayment}
+        />
+    );
+}
+
+function TenantPaymentMethods({
+    tenant,
+    showAddPayment,
+}: AdminBillingProps & { tenant: string }) {
     const stripePromise = useMemo(
         () => loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY ?? ''),
         []
     );
-
-    const selectedTenant = useTenantStore((state) => state.selectedTenant);
-
-    const setPaymentMethodStatus = useBillingStore(
-        (state) => state.setPaymentMethodStatus
-    );
-
+    const {
+        billing,
+        isLoading,
+        error,
+        refresh: refreshPaymentMethods,
+    } = useBillingPaymentMethods(tenant);
+    const [, createSetupIntent] = useMutation(CREATE_BILLING_SETUP_INTENT);
+    const [, setPrimary] = useMutation(SET_BILLING_PAYMENT_METHOD);
+    const [, deleteMethod] = useMutation(DELETE_BILLING_PAYMENT_METHOD);
     const [refreshCounter, setRefreshCounter] = useState(0);
-
     const [setupIntentSecret, setSetupIntentSecret] = useState(
         INTENT_SECRET_LOADING
     );
     const [newMethodOpen, setNewMethodOpen] = useState(showAddPayment ?? false);
+    const [actionError, setActionError] = useState<string>();
+    const methods = billing?.paymentMethods ?? [];
+    const primaryId = billing?.primaryPaymentMethod?.id;
+    const serverErrored = Boolean(error);
 
-    const [methodsLoading, setMethodsLoading] = useState(false);
-    const [methods, setMethods] = useState<any[] | undefined>([]);
-    const [defaultSource, setDefaultSource] = useState<
-        string | null | undefined
-    >(null);
-
-    // These are two different iifes so this component loads just a _tiny bit_ faster
     useEffect(() => {
-        let active = true;
-        void (async () => {
-            if (selectedTenant) {
-                const setupResponse =
-                    await getSetupIntentSecret(selectedTenant);
-
-                if (!active) {
-                    return;
+        let current = true;
+        if (tenant) {
+            void createSetupIntent({ tenant }).then((result) => {
+                if (current) {
+                    setSetupIntentSecret(
+                        !result.error &&
+                            result.data?.createBillingSetupIntent.clientSecret
+                            ? result.data.createBillingSetupIntent.clientSecret
+                            : INTENT_SECRET_ERROR
+                    );
                 }
-
-                if (setupResponse.data?.intent_secret) {
-                    setSetupIntentSecret(setupResponse.data.intent_secret);
-                } else {
-                    setSetupIntentSecret(INTENT_SECRET_ERROR);
-                }
-            }
-        })();
-
-        void (async () => {
-            if (selectedTenant) {
-                setMethodsLoading(true);
-
-                try {
-                    // TODO (optimization): Add proper typing and error handling for this service call. The response assumes
-                    //  an unexpected shape when the service errors. The error property is null and the data property
-                    //  is an object with the following shape: { error: string; }. Consequently, an undefined value is passed
-                    //  to the setters below (unbeknownst to the compiler given the state typing defined above), causing the
-                    //  the component to lean on the ErrorBoundary wrapper for its display in the presence of an error.
-
-                    // TODO (store payment method info) we load this for the first 5 tenants so we should just pull that info
-                    const methodsResponse =
-                        await getTenantPaymentMethods(selectedTenant);
-
-                    if (active) {
-                        setMethods(methodsResponse.data?.payment_methods);
-                        setDefaultSource(methodsResponse.data?.primary);
-                        setPaymentMethodStatus(
-                            selectedTenant,
-                            methodsResponse.data?.payment_methods
-                        );
-                    }
-                } finally {
-                    if (active) {
-                        setMethodsLoading(false);
-                    }
-                }
-            }
-        })();
+            });
+        }
         return () => {
-            active = false;
+            current = false;
         };
-    }, [selectedTenant, refreshCounter, setPaymentMethodStatus]);
+    }, [createSetupIntent, tenant, refreshCounter]);
 
-    // TODO (optimization): Remove this temporary, hacky means of detecting when the payment methods service errs
-    //   when proper error handling is in place.
-    const serverErrored = useMemo(
-        () =>
-            !methodsLoading &&
-            (typeof defaultSource === 'undefined' ||
-                typeof methods === 'undefined'),
-        [defaultSource, methods, methodsLoading]
-    );
+    const refreshSetup = () => {
+        setRefreshCounter((value) => value + 1);
+    };
+
+    const makePrimary = async (id: string) => {
+        setActionError(undefined);
+        const result = await setPrimary({ tenant, paymentMethodId: id });
+        if (result.error || !result.data?.setBillingPaymentMethod) {
+            void refreshPaymentMethods();
+            setActionError(
+                result.error?.message ??
+                    'Unable to make the payment method primary. Please try again.'
+            );
+        }
+        refreshSetup();
+    };
+
+    const remove = async (id: string) => {
+        setActionError(undefined);
+        const result = await deleteMethod({ tenant, paymentMethodId: id });
+        if (result.error || !result.data?.deleteBillingPaymentMethod) {
+            void refreshPaymentMethods();
+            setActionError(
+                result.error?.message ??
+                    'Unable to delete the payment method. Please try again.'
+            );
+        }
+        refreshSetup();
+    };
 
     useEffect(() => {
         if (serverErrored) {
@@ -172,7 +170,11 @@ const PaymentMethods = ({ showAddPayment }: AdminBillingProps) => {
                     </Typography>
                 </AlertBox>
             ) : null}
-
+            {actionError ? (
+                <AlertBox short severity="error">
+                    {actionError}
+                </AlertBox>
+            ) : null}
             <Stack
                 spacing={2}
                 direction="row"
@@ -202,10 +204,17 @@ const PaymentMethods = ({ showAddPayment }: AdminBillingProps) => {
                     <AddPaymentMethod
                         show={newMethodOpen}
                         setOpen={setNewMethodOpen}
-                        tenant={selectedTenant}
-                        onSuccess={() => setRefreshCounter((r) => r + 1)}
+                        tenant={tenant}
                         stripePromise={stripePromise}
                         setupIntentSecret={setupIntentSecret}
+                        onRefresh={refreshPaymentMethods}
+                        onComplete={(error) => {
+                            refreshSetup();
+                            setActionError(error);
+                            if (error) {
+                                void refreshPaymentMethods();
+                            }
+                        }}
                     />
                 )}
             </Stack>
@@ -243,30 +252,20 @@ const PaymentMethods = ({ showAddPayment }: AdminBillingProps) => {
                         </TableHead>
 
                         <TableBody>
-                            {!selectedTenant || methodsLoading ? (
+                            {!tenant || isLoading ? (
                                 <TableLoadingRows
                                     columnKeys={getColumnKeyList(columns)}
                                 />
-                            ) : methods && methods.length > 0 ? (
+                            ) : methods.length > 0 ? (
                                 methods.map((method) => (
                                     <PaymentMethod
-                                        onDelete={async () => {
-                                            await deleteTenantPaymentMethod(
-                                                selectedTenant,
-                                                method.id
-                                            );
-                                            setRefreshCounter((r) => r + 1);
-                                        }}
-                                        onPrimary={async () => {
-                                            await setTenantPrimaryPaymentMethod(
-                                                selectedTenant,
-                                                method.id
-                                            );
-                                            setRefreshCounter((r) => r + 1);
-                                        }}
+                                        onDelete={() => void remove(method.id)}
+                                        onPrimary={() =>
+                                            void makePrimary(method.id)
+                                        }
                                         key={method.id}
-                                        {...method}
-                                        primary={method.id === defaultSource}
+                                        method={method}
+                                        primary={method.id === primaryId}
                                     />
                                 ))
                             ) : (
@@ -286,6 +285,6 @@ const PaymentMethods = ({ showAddPayment }: AdminBillingProps) => {
             )}
         </Stack>
     );
-};
+}
 
 export default PaymentMethods;
