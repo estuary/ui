@@ -1,4 +1,4 @@
-import type { StripeInvoice } from 'src/api/billing';
+import type { Invoice, StripeInvoice } from 'src/api/billing';
 import type { TableColumns } from 'src/types';
 
 import { useEffect, useMemo, useState } from 'react';
@@ -6,7 +6,6 @@ import { useEffect, useMemo, useState } from 'react';
 import {
     Box,
     Button,
-    Skeleton,
     Table,
     TableContainer,
     tableRowClasses,
@@ -21,7 +20,6 @@ import TotalLines from 'src/components/tables/BillLineItems/TotalLines';
 import EntityTableBody from 'src/components/tables/EntityTable/TableBody';
 import EntityTableHeader from 'src/components/tables/EntityTable/TableHeader';
 import { getTableHeaderWithoutHeaderColor } from 'src/context/Theme';
-import { useBillingInvoices } from 'src/hooks/billing/useBillingInvoices';
 import { useTenantStore } from 'src/stores/Tenant';
 import { TableStatuses } from 'src/types';
 
@@ -46,10 +44,14 @@ const columns: TableColumns[] = [
     },
 ];
 
-function BillingLineItemsTable() {
-    const selectedTenant = useTenantStore((state) => state.selectedTenant);
+interface BillingLineItemsTableProps {
+    selectedInvoice: Invoice | null;
+}
 
-    const { invoices, selectedInvoice, isLoading } = useBillingInvoices();
+function BillingLineItemsTable({
+    selectedInvoice,
+}: BillingLineItemsTableProps) {
+    const selectedTenant = useTenantStore((state) => state.selectedTenant);
 
     const dataRows = useMemo(
         () => <Rows lineItems={selectedInvoice?.line_items ?? []} />,
@@ -103,11 +105,11 @@ function BillingLineItemsTable() {
                             disableDoclink: true,
                         }}
                         tableState={
-                            invoices.length > 0
+                            selectedInvoice
                                 ? { status: TableStatuses.DATA_FETCHED }
                                 : { status: TableStatuses.NO_EXISTING_DATA }
                         }
-                        loading={isLoading}
+                        loading={false}
                         rows={dataRows}
                     />
                 </Table>
@@ -122,64 +124,48 @@ function BillingLineItemsTable() {
                 }}
             >
                 {selectedInvoice?.invoice_type !== 'preview' ? (
-                    !isLoading ? (
-                        <Box>
+                    <Box>
+                        <Button
+                            href={stripeInvoice?.invoice_pdf}
+                            disabled={!stripeInvoice}
+                            startIcon={<Download />}
+                            variant="outlined"
+                            size="small"
+                        >
+                            {'Download invoice PDF'}
+                        </Button>
+                        {stripeInvoice?.status === 'open' ? (
                             <Button
-                                href={stripeInvoice?.invoice_pdf}
-                                disabled={!stripeInvoice}
-                                startIcon={<Download />}
+                                href={stripeInvoice.hosted_invoice_url}
+                                startIcon={<CreditCard />}
+                                sx={{ marginLeft: 1 }}
                                 variant="outlined"
                                 size="small"
                             >
-                                {'Download invoice PDF'}
+                                {'Pay Invoice'}
                             </Button>
-                            {stripeInvoice?.status === 'open' ? (
-                                <Button
-                                    href={stripeInvoice.hosted_invoice_url}
-                                    startIcon={<CreditCard />}
-                                    sx={{ marginLeft: 1 }}
-                                    variant="outlined"
-                                    size="small"
-                                >
-                                    {'Pay Invoice'}
-                                </Button>
-                            ) : stripeInvoice?.status === 'paid' ? (
-                                <Button
-                                    startIcon={<CreditCard />}
-                                    disabled
-                                    sx={{ marginLeft: 1 }}
-                                    variant="outlined"
-                                    size="small"
-                                >
-                                    {'Invoice Paid'}
-                                </Button>
-                            ) : (
-                                <Button
-                                    startIcon={<CreditCard />}
-                                    disabled
-                                    sx={{ marginLeft: 1 }}
-                                    variant="outlined"
-                                    size="small"
-                                >
-                                    {'Pay Invoice'}
-                                </Button>
-                            )}
-                        </Box>
-                    ) : (
-                        <>
-                            <Skeleton
-                                variant="rectangular"
-                                width={200}
-                                height={25}
-                            />
-                            <Skeleton
+                        ) : stripeInvoice?.status === 'paid' ? (
+                            <Button
+                                startIcon={<CreditCard />}
+                                disabled
                                 sx={{ marginLeft: 1 }}
-                                variant="rectangular"
-                                width={120}
-                                height={25}
-                            />
-                        </>
-                    )
+                                variant="outlined"
+                                size="small"
+                            >
+                                {'Invoice Paid'}
+                            </Button>
+                        ) : (
+                            <Button
+                                startIcon={<CreditCard />}
+                                disabled
+                                sx={{ marginLeft: 1 }}
+                                variant="outlined"
+                                size="small"
+                            >
+                                {'Pay Invoice'}
+                            </Button>
+                        )}
+                    </Box>
                 ) : null}
                 <Box sx={{ flexGrow: 1 }} />
                 {selectedInvoice ? (

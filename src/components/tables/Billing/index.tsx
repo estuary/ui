@@ -1,4 +1,5 @@
 import type { TableColumns } from 'src/types';
+import type { InvoiceId } from 'src/utils/billing-utils';
 
 import { useMemo } from 'react';
 
@@ -10,7 +11,11 @@ import EntityTableHeader from 'src/components/tables/EntityTable/TableHeader';
 import { getTableHeaderWithoutHeaderColor } from 'src/context/Theme';
 import { useBillingInvoices } from 'src/hooks/billing/useBillingInvoices';
 import { TableStatuses } from 'src/types';
-import { invoiceId } from 'src/utils/billing-utils';
+
+interface BillingHistoryTableProps {
+    selectedInvoiceId: InvoiceId | null;
+    onSelectInvoice: (id: InvoiceId) => void;
+}
 
 const columns: TableColumns[] = [
     {
@@ -36,10 +41,12 @@ const columns: TableColumns[] = [
     },
 ];
 
-function BillingHistoryTable() {
+function BillingHistoryTable({
+    selectedInvoiceId,
+    onSelectInvoice,
+}: BillingHistoryTableProps) {
     const {
         invoices: billingHistory,
-        selectedInvoice,
         isLoading,
         networkFailed,
     } = useBillingInvoices();
@@ -49,12 +56,11 @@ function BillingHistoryTable() {
             billingHistory.length > 0 ? (
                 <Rows
                     data={billingHistory}
-                    selectedInvoice={
-                        selectedInvoice ? invoiceId(selectedInvoice) : null
-                    }
+                    selectedInvoice={selectedInvoiceId}
+                    onSelectInvoice={onSelectInvoice}
                 />
             ) : null,
-        [billingHistory, selectedInvoice]
+        [billingHistory, selectedInvoiceId, onSelectInvoice]
     );
 
     return (

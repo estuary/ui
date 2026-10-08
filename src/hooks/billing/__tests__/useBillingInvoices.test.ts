@@ -1,13 +1,13 @@
 import type { TenantBillingInvoicesQuery } from 'src/gql-types/graphql';
+import type { InvoiceId } from 'src/utils/billing-utils';
 import type * as Urql from 'urql';
 
-import { act, renderHook, waitFor } from '@testing-library/react';
+import { renderHook, waitFor } from '@testing-library/react';
 import { format } from 'date-fns';
 import { CombinedError, createRequest, makeOperation, useQuery } from 'urql';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 
 import { useBillingInvoices } from 'src/hooks/billing/useBillingInvoices';
-import { useBillingStore } from 'src/stores/Billing';
 import { invoiceId } from 'src/utils/billing-utils';
 
 const tenant = vi.hoisted(() => ({ selectedTenant: 'acme/' }));
@@ -145,15 +145,17 @@ describe('useBillingInvoices', () => {
             makeNode({ invoiceType: 'MANUAL' }),
         ]);
         mockedUseQuery.mockImplementation((args) => makeResult(args, page));
-        const { result } = renderHook(() => useBillingInvoices());
+        const { result, rerender } = renderHook(useBillingInvoices, {
+            initialProps: null as InvoiceId | null,
+        });
         await waitFor(() => expect(result.current.invoices).toHaveLength(2));
         const manual = result.current.invoices.find(
             (invoice) => invoice.invoice_type === 'manual'
         )!;
-        act(() =>
-            useBillingStore.getState().setSelectedInvoice(invoiceId(manual))
-        );
+        rerender(invoiceId(manual));
         expect(result.current.selectedInvoice?.invoice_type).toBe('manual');
+        rerender(null);
+        expect(result.current.selectedInvoice?.invoice_type).toBe('final');
     });
 
     test('clears the old tenant while the next query retains its data and error', async () => {
@@ -180,10 +182,13 @@ describe('useBillingInvoices', () => {
                 retainOldPage
             )
         );
-        const { result, rerender } = renderHook(() => useBillingInvoices());
+        const { result, rerender } = renderHook(useBillingInvoices, {
+            initialProps: null as InvoiceId | null,
+        });
         await waitFor(() =>
             expect(result.current.selectedInvoice?.billed_prefix).toBe('acme/')
         );
+        const selectedId = invoiceId(result.current.selectedInvoice!);
 
         sourceFailed = true;
         rerender();
@@ -192,14 +197,14 @@ describe('useBillingInvoices', () => {
 
         tenant.selectedTenant = 'other/';
         retainOldPage = true;
-        rerender();
+        rerender(selectedId);
         expect(result.current.invoices).toEqual([]);
         expect(result.current.selectedInvoice).toBeNull();
         expect(result.current.isLoading).toBe(true);
         expect(result.current.errorExists).toBe(false);
         expect(result.current.networkFailed).toBe(false);
         retainOldPage = false;
-        rerender();
+        rerender(selectedId);
         await waitFor(() =>
             expect(result.current.selectedInvoice).toMatchObject({
                 billed_prefix: 'other/',

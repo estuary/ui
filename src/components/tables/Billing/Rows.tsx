@@ -6,23 +6,21 @@ import { TableCell, TableRow, Typography } from '@mui/material';
 import DataVolume from 'src/components/tables/cells/billing/DataVolume';
 import TimeStamp from 'src/components/tables/cells/billing/TimeStamp';
 import MonetaryValue from 'src/components/tables/cells/MonetaryValue';
-import { useBillingStore } from 'src/stores/Billing';
 import { invoiceId } from 'src/utils/billing-utils';
 
 interface RowProps {
     row: Invoice;
     isSelected: boolean;
+    onSelectInvoice: (id: InvoiceId) => void;
 }
 
 interface RowsProps {
     data: Invoice[];
     selectedInvoice: InvoiceId | null;
+    onSelectInvoice: (id: InvoiceId) => void;
 }
 
-function Row({ row, isSelected }: RowProps) {
-    const setSelectedInvoice = useBillingStore(
-        (state) => state.setSelectedInvoice
-    );
+function Row({ row, isSelected, onSelectInvoice }: RowProps) {
     const taskUsage = row.extra?.task_usage_hours ?? 0;
     const hourLabel =
         new Intl.PluralRules(navigator.language || 'en-US').select(
@@ -35,7 +33,7 @@ function Row({ row, isSelected }: RowProps) {
         <TableRow
             hover
             selected={isSelected}
-            onClick={() => setSelectedInvoice(invoiceId(row))}
+            onClick={() => onSelectInvoice(invoiceId(row))}
             sx={{ cursor: 'pointer' }}
         >
             <TimeStamp
@@ -61,7 +59,7 @@ function Row({ row, isSelected }: RowProps) {
 }
 
 // TODO (billing): Remove pagination placeholder when the new RPC is available.
-function Rows({ data, selectedInvoice }: RowsProps) {
+function Rows({ data, selectedInvoice, onSelectInvoice }: RowsProps) {
     return (
         <>
             {data.slice(0, 4).map((record, index) => (
@@ -69,6 +67,7 @@ function Rows({ data, selectedInvoice }: RowsProps) {
                     row={record}
                     key={index}
                     isSelected={invoiceId(record) === selectedInvoice}
+                    onSelectInvoice={onSelectInvoice}
                 />
             ))}
         </>
