@@ -2,9 +2,9 @@ import type { AnyVariables, CombinedError, DocumentInput } from '@urql/core';
 
 import { useEffect, useRef, useState } from 'react';
 
-import { useQuery } from 'urql';
+import { createRequest, useQuery } from 'urql';
 
-export interface Connection<TNode> {
+interface Connection<TNode> {
     edges: { node: TNode }[];
     pageInfo: {
         hasNextPage: boolean;
@@ -54,26 +54,29 @@ export function useAllPages<
     const { pause } = options;
 
     const variablesKey = JSON.stringify({
-        variables: options.variables ?? {},
+        request: createRequest(query, options.variables as TVariables).key,
         resetKey: options.resetKey ?? null,
     });
 
     // Store callbacks in refs so they don't need to be effect dependencies.
     // Callers typically pass inline arrows (e.g. `(data) => data.liveSpecs`)
     // which are new references every render. Putting them in deps would
-    // re-run the accumulation effect on every render, duplicating items
-    // and triggering an infinite setState loop.
+    // re-run the accumulation effect on every render and trigger an infinite
+    // setState loop.
     const getConnectionRef = useRef(options.getConnection);
     const transformRef = useRef(options.transform);
     getConnectionRef.current = options.getConnection;
     transformRef.current = options.transform;
 
-    const accumulator = useRef<{ key: string; items: TResult[] }>({
+    const accumulator = useRef<{
+        key: string;
+        pages: Map<string | undefined, TResult[]>;
+    }>({
         key: variablesKey,
-        items: [],
+        pages: new Map(),
     });
     if (accumulator.current.key !== variablesKey) {
-        accumulator.current = { key: variablesKey, items: [] };
+        accumulator.current = { key: variablesKey, pages: new Map() };
     }
 
     const [cursorState, setCursorState] = useState<KeyedCursor>({
@@ -95,16 +98,21 @@ export function useAllPages<
         ...options.variables,
         after: cursor,
     } as TVariables;
+    const requestKey = createRequest(query, variables).key;
 
-    const [{ fetching, data, error }] = useQuery({
+    const [{ fetching, data, error, operation }] = useQuery({
         query,
         variables,
         pause,
     });
+    const operationKey = operation?.key;
+    const currentError = operationKey === requestKey ? error : undefined;
+    const responseCursor = operation?.variables.after ?? undefined;
 
     // Accumulate paginated records, then setResult when we reach the end
     useEffect(() => {
-        if (fetching || !data) {
+        // URQL can retain the previous request's data while variables change.
+        if (fetching || !data || operationKey !== requestKey) {
             return;
         }
 
@@ -115,17 +123,12 @@ export function useAllPages<
             return;
         }
 
-        // When on the first page, reset the accumulator so URQL refetches
-        // (TTL expiry, StrictMode double-run) don't duplicate items.
-        if (!cursor) {
-            acc.items = [];
-        }
-
         const connection = getConnectionRef.current(data);
-
-        for (const { node } of connection.edges) {
-            acc.items.push(transformRef.current(node));
-        }
+        // Map insertion order preserves traversal order when a page is replaced.
+        acc.pages.set(
+            responseCursor,
+            connection.edges.map(({ node }) => transformRef.current(node))
+        );
 
         const { hasNextPage, endCursor } = connection.pageInfo;
 
@@ -134,15 +137,22 @@ export function useAllPages<
         } else {
             setResultState({
                 key: variablesKey,
-                data: [...acc.items],
+                data: Array.from(acc.pages.values()).flat(),
                 complete: true,
             });
         }
-    }, [data, fetching, variablesKey, cursor]);
+    }, [
+        data,
+        fetching,
+        variablesKey,
+        requestKey,
+        operationKey,
+        responseCursor,
+    ]);
 
     return {
         data: result,
-        loading: !pause && !error && !complete,
-        error,
+        loading: !pause && !currentError && !complete,
+        error: currentError,
     };
 }
