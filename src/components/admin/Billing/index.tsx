@@ -3,7 +3,6 @@ import type { AdminBillingProps } from 'src/components/admin/Billing/types';
 import { Divider, Grid, Typography } from '@mui/material';
 
 import { ErrorBoundary } from 'react-error-boundary';
-import { useIntl } from 'react-intl';
 
 import { authenticatedRoutes } from 'src/app/routes';
 import DateRange from 'src/components/admin/Billing/DateRange';
@@ -38,8 +37,6 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
         headerLink: 'https://www.estuary.dev/pricing/',
     });
 
-    const intl = useIntl();
-
     const { isLoading, selectedInvoice } = useBillingInvoices();
 
     return (
@@ -49,7 +46,7 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
             <Grid container spacing={{ xs: 3, md: 2 }} sx={{ py: 2 }}>
                 <Grid size={{ xs: 12, md: 9 }}>
                     <Typography variant="h6" sx={{ mb: 0.5 }}>
-                        {intl.formatMessage({ id: 'admin.billing.header' })}
+                        {'Billing'}
                     </Typography>
 
                     <PricingTierDetails />
@@ -69,9 +66,7 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
                 <Grid size={{ xs: 12, md: 6 }}>
                     <CardWrapper
                         height={TOTAL_CARD_HEIGHT}
-                        message={intl.formatMessage({
-                            id: 'admin.billing.table.history.header',
-                        })}
+                        message="Recent History"
                     >
                         <BillingHistoryTable />
                     </CardWrapper>
@@ -80,9 +75,7 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
                 <Grid size={{ xs: 12, md: 6 }}>
                     <CardWrapper
                         height={TOTAL_CARD_HEIGHT}
-                        message={intl.formatMessage({
-                            id: 'admin.billing.graph.usageByMonth.header',
-                        })}
+                        message="Usage by Month"
                     >
                         <GraphStateWrapper>
                             <UsageByMonthGraph />
@@ -95,23 +88,17 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
                         height={invoiceCardHeight}
                         message={
                             isLoading ? (
-                                intl.formatMessage({
-                                    id: 'admin.billing.label.lineItems.loading',
-                                })
+                                'Loading your bill'
                             ) : selectedInvoice ? (
                                 <>
-                                    {intl.formatMessage({
-                                        id: 'admin.billing.label.lineItems',
-                                    })}
+                                    {'Your bill for:'}
                                     <DateRange
                                         start_date={selectedInvoice.date_start}
                                         end_date={selectedInvoice.date_end}
                                     />
                                 </>
                             ) : (
-                                intl.formatMessage({
-                                    id: 'admin.billing.label.lineItems.empty',
-                                })
+                                'No bill to display'
                             )
                         }
                     >
@@ -145,15 +132,13 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
                                         fontWeight: '400',
                                     }}
                                 >
-                                    {intl.formatMessage({
-                                        id: 'admin.billing.paymentMethods.header',
-                                    })}
+                                    {'Payment Information'}
                                 </Typography>
                                 <AlertBox short severity="error">
                                     <Typography component="div">
-                                        {intl.formatMessage({
-                                            id: 'admin.billing.error.paymentMethodsError',
-                                        })}
+                                        {
+                                            'There was an error connecting with our payment provider. Please try again later.'
+                                        }
                                     </Typography>
                                 </AlertBox>
                             </>
