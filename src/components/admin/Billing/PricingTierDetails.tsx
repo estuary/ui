@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { Skeleton, Typography } from '@mui/material';
 
 import { useTenantUsesExternalPayment } from 'src/context/fetcher/TenantBillingDetails';
-import { useBillingStore } from 'src/stores/Billing';
+import { useBillingPaymentMethods } from 'src/hooks/billing/useBillingPaymentMethods';
 import { useTenantStore } from 'src/stores/Tenant';
 
 function PricingTierDetails() {
@@ -11,13 +11,10 @@ function PricingTierDetails() {
     const [externalPaymentMethod, marketPlaceProvider] =
         useTenantUsesExternalPayment(selectedTenant);
 
-    const paymentMethodState = useBillingStore(
-        (state) => state.paymentMethodStatus
+    const { billing, isLoading, error } = useBillingPaymentMethods(
+        externalPaymentMethod ? '' : selectedTenant
     );
-    const paymentMethodExists =
-        paymentMethodState?.tenant === selectedTenant
-            ? paymentMethodState.exists
-            : null;
+    const paymentMethodExists = Boolean(billing?.paymentMethods.length);
 
     const message = useMemo(() => {
         if (externalPaymentMethod) {
@@ -39,7 +36,11 @@ function PricingTierDetails() {
         return 'The free tier lets you try Estuary with up to 2 tasks and 10GB per month without entering a credit card. Usage beyond these limits automatically starts a 30 day free trial.';
     }, [externalPaymentMethod, marketPlaceProvider, paymentMethodExists]);
 
-    if (typeof paymentMethodExists !== 'boolean') {
+    if (!externalPaymentMethod && error) {
+        return <Typography>Pricing information unavailable.</Typography>;
+    }
+
+    if (!externalPaymentMethod && isLoading) {
         return (
             <Skeleton>
                 <Typography>{message}</Typography>
