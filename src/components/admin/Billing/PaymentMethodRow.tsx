@@ -1,3 +1,5 @@
+import type { BillingPaymentMethodFieldsFragment } from 'src/gql-types/graphql';
+
 import { Button, TableCell, TableRow } from '@mui/material';
 
 import { Check } from 'iconoir-react';
@@ -14,94 +16,70 @@ const cardLogos: Record<string, string> = {
     mastercard: MastercardLogo,
 };
 
-export interface PaymentMethodProps {
+interface PaymentMethodProps {
+    method: BillingPaymentMethodFieldsFragment;
     onDelete(): void;
     onPrimary(): void;
     primary: boolean;
-    id: string;
-    type: 'card' | 'us_bank_account';
-    billing_details: {
-        address: {
-            city: string;
-            country: string;
-            line1: string;
-            line2: string;
-            postal_code: string;
-            state: string;
-        };
-        email: string;
-        name: string;
-    };
-    card: {
-        brand:
-            | 'amex'
-            | 'diners'
-            | 'discover'
-            | 'eftpos_au'
-            | 'jcb'
-            | 'mastercard'
-            | 'unionpay'
-            | 'visa'
-            | 'unknown';
-        country: string;
-        exp_month: number;
-        exp_year: number;
-        last4: number;
-    };
-    us_bank_account: {
-        account_holder_type: 'individual' | 'company';
-        account_type: 'checking' | 'savings';
-        bank_name: string;
-        last4: number;
-    };
+    disabled: boolean;
 }
 
 export const PaymentMethod = ({
-    type,
+    method: { type, billingDetails, card, usBankAccount },
     onDelete,
     onPrimary,
-    billing_details,
-    card,
-    us_bank_account,
     primary,
+    disabled,
 }: PaymentMethodProps) => {
     return (
         <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
             <TableCell>
-                {type === 'card' ? (
-                    cardLogos[card.brand] ? (
+                {type === 'card' && card ? (
+                    cardLogos[card.brand ?? 'unknown'] ? (
                         <img
                             style={{ height: 35 }}
-                            src={cardLogos[card.brand]}
+                            src={cardLogos[card.brand ?? 'unknown']}
                             alt={`${card.brand} card logo`}
                         />
                     ) : (
                         card.brand
                     )
                 ) : (
-                    us_bank_account.bank_name
+                    (usBankAccount?.bankName ?? type.replaceAll('_', ' '))
                 )}
             </TableCell>
-            <TableCell>{billing_details.name}</TableCell>
+            <TableCell>{billingDetails.name}</TableCell>
             <TableCell>
-                {type === 'card' ? card.last4 : us_bank_account.last4}
+                {type === 'card' && card
+                    ? card.last4
+                    : (usBankAccount?.last4 ?? '—')}
             </TableCell>
             <TableCell>
-                {type === 'card' ? (
+                {type === 'card' && card ? (
                     <>
-                        Expires {card.exp_month}/{card.exp_year}
+                        Expires {card.expMonth}/{card.expYear}
                     </>
                 ) : (
-                    us_bank_account.account_type
+                    '—'
                 )}
             </TableCell>
             <TableCell>{primary ? <Check /> : ''}</TableCell>
             <TableCell>
-                <Button size="small" variant="text" onClick={onDelete}>
+                <Button
+                    size="small"
+                    variant="text"
+                    onClick={onDelete}
+                    disabled={disabled}
+                >
                     Delete
                 </Button>
                 {!primary ? (
-                    <Button size="small" variant="text" onClick={onPrimary}>
+                    <Button
+                        size="small"
+                        variant="text"
+                        onClick={onPrimary}
+                        disabled={disabled}
+                    >
                         Make Primary
                     </Button>
                 ) : null}

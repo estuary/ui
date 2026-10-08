@@ -1,5 +1,9 @@
 import type { Cache } from '@urql/exchange-graphcache';
-import type { QueryRoot } from 'src/gql-types/graphql';
+import type {
+    DeleteBillingPaymentMethodMutation,
+    QueryRoot,
+    SetBillingPaymentMethodMutation,
+} from 'src/gql-types/graphql';
 import type { BaseComponentProps } from 'src/types';
 
 import { useMemo, useRef } from 'react';
@@ -9,6 +13,7 @@ import { cacheExchange } from '@urql/exchange-graphcache';
 import { requestPolicyExchange } from '@urql/exchange-request-policy';
 import { Client, fetchExchange, Provider } from 'urql';
 
+import { TENANT_BILLING_PAYMENT_METHODS_QUERY } from 'src/api/gql/billing';
 import { useUserStore } from 'src/context/User/useUserContextStore';
 import { getGqlUrl } from 'src/utils/env-utils';
 import { getAuthHeader } from 'src/utils/misc-utils';
@@ -21,6 +26,37 @@ function invalidateQuery(
         .inspectFields('Query')
         .filter((f) => f.fieldName === queryName)
         .forEach((f) => cache.invalidate('Query', f.fieldName, f.arguments));
+}
+
+function updateBillingPaymentMethods(
+    cache: Cache,
+    tenant: string,
+    billing: SetBillingPaymentMethodMutation['setBillingPaymentMethod']
+) {
+    if (!billing) {
+        return;
+    }
+    cache.updateQuery(
+        {
+            query: TENANT_BILLING_PAYMENT_METHODS_QUERY,
+            variables: { tenant },
+        },
+        (data) =>
+            data?.tenant
+                ? {
+                      ...data,
+                      tenant: {
+                          ...data.tenant,
+                          billing: {
+                              ...data.tenant.billing,
+                              primaryPaymentMethod:
+                                  billing.primaryPaymentMethod,
+                              paymentMethods: billing.paymentMethods,
+                          },
+                      },
+                  }
+                : data
+    );
 }
 
 function UrqlConfigProvider({ children }: BaseComponentProps) {
@@ -84,6 +120,11 @@ function UrqlConfigProvider({ children }: BaseComponentProps) {
                         Tenant: (_data) => null,
                         TenantBilling: (_data) => null,
                         Invoice: (_data) => null,
+                        PaymentMethodBillingDetails: (_data) => null,
+                        CardPaymentMethodDetails: (_data) => null,
+                        UsBankAccountPaymentMethodDetails: (_data) => null,
+                        BillingPaymentMethodPayload: (_data) => null,
+                        CreateBillingSetupIntentPayload: (_data) => null,
                     },
                     // Normalization only merges update results into entities
                     // already in the cache. Creates and deletes need updaters
@@ -91,6 +132,23 @@ function UrqlConfigProvider({ children }: BaseComponentProps) {
                     // deleted one is not evicted on its own.
                     updates: {
                         Mutation: {
+                            setBillingPaymentMethod(result, args, cache) {
+                                updateBillingPaymentMethods(
+                                    cache,
+                                    args.tenant as string,
+                                    (result as SetBillingPaymentMethodMutation)
+                                        .setBillingPaymentMethod
+                                );
+                            },
+                            deleteBillingPaymentMethod(result, args, cache) {
+                                updateBillingPaymentMethods(
+                                    cache,
+                                    args.tenant as string,
+                                    (
+                                        result as DeleteBillingPaymentMethodMutation
+                                    ).deleteBillingPaymentMethod
+                                );
+                            },
                             createInviteLink(_result, _args, cache) {
                                 invalidateQuery(cache, 'inviteLinks');
                             },

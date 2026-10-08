@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 
 import {
     Button,
@@ -8,129 +8,88 @@ import {
     Typography,
 } from '@mui/material';
 
-import { useShallow } from 'zustand/react/shallow';
-
 import {
     AddressElement,
     PaymentElement,
     useElements,
     useStripe,
 } from '@stripe/react-stripe-js';
-import { useIntl } from 'react-intl';
 
 import AlertBox from 'src/components/shared/AlertBox';
 import { useUserStore } from 'src/context/User/useUserContextStore';
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 
-export interface PaymentFormProps {
-    onSuccess?(id?: string): Promise<void> | void;
-    onError?(msg: string): Promise<void> | void;
+interface PaymentFormProps {
+    onSuccess(id: string): Promise<void>;
+    onError?(message: string): Promise<void> | void;
 }
 
 export const PaymentForm = ({ onSuccess, onError }: PaymentFormProps) => {
-    const intl = useIntl();
-
     const stripe = useStripe();
     const elements = useElements();
-
-    const [user, userDetails] = useUserStore(
-        useShallow((state) => [state.user, state.userDetails])
-    );
-
-    const setupEvents = useRef(false);
+    const user = useUserStore((state) => state.user);
+    const userDetails = useUserStore((state) => state.userDetails);
     const [error, setError] = useState('');
     const [loadingError, setLoadingError] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
 
-    // Handle errors when stripe is loading in the forms
-    useEffect(() => {
-        if (setupEvents.current || !elements) {
-            return;
-        }
+    const handleLoadError = (formName: string) => {
+        setLoadingError(
+            'Unable to load the forms from Stripe. Try again and if the issue persists please contact support.'
+        );
+        logRocketEvent(CustomEvents.STRIPE_FORM_LOADING_FAILED, { formName });
+    };
 
-        // Try to fetch botht the elements we're gonna need to make sure load
-        const addressElement = elements.getElement('address');
-        const paymentElement = elements.getElement('payment');
-        if (!addressElement || !paymentElement) {
-            return;
-        }
-
-        // Wire up handlers
-        paymentElement.on('loaderror', () => {
-            setLoadingError(
-                intl.formatMessage({
-                    id: 'admin.billing.addPaymentMethods.stripeLoadError',
-                })
-            );
-
-            logRocketEvent(CustomEvents.STRIPE_FORM_LOADING_FAILED, {
-                formName: 'payment',
-            });
-        });
-        addressElement.on('loaderror', () => {
-            setLoadingError(
-                intl.formatMessage({
-                    id: 'admin.billing.addPaymentMethods.stripeLoadError',
-                })
-            );
-
-            logRocketEvent(CustomEvents.STRIPE_FORM_LOADING_FAILED, {
-                formName: 'address',
-            });
-        });
-
-        // Set so we only do this once
-        setupEvents.current = true;
-    }, [elements, intl]);
-
-    const handleSubmit = useCallback(async () => {
-        if (!stripe || !elements) {
+    const handleSubmit = async () => {
+        if (!stripe || !elements || loading) {
             // Stripe.js has not yet loaded.
             // Make sure to disable form submission until Stripe.js has loaded.
             return;
         }
 
+        setError('');
         setLoading(true);
         elements.getElement('payment')?.update({ readOnly: true });
         try {
             const result = await stripe.confirmSetup({
-                //`Elements` instance that was used to create the Payment Element
                 elements,
                 confirmParams: {
                     payment_method_data: {
-                        billing_details: {
-                            email: userDetails?.email,
-                        },
+                        billing_details: { email: userDetails?.email },
                     },
                     return_url: `${window.location.protocol}//${window.location.host}${window.location.pathname}`,
                 },
+                // Some payment methods redirect to authorize before returning to this page.
                 redirect: 'if_required',
             });
-
             // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
             if (result.error) {
-                if (result.error.message) {
-                    setError(result.error.message);
-                }
-                // Show error to your customer (for example, payment details incomplete)
-                await onError?.(
+                throw new Error(
                     result.error.message ??
-                        intl.formatMessage({ id: 'common.missingError' })
-                );
-                elements.getElement('payment')?.update({ readOnly: false });
-            } else {
-                // Your customer will be redirected to your `return_url`. For some payment
-                // methods like iDEAL, your customer will be redirected to an intermediate
-                // site first to authorize the payment, then redirected to the `return_url`.
-                await onSuccess?.(
-                    result.setupIntent.payment_method?.toString()
+                        'Unable to save the payment method. Please try again.'
                 );
             }
+            const method = result.setupIntent.payment_method;
+            const id = typeof method === 'string' ? method : method?.id;
+            if (!id) {
+                throw new Error(
+                    'Stripe did not return a payment method. Please try again.'
+                );
+            }
+            await onSuccess(id);
+        } catch (failure) {
+            const message =
+                failure instanceof Error
+                    ? failure.message
+                    : 'Unable to save the payment method. Please try again.';
+            setError(message);
+            await onError?.(message);
+            elements.getElement('payment')?.update({ readOnly: false });
         } finally {
             setLoading(false);
         }
-    }, [elements, intl, onError, onSuccess, stripe, userDetails?.email]);
+    };
 
     return (
         <>
@@ -141,6 +100,7 @@ export const PaymentForm = ({ onSuccess, onError }: PaymentFormProps) => {
                     </AlertBox>
                 ) : null}
                 <AddressElement
+                    onLoadError={() => handleLoadError('address')}
                     options={{
                         mode: 'billing',
                         defaultValues: {
@@ -150,6 +110,7 @@ export const PaymentForm = ({ onSuccess, onError }: PaymentFormProps) => {
                     }}
                 />
                 <PaymentElement
+                    onLoadError={() => handleLoadError('payment')}
                     options={{
                         fields: {
                             billingDetails: {
@@ -181,7 +142,9 @@ export const PaymentForm = ({ onSuccess, onError }: PaymentFormProps) => {
                 ) : null}
                 <Button
                     onClick={handleSubmit}
-                    disabled={Boolean(loading || loadingError)}
+                    disabled={Boolean(
+                        !stripe || !elements || loading || loadingError
+                    )}
                 >
                     {loading ? <CircularProgress size={15} /> : 'Submit'}
                 </Button>

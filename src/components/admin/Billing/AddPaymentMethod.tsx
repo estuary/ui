@@ -5,9 +5,10 @@ import { Box, Button, Dialog, DialogTitle, useTheme } from '@mui/material';
 import { usePostHog } from '@posthog/react';
 import { Elements } from '@stripe/react-stripe-js';
 import { Plus } from 'iconoir-react';
-import { useIntl } from 'react-intl';
+import { useMountedState } from 'react-use';
+import { useMutation } from 'urql';
 
-import { setTenantPrimaryPaymentMethod } from 'src/api/billing';
+import { SET_BILLING_PAYMENT_METHOD } from 'src/api/gql/billing';
 import { PaymentForm } from 'src/components/admin/Billing/CapturePaymentMethod';
 import {
     INTENT_SECRET_ERROR,
@@ -20,20 +21,23 @@ interface Props {
     show: boolean;
     setupIntentSecret: string;
     setOpen: (val: boolean) => void;
-    onSuccess: () => void;
+    onRefresh: () => void;
+    onComplete: (error?: string) => void;
     stripePromise: Promise<Stripe | null>;
     tenant: string;
 }
 
-function AddPaymentMethod({
-    onSuccess,
+export function AddPaymentMethod({
+    onRefresh,
+    onComplete,
     show,
     setupIntentSecret,
     setOpen,
     stripePromise,
     tenant,
 }: Props) {
-    const intl = useIntl();
+    const isMounted = useMountedState();
+    const [, setPrimary] = useMutation(SET_BILLING_PAYMENT_METHOD);
     const postHog = usePostHog();
     const theme = useTheme();
     const isDark = theme.palette.mode === 'dark';
@@ -56,9 +60,7 @@ function AddPaymentMethod({
                     sx={{ whiteSpace: 'nowrap' }}
                     variant="contained"
                 >
-                    {intl.formatMessage({
-                        id: 'admin.billing.paymentMethods.cta.addPaymentMethod',
-                    })}
+                    Add Payment Method
                 </Button>
             </Box>
 
@@ -70,11 +72,7 @@ function AddPaymentMethod({
                 onClose={() => setOpen(false)}
                 data-private
             >
-                <DialogTitle>
-                    {intl.formatMessage({
-                        id: 'admin.billing.addPaymentMethods.title',
-                    })}
-                </DialogTitle>
+                <DialogTitle>Add a payment method</DialogTitle>
                 {enable ? (
                     <Elements
                         stripe={stripePromise}
@@ -125,22 +123,37 @@ function AddPaymentMethod({
                         {!tenant ? null : (
                             <PaymentForm
                                 onSuccess={async (id) => {
-                                    if (id) {
-                                        await setTenantPrimaryPaymentMethod(
-                                            tenant,
-                                            id
-                                        );
-
+                                    if (!isMounted()) {
+                                        onRefresh();
+                                        return;
+                                    }
+                                    const result = await setPrimary({
+                                        tenant,
+                                        paymentMethodId: id,
+                                    });
+                                    const failed =
+                                        result.error ||
+                                        !result.data?.setBillingPaymentMethod;
+                                    if (!isMounted()) {
+                                        if (failed) {
+                                            onRefresh();
+                                        }
+                                        return;
+                                    }
+                                    if (!failed) {
                                         fireGtmEvent('Payment_Entered', {
                                             tenant,
                                         });
-
                                         postHog.capture('Payment_Entered', {
                                             tenant,
                                         });
                                     }
                                     setOpen(false);
-                                    onSuccess();
+                                    onComplete(
+                                        failed
+                                            ? `Your payment method was saved, but it could not be made primary. Please try Make Primary. ${result.error?.message ?? ''}`
+                                            : undefined
+                                    );
                                 }}
                                 onError={console.log}
                             />
@@ -151,5 +164,3 @@ function AddPaymentMethod({
         </>
     );
 }
-
-export default AddPaymentMethod;
