@@ -74,6 +74,7 @@ function UrqlConfigProvider({ children }: BaseComponentProps) {
                         RefreshTokenInfo: (_data) => null,
                         StorageMapping: (_data) => null,
                         DataPlane: (_data) => null,
+                        PublicDataPlane: (data) => data.name as string,
                         CatalogStats: (_data) => null,
                         CatalogStatsSummary: (_data) => null,
                         DocsAndBytes: (_data) => null,
