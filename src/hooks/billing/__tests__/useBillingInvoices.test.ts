@@ -1,13 +1,13 @@
 import type { TenantBillingInvoicesQuery } from 'src/gql-types/graphql';
+import type { InvoiceId } from 'src/utils/billing-utils';
 import type * as Urql from 'urql';
 
-import { act, renderHook, waitFor } from '@testing-library/react';
+import { renderHook, waitFor } from '@testing-library/react';
 import { format } from 'date-fns';
 import { CombinedError, createRequest, makeOperation, useQuery } from 'urql';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 
 import { useBillingInvoices } from 'src/hooks/billing/useBillingInvoices';
-import { useBillingStore } from 'src/stores/Billing';
 import { invoiceId } from 'src/utils/billing-utils';
 
 const tenant = vi.hoisted(() => ({ selectedTenant: 'acme/' }));
@@ -145,15 +145,17 @@ describe('useBillingInvoices', () => {
             makeNode({ invoiceType: 'MANUAL' }),
         ]);
         mockedUseQuery.mockImplementation((args) => makeResult(args, page));
-        const { result } = renderHook(() => useBillingInvoices());
+        const { result, rerender } = renderHook(useBillingInvoices, {
+            initialProps: null as InvoiceId | null,
+        });
         await waitFor(() => expect(result.current.invoices).toHaveLength(2));
         const manual = result.current.invoices.find(
             (invoice) => invoice.invoice_type === 'manual'
         )!;
-        act(() =>
-            useBillingStore.getState().setSelectedInvoice(invoiceId(manual))
-        );
+        rerender(invoiceId(manual));
         expect(result.current.selectedInvoice?.invoice_type).toBe('manual');
+        rerender(null);
+        expect(result.current.selectedInvoice?.invoice_type).toBe('final');
     });
 
     test('reports a later-page failure instead of returning a truncated successful result', async () => {

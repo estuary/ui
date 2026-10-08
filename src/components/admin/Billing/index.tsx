@@ -1,4 +1,7 @@
 import type { AdminBillingProps } from 'src/components/admin/Billing/types';
+import type { InvoiceId } from 'src/utils/billing-utils';
+
+import { useState } from 'react';
 
 import { Divider, Grid, Typography } from '@mui/material';
 
@@ -37,7 +40,10 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
         headerLink: 'https://www.estuary.dev/pricing/',
     });
 
-    const { isLoading, selectedInvoice } = useBillingInvoices();
+    const [selectedInvoiceId, setSelectedInvoiceId] =
+        useState<InvoiceId | null>(null);
+    const { isLoading, selectedInvoice } =
+        useBillingInvoices(selectedInvoiceId);
 
     return (
         <>
@@ -68,7 +74,14 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
                         height={TOTAL_CARD_HEIGHT}
                         message="Recent History"
                     >
-                        <BillingHistoryTable />
+                        <BillingHistoryTable
+                            selectedInvoiceId={
+                                selectedInvoice
+                                    ? invoiceId(selectedInvoice)
+                                    : null
+                            }
+                            onSelectInvoice={setSelectedInvoiceId}
+                        />
                     </CardWrapper>
                 </Grid>
 
@@ -104,6 +117,7 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
                     >
                         {!isLoading ? (
                             <BillingLineItemsTable
+                                selectedInvoice={selectedInvoice}
                                 // The key here makes sure that any stateful fetching logic doesn't get confused.
                                 key={
                                     selectedInvoice
