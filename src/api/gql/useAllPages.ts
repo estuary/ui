@@ -37,7 +37,14 @@ interface KeyedResult<TResult> {
     complete: boolean;
 }
 
+interface Page<TResult> {
+    items: TResult[];
+    // Cursor for the following page; null on the last page
+    next: string | null;
+}
+
 const EMPTY_RESULT: never[] = [];
+const FIRST_PAGE = '';
 
 /**
  * Fetches all pages from a Relay-style paginated query.
@@ -68,12 +75,15 @@ export function useAllPages<
     getConnectionRef.current = options.getConnection;
     transformRef.current = options.transform;
 
-    const accumulator = useRef<{ key: string; items: TResult[] }>({
+    const accumulator = useRef<{
+        key: string;
+        pages: Map<string, Page<TResult>>;
+    }>({
         key: variablesKey,
-        items: [],
+        pages: new Map(),
     });
     if (accumulator.current.key !== variablesKey) {
-        accumulator.current = { key: variablesKey, items: [] };
+        accumulator.current = { key: variablesKey, pages: new Map() };
     }
 
     const [cursorState, setCursorState] = useState<KeyedCursor>({
@@ -102,7 +112,11 @@ export function useAllPages<
         pause,
     });
 
-    // Accumulate paginated records, then setResult when we reach the end
+    // Store each page under the cursor that fetched it, then rebuild the list by
+    // following the cursor chain from the first page. URQL can re-publish any
+    // page (TTL expiry, graphcache invalidation, StrictMode double-run); that
+    // replaces the page's entry rather than appending its items again, preventing
+    // duplicates here rather than having consumers do it.
     useEffect(() => {
         if (fetching || !data) {
             return;
@@ -115,29 +129,41 @@ export function useAllPages<
             return;
         }
 
-        // When on the first page, reset the accumulator so URQL refetches
-        // (TTL expiry, StrictMode double-run) don't duplicate items.
-        if (!cursor) {
-            acc.items = [];
-        }
-
         const connection = getConnectionRef.current(data);
-
-        for (const { node } of connection.edges) {
-            acc.items.push(transformRef.current(node));
-        }
-
         const { hasNextPage, endCursor } = connection.pageInfo;
 
-        if (hasNextPage && endCursor) {
-            setCursorState({ key: variablesKey, value: endCursor });
-        } else {
-            setResultState({
-                key: variablesKey,
-                data: [...acc.items],
-                complete: true,
-            });
+        acc.pages.set(cursor ?? FIRST_PAGE, {
+            items: connection.edges.map(({ node }) =>
+                transformRef.current(node)
+            ),
+            next: hasNextPage && endCursor ? endCursor : null,
+        });
+
+        const items: TResult[] = [];
+        const visited = new Set<string>();
+        let pageKey: string | null = FIRST_PAGE;
+
+        while (pageKey !== null) {
+            const page = acc.pages.get(pageKey);
+
+            // chain points at a page we haven't fetched yet, so
+            // update the cursor state to fetch it
+            if (!page) {
+                setCursorState({ key: variablesKey, value: pageKey });
+                return;
+            }
+
+            // guard against a cursor cycle
+            if (visited.has(pageKey)) {
+                break;
+            }
+
+            visited.add(pageKey);
+            items.push(...page.items);
+            pageKey = page.next;
         }
+
+        setResultState({ key: variablesKey, data: items, complete: true });
     }, [data, fetching, variablesKey, cursor]);
 
     return {
