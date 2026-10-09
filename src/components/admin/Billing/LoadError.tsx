@@ -1,16 +1,12 @@
 import { Grid } from '@mui/material';
 
-import { FormattedMessage } from 'react-intl';
-
 import AlertBox from 'src/components/shared/AlertBox';
-import { useBillingStore } from 'src/stores/Billing';
+import { useBillingInvoices } from 'src/hooks/billing/useBillingInvoices';
 
 function BillingLoadError() {
-    const hydrationErrorsExist = useBillingStore(
-        (state) => state.hydrationErrorsExist
-    );
+    const { errorExists } = useBillingInvoices();
 
-    if (!hydrationErrorsExist) {
+    if (!errorExists) {
         return null;
     }
 
@@ -19,11 +15,10 @@ function BillingLoadError() {
             <AlertBox
                 short
                 severity="warning"
-                title={
-                    <FormattedMessage id="admin.billing.error.details.header" />
-                }
+                title="There was a network issue."
             >
-                <FormattedMessage id="admin.billing.error.details.message" />
+                There was an error fetching your billing details. Try again and
+                if the issue persists please contact support.
             </AlertBox>
         </Grid>
     );

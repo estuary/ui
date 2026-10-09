@@ -22,12 +22,11 @@ import {
 import * as echarts from 'echarts/core';
 import { UniversalTransition } from 'echarts/features';
 import { CanvasRenderer } from 'echarts/renderers';
-import { useIntl } from 'react-intl';
 
 import useLegendConfig from 'src/components/graphs/useLegendConfig';
 import useTooltipConfig from 'src/components/graphs/useTooltipConfig';
 import { eChartsColors } from 'src/context/Theme';
-import { useBillingStore } from 'src/stores/Billing';
+import { useBillingInvoices } from 'src/hooks/billing/useBillingInvoices';
 import { CARD_AREA_HEIGHT, stripTimeFromDate } from 'src/utils/billing-utils';
 
 const chartContainerId = 'data-by-month';
@@ -36,12 +35,11 @@ const itemStyle = { borderRadius: [4, 4, 0, 0] };
 
 function UsageByMonthGraph() {
     const theme = useTheme();
-    const intl = useIntl();
+    const locale = navigator.language || 'en-US';
     const tooltipConfig = useTooltipConfig();
     const legendConfig = useLegendConfig([{ name: 'Data' }, { name: 'Hours' }]);
 
-    const billingStoreHydrated = useBillingStore((state) => state.hydrated);
-    const invoices = useBillingStore((state) => state.invoices);
+    const { invoices, isLoading } = useBillingInvoices();
 
     const [myChart, setMyChart] = useState<echarts.ECharts | null>(null);
 
@@ -53,8 +51,8 @@ function UsageByMonthGraph() {
         return eachMonthOfInterval({
             start: startDate,
             end: today,
-        }).map((date) => intl.formatDate(date, { month: 'short' }));
-    }, [intl, today]);
+        }).map((date) => date.toLocaleDateString(locale, { month: 'short' }));
+    }, [locale, today]);
 
     const seriesConfigs = useMemo(() => {
         const startDate = startOfMonth(sub(today, { months: 5 }));
@@ -78,7 +76,9 @@ function UsageByMonthGraph() {
 
         const data_series = filteredHistory.flatMap(({ date_start, extra }) => {
             const billedMonth = stripTimeFromDate(date_start);
-            const month = intl.formatDate(billedMonth, { month: 'short' });
+            const month = billedMonth.toLocaleDateString(locale, {
+                month: 'short',
+            });
 
             return { month, data: extra?.processed_data_gb ?? 0 };
         });
@@ -86,17 +86,19 @@ function UsageByMonthGraph() {
         const hours_series = filteredHistory.flatMap(
             ({ date_start, extra }) => {
                 const billedMonth = stripTimeFromDate(date_start);
-                const month = intl.formatDate(billedMonth, { month: 'short' });
+                const month = billedMonth.toLocaleDateString(locale, {
+                    month: 'short',
+                });
 
                 return { month, data: extra?.task_usage_hours ?? 0 };
             }
         );
 
         return { data: data_series, hours: hours_series };
-    }, [invoices, intl, today]);
+    }, [invoices, locale, today]);
 
     useEffect(() => {
-        if (billingStoreHydrated && invoices.length > 0) {
+        if (!isLoading && invoices.length > 0) {
             if (!myChart) {
                 echarts.use([
                     GridComponent,
@@ -126,8 +128,8 @@ function UsageByMonthGraph() {
         return undefined;
     }, [
         invoices,
-        billingStoreHydrated,
-        intl,
+        isLoading,
+        locale,
         legendConfig,
         months,
         myChart,
@@ -148,9 +150,7 @@ function UsageByMonthGraph() {
                 {
                     type: 'value',
                     axisLabel: {
-                        formatter: intl.messages[
-                            'admin.billing.graph.usageByMonth.dataFormatter'
-                        ] as string,
+                        formatter: '{value} GB',
                         color: eChartsColors.medium[0],
                         fontSize: 14,
                         fontWeight: 'bold',
@@ -163,9 +163,7 @@ function UsageByMonthGraph() {
                 {
                     type: 'value',
                     axisLabel: {
-                        formatter: intl.messages[
-                            'admin.billing.graph.usageByMonth.hoursFormatter'
-                        ] as string,
+                        formatter: '{value} hours',
                         color: eChartsColors.medium[1],
                         fontSize: 14,
                         fontWeight: 'bold',
@@ -186,14 +184,7 @@ function UsageByMonthGraph() {
                     itemStyle,
                     tooltip: {
                         valueFormatter: (value) => {
-                            return intl.formatMessage(
-                                {
-                                    id: 'admin.billing.graph.usageByMonth.dataFormatter',
-                                },
-                                {
-                                    value: String(value),
-                                }
-                            );
+                            return `${String(value)} GB`;
                         },
                     },
                 },
@@ -209,14 +200,7 @@ function UsageByMonthGraph() {
                     itemStyle,
                     tooltip: {
                         valueFormatter: (value) => {
-                            return intl.formatMessage(
-                                {
-                                    id: 'admin.billing.graph.usageByMonth.hoursFormatter',
-                                },
-                                {
-                                    value: String(value),
-                                }
-                            );
+                            return `${String(value)} hours`;
                         },
                     },
                     yAxisIndex: 1,
@@ -241,7 +225,6 @@ function UsageByMonthGraph() {
 
         myChart?.setOption(option);
     }, [
-        intl,
         legendConfig,
         months,
         myChart,
