@@ -14,8 +14,10 @@ import {
 
 import { useShallow } from 'zustand/react/shallow';
 
-import { HalfMoon, LogOut, MoreHoriz, SunLight } from 'iconoir-react';
+import { HalfMoon, Key, LogOut, MoreHoriz, SunLight } from 'iconoir-react';
+import { Link } from 'react-router-dom';
 
+import { authenticatedRoutes } from 'src/app/routes';
 import { navButtonSx } from 'src/components/navigation/NavItems';
 import UserAvatar from 'src/components/shared/UserAvatar';
 import { supabaseClient } from 'src/context/GlobalProviders';
@@ -117,6 +119,16 @@ export const UserMenu = ({ anchorEl, onClose }: UserMenuProps) => {
             </MenuItem>
 
             <Divider />
+
+            <MenuItem
+                component={Link}
+                to={authenticatedRoutes.settings.personalTokens.fullPath}
+            >
+                <ListItemIcon>
+                    <Key />
+                </ListItemIcon>
+                Personal Tokens
+            </MenuItem>
 
             <MenuItem onClick={() => colorMode.toggleColorMode()}>
                 <ListItemIcon>

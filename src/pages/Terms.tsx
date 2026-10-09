@@ -29,7 +29,7 @@ function TermsHeading({
     children,
     ...props
 }: TypographyProps & { component: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' }) {
-    const { isCopied, handleCopy } = useCopyToClipboard('TermsHeading');
+    const { isCopied, handleCopy } = useCopyToClipboard();
     const label = isCopied ? 'Link copied' : 'Copy link to this section';
 
     return (

@@ -107,6 +107,13 @@ declare module '@mui/material/Typography' {
     }
 }
 
+declare module '@mui/material/styles' {
+    interface TypeBackground {
+        /** Background for code strips. */
+        code: string;
+    }
+}
+
 // Colors
 const sample_blue = {
     100: '#DCE6FE',
@@ -221,6 +228,7 @@ const lightMode: PaletteOptions = {
         // 100, which left the panel on white and the cards with nowhere
         // lighter to go — see `paperBackground`.
         default: sample_grey[200],
+        code: sample_grey[200],
     },
     contrastThreshold,
     error: {
@@ -284,6 +292,8 @@ const lightMode: PaletteOptions = {
 const darkMode: PaletteOptions = {
     background: {
         default: sample_grey[900],
+        // Translucent in dark mode so code strips blend with the surrounding surface.
+        code: 'rgba(247, 249, 252, 0.05)',
     },
     contrastThreshold,
     mode: 'dark',
@@ -597,12 +607,6 @@ export const monacoEditorWidgetBackground = {
 export const monacoEditorComponentBackground = {
     light: 'vs',
     dark: 'vs-dark',
-};
-
-// RGB translation of #F7F9FC.
-export const codeBackground = {
-    light: sample_grey[200],
-    dark: 'rgba(247, 249, 252, 0.05)',
 };
 
 const expandedRowBgColor = {
@@ -1004,7 +1008,6 @@ const themeSettings = createTheme({
                 root: {
                     fontSize: 14,
                     borderRadius: 4,
-                    textTransform: 'none',
                 },
             },
         },
@@ -1045,20 +1048,6 @@ const themeSettings = createTheme({
                 },
             },
         },
-        MuiTab: {
-            styleOverrides: {
-                root: {
-                    textTransform: 'none',
-                },
-            },
-        },
-        MuiToggleButton: {
-            styleOverrides: {
-                root: {
-                    textTransform: 'none',
-                },
-            },
-        },
         MuiTabs: {
             ...baseBackground,
             defaultProps: {
@@ -1094,6 +1083,7 @@ const themeSettings = createTheme({
         },
         button: {
             fontSize: 14,
+            textTransform: 'none',
         },
         formSectionHeader: {
             fontSize: 18,
