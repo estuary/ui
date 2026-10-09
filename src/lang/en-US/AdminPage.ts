@@ -8,6 +8,7 @@ export const AdminPage: Record<string, string> = {
     'admin.roles.message.docLink': `authorization settings`,
     'admin.roles.message.docPath': `https://go.estuary.dev/provision`,
 
+
     'admin.billing.header': `Billing`,
     'admin.billing.message.freeTier': `The free tier lets you try ${CommonMessages.productName} with up to 2 tasks and 10GB per month without entering a credit card. Usage beyond these limits automatically starts a 30 day free trial.`,
     'admin.billing.message.paidTier': `Cloud tier`,
@@ -106,6 +107,7 @@ export const AdminPage: Record<string, string> = {
 
     'admin.tabs.users': `Account Access`,
     'admin.tabs.notifications': `Notifications`,
+    'admin.tabs.serviceAccounts': `Service Accounts`,
     'admin.tabs.billing': `Billing`,
     'admin.tabs.settings': `Settings`,
 

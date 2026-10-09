@@ -81,6 +81,19 @@ function UrqlConfigProvider({ children }: BaseComponentProps) {
                         CatalogTaskStats: (_data) => null,
                         CaptureBindingStats: (_data) => null,
                         MaterializeBindingStats: (_data) => null,
+                        // Normalized by stable identity so a mutation that
+                        // returns the updated account reconciles every cached
+                        // query (list + detail) by key — see updates below.
+                        ServiceAccount: (data) => data.catalogName as string,
+                        ServiceAccountApiKey: (data) => data.id as string,
+                        // Grants have no id of their own; keep them embedded
+                        // under their owning account.
+                        UserGrant: (_data) => null,
+                        // The one-time API-key secret lives only on this result —
+                        // leave it un-normalized so it never lands in the cache.
+                        // Its nested `serviceAccount` still normalizes by
+                        // catalogName, so the new key merges into the account.
+                        CreateApiKeyResult: (_data) => null,
                     },
                     // Normalization only merges update results into entities
                     // already in the cache. Creates and deletes need updaters
@@ -117,6 +130,15 @@ function UrqlConfigProvider({ children }: BaseComponentProps) {
                             },
                             updateStorageMapping(_result, _args, cache) {
                                 invalidateQuery(cache, 'storageMappings');
+                            },
+                            // Grant and API-key mutations return the updated
+                            // ServiceAccount, so the normalized cache (keyed by
+                            // catalogName) reconciles the list and detail queries
+                            // on its own. createServiceAccount still needs an
+                            // invalidation: it adds a new node to the connection,
+                            // which normalization can't do.
+                            createServiceAccount(_result, _args, cache) {
+                                invalidateQuery(cache, 'serviceAccounts');
                             },
                         },
                     },

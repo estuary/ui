@@ -1,6 +1,10 @@
-import { Box, Stack, Typography } from '@mui/material';
+import { Box, Link, Stack, Typography } from '@mui/material';
 
+import { Link as RouterLink } from 'react-router-dom';
+
+import { authenticatedRoutes } from 'src/app/routes';
 import { RefreshTokenTable } from 'src/components/admin/Api/RefreshToken/Table';
+import AlertBox from 'src/components/shared/AlertBox';
 
 export function RefreshToken() {
     return (
@@ -21,6 +25,25 @@ export function RefreshToken() {
                     including the Kafka compatible API “dekaf”.
                 </Typography>
             </Stack>
+
+            <Box sx={{ maxWidth: 660, mb: 3 }}>
+                <AlertBox severity="info" short>
+                    <Typography>
+                        For automation that a team depends on, such as CI/CD
+                        pipelines, AI agents, and shared integrations, create a{' '}
+                        <Link
+                            component={RouterLink}
+                            to={
+                                authenticatedRoutes.admin.serviceAccounts
+                                    .fullPath
+                            }
+                        >
+                            service account
+                        </Link>
+                        .
+                    </Typography>
+                </AlertBox>
+            </Box>
 
             <RefreshTokenTable />
         </Box>
