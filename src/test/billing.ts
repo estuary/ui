@@ -1,11 +1,14 @@
 import type {
     CreateBillingSetupIntentMutation,
+    SetBillingContactMutation,
+    SetBillingContactMutationVariables,
+    TenantBillingContactQuery,
     TenantBillingPaymentMethodsQuery,
 } from 'src/gql-types/graphql';
 
 import { vi } from 'vitest';
 
-import { graphql, HttpResponse } from 'src/test/server/test-server';
+import { graphql, HttpResponse, server } from 'src/test/server/test-server';
 import { getGqlUrl } from 'src/utils/env-utils';
 
 export const billingGraphql = graphql.link(getGqlUrl());
@@ -63,3 +66,84 @@ export const setupIntent = (clientSecret = 'secret') =>
             },
         },
     });
+
+type Contact = NonNullable<
+    TenantBillingContactQuery['tenant']
+>['billing']['contact'];
+
+export const completeContact: Contact = {
+    __typename: 'BillingContact',
+    name: 'Acme Corp',
+    email: 'billing@acme.co',
+    address: {
+        __typename: 'BillingAddress',
+        line1: '500 Howard St',
+        line2: null,
+        city: 'San Francisco',
+        state: 'CA',
+        postalCode: '94105',
+        country: 'US',
+    },
+};
+export const incompleteContact: Contact = { ...completeContact, name: null };
+export const emptyContact: Contact = {
+    __typename: 'BillingContact',
+    name: null,
+    email: null,
+    address: null,
+};
+
+export const contactData = (tenant: string, contact: Contact) => ({
+    tenant: {
+        __typename: 'Tenant' as const,
+        name: tenant,
+        billing: { __typename: 'TenantBilling' as const, contact },
+    },
+});
+
+// What Stripe's AddressElement reports for a newly entered address.
+export const austin = {
+    complete: true,
+    value: {
+        name: 'Acme Texas',
+        address: {
+            line1: '1 Main St',
+            line2: null,
+            city: 'Austin',
+            state: 'TX',
+            postal_code: '78701',
+            country: 'US',
+        },
+    },
+};
+
+// Echoes saved contacts back like the server does, and records each save.
+export const handleContactSaves = () => {
+    const saves: SetBillingContactMutationVariables[] = [];
+    server.use(
+        billingGraphql.mutation<
+            SetBillingContactMutation,
+            SetBillingContactMutationVariables
+        >('SetBillingContact', ({ variables }) => {
+            saves.push(variables);
+            const { name, email, address } = variables;
+            return HttpResponse.json({
+                data: {
+                    setBillingContact: {
+                        __typename: 'SetBillingContactPayload',
+                        contact: {
+                            __typename: 'BillingContact',
+                            name,
+                            email,
+                            address: {
+                                __typename: 'BillingAddress',
+                                ...address,
+                            },
+                        },
+                    },
+                },
+            });
+        })
+    );
+    return saves;
+};

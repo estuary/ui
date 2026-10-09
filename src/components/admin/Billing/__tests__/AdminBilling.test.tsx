@@ -11,6 +11,8 @@ import UrqlConfigProvider from 'src/context/URQL';
 import { useTenantStore } from 'src/stores/Tenant';
 import {
     billingGraphql,
+    completeContact,
+    contactData,
     dropFetchSignals,
     paymentMethodsData,
     setupIntent,
@@ -28,7 +30,7 @@ vi.mock('@stripe/stripe-js', () => ({
     loadStripe: () => Promise.resolve(null),
 }));
 
-// The tenants whose invoices or payment methods were read.
+// The tenants whose invoices, contact or payment methods were read.
 let billingReads: string[];
 let setupIntents: string[];
 
@@ -92,6 +94,12 @@ beforeEach(() => {
                         },
                     },
                 },
+            });
+        }),
+        billingGraphql.query('TenantBillingContact', ({ variables }) => {
+            billingReads.push(variables.tenant);
+            return HttpResponse.json({
+                data: contactData(variables.tenant, completeContact),
             });
         }),
         billingGraphql.query('TenantBillingPaymentMethods', ({ variables }) => {

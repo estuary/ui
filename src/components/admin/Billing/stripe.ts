@@ -1,4 +1,9 @@
-import type { Appearance, Stripe } from '@stripe/stripe-js';
+import type {
+    Appearance,
+    Stripe,
+    StripeAddressElementOptions,
+} from '@stripe/stripe-js';
+import type { StripeAddress } from 'src/utils/billing-contact-utils';
 
 import { useTheme } from '@mui/material';
 
@@ -20,6 +25,18 @@ export function getStripe() {
     );
     return stripePromise;
 }
+
+export const billingAddressOptions = (
+    name: string,
+    address: Partial<StripeAddress>
+): StripeAddressElementOptions => ({
+    mode: 'billing',
+    display: { name: 'organization' },
+    defaultValues: {
+        name,
+        address: { ...address, country: address.country || 'US' },
+    },
+});
 
 export function useStripeAppearance(): Appearance {
     const theme = useTheme();
