@@ -124,7 +124,6 @@ export const startSessionWithUser = async (
         console.log('startingSession:login:settings:defaulting');
         authSettings = {
             email,
-            legalDone: false,
             tenant: null,
         };
 
@@ -134,7 +133,6 @@ export const startSessionWithUser = async (
     console.log('startingSession:end');
     return {
         email: authSettings?.email ?? email,
-        legalDone: authSettings?.legalDone ?? false,
         tenant: authSettings?.tenant ?? null,
         filePath,
         name,
@@ -150,29 +148,11 @@ export const inituser = async (
 ): Promise<AuthProps> => {
     let newTenant;
 
-    const { name, email, filePath, legalDone, tenant } =
-        await startSessionWithUser(page, test, originalName);
-
-    console.log(`legal:checking`, { legalDone });
-    if (!legalDone) {
-        console.log(`legal:started:${name}`);
-
-        // Agree to Legal
-        const legalStuffResponse = await expect
-            .soft(page.getByText('Legal Stuff'))
-            .toBeVisible();
-
-        await page
-            .getByText('I accept the Privacy Policy and Terms of Service')
-            .click();
-        await page.getByRole('button', { name: 'Continue' }).click();
-
-        updateSavedAuth(filePath, {
-            legalDone: true,
-        });
-
-        console.log(`legal:done:${name}`);
-    }
+    const { name, email, filePath, tenant } = await startSessionWithUser(
+        page,
+        test,
+        originalName
+    );
 
     console.log(`tenant:checking`, { tenant });
     if (!tenant) {
@@ -184,16 +164,31 @@ export const inituser = async (
         await expect(page.getByText(`Where did you hear about`)).toBeVisible();
 
         // Create Tenant
-        await page.getByRole('textbox', { name: 'Organization' }).click();
-        await page.getByLabel('Organization').type(`${name}${tenantSuffix}`);
+        await page.getByLabel('Organization Name').fill(newTenant);
+
+        // Choose an available data plane.
+        await page.getByRole('combobox', { name: 'Data plane' }).click();
+        await page
+            .getByRole('option')
+            .filter({ hasNotText: 'Select a data plane' })
+            .first()
+            .click();
 
         // Tell how we heard
-        await page.getByText('Other').click();
+        await page
+            .getByRole('combobox', {
+                name: 'Where did you hear about Estuary?',
+            })
+            .click();
+        await page.getByRole('option', { name: 'Other' }).click();
+
+        // Agree to Legal
+        await page
+            .getByRole('checkbox', { name: /I have read and accept the/ })
+            .check();
 
         // Finish
-        await page
-            .getByRole('button', { name: 'Complete Registration' })
-            .click();
+        await page.getByRole('button', { name: 'Continue' }).click();
 
         updateSavedAuth(filePath, {
             tenant: newTenant,
@@ -213,7 +208,6 @@ export const inituser = async (
     return {
         email,
         filePath,
-        legalDone: true,
         name,
         saved: true,
         tenant: tenant ?? newTenant ?? 'ERROR_WITH_TENANT',

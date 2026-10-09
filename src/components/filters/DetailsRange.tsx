@@ -11,7 +11,7 @@ import { FormattedMessage, useIntl } from 'react-intl';
 
 import { DataGrains } from 'src/components/graphs/types';
 import { cardHeaderSx, linkButtonSx } from 'src/context/Theme';
-import { LUXON_GRAIN_SETTINGS } from 'src/services/luxon';
+import { getRangeLabelDescriptor } from 'src/services/luxon';
 import { useDetailsUsageStore } from 'src/stores/DetailsUsage/useDetailsUsageStore';
 
 // TODO (details range) - we should probably not add many more predefined ranges and
@@ -22,8 +22,7 @@ function DetailsRange() {
     const [range, setRange] = useDetailsUsageStore(
         useShallow((store) => [store.range, store.setRange])
     );
-    const { relativeUnit, selectedLabelKey } =
-        LUXON_GRAIN_SETTINGS[range.grain];
+    const selectedLabel = getRangeLabelDescriptor(range);
 
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
@@ -62,12 +61,8 @@ function DetailsRange() {
                 sx={{ ...linkButtonSx }}
             >
                 {intl.formatMessage(
-                    {
-                        id:
-                            selectedLabelKey ??
-                            `detailsPanel.recentUsage.filter.label.${relativeUnit}`,
-                    },
-                    { range: range.amount }
+                    { id: selectedLabel.id },
+                    selectedLabel.values
                 )}
             </Button>
 

@@ -294,4 +294,7 @@ export const unauthenticatedRoutes = {
         path: '/magicLink',
     },
     marketplace: marketplace.unauthenticated,
+    terms: {
+        path: '/terms',
+    },
 };

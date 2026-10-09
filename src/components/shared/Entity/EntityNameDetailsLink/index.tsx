@@ -6,8 +6,31 @@ import { useIntl } from 'react-intl';
 
 import LinkWrapper from 'src/components/shared/LinkWrapper';
 
-function EntityNameDetailsLink({ name, path, newWindow }: ViewDetailsProps) {
+function EntityNameDetailsLink({
+    name,
+    path,
+    newWindow,
+    plain,
+}: ViewDetailsProps) {
     const intl = useIntl();
+
+    const link = (
+        <LinkWrapper
+            newWindow={newWindow}
+            ariaLabel={intl.formatMessage(
+                { id: 'entityTable.viewDetails.aria' },
+                { name }
+            )}
+            link={path}
+            plain={plain}
+        >
+            {name}
+        </LinkWrapper>
+    );
+
+    if (plain) {
+        return link;
+    }
 
     return (
         <Tooltip
@@ -17,18 +40,7 @@ function EntityNameDetailsLink({ name, path, newWindow }: ViewDetailsProps) {
                 id: 'entityTable.detailsLink',
             })}
         >
-            <Box>
-                <LinkWrapper
-                    newWindow={newWindow}
-                    ariaLabel={intl.formatMessage(
-                        { id: 'entityTable.viewDetails.aria' },
-                        { name }
-                    )}
-                    link={path}
-                >
-                    {name}
-                </LinkWrapper>
-            </Box>
+            <Box>{link}</Box>
         </Tooltip>
     );
 }

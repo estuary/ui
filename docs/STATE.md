@@ -9,7 +9,7 @@ State lives in four places:
 3. **URQL graphcache** — server data fetched over GraphQL; the target home for all server data (`docs/GRAPHQL.md`)
 4. **SWR** — REST fetching (entity status, shards, journal data, gateway auth). Data-plane reads come from the Data-Plane-Gateway and are not in GraphQL, so this path stays for them. New control-plane data goes to GraphQL.
 
-Many Zustand stores still mirror server data through hydration slices. Narrow them as you touch them (see In-Flight Migrations in `CLAUDE.md`).
+Many Zustand stores still mirror server data through hydration slices. Narrow them as you touch them (see In-Flight Migrations in `AGENTS.md`).
 
 ---
 

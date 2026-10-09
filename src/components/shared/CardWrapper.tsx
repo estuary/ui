@@ -42,24 +42,27 @@ function CardWrapper({
     // step, and the border is what makes the edge legible.
     return (
         <Stack
-            sx={{
-                ...eChartsTooltipSX,
-                height,
-                p: 2,
-                display: 'flex',
-                flexDirection: 'column',
-                borderRadius: 3,
-                rowGap: 2,
-                minWidth: disableMinWidth ? undefined : 'min-content',
-                background: opaqueLightMode
-                    ? opaqueLightModeBackground[theme.palette.mode]
-                    : semiTransparentBackground[theme.palette.mode],
-                border:
-                    theme.palette.mode === 'light'
-                        ? `1px solid ${theme.palette.divider}`
-                        : 'none',
-                ...((sx as any) ?? {}),
-            }}
+            sx={[
+                {
+                    ...eChartsTooltipSX,
+                    height,
+                    p: 2,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    borderRadius: 3,
+                    rowGap: 2,
+                    minWidth: disableMinWidth ? undefined : 'min-content',
+                    background: opaqueLightMode
+                        ? opaqueLightModeBackground[theme.palette.mode]
+                        : semiTransparentBackground[theme.palette.mode],
+                    border:
+                        theme.palette.mode === 'light'
+                            ? `1px solid ${theme.palette.divider}`
+                            : 'none',
+                },
+                // `sx` may itself be an array, which `Stack` rejects nested.
+                ...(Array.isArray(sx) ? sx : [sx]),
+            ]}
         >
             {Boolean(message || tooltipMessageId) ? (
                 <Stack
