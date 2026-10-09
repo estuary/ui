@@ -26,7 +26,6 @@ export const AccessGrants: Record<string, string> = {
     'accessGrants.message1': `No results found.`,
     'accessGrants.message2': `We couldn't find any results matching your search. Please try a different filter.`,
 
-    'accessGrants.table.accessLinks.title': `Active Invite Links`,
     'accessGrants.table.accessLinks.cta.generate': `Create Links`,
     'accessGrants.table.accessLinks.header.noData': `No active invitations found.`,
     'accessGrants.table.accessLinks.message.noData': `To create an invitation, click the "Create Invite Link" button above. Invitations will be listed here while they are live.`,
@@ -34,8 +33,6 @@ export const AccessGrants: Record<string, string> = {
     'accessGrants.table.accessLinks.label.capability': `Capability`,
     'accessGrants.table.accessLinks.label.lastUpdated': `Last Updated`,
     'accessGrants.table.accessLinks.label.type': `Type`,
-    'accessGrants.table.accessLinks.label.type.singleUse': `Single use`,
-    'accessGrants.table.accessLinks.label.type.multiUse': `Multi-use`,
 
     'accessGrants.actions.extra.confirmation.whatThatMeans': `What will happen?`,
     'accessGrants.actions.extra.confirmation.whatIsChanging': `What is changing?`,
