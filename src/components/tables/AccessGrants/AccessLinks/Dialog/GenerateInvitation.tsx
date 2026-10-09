@@ -22,10 +22,8 @@ import { useMutation } from 'urql';
 import { CREATE_INVITE_LINK } from 'src/api/gql/inviteLinks';
 import { RHFLeavesAutocomplete } from 'src/components/shared/RHFFields';
 import { usePrefixes } from 'src/hooks/usePrefixes';
-import {
-    appendWithForwardSlash,
-    validateCatalogName,
-} from 'src/utils/misc-utils';
+import { appendWithForwardSlash } from 'src/utils/misc-utils';
+import { validateCatalogSlashes } from 'src/validation';
 
 // The write capability should be obscured to the user. It is more challenging
 // for a user to understand the nuances of this grant and likely will not be used
@@ -39,7 +37,7 @@ interface InviteFormData {
 
 const prefixRules = {
     partial: {
-        validate: (value: string) => validateCatalogName(value) ?? true,
+        validate: (value: string) => validateCatalogSlashes(value) ?? true,
     },
     final: {
         required: 'Estuary prefix is required.',
@@ -57,7 +55,7 @@ export function GenerateInvitation({ setError }: InviteErrorProps) {
     const catalogPrefix = appendWithForwardSlash(prefix);
     const prefixError = !prefix
         ? 'Estuary prefix is required.'
-        : validateCatalogName(prefix);
+        : validateCatalogSlashes(prefix);
     const [capability, setCapability] = useState<Capability | null>(null);
     const [singleUse, setSingleUse] = useState(true);
     async function createInvite() {
