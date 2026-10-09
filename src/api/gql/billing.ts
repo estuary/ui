@@ -114,3 +114,24 @@ export const DELETE_BILLING_PAYMENT_METHOD = graphql(`
         }
     }
 `);
+
+// `none` returns every prefix the user can reach, with its capability bits.
+// Billing access is checked against the bits rather than the legacy
+// read/write/admin level, which no longer says whether a grant includes
+// ViewBilling or EditBilling.
+export const BILLING_CAPABILITIES_QUERY = graphql(`
+    query BillingCapabilities($after: String) {
+        prefixes(by: { minCapability: none }, first: 7500, after: $after) {
+            edges {
+                node {
+                    prefix
+                    capabilities
+                }
+            }
+            pageInfo {
+                hasNextPage
+                endCursor
+            }
+        }
+    }
+`);

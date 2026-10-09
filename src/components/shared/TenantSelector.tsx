@@ -13,11 +13,14 @@ import { useTenantStore } from 'src/stores/Tenant';
 import { hasLength } from 'src/utils/misc-utils';
 
 interface Props {
+    // The tenants to choose from. Defaults to those the user administers.
+    tenants?: string[];
     updateStoreState?: (value?: string) => void;
 }
 
-function TenantSelector({ updateStoreState }: Props) {
-    const tenantNames = useEntitiesStore_tenantsWithAdmin();
+function TenantSelector({ tenants, updateStoreState }: Props) {
+    const tenantsWithAdmin = useEntitiesStore_tenantsWithAdmin();
+    const tenantNames = tenants ?? tenantsWithAdmin;
     const tenantNamesHaveLength = useMemo(
         () => hasLength(tenantNames),
         [tenantNames]
