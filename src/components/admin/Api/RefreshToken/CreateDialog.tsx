@@ -73,9 +73,8 @@ export function CreateRefreshTokenDialog({ open, onClose, onCreated }: Props) {
 
         const { id, secret } = result.data.createRefreshToken;
 
-        // The refresh token ID and secret are needed by Flow, therefore it was decided
-        // to base64 encode the data returned in the response and present that as the
-        // one-time secret presented to the user.
+        // Base64-encoding { id, secret } produces a single copyable credential that the API accepts as a bearer token.
+        // Maybe the mutation will return the encoded format directly in the future.
         const encodedToken = Buffer.from(
             JSON.stringify({ id, secret })
         ).toString('base64');
@@ -96,7 +95,7 @@ export function CreateRefreshTokenDialog({ open, onClose, onCreated }: Props) {
             onClose={token || generating ? undefined : onClose}
             maxWidth="sm"
             fullWidth
-            aria-label="Create Refresh Token"
+            aria-label="Create Personal Token"
             slotProps={{
                 transition: {
                     onExited: resetDialog,
@@ -111,7 +110,7 @@ export function CreateRefreshTokenDialog({ open, onClose, onCreated }: Props) {
                     justifyContent: 'space-between',
                 }}
             >
-                <Typography variant="h6">Create Refresh Token</Typography>
+                <Typography variant="h6">Create Personal Token</Typography>
 
                 <IconButton disabled={generating} onClick={onClose}>
                     <Xmark
@@ -133,8 +132,8 @@ export function CreateRefreshTokenDialog({ open, onClose, onCreated }: Props) {
                     {token ? (
                         <AlertBox severity="info" short data-private>
                             <Typography sx={{ mb: 1 }}>
-                                Copy this refresh token now - you won&apos;t be
-                                able to see it again!
+                                {`Copy this personal token now - you won't be able
+                                to see it again!`}
                             </Typography>
 
                             <SingleLineCode value={token} />
