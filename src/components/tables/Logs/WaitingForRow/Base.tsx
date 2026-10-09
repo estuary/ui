@@ -1,9 +1,8 @@
+import type { ReactNode } from 'react';
 import type {
     FetchMoreLogsOptions,
     WaitingForRowProps,
 } from 'src/components/tables/Logs/types';
-
-import type { ReactNode } from 'react';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 
@@ -77,9 +76,7 @@ function WaitingForRowBase({
     const fetchMoreLogs = useJournalDataLogsStore(
         (state) => state.fetchMoreLogs
     );
-    const fetchingMore = useJournalDataLogsStore(
-        (state) => state.fetchingMore
-    );
+    const fetchingMore = useJournalDataLogsStore((state) => state.fetchingMore);
 
     // Kinda hacky - but checking this flag here keeps the effect trigger
     //  as it is flipped back and forth
