@@ -1,6 +1,6 @@
 import type { TextFieldVariants } from '@mui/material';
 
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 
 import { Autocomplete, Box, Link, TextField, Typography } from '@mui/material';
 
@@ -9,8 +9,15 @@ import { Link as RouterLink } from 'react-router-dom';
 
 import {
     appendWithForwardSlash,
-    replaceWhitespacesWithUnderscores,
+    normalizeCatalogName,
 } from 'src/utils/misc-utils';
+import { breakAtSlashes } from 'src/utils/path-utils';
+
+type MuiKeyboardEvent = React.KeyboardEvent & {
+    // MUI adds this flag to keyboard events so our Enter handler can tell the
+    // autocomplete to skip its built-in handling. preventDefault() alone won't do that
+    defaultMuiPrevented?: boolean;
+};
 
 interface LeavesAutocompleteProps {
     leaves: string[];
@@ -25,12 +32,15 @@ interface LeavesAutocompleteProps {
     textFieldVariant?: TextFieldVariants;
 }
 
-// Insert <wbr> after each "/" so the browser only wraps at path boundaries
-function breakAtSlashes(text: string) {
-    const segments = text.split('/');
-    return segments.flatMap((seg, i) =>
-        i < segments.length - 1 ? [seg, '/', <wbr key={i} />] : [seg]
-    );
+// The prefix one level up: "acmeCo/prod/" -> "acmeCo/", "acmeCo/" -> "".
+// This is to support the shift-tab behavior, allowing the user to go back up one level in the prefix hierarchy.
+function parentPrefix(prefix: string): string {
+    const withoutTrailingSlash = prefix.endsWith('/')
+        ? prefix.slice(0, -1)
+        : prefix;
+    const lastSlash = withoutTrailingSlash.lastIndexOf('/');
+
+    return lastSlash === -1 ? '' : withoutTrailingSlash.slice(0, lastSlash + 1);
 }
 
 const markdownOptions = {
@@ -61,6 +71,10 @@ export function LeavesAutocomplete({
 }: LeavesAutocompleteProps) {
     const [isOpen, setIsOpen] = useState(false);
 
+    // Enter is used to select the highlighted value _and_ blur the component (to dismiss the popup).
+    // This ref keeps track of what was picked on exit so that blur doesn't use the value that was in the input before Enter was pressed.
+    const pickedOnExit = useRef<string | null>(null);
+
     const msg = errorMessage ?? helperText;
     const displayMessage = msg ? (
         <Markdown options={markdownOptions}>{msg}</Markdown>
@@ -86,11 +100,86 @@ export function LeavesAutocomplete({
         });
     }, [leaves]);
 
+    // The source of truth used by both the popup and the Tab-to-select handler.
+    const offered = useMemo(
+        () => branches.filter((b) => b.startsWith(value) && b !== value),
+        [branches, value]
+    );
+
+    // Find MUI's highlighted option so Tab can select it.
+    // aria-activedescendant identifies its element; data-option-index
+    // maps that element back to the filtered options.
+    const highlightedOption = (input: HTMLInputElement) => {
+        const activeId = input.getAttribute('aria-activedescendant');
+        const index = activeId
+            ? document
+                  .getElementById(activeId)
+                  ?.getAttribute('data-option-index')
+            : null;
+
+        return index === null || index === undefined
+            ? undefined
+            : offered[Number(index)];
+    };
+
     return (
         <Autocomplete
             sx={{ mb: 0, pb: 0 }}
             freeSolo
+            disableClearable
             autoHighlight
+            onKeyDown={(event) => {
+                const input = event.target as HTMLInputElement;
+
+                if (event.key === 'Enter') {
+                    // Enter selects the highlighted option and leaves/blurs the field.
+                    // `defaultMuiPrevented` tells MUI's Autocomplete to skip its built-in Enter handling.
+                    (event as MuiKeyboardEvent).defaultMuiPrevented = true;
+
+                    const picked = highlightedOption(input);
+
+                    if (picked !== undefined) {
+                        pickedOnExit.current = picked;
+                        onChange(picked);
+                    }
+
+                    input.blur();
+                    return;
+                }
+
+                if (event.key !== 'Tab') {
+                    // arrow keys fall through to MUI's default handling.
+                    return;
+                }
+
+                // event.key === 'Tab' at this point.
+                if (event.shiftKey) {
+                    // Shift+Tab walks back up the prefix hierarchy.
+                    const parent = parentPrefix(value);
+
+                    // Already at the root, so let Shift+Tab step back out of
+                    // the field.
+                    if (parent === value) {
+                        return;
+                    }
+
+                    event.preventDefault();
+                    onChange(parent);
+                    return;
+                }
+
+                // Tab selects the highlighted option and leaves the menu open with the next child highlighted.
+                const picked = highlightedOption(input);
+
+                // Nothing to select, so let Tab move focus on as usual — the
+                // field must not trap a keyboard user.
+                if (picked === undefined) {
+                    return;
+                }
+
+                event.preventDefault();
+                onChange(picked);
+            }}
             value={value}
             options={branches}
             open={isOpen}
@@ -98,15 +187,10 @@ export function LeavesAutocomplete({
                 setIsOpen(true);
             }}
             disableCloseOnSelect={true}
-            filterOptions={(options) =>
-                options.filter(
-                    (option: string) =>
-                        option.startsWith(value) && option !== value
-                )
-            }
+            filterOptions={() => offered}
             inputValue={value}
             onInputChange={(_event, newInputValue, _reason) =>
-                onChange(replaceWhitespacesWithUnderscores(newInputValue))
+                onChange(normalizeCatalogName(newInputValue))
             }
             onChange={(_event, newValue) => {
                 onChange(newValue ?? '');
@@ -114,10 +198,16 @@ export function LeavesAutocomplete({
             onClose={() => setIsOpen(false)}
             onBlur={() => {
                 setIsOpen(false);
+
+                // Whatever the field is leaving on: the option Enter just took,
+                // or the text the prop still holds.
+                const leavingWith = pickedOnExit.current ?? value;
+                pickedOnExit.current = null;
+
                 // append trailing slash if not present to adhere to prefix convention.
                 // might make sense as a configurable option if we want to use this for catalog_names in the future
-                const appendedVal = appendWithForwardSlash(value);
-                if (appendedVal && appendedVal !== value) {
+                const appendedVal = appendWithForwardSlash(leavingWith);
+                if (appendedVal && appendedVal !== leavingWith) {
                     onChange(appendedVal);
                 }
                 onBlur?.();

@@ -6,7 +6,7 @@ import {
     JOURNAL_READ_WARNINGS,
     journalStatusIsError,
     journalStatusIsWarning,
-    replaceWhitespacesWithUnderscores,
+    normalizeCatalogName,
     splitPathAndName,
     stripPathing,
 } from 'src/utils/misc-utils';
@@ -89,26 +89,6 @@ describe('appendWithForwardSlash', () => {
     });
 });
 
-describe('replaceWhitespacesWithUnderscores', () => {
-    test('replaces spaces with underscores', () => {
-        expect(replaceWhitespacesWithUnderscores('hello world')).toBe(
-            'hello_world'
-        );
-    });
-
-    test('replaces multiple whitespace characters', () => {
-        expect(replaceWhitespacesWithUnderscores('a b\tc')).toBe('a_b_c');
-    });
-
-    test('returns string without whitespace unchanged', () => {
-        expect(replaceWhitespacesWithUnderscores('nospaces')).toBe('nospaces');
-    });
-
-    test('handles empty string', () => {
-        expect(replaceWhitespacesWithUnderscores('')).toBe('');
-    });
-});
-
 describe('getPathWithParams', () => {
     test('appends an object of params as a query string', () => {
         const result = getPathWithParams('/api/data', {
@@ -157,5 +137,67 @@ describe('journalStatusIsError', () => {
 
     test('returns false for undefined', () => {
         expect(journalStatusIsError(undefined)).toBe(false);
+    });
+});
+
+describe('normalizeCatalogName', () => {
+    test('replaces spaces with underscores', () => {
+        expect(normalizeCatalogName('hello world')).toBe('hello_world');
+    });
+
+    test('replaces multiple whitespace characters', () => {
+        expect(normalizeCatalogName('a b\tc')).toBe('a_b_c');
+    });
+
+    test('returns string without whitespace unchanged', () => {
+        expect(normalizeCatalogName('nospaces')).toBe('nospaces');
+    });
+
+    test('handles empty string', () => {
+        expect(normalizeCatalogName('')).toBe('');
+    });
+
+    test('keeps letters, numbers, dashes, underscores, periods and slashes', () => {
+        expect(normalizeCatalogName('acmeCo/prod_v2/anvils-1.0/')).toBe(
+            'acmeCo/prod_v2/anvils-1.0/'
+        );
+    });
+
+    test('drops an apostrophe', () => {
+        expect(normalizeCatalogName("acmeCo/account's/")).toBe(
+            'acmeCo/accounts/'
+        );
+    });
+
+    test('drops punctuation and symbols', () => {
+        expect(normalizeCatalogName('acmeCo/(one)+two@three#/')).toBe(
+            'acmeCo/onetwothree/'
+        );
+    });
+
+    test('converts accented Latin letters to ASCII counterparts', () => {
+        expect(normalizeCatalogName('acmeCo/café/søren/Crème Brûlée/')).toBe(
+            'acmeCo/cafe/soren/Creme_Brulee/'
+        );
+    });
+
+    test('strips non-Latin letters and non-ASCII numbers', () => {
+        expect(normalizeCatalogName('acmeCo/日本Приключения੫൬٢½⑩prod/')).toBe(
+            'acmeCo/prod/'
+        );
+    });
+
+    test('removes decomposed accents', () => {
+        expect(normalizeCatalogName('acmeCo/cafe\u0301/')).toBe('acmeCo/cafe/');
+    });
+
+    test('strips emoji, control characters, zero-width characters and uncomposed marks', () => {
+        expect(normalizeCatalogName('acmeCo/😀\u0000\u200B\u0301prod/')).toBe(
+            'acmeCo/prod/'
+        );
+    });
+
+    test('returns an empty string when nothing is allowed', () => {
+        expect(normalizeCatalogName('!@#$%')).toBe('');
     });
 });
