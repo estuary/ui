@@ -6,6 +6,8 @@ export const RouteTitles: Record<string, string> = {
     'routeTitle.admin': `Admin`,
     'routeTitle.admin.accessGrants': `Access Grants`,
     'routeTitle.admin.billing': `Billing`,
+    'routeTitle.admin.serviceAccounts': `Service Accounts`,
+    'routeTitle.admin.serviceAccounts.details': `Service Accounts`,
     'routeTitle.admin.settings': `Settings`,
     'routeTitle.captureCreate': `Create Capture`,
     'routeTitle.captureDetails': `Capture Details`,
