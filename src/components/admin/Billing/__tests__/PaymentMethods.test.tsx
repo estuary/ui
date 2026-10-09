@@ -1,8 +1,4 @@
 import type { ReactNode } from 'react';
-import type {
-    CreateBillingSetupIntentMutation,
-    TenantBillingPaymentMethodsQuery,
-} from 'src/gql-types/graphql';
 
 import {
     act,
@@ -18,8 +14,15 @@ import PaymentMethods from 'src/components/admin/Billing/PaymentMethods';
 import PricingTierDetails from 'src/components/admin/Billing/PricingTierDetails';
 import UrqlConfigProvider from 'src/context/URQL';
 import { fireGtmEvent } from 'src/services/gtm';
-import { graphql, HttpResponse, server } from 'src/test/server/test-server';
-import { getGqlUrl } from 'src/utils/env-utils';
+import {
+    billing,
+    billingGraphql,
+    dropFetchSignals,
+    paymentMethod,
+    paymentMethodsData,
+    setupIntent,
+} from 'src/test/billing';
+import { HttpResponse, server } from 'src/test/server/test-server';
 
 const tenant = vi.hoisted(() => ({ selectedTenant: 'acme/' }));
 const stripe = vi.hoisted(() => ({ confirmSetup: vi.fn(), update: vi.fn() }));
@@ -55,38 +58,6 @@ vi.mock('@stripe/react-stripe-js', () => ({
     }),
 }));
 
-const billingGraphql = graphql.link(getGqlUrl());
-
-const method = {
-    __typename: 'PaymentMethod' as const,
-    id: 'pm_card',
-    type: 'card',
-    billingDetails: {
-        __typename: 'PaymentMethodBillingDetails' as const,
-        name: 'Acme card',
-    },
-    card: {
-        __typename: 'CardPaymentMethodDetails' as const,
-        brand: 'visa',
-        last4: '0042',
-        expMonth: 12,
-        expYear: 2030,
-    },
-    usBankAccount: null,
-};
-const billing = (methods = [method], primaryId: string | null = null) =>
-    ({
-        __typename: 'TenantBilling' as const,
-        paymentMethods: methods,
-        primaryPaymentMethod: primaryId
-            ? { __typename: 'PaymentMethod' as const, id: primaryId }
-            : null,
-    }) satisfies NonNullable<
-        TenantBillingPaymentMethodsQuery['tenant']
-    >['billing'];
-const queryData = (name: string, value = billing()) => ({
-    tenant: { __typename: 'Tenant' as const, name, billing: value },
-});
 const payload = (value = billing()) => ({
     ...value,
     __typename: 'BillingPaymentMethodPayload' as const,
@@ -95,21 +66,12 @@ const failure = () =>
     HttpResponse.json<{ errors: { message: string }[] }>({
         errors: [{ message: 'Payment provider unavailable' }],
     });
-const setupIntent = (clientSecret = 'secret') =>
-    HttpResponse.json<{ data: CreateBillingSetupIntentMutation }>({
-        data: {
-            createBillingSetupIntent: {
-                __typename: 'CreateBillingSetupIntentPayload',
-                clientSecret,
-            },
-        },
-    });
 const view = (showAddPayment = false) => (
     <>
         <div data-testid="pricing">
             <PricingTierDetails />
         </div>
-        <PaymentMethods showAddPayment={showAddPayment} />
+        <PaymentMethods canEdit showAddPayment={showAddPayment} />
     </>
 );
 const wrapper = ({ children }: { children: ReactNode }) => (
@@ -119,18 +81,14 @@ const wrapper = ({ children }: { children: ReactNode }) => (
 );
 
 beforeEach(() => {
-    // jsdom AbortSignals are incompatible with Node's fetch implementation.
-    const fetchTransport = globalThis.fetch;
-    vi.spyOn(globalThis, 'fetch').mockImplementation((input, init) =>
-        fetchTransport(input, { ...init, signal: undefined })
-    );
+    dropFetchSignals();
     tenant.selectedTenant = 'acme/';
     stripe.confirmSetup.mockResolvedValue({
         setupIntent: { payment_method: 'pm_saved' },
     });
     server.use(
         billingGraphql.query('TenantBillingPaymentMethods', ({ variables }) =>
-            HttpResponse.json({ data: queryData(variables.tenant) })
+            HttpResponse.json({ data: paymentMethodsData(variables.tenant) })
         ),
         billingGraphql.mutation('CreateBillingSetupIntent', () => setupIntent())
     );
@@ -145,7 +103,7 @@ describe('billing payments', () => {
                 ({ variables }) => {
                     paymentReads++;
                     return HttpResponse.json({
-                        data: queryData(variables.tenant),
+                        data: paymentMethodsData(variables.tenant),
                     });
                 }
             ),
@@ -153,7 +111,7 @@ describe('billing payments', () => {
                 HttpResponse.json({
                     data: {
                         setBillingPaymentMethod: payload(
-                            billing([method], method.id)
+                            billing([paymentMethod], paymentMethod.id)
                         ),
                     },
                 })
@@ -263,7 +221,7 @@ describe('billing payments', () => {
                 HttpResponse.json({
                     data: {
                         setBillingPaymentMethod: payload(
-                            billing([method], method.id)
+                            billing([paymentMethod], paymentMethod.id)
                         ),
                     },
                 })
@@ -304,9 +262,12 @@ describe('billing payments', () => {
 
     test('closes a saved Stripe form after primary failure, allows table recovery, and scopes late Stripe completion', async () => {
         const savedMethod = {
-            ...method,
+            ...paymentMethod,
             id: 'pm_saved',
-            billingDetails: { ...method.billingDetails, name: 'Saved card' },
+            billingDetails: {
+                ...paymentMethod.billingDetails,
+                name: 'Saved card',
+            },
         };
         let saved = false;
         let primaryAttempts = 0;
@@ -315,12 +276,12 @@ describe('billing payments', () => {
                 'TenantBillingPaymentMethods',
                 ({ variables }) =>
                     HttpResponse.json({
-                        data: queryData(
+                        data: paymentMethodsData(
                             variables.tenant,
                             billing(
                                 saved && variables.tenant === 'acme/'
                                     ? [savedMethod]
-                                    : [method]
+                                    : [paymentMethod]
                             )
                         ),
                     })
@@ -390,7 +351,7 @@ describe('billing payments', () => {
                         refreshedOriginal = true;
                     }
                     return HttpResponse.json({
-                        data: queryData(variables.tenant),
+                        data: paymentMethodsData(variables.tenant),
                     });
                 }
             )
