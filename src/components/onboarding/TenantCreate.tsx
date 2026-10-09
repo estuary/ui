@@ -25,6 +25,7 @@ import { useTenantCreate } from 'src/api/gql/tenant';
 import { unauthenticatedRoutes } from 'src/app/routes';
 import Logo from 'src/components/navigation/Logo';
 import { OnboardingSurvey } from 'src/components/onboarding/Survey';
+import { useOnboardingRequestError } from 'src/components/onboarding/useOnboardingRequestError';
 import AlertBox from 'src/components/shared/AlertBox';
 import ExternalLink from 'src/components/shared/ExternalLink';
 import { supabaseClient } from 'src/context/GlobalProviders';
@@ -57,6 +58,13 @@ export const TenantCreate = () => {
     });
     const termsId = termsData?.legalTerms?.id;
     const termsReady = Boolean(termsId && !termsFetching && !termsError);
+    useOnboardingRequestError('terms', termsFetching, !termsId, termsError);
+    useOnboardingRequestError(
+        'dataPlanes',
+        dataPlanesLoading,
+        dataPlanes.length === 0,
+        dataPlanesError
+    );
     const methods = useForm({
         defaultValues: {
             name: '',
