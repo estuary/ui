@@ -27,6 +27,7 @@ const TOKEN_VALIDITY = 'P1Y';
 const TOKEN_DISPLAY_ERROR: ErrorDetails = {
     message:
         'An issue was encountered displaying your token. Please generate a new token.',
+    // This `code` forces the Error component to treat the message as a literal string rather than an i18n key.
     code: 'token_display_failed',
 };
 
@@ -94,7 +95,7 @@ export function CreateRefreshTokenDialog({ open, onClose, onCreated }: Props) {
             onClose={token || generating ? undefined : onClose}
             maxWidth="sm"
             fullWidth
-            aria-label="Create Refresh Token"
+            aria-label="Create Personal Token"
             slotProps={{
                 transition: {
                     onExited: resetDialog,
@@ -109,7 +110,7 @@ export function CreateRefreshTokenDialog({ open, onClose, onCreated }: Props) {
                     justifyContent: 'space-between',
                 }}
             >
-                <Typography variant="h6">Create Refresh Token</Typography>
+                <Typography variant="h6">Create Personal Token</Typography>
 
                 <IconButton disabled={generating} onClick={onClose}>
                     <Xmark
@@ -131,8 +132,8 @@ export function CreateRefreshTokenDialog({ open, onClose, onCreated }: Props) {
                     {token ? (
                         <AlertBox severity="info" short data-private>
                             <Typography sx={{ mb: 1 }}>
-                                Copy this refresh token now - you won&apos;t be
-                                able to see it again!
+                                Copy this personal token now - you won't be able
+                                to see it again!
                             </Typography>
 
                             <SingleLineCode value={token} />

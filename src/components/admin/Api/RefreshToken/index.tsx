@@ -13,12 +13,12 @@ export function RefreshToken() {
                         fontWeight: '400',
                     }}
                 >
-                    Refresh Tokens
+                    Personal Tokens
                 </Typography>
 
                 <Typography>
-                    Refresh tokens enable programmatic access to most services
-                    including the Kafka compatible API &quot;dekaf&quot;.
+                    Personal tokens enable programmatic access to most services
+                    including the Kafka compatible API “dekaf”.
                 </Typography>
             </Stack>
 

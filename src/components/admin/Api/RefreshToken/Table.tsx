@@ -124,7 +124,7 @@ export function RefreshTokenTable() {
                 }}
             >
                 <Button onClick={() => setDialogOpen(true)} variant="outlined">
-                    Create Refresh Token
+                    Create Personal Token
                 </Button>
 
                 <CreateRefreshTokenDialog
@@ -136,7 +136,7 @@ export function RefreshTokenTable() {
 
             {error ? (
                 <Typography color="error" sx={{ mb: 2 }}>
-                    There was an error loading refresh tokens.
+                    There was an error loading personal tokens.
                 </Typography>
             ) : null}
 
@@ -169,7 +169,7 @@ export function RefreshTokenTable() {
                                     sx={{ textAlign: 'center', p: 4 }}
                                 >
                                     <Typography sx={{ py: 1 }}>
-                                        No refresh tokens found.
+                                        No personal tokens found.
                                     </Typography>
                                     <Typography
                                         component="a"

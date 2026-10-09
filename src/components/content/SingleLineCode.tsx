@@ -2,7 +2,7 @@ import type { SingleLineCodeProps } from 'src/components/content/types';
 
 import { Box, Button, Tooltip, Typography, useTheme } from '@mui/material';
 
-import { codeBackground, getButtonIcon } from 'src/context/Theme';
+import { getButtonIcon } from 'src/context/Theme';
 import { useCopyToClipboard } from 'src/hooks/useCopyToClipboard';
 
 const borderRadius = 3;
@@ -15,7 +15,7 @@ function SingleLineCode({
 }: SingleLineCodeProps) {
     const theme = useTheme();
 
-    const { isCopied, handleCopy } = useCopyToClipboard('SingleLineCode');
+    const { isCopied, handleCopy } = useCopyToClipboard();
 
     return (
         <Box
@@ -23,7 +23,7 @@ function SingleLineCode({
                 maxWidth: 1000,
                 mb: subsequentCommandExists ? 1 : undefined,
                 display: 'flex',
-                bgcolor: codeBackground[theme.palette.mode],
+                bgcolor: theme.palette.background.code,
                 borderRadius,
                 ...(sx ?? {}),
             }}
