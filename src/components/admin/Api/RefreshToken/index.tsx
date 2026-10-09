@@ -1,7 +1,5 @@
 import { Box, Stack, Typography } from '@mui/material';
 
-import { FormattedMessage } from 'react-intl';
-
 import { RefreshTokenTable } from 'src/components/admin/Api/RefreshToken/Table';
 
 export function RefreshToken() {
@@ -15,11 +13,12 @@ export function RefreshToken() {
                         fontWeight: '400',
                     }}
                 >
-                    <FormattedMessage id="admin.cli_api.refreshToken.header" />
+                    Personal Tokens
                 </Typography>
 
                 <Typography>
-                    <FormattedMessage id="admin.cli_api.refreshToken.message" />
+                    Personal tokens enable programmatic access to most services
+                    including the Kafka compatible API “dekaf”.
                 </Typography>
             </Stack>
 

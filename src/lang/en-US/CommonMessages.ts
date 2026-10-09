@@ -36,7 +36,6 @@ export const CommonMessages: Record<string, string> = {
     'common.version': `version`,
     'common.tenant': `Prefix`,
     'common.recommended': `Recommended`,
-    'common.copied': `Copied`,
     'common.synchronizing': `Synchronizing`,
     'common.synchronized': `Synchronized`,
     'common.outOfSync': `Out of Sync`,

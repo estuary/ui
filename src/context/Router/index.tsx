@@ -5,6 +5,7 @@ import {
     createBrowserRouter,
     createRoutesFromElements,
     Navigate,
+    redirect,
     Route,
     RouterProvider,
     Routes,
@@ -12,7 +13,6 @@ import {
 
 import { authenticatedRoutes, unauthenticatedRoutes } from 'src/app/routes';
 import AccessGrants from 'src/components/admin/AccessGrants';
-import AdminApi from 'src/components/admin/Api';
 import AdminBilling from 'src/components/admin/Billing';
 import AdminSettings from 'src/components/admin/Settings';
 import { ErrorImporting } from 'src/components/shared/ErrorImporting';
@@ -39,6 +39,7 @@ import BasicLogin from 'src/pages/login/Basic';
 import EnterpriseLogin from 'src/pages/login/Enterprise';
 import MarketplaceCallback from 'src/pages/marketplace/Callback';
 import MarketplaceVerification from 'src/pages/marketplace/Verification';
+import { PersonalTokens } from 'src/pages/PersonalTokens';
 import { SSORequired } from 'src/pages/SSORequired';
 import { Terms } from 'src/pages/Terms';
 import { isProduction } from 'src/utils/env-utils';
@@ -213,6 +214,13 @@ const router = createBrowserRouter(
                     <Route
                         path={authenticatedRoutes.dataPlaneAuth.path}
                         element={<DataPlaneAuthReq />}
+                    />
+
+                    <Route
+                        path={
+                            authenticatedRoutes.settings.personalTokens.fullPath
+                        }
+                        element={<PersonalTokens />}
                     />
 
                     <Route
@@ -669,10 +677,11 @@ const router = createBrowserRouter(
                         />
                         <Route
                             path={authenticatedRoutes.admin.api.path}
-                            element={
-                                <Suspense fallback={null}>
-                                    <AdminApi />
-                                </Suspense>
+                            loader={() =>
+                                redirect(
+                                    authenticatedRoutes.settings.personalTokens
+                                        .fullPath
+                                )
                             }
                         />
 
