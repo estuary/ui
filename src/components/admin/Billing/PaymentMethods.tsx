@@ -1,7 +1,7 @@
 import type { AdminBillingProps } from 'src/components/admin/Billing/types';
 import type { TableColumns } from 'src/types';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import {
     Box,
@@ -23,6 +23,7 @@ import {
     SET_BILLING_PAYMENT_METHOD,
 } from 'src/api/gql/billing';
 import AddPaymentMethod from 'src/components/admin/Billing/AddPaymentMethod';
+import { BillingContactDialog } from 'src/components/admin/Billing/BillingContactDialog';
 import { BillingEditLock } from 'src/components/admin/Billing/BillingEditLock';
 import { PaymentMethod } from 'src/components/admin/Billing/PaymentMethodRow';
 import {
@@ -31,8 +32,10 @@ import {
 } from 'src/components/admin/Billing/shared';
 import AlertBox from 'src/components/shared/AlertBox';
 import TableLoadingRows from 'src/components/tables/Loading';
+import { useBillingContact } from 'src/hooks/billing/useBillingContact';
 import { useBillingPaymentMethods } from 'src/hooks/billing/useBillingPaymentMethods';
 import { useTenantStore } from 'src/stores/Tenant';
+import { getContactStatus } from 'src/utils/billing-contact-utils';
 import { getColumnKeyList } from 'src/utils/table-utils';
 
 const columns: (TableColumns & { header: string })[] = [
@@ -91,6 +94,11 @@ function TenantPaymentMethods({
         error,
         refresh: refreshPaymentMethods,
     } = useBillingPaymentMethods(tenant);
+    const {
+        contact,
+        isLoading: contactLoading,
+        error: contactError,
+    } = useBillingContact(tenant);
     const [, createSetupIntent] = useMutation(CREATE_BILLING_SETUP_INTENT);
     const [, setPrimary] = useMutation(SET_BILLING_PAYMENT_METHOD);
     const [, deleteMethod] = useMutation(DELETE_BILLING_PAYMENT_METHOD);
@@ -98,7 +106,12 @@ function TenantPaymentMethods({
     const [setupIntentSecret, setSetupIntentSecret] = useState(
         INTENT_SECRET_LOADING
     );
-    const [newMethodOpen, setNewMethodOpen] = useState(
+    const [newMethodOpen, setNewMethodOpen] = useState(false);
+    // Adding a payment method starts with the billing contact when it is
+    // incomplete. Saving it continues to the payment form as step 2.
+    const [contactOpen, setContactOpen] = useState(false);
+    const [continuedFromContact, setContinuedFromContact] = useState(false);
+    const [autoOpenPending, setAutoOpenPending] = useState(
         Boolean(showAddPayment && canEdit)
     );
     const [actionError, setActionError] = useState<string>();
@@ -126,6 +139,27 @@ function TenantPaymentMethods({
             current = false;
         };
     }, [canEdit, createSetupIntent, tenant, refreshCounter]);
+
+    const contactComplete = getContactStatus(contact) === 'complete';
+    const startAddPayment = useCallback(() => {
+        if (!canEdit) {
+            return;
+        }
+        if (contactComplete) {
+            setContinuedFromContact(false);
+            setNewMethodOpen(true);
+        } else {
+            setContactOpen(true);
+        }
+    }, [canEdit, contactComplete]);
+
+    // The add-payment route starts the flow once the contact loads.
+    useEffect(() => {
+        if (autoOpenPending && !contactLoading) {
+            setAutoOpenPending(false);
+            startAddPayment();
+        }
+    }, [autoOpenPending, contactLoading, startAddPayment]);
 
     const refreshSetup = () => {
         setRefreshCounter((value) => value + 1);
@@ -164,8 +198,9 @@ function TenantPaymentMethods({
     };
 
     // The page shows one error for the contact and payment sections.
-    if (error) {
-        throw error;
+    const loadError = error ?? contactError;
+    if (loadError) {
+        throw loadError;
     }
 
     return (
@@ -211,6 +246,10 @@ function TenantPaymentMethods({
                     <AddPaymentMethod
                         show={newMethodOpen}
                         setOpen={setNewMethodOpen}
+                        onStart={startAddPayment}
+                        starting={contactLoading}
+                        step={continuedFromContact ? 'Step 2 of 2' : undefined}
+                        contact={contact}
                         tenant={tenant}
                         setupIntentSecret={setupIntentSecret}
                         onRefresh={refreshPaymentMethods}
@@ -281,6 +320,21 @@ function TenantPaymentMethods({
                     </TableBody>
                 </Table>
             </TableContainer>
+
+            {canEdit ? (
+                <BillingContactDialog
+                    open={contactOpen}
+                    tenant={tenant}
+                    contact={contact}
+                    mode="continue"
+                    onClose={() => setContactOpen(false)}
+                    onSaved={() => {
+                        setContactOpen(false);
+                        setContinuedFromContact(true);
+                        setNewMethodOpen(true);
+                    }}
+                />
+            ) : null}
         </Stack>
     );
 }

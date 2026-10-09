@@ -1,4 +1,6 @@
-import { Box, Button, Dialog, DialogTitle } from '@mui/material';
+import type { BillingContact } from 'src/utils/billing-contact-utils';
+
+import { Box, Button, Dialog } from '@mui/material';
 
 import { usePostHog } from '@posthog/react';
 import { Elements } from '@stripe/react-stripe-js';
@@ -7,6 +9,7 @@ import { useMountedState } from 'react-use';
 import { useMutation } from 'urql';
 
 import { SET_BILLING_PAYMENT_METHOD } from 'src/api/gql/billing';
+import { BillingDialogTitle } from 'src/components/admin/Billing/BillingDialogTitle';
 import { PaymentForm } from 'src/components/admin/Billing/CapturePaymentMethod';
 import {
     INTENT_SECRET_ERROR,
@@ -22,6 +25,11 @@ interface Props {
     show: boolean;
     setupIntentSecret: string;
     setOpen: (val: boolean) => void;
+    // The button may collect the billing contact before opening the dialog.
+    onStart: () => void;
+    starting?: boolean;
+    step?: string;
+    contact: BillingContact | undefined;
     onRefresh: () => void;
     onComplete: (error?: string) => void;
     tenant: string;
@@ -30,6 +38,10 @@ interface Props {
 function AddPaymentMethod({
     onRefresh,
     onComplete,
+    onStart,
+    starting,
+    step,
+    contact,
     show,
     setupIntentSecret,
     setOpen,
@@ -50,8 +62,10 @@ function AddPaymentMethod({
                 <Button
                     loadingPosition="start"
                     disabled={!enable}
-                    loading={setupIntentSecret === INTENT_SECRET_LOADING}
-                    onClick={() => setOpen(true)}
+                    loading={
+                        starting || setupIntentSecret === INTENT_SECRET_LOADING
+                    }
+                    onClick={onStart}
                     startIcon={<Plus style={{ fontSize: 15 }} />}
                     sx={{ whiteSpace: 'nowrap' }}
                     variant="contained"
@@ -68,7 +82,7 @@ function AddPaymentMethod({
                 onClose={() => setOpen(false)}
                 data-private
             >
-                <DialogTitle>Add a payment method</DialogTitle>
+                <BillingDialogTitle title="Add a payment method" step={step} />
                 {enable ? (
                     <Elements
                         stripe={getStripe()}
@@ -80,6 +94,7 @@ function AddPaymentMethod({
                     >
                         {!tenant ? null : (
                             <PaymentForm
+                                contact={contact}
                                 onSuccess={async (id) => {
                                     if (!isMounted()) {
                                         onRefresh();
