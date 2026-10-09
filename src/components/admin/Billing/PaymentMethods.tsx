@@ -1,7 +1,7 @@
 import type { AdminBillingProps } from 'src/components/admin/Billing/types';
 import type { TableColumns } from 'src/types';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import {
     Box,
@@ -15,7 +15,6 @@ import {
     Typography,
 } from '@mui/material';
 
-import { loadStripe } from '@stripe/stripe-js';
 import { useMutation } from 'urql';
 
 import {
@@ -88,10 +87,6 @@ function TenantPaymentMethods({
     canEdit,
     showAddPayment,
 }: PaymentMethodsProps & { tenant: string }) {
-    const stripePromise = useMemo(
-        () => loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY ?? ''),
-        []
-    );
     const {
         billing,
         isLoading,
@@ -223,7 +218,6 @@ function TenantPaymentMethods({
                         show={newMethodOpen}
                         setOpen={setNewMethodOpen}
                         tenant={tenant}
-                        stripePromise={stripePromise}
                         setupIntentSecret={setupIntentSecret}
                         onRefresh={refreshPaymentMethods}
                         onComplete={(error) => {
