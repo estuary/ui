@@ -1,4 +1,4 @@
-import { TableCell, Tooltip } from '@mui/material';
+import { Tooltip } from '@mui/material';
 
 import { unauthenticatedRoutes } from 'src/app/routes';
 import CopyToClipboardButton from 'src/components/shared/buttons/CopyToClipboardButton';
@@ -28,14 +28,12 @@ export function CopyAccessLink({ token, ssoProviderId }: Props) {
     );
 
     return (
-        <TableCell>
-            <Tooltip title={accessLink}>
-                <span>
-                    <CopyToClipboardButton writeValue={accessLink}>
-                        Invite Link
-                    </CopyToClipboardButton>
-                </span>
-            </Tooltip>
-        </TableCell>
+        <Tooltip title={accessLink}>
+            <span>
+                <CopyToClipboardButton writeValue={accessLink}>
+                    Invite Link
+                </CopyToClipboardButton>
+            </span>
+        </Tooltip>
     );
 }
