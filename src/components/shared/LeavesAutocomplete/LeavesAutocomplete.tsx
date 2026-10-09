@@ -30,6 +30,7 @@ interface LeavesAutocompleteProps {
     errorMessage?: string;
     helperText?: string;
     textFieldVariant?: TextFieldVariants;
+    autoFocus?: boolean;
 }
 
 // The prefix one level up: "acmeCo/prod/" -> "acmeCo/", "acmeCo/" -> "".
@@ -68,6 +69,7 @@ export function LeavesAutocomplete({
     errorMessage,
     helperText,
     textFieldVariant,
+    autoFocus = false,
 }: LeavesAutocompleteProps) {
     const [isOpen, setIsOpen] = useState(false);
 
@@ -215,6 +217,7 @@ export function LeavesAutocomplete({
             renderInput={(params) => (
                 <TextField
                     {...params}
+                    autoFocus={autoFocus}
                     label={label}
                     required={required}
                     error={error}

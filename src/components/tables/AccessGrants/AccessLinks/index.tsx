@@ -43,10 +43,6 @@ const columns: TableColumns[] = [
         headerIntlKey: '',
     },
     {
-        field: 'createdAt',
-        headerIntlKey: 'accessGrants.table.accessLinks.label.lastUpdated',
-    },
-    {
         field: null,
         headerIntlKey: '',
     },

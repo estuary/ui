@@ -1,13 +1,13 @@
 import type { InviteErrorProps } from 'src/components/tables/AccessGrants/AccessLinks';
 import type { InviteLink } from 'src/gql-types/graphql';
 
-import { Button, TableCell, TableRow, Typography } from '@mui/material';
+import { IconButton, TableCell, TableRow, Typography } from '@mui/material';
 
+import { Trash } from 'iconoir-react';
 import { useMutation } from 'urql';
 
 import { DELETE_INVITE_LINK } from 'src/api/gql/inviteLinks';
 import { CopyAccessLink } from 'src/components/tables/cells/CopyAccessLink';
-import TimeStamp from 'src/components/tables/cells/TimeStamp';
 
 export function Row({
     row,
@@ -24,7 +24,14 @@ export function Row({
     };
 
     return (
-        <TableRow hover>
+        <TableRow
+            sx={{
+                '&:hover .remove-action, &:has(:focus-visible) .remove-action':
+                    {
+                        opacity: 1,
+                    },
+            }}
+        >
             <TableCell>
                 <Typography>{row.catalogPrefix}</Typography>
             </TableCell>
@@ -39,23 +46,25 @@ export function Row({
                 </Typography>
             </TableCell>
 
-            <CopyAccessLink
-                token={row.token}
-                ssoProviderId={row.ssoProviderId}
-            />
+            <TableCell sx={{ width: 150 }}>
+                <CopyAccessLink
+                    token={row.token}
+                    ssoProviderId={row.ssoProviderId}
+                />
+            </TableCell>
 
-            <TimeStamp time={row.createdAt} />
-
-            <TableCell sx={{ width: 50 }}>
-                <Button
+            <TableCell sx={{ width: 30 }}>
+                <IconButton
                     onClick={handleDelete}
                     disabled={fetching}
-                    variant="text"
+                    className="remove-action"
+                    color="error"
                     size="small"
                     aria-label="Delete"
+                    sx={{ opacity: 0, transition: 'opacity 100ms ease-in-out' }}
                 >
-                    Remove
-                </Button>
+                    <Trash />
+                </IconButton>
             </TableCell>
         </TableRow>
     );

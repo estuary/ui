@@ -31,8 +31,8 @@ export const AccessGrants: Record<string, string> = {
     'accessGrants.table.accessLinks.message.noData': `To create an invitation, click the "Create Invite Link" button above. Invitations will be listed here while they are live.`,
     'accessGrants.table.accessLinks.label.prefix': `Prefix`,
     'accessGrants.table.accessLinks.label.capability': `Capability`,
-    'accessGrants.table.accessLinks.label.lastUpdated': `Last Updated`,
     'accessGrants.table.accessLinks.label.type': `Type`,
+    'accessGrants.table.accessLinks.label.lastUpdated': `Last Updated`,
 
     'accessGrants.actions.extra.confirmation.whatThatMeans': `What will happen?`,
     'accessGrants.actions.extra.confirmation.whatIsChanging': `What is changing?`,
