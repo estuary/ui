@@ -9,7 +9,6 @@ import {
     Dialog,
     DialogActions,
     DialogContent,
-    DialogTitle,
     Stack,
     TextField,
     Typography,
@@ -19,6 +18,7 @@ import { AddressElement, Elements, useElements } from '@stripe/react-stripe-js';
 import { useMutation } from 'urql';
 
 import { SET_BILLING_CONTACT } from 'src/api/gql/billing';
+import { BillingDialogTitle } from 'src/components/admin/Billing/BillingDialogTitle';
 import {
     billingAddressOptions,
     getStripe,
@@ -39,6 +39,8 @@ interface BillingContactDialogProps {
     open: boolean;
     tenant: string;
     contact: BillingContact | undefined;
+    // `continue` is step 1 of adding a payment method.
+    mode: 'edit' | 'continue';
     // Notes that existing payment methods keep their billing address.
     hasPaymentMethods?: boolean;
     onClose: () => void;
@@ -82,6 +84,7 @@ export function BillingContactDialog({
 function BillingContactForm({
     tenant,
     contact,
+    mode,
     hasPaymentMethods,
     saving,
     setSaving,
@@ -151,16 +154,18 @@ function BillingContactForm({
         }
     };
 
+    const subtitle =
+        mode === 'continue'
+            ? `${status === 'missing' ? 'Add' : 'Finish'} your billing contact before adding a payment method. It appears on invoices and receipts.`
+            : `Shown on invoices and receipts for ${tenant}.`;
+
     return (
         <>
-            <DialogTitle component="div">
-                <Typography variant="h6" component="h2">
-                    Billing contact
-                </Typography>
-                <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                    Shown on invoices and receipts for {tenant}.
-                </Typography>
-            </DialogTitle>
+            <BillingDialogTitle
+                title="Billing contact"
+                step={mode === 'continue' ? 'Step 1 of 2' : undefined}
+                subtitle={subtitle}
+            />
 
             <DialogContent>
                 <Stack spacing={2} sx={{ pt: 1 }}>
@@ -229,7 +234,11 @@ function BillingContactForm({
                     loadingPosition="start"
                     disabled={loadError}
                 >
-                    {saving ? 'Saving…' : 'Save'}
+                    {saving
+                        ? 'Saving…'
+                        : mode === 'continue'
+                          ? 'Save and continue'
+                          : 'Save'}
                 </Button>
             </DialogActions>
         </>
