@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import type { BillingPaymentMethodFieldsFragment } from 'src/gql-types/graphql';
 
 import { Button, TableCell, TableRow } from '@mui/material';
@@ -18,6 +19,8 @@ const cardLogos: Record<string, string> = {
 
 export interface PaymentMethodProps {
     method: BillingPaymentMethodFieldsFragment;
+    // Replaces the actions for people who cannot edit billing.
+    lock?: ReactNode;
     onDelete(): void;
     onPrimary(): void;
     primary: boolean;
@@ -25,6 +28,7 @@ export interface PaymentMethodProps {
 
 export const PaymentMethod = ({
     method: { type, billingDetails, card, usBankAccount },
+    lock,
     onDelete,
     onPrimary,
     primary,
@@ -63,14 +67,22 @@ export const PaymentMethod = ({
             </TableCell>
             <TableCell>{primary ? <Check /> : ''}</TableCell>
             <TableCell>
-                <Button size="small" variant="text" onClick={onDelete}>
-                    Delete
-                </Button>
-                {!primary ? (
-                    <Button size="small" variant="text" onClick={onPrimary}>
-                        Make Primary
-                    </Button>
-                ) : null}
+                {lock ?? (
+                    <>
+                        <Button size="small" variant="text" onClick={onDelete}>
+                            Delete
+                        </Button>
+                        {!primary ? (
+                            <Button
+                                size="small"
+                                variant="text"
+                                onClick={onPrimary}
+                            >
+                                Make Primary
+                            </Button>
+                        ) : null}
+                    </>
+                )}
             </TableCell>
         </TableRow>
     );

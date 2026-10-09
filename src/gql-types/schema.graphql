@@ -2064,6 +2064,15 @@ input PrefixesBy {
 }
 
 """
+Optional filter for the `prefixes` query. A filter only narrows the
+prefixes the caller can reach.
+"""
+input PrefixesFilter {
+  """Filter on the returned prefix."""
+  prefix: PrefixFilter
+}
+
+"""
 A configured private link and its controller-observed provisioning status.
 """
 type PrivateLink {
@@ -2335,7 +2344,7 @@ type QueryRoot {
   has for the given spec.
   """
   liveSpecs(after: String, before: String, by: LiveSpecsBy!, first: Int, last: Int): LiveSpecRefConnection!
-  prefixes(after: String, by: PrefixesBy!, first: Int): PrefixRefConnection!
+  prefixes(after: String, by: PrefixesBy!, filter: PrefixesFilter, first: Int): PrefixRefConnection!
 
   """
   Returns all public data planes.

@@ -114,3 +114,22 @@ export const DELETE_BILLING_PAYMENT_METHOD = graphql(`
         }
     }
 `);
+
+// Billing is checked against the capability bits rather than the legacy
+// read/write/admin level, which no longer says whether a grant includes
+// ViewBilling or EditBilling. `none` keeps grants that carry only bits, and
+// the `in` filter returns just the row at the tenant itself.
+export const BILLING_CAPABILITIES_QUERY = graphql(`
+    query BillingCapabilities($tenant: String!) {
+        prefixes(
+            by: { minCapability: none }
+            filter: { prefix: { in: [$tenant] } }
+        ) {
+            edges {
+                node {
+                    capabilities
+                }
+            }
+        }
+    }
+`);
