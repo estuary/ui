@@ -1,6 +1,6 @@
-import type { Stripe } from '@stripe/stripe-js';
+import type { BillingContact } from 'src/utils/billing-contact-utils';
 
-import { Box, Button, Dialog, DialogTitle, useTheme } from '@mui/material';
+import { Box, Button, Dialog } from '@mui/material';
 
 import { usePostHog } from '@posthog/react';
 import { Elements } from '@stripe/react-stripe-js';
@@ -9,40 +9,48 @@ import { useMountedState } from 'react-use';
 import { useMutation } from 'urql';
 
 import { SET_BILLING_PAYMENT_METHOD } from 'src/api/gql/billing';
+import { BillingDialogTitle } from 'src/components/admin/Billing/BillingDialogTitle';
 import { PaymentForm } from 'src/components/admin/Billing/CapturePaymentMethod';
 import {
     INTENT_SECRET_ERROR,
     INTENT_SECRET_LOADING,
 } from 'src/components/admin/Billing/shared';
-import { stripePaymentFormFieldBackgroundDark } from 'src/context/Theme';
+import {
+    getStripe,
+    useStripeAppearance,
+} from 'src/components/admin/Billing/stripe';
 import { fireGtmEvent } from 'src/services/gtm';
 
 interface Props {
     show: boolean;
     setupIntentSecret: string;
     setOpen: (val: boolean) => void;
+    // The button may collect the billing contact before opening the dialog.
+    onStart: () => void;
+    starting?: boolean;
+    step?: string;
+    contact: BillingContact | undefined;
     onRefresh: () => void;
     onComplete: (error?: string) => void;
-    stripePromise: Promise<Stripe | null>;
     tenant: string;
 }
 
 function AddPaymentMethod({
     onRefresh,
     onComplete,
+    onStart,
+    starting,
+    step,
+    contact,
     show,
     setupIntentSecret,
     setOpen,
-    stripePromise,
     tenant,
 }: Props) {
     const isMounted = useMountedState();
     const [, setPrimary] = useMutation(SET_BILLING_PAYMENT_METHOD);
     const postHog = usePostHog();
-    const theme = useTheme();
-    const isDark = theme.palette.mode === 'dark';
-
-    const flatField = { border: 'none', boxShadow: 'none' };
+    const appearance = useStripeAppearance();
 
     const enable =
         setupIntentSecret !== INTENT_SECRET_LOADING &&
@@ -54,8 +62,10 @@ function AddPaymentMethod({
                 <Button
                     loadingPosition="start"
                     disabled={!enable}
-                    loading={setupIntentSecret === INTENT_SECRET_LOADING}
-                    onClick={() => setOpen(true)}
+                    loading={
+                        starting || setupIntentSecret === INTENT_SECRET_LOADING
+                    }
+                    onClick={onStart}
                     startIcon={<Plus style={{ fontSize: 15 }} />}
                     sx={{ whiteSpace: 'nowrap' }}
                     variant="contained"
@@ -72,56 +82,19 @@ function AddPaymentMethod({
                 onClose={() => setOpen(false)}
                 data-private
             >
-                <DialogTitle>Add a payment method</DialogTitle>
+                <BillingDialogTitle title="Add a payment method" step={step} />
                 {enable ? (
                     <Elements
-                        stripe={stripePromise}
+                        stripe={getStripe()}
                         options={{
                             clientSecret: setupIntentSecret,
                             loader: 'auto',
-                            appearance: {
-                                theme: isDark ? 'night' : 'stripe',
-                                variables: {
-                                    colorPrimary: theme.palette.primary.main,
-                                    fontFamily: theme.typography.fontFamily,
-                                    borderRadius: `6px`,
-                                    focusBoxShadow: 'none',
-                                    focusOutline: 'none',
-                                },
-                                ...(isDark && {
-                                    rules: {
-                                        '.Input': {
-                                            ...flatField,
-                                            backgroundColor:
-                                                stripePaymentFormFieldBackgroundDark,
-                                        },
-                                        '.Tab': {
-                                            ...flatField,
-                                            backgroundColor:
-                                                stripePaymentFormFieldBackgroundDark,
-                                        },
-                                        '.Tab--focused': {
-                                            borderColor:
-                                                theme.palette.primary.main,
-                                        },
-                                        '.Block': {
-                                            ...flatField,
-                                            padding: '14px',
-                                            backgroundColor:
-                                                stripePaymentFormFieldBackgroundDark,
-                                        },
-                                        '.PickerItem': {
-                                            ...flatField,
-                                            backgroundColor:
-                                                stripePaymentFormFieldBackgroundDark,
-                                        },
-                                    },
-                                }),
-                            },
+                            appearance,
                         }}
                     >
                         {!tenant ? null : (
                             <PaymentForm
+                                contact={contact}
                                 onSuccess={async (id) => {
                                     if (!isMounted()) {
                                         onRefresh();
