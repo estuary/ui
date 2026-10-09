@@ -16,8 +16,8 @@ import {
     useElements,
     useStripe,
 } from '@stripe/react-stripe-js';
-import { useIntl } from 'react-intl';
 
+import { STRIPE_LOAD_ERROR } from 'src/components/admin/Billing/stripe';
 import AlertBox from 'src/components/shared/AlertBox';
 import { useUserStore } from 'src/context/User/useUserContextStore';
 import { logRocketEvent } from 'src/services/shared';
@@ -29,8 +29,6 @@ export interface PaymentFormProps {
 }
 
 export const PaymentForm = ({ onSuccess, onError }: PaymentFormProps) => {
-    const intl = useIntl();
-
     const stripe = useStripe();
     const elements = useElements();
 
@@ -58,22 +56,14 @@ export const PaymentForm = ({ onSuccess, onError }: PaymentFormProps) => {
 
         // Wire up handlers
         paymentElement.on('loaderror', () => {
-            setLoadingError(
-                intl.formatMessage({
-                    id: 'admin.billing.addPaymentMethods.stripeLoadError',
-                })
-            );
+            setLoadingError(STRIPE_LOAD_ERROR);
 
             logRocketEvent(CustomEvents.STRIPE_FORM_LOADING_FAILED, {
                 formName: 'payment',
             });
         });
         addressElement.on('loaderror', () => {
-            setLoadingError(
-                intl.formatMessage({
-                    id: 'admin.billing.addPaymentMethods.stripeLoadError',
-                })
-            );
+            setLoadingError(STRIPE_LOAD_ERROR);
 
             logRocketEvent(CustomEvents.STRIPE_FORM_LOADING_FAILED, {
                 formName: 'address',
@@ -82,7 +72,7 @@ export const PaymentForm = ({ onSuccess, onError }: PaymentFormProps) => {
 
         // Set so we only do this once
         setupEvents.current = true;
-    }, [elements, intl]);
+    }, [elements]);
 
     const handleSubmit = useCallback(async () => {
         if (!stripe || !elements) {
@@ -114,10 +104,7 @@ export const PaymentForm = ({ onSuccess, onError }: PaymentFormProps) => {
                     setError(result.error.message);
                 }
                 // Show error to your customer (for example, payment details incomplete)
-                await onError?.(
-                    result.error.message ??
-                        intl.formatMessage({ id: 'common.missingError' })
-                );
+                await onError?.(result.error.message ?? 'Something went wrong');
                 elements.getElement('payment')?.update({ readOnly: false });
             } else {
                 // Your customer will be redirected to your `return_url`. For some payment
@@ -130,7 +117,7 @@ export const PaymentForm = ({ onSuccess, onError }: PaymentFormProps) => {
         } finally {
             setLoading(false);
         }
-    }, [elements, intl, onError, onSuccess, stripe, userDetails?.email]);
+    }, [elements, onError, onSuccess, stripe, userDetails?.email]);
 
     return (
         <>
