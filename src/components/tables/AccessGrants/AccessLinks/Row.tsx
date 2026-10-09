@@ -25,11 +25,11 @@ export function Row({
 
     return (
         <TableRow
-            hover
             sx={{
-                '&:hover .remove-action, &:focus-within .remove-action': {
-                    opacity: 1,
-                },
+                '&:hover .remove-action, &:has(:focus-visible) .remove-action':
+                    {
+                        opacity: 1,
+                    },
             }}
         >
             <TableCell>
