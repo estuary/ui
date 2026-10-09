@@ -9,8 +9,12 @@ import produce from 'immer';
 import { GlobalStoreNames } from 'src/stores/names';
 import { devtoolsOptions } from 'src/utils/store-utils';
 
-const getInitialStateData = (): Pick<TopBarState, 'header' | 'headerLink'> => ({
+const getInitialStateData = (): Pick<
+    TopBarState,
+    'header' | 'headerDetail' | 'headerLink'
+> => ({
     header: '',
+    headerDetail: undefined,
     headerLink: undefined,
 });
 
@@ -27,6 +31,16 @@ const getInitialState = (
             }),
             false,
             'Top Bar Header Updated'
+        );
+    },
+
+    setHeaderDetail: (val) => {
+        set(
+            produce((state: TopBarState) => {
+                state.headerDetail = val;
+            }),
+            false,
+            'Top Bar Header Detail Updated'
         );
     },
 
