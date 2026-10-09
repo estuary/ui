@@ -33,6 +33,7 @@ import { fireGtmEvent } from 'src/services/gtm';
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 import { getUrls } from 'src/utils/env-utils';
+import { normalizeCatalogName } from 'src/utils/misc-utils';
 
 const urls = getUrls();
 const NAME_TAKEN_MESSAGE = 'is already in use';
@@ -227,10 +228,9 @@ export const TenantCreate = () => {
                                     disabled={saving}
                                     size="small"
                                     onChange={(event) => {
-                                        const value = event.target.value
-                                            .normalize('NFD')
-                                            .replace(/\s/g, '_')
-                                            .replace(/[^a-zA-Z0-9._-]/g, '');
+                                        const value = normalizeCatalogName(
+                                            event.target.value
+                                        ).replaceAll('/', '');
                                         if (value !== field.value)
                                             field.onChange(value);
                                     }}

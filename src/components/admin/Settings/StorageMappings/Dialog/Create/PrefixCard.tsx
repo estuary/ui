@@ -10,7 +10,7 @@ import { useCouldMatchRoot } from 'src/components/shared/LeavesAutocomplete';
 import { RHFLeavesAutocomplete } from 'src/components/shared/RHFFields';
 import { useDialogLink } from 'src/hooks/useDialog';
 import { useTenantStore } from 'src/stores/Tenant';
-import { validateCatalogName } from 'src/validation';
+import { validateCatalogSlashes } from 'src/validation';
 
 export function PrefixCard() {
     const { storageMappings } = useStorageMappings();
@@ -48,8 +48,7 @@ export function PrefixCard() {
             partial: {
                 validate: {
                     validCharacters: (value: string) =>
-                        validateCatalogName(value, false, true) == null ||
-                        'Invalid prefix - only letters, numbers, dashes, underscores, and periods are allowed.',
+                        validateCatalogSlashes(value) ?? true,
                     couldMatchRoot,
                 },
             },

@@ -6,7 +6,7 @@ import type {
 import type { ProtocolStatus } from 'data-plane-gateway/types/gen/broker/protocol/broker';
 import type { BaseGrant, Grant_UserExt } from 'src/types';
 
-import { isEmpty, isObject } from 'lodash';
+import { deburr, isEmpty, isObject } from 'lodash';
 import { createSearchParams } from 'react-router-dom';
 
 import { logRocketConsole } from 'src/services/shared';
@@ -91,8 +91,12 @@ export const hasLength = (val: string | any[] | null | undefined): boolean => {
 export const appendWithForwardSlash = (value: string): string =>
     hasLength(value) && !value.endsWith('/') ? `${value}/` : value;
 
-export const replaceWhitespacesWithUnderscores = (value: string): string =>
-    value.replaceAll(/\s/g, '_');
+// Keep catalog names ASCII until Unicode names are supported.
+// Convert accented Latin letters before filtering, preserving path separators.
+export const normalizeCatalogName = (value: string): string =>
+    deburr(value.normalize('NFD'))
+        .replaceAll(/\s/g, '_')
+        .replaceAll(/[^a-zA-Z0-9._/-]/g, '');
 
 export const encodeParamVal = (val: any) => {
     if (typeof val === 'boolean') {

@@ -38,6 +38,16 @@ export const UNDERSCORE_RE = new RegExp(/_+/g);
 // Validation is VERY basic 'non-whitespace@non-whitespace'
 export const BASIC_EMAIL_RE = new RegExp(/^\S+@\S+$/m);
 
+export const validateCatalogSlashes = (value: string): string | null => {
+    if (value.startsWith('/')) {
+        return 'Must not start with a slash';
+    }
+    if (value.includes('//')) {
+        return 'Must not contain double slashes';
+    }
+    return null;
+};
+
 export const validateCatalogName = (
     value: string,
     allowBlank?: boolean,
