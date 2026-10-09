@@ -84,7 +84,10 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
             </Grid>
 
             {status === 'granted' ? (
-                <BillingDetails showAddPayment={showAddPayment} />
+                <BillingDetails
+                    canEdit={access.canEdit}
+                    showAddPayment={showAddPayment}
+                />
             ) : status === 'loading' ? (
                 <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
                     <CircularProgress aria-label="Loading billing access" />
@@ -106,7 +109,10 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
 
 // Mounted only once the user can view the selected tenant's billing, so none
 // of these queries run without access.
-function BillingDetails({ showAddPayment }: AdminBillingProps) {
+function BillingDetails({
+    canEdit,
+    showAddPayment,
+}: AdminBillingProps & { canEdit: boolean }) {
     const [selectedInvoiceId, setSelectedInvoiceId] =
         useState<InvoiceId | null>(null);
     const { isLoading, selectedInvoice } =
@@ -211,7 +217,10 @@ function BillingDetails({ showAddPayment }: AdminBillingProps) {
                         );
                     }}
                 >
-                    <PaymentMethods showAddPayment={showAddPayment} />
+                    <PaymentMethods
+                        canEdit={canEdit}
+                        showAddPayment={showAddPayment}
+                    />
                 </ErrorBoundary>
             </Grid>
         </Grid>

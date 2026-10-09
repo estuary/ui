@@ -25,9 +25,13 @@ export function useBillingAccess(tenant: string) {
         [data]
     );
 
+    const capabilities =
+        data.find(({ prefix }) => prefix === tenant)?.capabilities ?? [];
+
     return {
         tenants,
         canView: tenants.includes(tenant),
+        canEdit: capabilities.includes('EditBilling'),
         isLoading: loading,
         error,
     };

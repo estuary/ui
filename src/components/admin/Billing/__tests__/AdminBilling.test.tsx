@@ -1,7 +1,13 @@
 import type { ReactNode } from 'react';
 import type { CapabilityBit } from 'src/gql-types/graphql';
 
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import {
+    fireEvent,
+    render,
+    screen,
+    waitFor,
+    within,
+} from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, expect, test, vi } from 'vitest';
 
@@ -31,6 +37,10 @@ vi.mock('@stripe/stripe-js', () => ({
 
 // The tenants whose invoices or payment methods were read.
 let billingReads: string[];
+let setupIntents: string[];
+
+const lock = (tenant: string) =>
+    `You don't have permission to edit billing for ${tenant}`;
 
 const capabilities = (grants: Record<string, CapabilityBit[]>) => ({
     prefixes: {
@@ -65,6 +75,7 @@ const wrapper = ({ children }: { children: ReactNode }) => (
 beforeEach(() => {
     dropFetchSignals();
     billingReads = [];
+    setupIntents = [];
     useTenantStore.setState({ selectedTenant: 'acme/' });
     server.use(
         billingGraphql.query('TenantBillingInvoices', ({ variables }) => {
@@ -96,7 +107,10 @@ beforeEach(() => {
                 data: paymentMethodsData(variables.tenant),
             });
         }),
-        billingGraphql.mutation('CreateBillingSetupIntent', () => setupIntent())
+        billingGraphql.mutation('CreateBillingSetupIntent', ({ variables }) => {
+            setupIntents.push(variables.tenant);
+            return setupIntent();
+        })
     );
 });
 
@@ -183,4 +197,45 @@ test.each([
     await screen.findByText(message);
     expect(screen.queryByRole('combobox')).toBeNull();
     expect(billingReads).toEqual([]);
+});
+
+test('lets viewers read billing without setup or edit requests', async () => {
+    grant({
+        // An edit grant below the tenant does not cover the tenant.
+        'acme/team/': ['EditBilling'],
+        'acme/': ['ViewBilling'],
+    });
+    // The add-payment route.
+    render(<AdminBilling showAddPayment />, { wrapper });
+
+    const row = await screen.findByRole('row', { name: /Acme card/ });
+    expect(within(row).getByLabelText(lock('acme/'))).toBeTruthy();
+    ['Add Payment Method', 'Delete', 'Make Primary'].forEach((name) =>
+        expect(screen.queryByRole('button', { name })).toBeNull()
+    );
+    expect(screen.queryByRole('dialog')).toBeNull();
+    expect(setupIntents).toEqual([]);
+});
+
+test('swaps payment actions for locks on switching to a view-only tenant', async () => {
+    grant({
+        'acme/': ['ViewBilling', 'EditBilling'],
+        'viewer/': ['ViewBilling'],
+    });
+    render(<AdminBilling showAddPayment />, { wrapper });
+
+    // Editors get the add-payment form from the route, and every action.
+    await screen.findByRole('dialog');
+    await screen.findByText('Acme card');
+    ['Add Payment Method', 'Delete', 'Make Primary'].forEach((name) =>
+        expect(screen.getByRole('button', { name })).toBeTruthy()
+    );
+
+    fireEvent.mouseDown(screen.getByRole('combobox'));
+    fireEvent.click(screen.getByRole('option', { name: 'viewer/' }));
+
+    await screen.findAllByLabelText(lock('viewer/'));
+    expect(screen.queryByRole('dialog')).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Delete' })).toBeNull();
+    expect(setupIntents).not.toContain('viewer/');
 });

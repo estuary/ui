@@ -24,6 +24,7 @@ import {
     SET_BILLING_PAYMENT_METHOD,
 } from 'src/api/gql/billing';
 import AddPaymentMethod from 'src/components/admin/Billing/AddPaymentMethod';
+import { BillingEditLock } from 'src/components/admin/Billing/BillingEditLock';
 import { PaymentMethod } from 'src/components/admin/Billing/PaymentMethodRow';
 import {
     INTENT_SECRET_ERROR,
@@ -65,13 +66,18 @@ const columns: (TableColumns & { header: string })[] = [
     },
 ];
 
-function PaymentMethods({ showAddPayment }: AdminBillingProps) {
+interface PaymentMethodsProps extends AdminBillingProps {
+    canEdit: boolean;
+}
+
+function PaymentMethods({ canEdit, showAddPayment }: PaymentMethodsProps) {
     const tenant = useTenantStore((state) => state.selectedTenant);
     // Remount dialog and action state when the selected tenant changes.
     return (
         <TenantPaymentMethods
             key={tenant}
             tenant={tenant}
+            canEdit={canEdit}
             showAddPayment={showAddPayment}
         />
     );
@@ -79,8 +85,9 @@ function PaymentMethods({ showAddPayment }: AdminBillingProps) {
 
 function TenantPaymentMethods({
     tenant,
+    canEdit,
     showAddPayment,
-}: AdminBillingProps & { tenant: string }) {
+}: PaymentMethodsProps & { tenant: string }) {
     const stripePromise = useMemo(
         () => loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY ?? ''),
         []
@@ -98,15 +105,20 @@ function TenantPaymentMethods({
     const [setupIntentSecret, setSetupIntentSecret] = useState(
         INTENT_SECRET_LOADING
     );
-    const [newMethodOpen, setNewMethodOpen] = useState(showAddPayment ?? false);
+    const [newMethodOpen, setNewMethodOpen] = useState(
+        Boolean(showAddPayment && canEdit)
+    );
     const [actionError, setActionError] = useState<string>();
     const methods = billing?.paymentMethods ?? [];
     const primaryId = billing?.primaryPaymentMethod?.id;
     const serverErrored = Boolean(error);
 
+    const editLock = canEdit ? null : <BillingEditLock tenant={tenant} />;
+
+    // Viewers cannot create setup intents, so skip the request.
     useEffect(() => {
         let current = true;
-        if (tenant) {
+        if (tenant && canEdit) {
             void createSetupIntent({ tenant }).then((result) => {
                 if (current) {
                     setSetupIntentSecret(
@@ -121,13 +133,16 @@ function TenantPaymentMethods({
         return () => {
             current = false;
         };
-    }, [createSetupIntent, tenant, refreshCounter]);
+    }, [canEdit, createSetupIntent, tenant, refreshCounter]);
 
     const refreshSetup = () => {
         setRefreshCounter((value) => value + 1);
     };
 
     const makePrimary = async (id: string) => {
+        if (!canEdit) {
+            return;
+        }
         setActionError(undefined);
         const result = await setPrimary({ tenant, paymentMethodId: id });
         if (result.error || !result.data?.setBillingPaymentMethod) {
@@ -141,6 +156,9 @@ function TenantPaymentMethods({
     };
 
     const remove = async (id: string) => {
+        if (!canEdit) {
+            return;
+        }
         setActionError(undefined);
         const result = await deleteMethod({ tenant, paymentMethodId: id });
         if (result.error || !result.data?.deleteBillingPaymentMethod) {
@@ -200,7 +218,7 @@ function TenantPaymentMethods({
                     )}
                 </Box>
 
-                {serverErrored ? null : (
+                {serverErrored ? null : canEdit ? (
                     <AddPaymentMethod
                         show={newMethodOpen}
                         setOpen={setNewMethodOpen}
@@ -216,6 +234,8 @@ function TenantPaymentMethods({
                             }
                         }}
                     />
+                ) : (
+                    editLock
                 )}
             </Stack>
 
@@ -259,6 +279,7 @@ function TenantPaymentMethods({
                             ) : methods.length > 0 ? (
                                 methods.map((method) => (
                                     <PaymentMethod
+                                        lock={editLock}
                                         onDelete={() => void remove(method.id)}
                                         onPrimary={() =>
                                             void makePrimary(method.id)

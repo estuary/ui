@@ -71,7 +71,7 @@ const view = (showAddPayment = false) => (
         <div data-testid="pricing">
             <PricingTierDetails />
         </div>
-        <PaymentMethods showAddPayment={showAddPayment} />
+        <PaymentMethods canEdit showAddPayment={showAddPayment} />
     </>
 );
 const wrapper = ({ children }: { children: ReactNode }) => (
