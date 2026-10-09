@@ -8,6 +8,9 @@ import { stripePaymentFormFieldBackgroundDark } from 'src/context/Theme';
 
 const flatField = { border: 'none', boxShadow: 'none' };
 
+export const STRIPE_LOAD_ERROR =
+    'Unable to load the forms from Stripe. Try again and if the issue persists please contact support.';
+
 let stripePromise: Promise<Stripe | null> | null = null;
 
 // Load Stripe.js once per page.
