@@ -3,7 +3,6 @@ import type { InviteLink } from 'src/gql-types/graphql';
 
 import { Button, TableCell, TableRow, Typography } from '@mui/material';
 
-import { useIntl } from 'react-intl';
 import { useMutation } from 'urql';
 
 import { DELETE_INVITE_LINK } from 'src/api/gql/inviteLinks';
@@ -16,7 +15,6 @@ export function Row({
 }: InviteErrorProps & {
     row: InviteLink;
 }) {
-    const intl = useIntl();
     const [{ fetching }, deleteInviteLink] = useMutation(DELETE_INVITE_LINK);
 
     const handleDelete = async () => {
@@ -37,11 +35,7 @@ export function Row({
 
             <TableCell>
                 <Typography>
-                    {intl.formatMessage({
-                        id: row.singleUse
-                            ? 'accessGrants.table.accessLinks.label.type.singleUse'
-                            : 'accessGrants.table.accessLinks.label.type.multiUse',
-                    })}
+                    {row.singleUse ? 'Single use' : 'Multi-use'}
                 </Typography>
             </TableCell>
 
@@ -58,9 +52,9 @@ export function Row({
                     disabled={fetching}
                     variant="text"
                     size="small"
-                    aria-label={intl.formatMessage({ id: 'cta.delete' })}
+                    aria-label="Delete"
                 >
-                    {intl.formatMessage({ id: 'cta.remove' })}
+                    Remove
                 </Button>
             </TableCell>
         </TableRow>
