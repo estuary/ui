@@ -8,12 +8,14 @@ import {
     CircularProgress,
     Divider,
     Grid,
+    Stack,
     Typography,
 } from '@mui/material';
 
 import { ErrorBoundary } from 'react-error-boundary';
 
 import { authenticatedRoutes } from 'src/app/routes';
+import { BillingContactSection } from 'src/components/admin/Billing/BillingContactSection';
 import DateRange from 'src/components/admin/Billing/DateRange';
 import BillingLoadError from 'src/components/admin/Billing/LoadError';
 import PaymentMethods from 'src/components/admin/Billing/PaymentMethods';
@@ -187,26 +189,16 @@ function BillingDetails({
             </Grid>
 
             <Grid size={{ xs: 12 }}>
+                {/* One error replaces both sections if either fails to
+                    load. Selecting another tenant remounts them. */}
                 <ErrorBoundary
                     fallback={
-                        <>
-                            <Typography
-                                sx={{
-                                    mb: 1,
-                                    fontSize: 18,
-                                    fontWeight: '400',
-                                }}
-                            >
-                                {'Payment Information'}
+                        <AlertBox short severity="error">
+                            <Typography component="div">
+                                There was an error loading your billing contact
+                                and payment information. Please try again later.
                             </Typography>
-                            <AlertBox short severity="error">
-                                <Typography component="div">
-                                    {
-                                        'There was an error connecting with our payment provider. Please try again later.'
-                                    }
-                                </Typography>
-                            </AlertBox>
-                        </>
+                        </AlertBox>
                     }
                     onError={(errorLoadingPaymentMethods) => {
                         logRocketEvent(
@@ -217,10 +209,13 @@ function BillingDetails({
                         );
                     }}
                 >
-                    <PaymentMethods
-                        canEdit={canEdit}
-                        showAddPayment={showAddPayment}
-                    />
+                    <Stack spacing={3} divider={<Divider />}>
+                        <BillingContactSection canEdit={canEdit} />
+                        <PaymentMethods
+                            canEdit={canEdit}
+                            showAddPayment={showAddPayment}
+                        />
+                    </Stack>
                 </ErrorBoundary>
             </Grid>
         </Grid>

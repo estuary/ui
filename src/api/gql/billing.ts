@@ -115,6 +115,56 @@ export const DELETE_BILLING_PAYMENT_METHOD = graphql(`
     }
 `);
 
+// Only registers the fragment with codegen. The contact query and mutation
+// share it so `setBillingContact` returns the fields its cache update writes.
+graphql(`
+    fragment BillingContactFields on BillingContact {
+        name
+        email
+        address {
+            line1
+            line2
+            city
+            state
+            postalCode
+            country
+        }
+    }
+`);
+
+export const TENANT_BILLING_CONTACT_QUERY = graphql(`
+    query TenantBillingContact($tenant: String!) {
+        tenant(name: $tenant) {
+            name
+            billing {
+                contact {
+                    ...BillingContactFields
+                }
+            }
+        }
+    }
+`);
+
+export const SET_BILLING_CONTACT = graphql(`
+    mutation SetBillingContact(
+        $tenant: String!
+        $name: String!
+        $email: String!
+        $address: BillingAddressInput!
+    ) {
+        setBillingContact(
+            tenant: $tenant
+            name: $name
+            email: $email
+            address: $address
+        ) {
+            contact {
+                ...BillingContactFields
+            }
+        }
+    }
+`);
+
 // `none` returns every prefix the user can reach, with its capability bits.
 // Billing access is checked against the bits rather than the legacy
 // read/write/admin level, which no longer says whether a grant includes

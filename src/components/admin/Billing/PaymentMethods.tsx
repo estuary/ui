@@ -32,8 +32,6 @@ import {
 import AlertBox from 'src/components/shared/AlertBox';
 import TableLoadingRows from 'src/components/tables/Loading';
 import { useBillingPaymentMethods } from 'src/hooks/billing/useBillingPaymentMethods';
-import { logRocketEvent } from 'src/services/shared';
-import { CustomEvents } from 'src/services/types';
 import { useTenantStore } from 'src/stores/Tenant';
 import { getColumnKeyList } from 'src/utils/table-utils';
 
@@ -106,7 +104,6 @@ function TenantPaymentMethods({
     const [actionError, setActionError] = useState<string>();
     const methods = billing?.paymentMethods ?? [];
     const primaryId = billing?.primaryPaymentMethod?.id;
-    const serverErrored = Boolean(error);
 
     const editLock = canEdit ? null : <BillingEditLock tenant={tenant} />;
 
@@ -166,14 +163,13 @@ function TenantPaymentMethods({
         refreshSetup();
     };
 
-    useEffect(() => {
-        if (serverErrored) {
-            logRocketEvent(CustomEvents.ERROR_BOUNDARY_PAYMENT_METHODS);
-        }
-    }, [serverErrored]);
+    // The page shows one error for the contact and payment sections.
+    if (error) {
+        throw error;
+    }
 
     return (
-        <Stack spacing={serverErrored ? 0 : 3}>
+        <Stack spacing={3}>
             {setupIntentSecret === INTENT_SECRET_ERROR ? (
                 <AlertBox short severity="error">
                     <Typography component="div">
@@ -204,16 +200,14 @@ function TenantPaymentMethods({
                         Payment Information
                     </Typography>
 
-                    {serverErrored ? null : (
-                        <Typography>
-                            Enter your payment information. You won&apos;t be
-                            charged until your account usage exceeds free tier
-                            limits.
-                        </Typography>
-                    )}
+                    <Typography>
+                        Enter your payment information. You won&apos;t be
+                        charged until your account usage exceeds free tier
+                        limits.
+                    </Typography>
                 </Box>
 
-                {serverErrored ? null : canEdit ? (
+                {canEdit ? (
                     <AddPaymentMethod
                         show={newMethodOpen}
                         setOpen={setNewMethodOpen}
@@ -233,71 +227,60 @@ function TenantPaymentMethods({
                 )}
             </Stack>
 
-            {serverErrored ? (
-                <AlertBox short severity="error">
-                    <Typography component="div">
-                        There was an error connecting with our payment provider.
-                        Please try again later.
-                    </Typography>
-                </AlertBox>
-            ) : (
-                <TableContainer>
-                    <Table
-                        sx={{ minWidth: 650 }}
-                        aria-label="simple table"
-                        size="small"
-                    >
-                        <TableHead>
-                            <TableRow
-                                sx={{
-                                    background: (theme) =>
-                                        theme.palette.background.default,
-                                }}
-                            >
-                                {columns.map((column, index) => (
-                                    <TableCell
-                                        key={`${column.field}-${index}`}
-                                        width={column.width ?? 'auto'}
-                                    >
-                                        {column.header}
-                                    </TableCell>
-                                ))}
-                            </TableRow>
-                        </TableHead>
+            <TableContainer>
+                <Table
+                    sx={{ minWidth: 650 }}
+                    aria-label="simple table"
+                    size="small"
+                >
+                    <TableHead>
+                        <TableRow
+                            sx={{
+                                background: (theme) =>
+                                    theme.palette.background.default,
+                            }}
+                        >
+                            {columns.map((column, index) => (
+                                <TableCell
+                                    key={`${column.field}-${index}`}
+                                    width={column.width ?? 'auto'}
+                                >
+                                    {column.header}
+                                </TableCell>
+                            ))}
+                        </TableRow>
+                    </TableHead>
 
-                        <TableBody>
-                            {!tenant || isLoading ? (
-                                <TableLoadingRows
-                                    columnKeys={getColumnKeyList(columns)}
+                    <TableBody>
+                        {!tenant || isLoading ? (
+                            <TableLoadingRows
+                                columnKeys={getColumnKeyList(columns)}
+                            />
+                        ) : methods.length > 0 ? (
+                            methods.map((method) => (
+                                <PaymentMethod
+                                    lock={editLock}
+                                    onDelete={() => void remove(method.id)}
+                                    onPrimary={() =>
+                                        void makePrimary(method.id)
+                                    }
+                                    key={method.id}
+                                    method={method}
+                                    primary={method.id === primaryId}
                                 />
-                            ) : methods.length > 0 ? (
-                                methods.map((method) => (
-                                    <PaymentMethod
-                                        lock={editLock}
-                                        onDelete={() => void remove(method.id)}
-                                        onPrimary={() =>
-                                            void makePrimary(method.id)
-                                        }
-                                        key={method.id}
-                                        method={method}
-                                        primary={method.id === primaryId}
-                                    />
-                                ))
-                            ) : (
-                                <TableRow>
-                                    <TableCell colSpan={6}>
-                                        <Typography
-                                            sx={{ textAlign: 'center' }}
-                                        >
-                                            No payment methods available.
-                                        </Typography>
-                                    </TableCell>
-                                </TableRow>
-                            )}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
-            )}
+                            ))
+                        ) : (
+                            <TableRow>
+                                <TableCell colSpan={6}>
+                                    <Typography sx={{ textAlign: 'center' }}>
+                                        No payment methods available.
+                                    </Typography>
+                                </TableCell>
+                            </TableRow>
+                        )}
+                    </TableBody>
+                </Table>
+            </TableContainer>
         </Stack>
     );
 }

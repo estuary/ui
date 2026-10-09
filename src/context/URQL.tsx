@@ -2,6 +2,7 @@ import type { Cache } from '@urql/exchange-graphcache';
 import type {
     DeleteBillingPaymentMethodMutation,
     QueryRoot,
+    SetBillingContactMutation,
     SetBillingPaymentMethodMutation,
 } from 'src/gql-types/graphql';
 import type { BaseComponentProps } from 'src/types';
@@ -13,7 +14,10 @@ import { cacheExchange } from '@urql/exchange-graphcache';
 import { requestPolicyExchange } from '@urql/exchange-request-policy';
 import { Client, fetchExchange, Provider } from 'urql';
 
-import { TENANT_BILLING_PAYMENT_METHODS_QUERY } from 'src/api/gql/billing';
+import {
+    TENANT_BILLING_CONTACT_QUERY,
+    TENANT_BILLING_PAYMENT_METHODS_QUERY,
+} from 'src/api/gql/billing';
 import { useUserStore } from 'src/context/User/useUserContextStore';
 import { getGqlUrl } from 'src/utils/env-utils';
 import { getAuthHeader } from 'src/utils/misc-utils';
@@ -53,6 +57,30 @@ function updateBillingPaymentMethods(
                                   billing.primaryPaymentMethod,
                               paymentMethods: billing.paymentMethods,
                           },
+                      },
+                  }
+                : data
+    );
+}
+
+function updateBillingContact(
+    cache: Cache,
+    tenant: string,
+    payload: SetBillingContactMutation['setBillingContact']
+) {
+    if (!payload) {
+        return;
+    }
+    const { contact } = payload;
+    cache.updateQuery(
+        { query: TENANT_BILLING_CONTACT_QUERY, variables: { tenant } },
+        (data) =>
+            data?.tenant
+                ? {
+                      ...data,
+                      tenant: {
+                          ...data.tenant,
+                          billing: { ...data.tenant.billing, contact },
                       },
                   }
                 : data
@@ -125,6 +153,9 @@ function UrqlConfigProvider({ children }: BaseComponentProps) {
                         UsBankAccountPaymentMethodDetails: (_data) => null,
                         BillingPaymentMethodPayload: (_data) => null,
                         CreateBillingSetupIntentPayload: (_data) => null,
+                        BillingContact: (_data) => null,
+                        BillingAddress: (_data) => null,
+                        SetBillingContactPayload: (_data) => null,
                     },
                     // Normalization only merges update results into entities
                     // already in the cache. Creates and deletes need updaters
@@ -147,6 +178,14 @@ function UrqlConfigProvider({ children }: BaseComponentProps) {
                                     (
                                         result as DeleteBillingPaymentMethodMutation
                                     ).deleteBillingPaymentMethod
+                                );
+                            },
+                            setBillingContact(result, args, cache) {
+                                updateBillingContact(
+                                    cache,
+                                    args.tenant as string,
+                                    (result as SetBillingContactMutation)
+                                        .setBillingContact
                                 );
                             },
                             createInviteLink(_result, _args, cache) {
