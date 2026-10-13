@@ -146,10 +146,6 @@ export const CommonMessages: Record<string, string> = {
     'status.error.low': `Low`,
     'status.error.medium': `Medium`,
 
-    // Leaves autocomplete validation
-    'leavesAutocomplete.mustStartWith.single': `Must start with "{root}"`,
-    'leavesAutocomplete.mustStartWith.multiple': `Must start with one of: {roots}`,
-
     'defaults.tenant': `acmeCo`,
     'defaults.schema': `anvils`,
     'defaults.table': `orders`,
