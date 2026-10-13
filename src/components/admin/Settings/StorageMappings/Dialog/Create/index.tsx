@@ -1,48 +1,40 @@
 import type { StorageMappingFormData } from 'src/components/admin/Settings/StorageMappings/Dialog/types';
 import type { WizardStep } from 'src/components/shared/WizardDialog/types';
 
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 
 import { Link, Stack, Typography } from '@mui/material';
 
-import {
-    FormProvider,
-    useFieldArray,
-    useForm,
-    useFormContext,
-} from 'react-hook-form';
+import { useFormContext } from 'react-hook-form';
 
-import { useStorageMappingService } from 'src/api/gql/storageMappings';
-import {
-    ConnectionList,
-    ConnectionTestProvider,
-    useConnectionTest,
-} from 'src/components/admin/Settings/StorageMappings/Dialog/ConnectionTest';
-import { PrefixCard } from 'src/components/admin/Settings/StorageMappings/Dialog/Create/PrefixCard';
-import { DataPlanesCard } from 'src/components/admin/Settings/StorageMappings/Dialog/DataPlanesCard';
-import { StorageFields } from 'src/components/admin/Settings/StorageMappings/Dialog/StorageFields';
-import MessageWithLink from 'src/components/content/MessageWithLink';
+import { ConnectionList } from 'src/components/admin/Settings/StorageMappings/ConnectionTest';
+import { useConnectionTestContext } from 'src/components/admin/Settings/StorageMappings/ConnectionTest/ConnectionTestContext';
+import { StorageMappingForm } from 'src/components/admin/Settings/StorageMappings/Form/StorageMappingForm';
+import { StorageMappingFormProvider } from 'src/components/admin/Settings/StorageMappings/Form/StorageMappingFormProvider';
 import AlertBox from 'src/components/shared/AlertBox';
-import CardWrapper from 'src/components/shared/CardWrapper';
 import { WizardDialog } from 'src/components/shared/WizardDialog/WizardDialog';
-import { cardHeaderSx } from 'src/context/Theme';
 import { useDataPlanes } from 'src/hooks/dataPlanes/useDataPlanes';
+import { useCreateStorageMapping } from 'src/hooks/storageMappings/useCreateStorageMapping';
 import { useDialog } from 'src/hooks/useDialog';
 
-function buildMappingPayload(
-    mapping: StorageMappingFormData
-): Omit<
-    Parameters<ReturnType<typeof useStorageMappingService>['create']>[0],
-    'dryRun'
-> {
-    return {
-        catalogPrefix: mapping.catalogPrefix,
-        spec: {
-            fragmentStores: mapping.fragmentStores,
-            dataPlanes: mapping.dataPlanes.map((dp) => dp.name),
-        },
-        detail: undefined,
-    };
+export function CreateMappingWizard() {
+    const { open, onClose } = useDialog('CREATE_STORAGE_MAPPING');
+
+    const defaultValues = useMemo<StorageMappingFormData>(
+        () => ({
+            catalogPrefix: '',
+            dataPlanes: [],
+            fragmentStores: [],
+            allowPublic: false,
+        }),
+        []
+    );
+
+    return (
+        <StorageMappingFormProvider defaultValues={defaultValues}>
+            <CreateMappingWizardInner open={open} onClose={onClose} />
+        </StorageMappingFormProvider>
+    );
 }
 
 function CreateMappingWizardInner({
@@ -53,36 +45,30 @@ function CreateMappingWizardInner({
     onClose: () => void;
 }) {
     const { error: dataPlanesError } = useDataPlanes();
-    const { create } = useStorageMappingService();
-    const {
-        testConnections,
-        allTestsPassing,
-        clear: clearConnectionTests,
-        initializeEndpoints,
-    } = useConnectionTest();
-    const { getValues, formState, watch, setValue, reset } =
-        useFormContext<StorageMappingFormData>();
-    const { append, remove, move } = useFieldArray({
-        name: 'dataPlanes',
-        rules: {
-            required: 'At least one data plane is required',
-        },
-    });
+    const createStorageMapping = useCreateStorageMapping();
 
-    const dataPlanes = watch('dataPlanes');
-    const allowPublic = watch('allowPublic');
-    const stores = watch('fragmentStores');
+    const { getValues, formState } = useFormContext<StorageMappingFormData>();
+    const formValid = formState.isValid;
+
+    const { connections, testAllConnections } = useConnectionTestContext();
+    const allTestsPassing = connections.every((c) => c.status === 'success');
+
+    const handleComplete = useCallback(async () => {
+        const { catalogPrefix, dataPlanes, fragmentStores } = getValues();
+        const dataPlaneNames = dataPlanes.map((dp) => dp.name);
+        await createStorageMapping({
+            catalogPrefix,
+            dataPlaneNames,
+            fragmentStores,
+        });
+
+        return true;
+    }, [getValues, createStorageMapping]);
 
     const closeDialog = useCallback(() => {
         onClose();
-        reset();
-        clearConnectionTests();
-    }, [onClose, reset, clearConnectionTests]);
-
-    const handleComplete = useCallback(async () => {
-        await create(buildMappingPayload(getValues()));
-        return true;
-    }, [create, getValues]);
+        // reset();
+    }, [onClose]);
 
     const steps = useMemo(
         (): WizardStep[] =>
@@ -107,52 +93,11 @@ function CreateMappingWizardInner({
                 : [
                       {
                           title: 'New Collection Storage',
-                          component: (
-                              <>
-                                  <MessageWithLink messageID="storageMappings.dialog.create.description" />
-                                  <Stack spacing={2}>
-                                      <CardWrapper>
-                                          <PrefixCard />
-                                      </CardWrapper>
-                                      <CardWrapper>
-                                          <DataPlanesCard
-                                              dataPlanes={dataPlanes}
-                                              defaultDataPlane={
-                                                  dataPlanes.length > 0
-                                                      ? dataPlanes[0]
-                                                      : null
-                                              }
-                                              allowPublicChecked={allowPublic}
-                                              onSelect={append}
-                                              onRemove={remove}
-                                              onSelectDefault={(index) =>
-                                                  move(index, 0)
-                                              }
-                                              onToggleAllowPublic={(value) =>
-                                                  setValue('allowPublic', value)
-                                              }
-                                          />
-                                      </CardWrapper>
-                                      <CardWrapper>
-                                          <Typography sx={cardHeaderSx}>
-                                              Storage Locations
-                                          </Typography>
-                                          <StorageFields
-                                              defaultDataPlane={dataPlanes[0]}
-                                          />
-                                      </CardWrapper>
-                                  </Stack>
-                              </>
-                          ),
+                          component: <StorageMappingForm mode="create" />,
                           nextLabel: 'Continue to connection test',
-                          canAdvance: () => formState.isValid,
+                          canAdvance: () => formValid,
                           onAdvance: async () => {
-                              const connections = initializeEndpoints(
-                                  dataPlanes,
-                                  stores
-                              );
-
-                              await testConnections(connections);
+                              await testAllConnections();
                               return true;
                           },
                       },
@@ -182,51 +127,13 @@ function CreateMappingWizardInner({
                   ],
         [
             dataPlanesError,
-            formState.isValid,
-            allTestsPassing,
-            testConnections,
-            dataPlanes,
-            allowPublic,
-            stores,
-            append,
             handleComplete,
-            initializeEndpoints,
-            move,
-            remove,
-            setValue,
             closeDialog,
+            formValid,
+            testAllConnections,
+            allTestsPassing,
         ]
     );
 
     return <WizardDialog open={open} onClose={closeDialog} steps={steps} />;
-}
-
-export function CreateMappingWizard() {
-    const { open, onClose } = useDialog('CREATE_STORAGE_MAPPING');
-
-    const methods = useForm<StorageMappingFormData>({
-        mode: 'onChange',
-        defaultValues: {
-            catalogPrefix: '',
-            dataPlanes: [],
-            fragmentStores: [{}],
-            allowPublic: false,
-        },
-    });
-
-    useEffect(() => {
-        if (!open) {
-            methods.reset();
-        }
-    }, [open, methods]);
-
-    const catalogPrefix = methods.watch('catalogPrefix');
-
-    return (
-        <FormProvider {...methods}>
-            <ConnectionTestProvider catalogPrefix={catalogPrefix}>
-                <CreateMappingWizardInner open={open} onClose={onClose} />
-            </ConnectionTestProvider>
-        </FormProvider>
-    );
 }

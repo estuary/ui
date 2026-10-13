@@ -3,21 +3,19 @@ import type { StorageMappingFormData } from 'src/components/admin/Settings/Stora
 import { useMemo } from 'react';
 
 import { useFormContext } from 'react-hook-form';
-import { useIntl } from 'react-intl';
 
 import { useLiveSpecs } from 'src/api/gql/liveSpecs';
-import { useStorageMappings } from 'src/api/gql/storageMappings';
 import { useCouldMatchRoot } from 'src/components/shared/LeavesAutocomplete';
 import { RHFLeavesAutocomplete } from 'src/components/shared/RHFFields';
+import { useStorageMappingsQuery } from 'src/hooks/storageMappings/useStorageMappingsQuery';
 import { useDialogLink } from 'src/hooks/useDialog';
 import { useTenantStore } from 'src/stores/Tenant';
 import { validateCatalogName } from 'src/validation';
 
-export function PrefixCard() {
-    const intl = useIntl();
-    const { storageMappings } = useStorageMappings();
-    const liveSpecNames = useLiveSpecs();
+export function StorageMappingFormPrefixCard() {
     const selectedTenant = useTenantStore((state) => state.selectedTenant);
+    const { data: storageMappings } = useStorageMappingsQuery(selectedTenant);
+    const { data: liveSpecNames } = useLiveSpecs(selectedTenant);
 
     const { watch } = useFormContext<StorageMappingFormData>();
     const couldMatchRoot = useCouldMatchRoot([selectedTenant]);
@@ -51,26 +49,17 @@ export function PrefixCard() {
                 validate: {
                     validCharacters: (value: string) =>
                         validateCatalogName(value, false, true) == null ||
-                        intl.formatMessage({
-                            id: 'storageMappings.dialog.prefix.validation.invalidCharacters',
-                        }),
+                        'Invalid prefix - only letters, numbers, dashes, underscores, and periods are allowed.',
                     couldMatchRoot,
                 },
             },
             final: {
-                required: intl.formatMessage({
-                    id: 'storageMappings.dialog.prefix.validation.required',
-                }),
+                required: 'Estuary prefix is required.',
                 validate: {
                     notDuplicateMapping: (value: string) => {
                         return (
                             !storageMappingPrefixes.includes(value) ||
-                            intl.formatMessage(
-                                {
-                                    id: 'storageMappings.dialog.prefix.validation.duplicate',
-                                },
-                                { link: duplicateDialogLinkParams }
-                            )
+                            `A storage mapping already exists at this prefix. [Click here to see it.](${duplicateDialogLinkParams})`
                         );
                     },
 
@@ -97,12 +86,7 @@ export function PrefixCard() {
 
                         return (
                             uncoveredSpecs.length === 0 ||
-                            intl.formatMessage(
-                                {
-                                    id: 'storageMappings.dialog.prefix.validation.uncoveredSpecs',
-                                },
-                                { count: uncoveredSpecs.length }
-                            )
+                            `${uncoveredSpecs.length} live spec(s) would be impacted by creating this storage mapping. Choose an empty prefix or contact support for help.`
                         );
                     },
                 },
@@ -113,7 +97,6 @@ export function PrefixCard() {
             liveSpecNames,
             duplicateDialogLinkParams,
             couldMatchRoot,
-            intl,
         ]
     );
 
@@ -121,9 +104,7 @@ export function PrefixCard() {
         <RHFLeavesAutocomplete<StorageMappingFormData, 'catalogPrefix'>
             name="catalogPrefix"
             leaves={leaves}
-            label={intl.formatMessage({
-                id: 'storageMappings.dialog.prefix.label',
-            })}
+            label="Estuary Prefix"
             required
             progressiveRules={progressiveRules}
         />

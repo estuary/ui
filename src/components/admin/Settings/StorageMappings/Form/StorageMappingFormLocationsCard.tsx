@@ -1,6 +1,6 @@
 import type { SxProps, Theme } from '@mui/material';
 import type { FieldPath } from 'react-hook-form';
-import type { FragmentStore } from 'src/api/gql/storageMappings';
+import type { StorageMappingFragmentStore } from 'src/api/gql/storageMappings';
 import type { StorageMappingFormData } from 'src/components/admin/Settings/StorageMappings/Dialog/types';
 
 import { useCallback, useEffect, useState } from 'react';
@@ -18,7 +18,6 @@ import { Check, EditPencil, Xmark } from 'iconoir-react';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 import { useIntl } from 'react-intl';
 
-import { useConnectionTest } from 'src/components/admin/Settings/StorageMappings/Dialog/ConnectionTest';
 import { ActionLink } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/ActionLink';
 import { StorageFields } from 'src/components/admin/Settings/StorageMappings/Dialog/StorageFields';
 import { cardHeaderSx } from 'src/context/Theme';
@@ -35,7 +34,7 @@ function CompactStoreRow({
     inactive,
     sx,
 }: {
-    store: FragmentStore;
+    store: StorageMappingFragmentStore;
     inactive?: boolean;
     sx?: SxProps<Theme>;
 }) {
@@ -46,7 +45,7 @@ function CompactStoreRow({
     } else {
         if (store.region) details.push(store.region);
     }
-    if (store.storagePrefix) details.push(store.storagePrefix);
+    if (store.prefix) details.push(store.prefix);
 
     return (
         <Stack
@@ -162,9 +161,6 @@ function StoreRowActions({
     );
 }
 
-const getStoreKey = (store: FragmentStore) =>
-    `${store.provider}${store.region}${store.provider === 'AZURE' ? `${store.storageAccountName}${store.containerName}` : store.bucket}${store.storagePrefix}`;
-
 export function StorageLocationsCard({
     formOpen,
     setFormOpen,
@@ -172,22 +168,23 @@ export function StorageLocationsCard({
     formOpen: boolean;
     setFormOpen: (editing: boolean) => void;
 }) {
-    const intl = useIntl();
     const { control, watch, trigger, getValues } =
         useFormContext<StorageMappingFormData>();
-    const {
-        addStore: connectStore,
-        removeStore: disconnectStore,
-        testConnections,
-    } = useConnectionTest();
+
     const { prepend, remove } = useFieldArray({
-        control,
         name: 'fragmentStores',
+        control,
     });
 
     const fragmentStores = watch('fragmentStores');
     const dataPlanes = watch('dataPlanes');
-    const defaultDataPlane = dataPlanes[0];
+
+    const defaultDataPlane = dataPlanes.length > 0 ? dataPlanes[0] : null;
+    const defaultStoreProvider = defaultDataPlane?.storeProvider;
+    const defaultCloudProvider = defaultDataPlane?.cloudProvider;
+    const defaultRegion =
+        defaultCloudProvider === 'AWS' ? defaultDataPlane?.region : undefined;
+
     const [newKey, setNewKey] = useState<string | null>(null);
     const hasNewStore = newKey !== null;
 
@@ -206,37 +203,39 @@ export function StorageLocationsCard({
         // important to set nulls otherwise the new store will inherit values
         // from the previously first store (since the form fields are all mapped by index)
         const newStore = {
-            provider: defaultDataPlane?.cloudProvider,
-            region:
-                defaultDataPlane?.cloudProvider === 'AWS'
-                    ? defaultDataPlane?.region
-                    : null,
+            key: '',
+            provider: defaultStoreProvider ?? 'CUSTOM',
+            cloudProvider: defaultCloudProvider ?? null,
+            region: defaultRegion,
             bucket: null,
             storagePrefix: null,
             containerName: null,
             storageAccountName: null,
             accountTenantId: null,
         };
+
         prepend(newStore);
         setFormOpen(true);
     };
 
     const handleAcceptNestedForm = async () => {
-        const store = getValues('fragmentStores.0');
-
         // validate all fields on the new store to present per-field errors, if there are any
-        const fieldsToValidate = Object.keys(store).map(
-            (key) =>
-                `fragmentStores.0.${key}` as FieldPath<StorageMappingFormData>
+        const store = getValues('fragmentStores.0');
+        const valid = await trigger(
+            Object.keys(store).map(
+                (key) =>
+                    `fragmentStores.0.${key}` as FieldPath<StorageMappingFormData>
+            )
         );
-        const valid = await trigger(fieldsToValidate);
+
         if (valid) {
-            const addKey = getStoreKey(fragmentStores[0]);
-            setNewKey(addKey);
-            setIncomingKey(addKey);
+            const store = fragmentStores[0];
+            setNewKey(store.key);
+            setIncomingKey(store.key);
             setFormOpen(false);
-            const newConnections = connectStore(store);
-            testConnections(newConnections).catch(() => {});
+
+            // const newConnections = connectStore(store);
+            // testConnections(newConnections).catch(() => {});
         }
     };
 
@@ -250,31 +249,30 @@ export function StorageLocationsCard({
         if (closing) {
             // If the store was previously accepted (has a newKey), notify the
             // parent so its connections can be cleaned up before we remove it.
-            if (newKey) {
-                const store = getValues('fragmentStores.0');
-                disconnectStore(store);
-            }
+            // if (newKey) {
+            //     const store = getValues('fragmentStores.0');
+            //     disconnectStore(store);
+            // }
             setClosing(false);
             setFormOpen(false);
             setNewKey(null);
             remove(0);
         }
-    }, [closing, remove, setFormOpen, newKey, getValues, disconnectStore]);
+    }, [closing, remove, setFormOpen]);
 
     const handleRemoveStore = (key: string) => {
-        const store = fragmentStores.find((s) => getStoreKey(s) === key);
-        if (store) {
-            disconnectStore(store);
-        }
+        // const store = fragmentStores.find((s) => s.key === key);
+        // if (store) {
+        //     disconnectStore(store);
+        // }
         setNewKey(null);
         setOutgoingKey(key);
     };
 
     const handleStoreRemoveExited = useCallback(() => {
         if (!outgoingKey) return;
-        const index = fragmentStores.findIndex(
-            (s) => getStoreKey(s) === outgoingKey
-        );
+
+        const index = fragmentStores.findIndex((s) => s.key === outgoingKey);
         if (index !== -1) {
             remove(index);
         }
@@ -301,19 +299,13 @@ export function StorageLocationsCard({
                         theme.transitions.create('margin-bottom'),
                 }}
             >
-                <Typography sx={cardHeaderSx}>
-                    {intl.formatMessage({
-                        id: 'storageMappings.dialog.storageLocations.title',
-                    })}
-                </Typography>
+                <Typography sx={cardHeaderSx}>Storage Locations</Typography>
                 <Collapse in={!showNestedStorageForm}>
                     <ActionLink
                         onClick={handleStartAdding}
                         disabled={hasNewStore}
                     >
-                        {intl.formatMessage({
-                            id: 'storageMappings.dialog.storageLocations.changePrimary',
-                        })}
+                        Change primary store
                     </ActionLink>
                 </Collapse>
             </Stack>
@@ -329,7 +321,8 @@ export function StorageLocationsCard({
                             onCancel={handleCancelNestedForm}
                         />
                         <StorageFields
-                            defaultDataPlane={dataPlanes[0]}
+                            defaultProvider={defaultStoreProvider}
+                            defaultRegion={defaultRegion}
                             sx={{
                                 ...primaryStoreSx,
                                 borderTopRightRadius: 0,
@@ -342,7 +335,7 @@ export function StorageLocationsCard({
                         // skip the store being edited in the nested form
                         if (formOpen && index === 0) return null;
 
-                        const key = getStoreKey(store);
+                        const { key } = store;
                         const showRowActions = key === newKey;
                         const animate =
                             key !== outgoingKey && key !== incomingKey;
@@ -384,9 +377,8 @@ export function StorageLocationsCard({
                         color="text.secondary"
                         sx={{ mt: 1 }}
                     >
-                        {intl.formatMessage({
-                            id: 'storageMappings.dialog.storageLocations.historicalNote',
-                        })}
+                        Previous stores are kept for historical data. New data
+                        will be directed to the primary store.
                     </Typography>
                 </Collapse>
             </Stack>
