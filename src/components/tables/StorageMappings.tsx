@@ -1,6 +1,6 @@
-import type { StorageMappingTableRow } from 'src/api/gql/storageMappings';
+import type { StorageMappingsTableRow } from 'src/api/gql/storageMappings';
 
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 
 import {
     Box,
@@ -17,9 +17,9 @@ import {
     useTheme,
 } from '@mui/material';
 
-import { usePaginatedStorageMappings } from 'src/api/gql/storageMappings';
 import { AddStorageButton } from 'src/components/admin/Settings/StorageMappings/AddStorageButton';
 import { getEntityTableRowSx } from 'src/context/Theme';
+import { useStorageMappingsTableQuery } from 'src/hooks/storageMappings/useStorageMappingsTableQuery';
 import { useCursorPagination } from 'src/hooks/useCursorPagination';
 import { useDialog } from 'src/hooks/useDialog';
 import { DATA_PLANE_PREFIX } from 'src/settings/dataPlanes';
@@ -34,37 +34,46 @@ const tableColumns = [
 
 const columnCount = tableColumns.length;
 
-function Row({ row }: { row: StorageMappingTableRow }) {
+interface RowProps {
+    catalogPrefix: string;
+    dataPlanes: StorageMappingsTableRow['dataPlanes'];
+    fragmentStores: StorageMappingsTableRow['fragmentStores'];
+}
+
+function Row({ catalogPrefix, dataPlanes, fragmentStores }: RowProps) {
+    const { onOpen } = useDialog('EDIT_STORAGE_MAPPING');
     const theme = useTheme();
 
-    const { onOpen } = useDialog('EDIT_STORAGE_MAPPING');
-
-    const store = row.spec.stores?.[0];
+    const primaryStore = useMemo(() => {
+        return fragmentStores.length > 0 ? fragmentStores[0] : null;
+    }, [fragmentStores]);
 
     return (
         <TableRow
             hover
             sx={getEntityTableRowSx(theme)}
-            onClick={() => onOpen({ prefix: row.catalogPrefix })}
+            onClick={() => onOpen({ prefix: catalogPrefix })}
         >
-            <TableCell>{row.catalogPrefix}</TableCell>
+            <TableCell>{catalogPrefix}</TableCell>
 
             <TableCell>
                 <Stack>
                     {/* The spec omits data_planes entirely when empty */}
-                    {(row.spec.data_planes ?? []).map((dataPlane) => (
-                        <Typography key={dataPlane} variant="body2">
-                            {dataPlane.replace(DATA_PLANE_PREFIX, '')}
+                    {(dataPlanes ?? []).map((dataPlane) => (
+                        <Typography key={dataPlane.name} variant="body2">
+                            {dataPlane.name.replace(DATA_PLANE_PREFIX, '')}
                         </Typography>
                     ))}
                 </Stack>
             </TableCell>
 
             <TableCell>
-                {store ? `${store.provider}/${store.bucket}` : null}
+                {primaryStore
+                    ? `${primaryStore.provider}/${primaryStore.bucket}`
+                    : null}
             </TableCell>
 
-            <TableCell>{store?.prefix}</TableCell>
+            <TableCell>{primaryStore?.prefix}</TableCell>
         </TableRow>
     );
 }
@@ -78,7 +87,7 @@ function TenantStorageMappingsTable({
         useCursorPagination();
 
     const { storageMappings, fetching, error, pageInfo, pageSize } =
-        usePaginatedStorageMappings(selectedTenant, cursor);
+        useStorageMappingsTableQuery(selectedTenant, cursor);
 
     const handlePageChange = (event: any, page: number) => {
         onPageChange(event, page, pageInfo?.endCursor);
@@ -144,7 +153,9 @@ function TenantStorageMappingsTable({
                             storageMappings.map((row) => (
                                 <Row
                                     key={`StorageMappings-${row.catalogPrefix}`}
-                                    row={row}
+                                    catalogPrefix={row.catalogPrefix}
+                                    dataPlanes={row.dataPlanes}
+                                    fragmentStores={row.fragmentStores}
                                 />
                             ))
                         )}
