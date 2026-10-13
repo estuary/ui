@@ -13,8 +13,8 @@ import { List, ListItem } from 'src/components/shared/List';
 import { useDataPlanes } from 'src/hooks/dataPlanes/useDataPlanes';
 
 interface DataPlanesCardProps {
-    dataPlanes: DataPlaneNode[];
-    defaultDataPlane: DataPlaneNode | null;
+    selectedNames: string[];
+    defaultName?: string;
     allowPublicChecked: boolean;
     onSelect: (dataPlane: DataPlaneNode) => void;
     onRemove: (index: number) => void;
@@ -22,13 +22,9 @@ interface DataPlanesCardProps {
     onToggleAllowPublic: (value: boolean) => void;
 }
 
-function names(dataPlanes: DataPlaneNode[]): Set<string> {
-    return new Set(dataPlanes.map((dp) => dp.name));
-}
-
 export function DataPlanesCard({
-    dataPlanes: selectedDps,
-    defaultDataPlane: defaultDp,
+    selectedNames,
+    defaultName,
     allowPublicChecked,
     onSelect,
     onRemove,
@@ -37,6 +33,7 @@ export function DataPlanesCard({
 }: DataPlanesCardProps) {
     const intl = useIntl();
     const { dataPlanes } = useDataPlanes();
+    const [selectorIsOpen, setSelectorIsOpen] = useState(false);
 
     // users shouldn't add storage mappings to closed data planes
     const openDataPlanes = useMemo(
@@ -44,15 +41,22 @@ export function DataPlanesCard({
         [dataPlanes]
     );
 
-    const [selectorIsOpen, setSelectorIsOpen] = useState(false);
+    const defaultDp = useMemo(() => {
+        return openDataPlanes.find((dp) => dp.name === defaultName);
+    }, [openDataPlanes, defaultName]);
+
+    const selectedDps = useMemo(() => {
+        return selectedNames
+            .map((name) => openDataPlanes.find((dp) => dp.name === name))
+            .filter(Boolean) as DataPlaneNode[];
+    }, [openDataPlanes, selectedNames]);
 
     const [unselectedDps, hasMoreOptions] = useMemo(() => {
-        const selectedNames = names(selectedDps);
         const unselected = openDataPlanes.filter(
-            (dp) => !selectedNames.has(dp.name)
+            (dp) => !selectedNames.includes(dp.name)
         );
         return [unselected, unselected.length > 0];
-    }, [openDataPlanes, selectedDps]);
+    }, [openDataPlanes, selectedNames]);
 
     const effectiveAllowPublic =
         allowPublicChecked ||

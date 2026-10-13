@@ -5,17 +5,17 @@ import { useMemo } from 'react';
 import { useFormContext } from 'react-hook-form';
 
 import { useLiveSpecs } from 'src/api/gql/liveSpecs';
-import { useStorageMappings } from 'src/api/gql/storageMappings';
 import { useCouldMatchRoot } from 'src/components/shared/LeavesAutocomplete';
 import { RHFLeavesAutocomplete } from 'src/components/shared/RHFFields';
+import { useStorageMappingsQuery } from 'src/hooks/storageMappings/useStorageMappingsQuery';
 import { useDialogLink } from 'src/hooks/useDialog';
 import { useTenantStore } from 'src/stores/Tenant';
 import { validateCatalogName } from 'src/validation';
 
-export function PrefixCard() {
-    const { storageMappings } = useStorageMappings();
-    const liveSpecNames = useLiveSpecs();
+export function StorageMappingFormPrefixCard() {
     const selectedTenant = useTenantStore((state) => state.selectedTenant);
+    const { data: storageMappings } = useStorageMappingsQuery(selectedTenant);
+    const { data: liveSpecNames } = useLiveSpecs(selectedTenant);
 
     const { watch } = useFormContext<StorageMappingFormData>();
     const roots = useMemo(() => [selectedTenant], [selectedTenant]);
