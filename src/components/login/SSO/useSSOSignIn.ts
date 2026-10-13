@@ -4,8 +4,8 @@ import { useIntl } from 'react-intl';
 import { useNavigate } from 'react-router';
 
 import useRedirectPath from 'src/components/login/useRedirectPath';
-import { supabaseClient } from 'src/context/GlobalProviders';
 import { logRocketEvent } from 'src/services/shared';
+import { supabaseClient } from 'src/services/supabaseClient';
 
 export function useSSOSignIn(grantToken?: string) {
     const redirectPath = useRedirectPath(grantToken);

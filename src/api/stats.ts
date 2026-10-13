@@ -20,9 +20,9 @@ import {
 import { DateTime } from 'luxon';
 import pLimit from 'p-limit';
 
-import { supabaseClient } from 'src/context/GlobalProviders';
 import { defaultQueryDateFormat } from 'src/services/luxon';
 import { TABLES } from 'src/services/supabase';
+import { supabaseClient } from 'src/services/supabaseClient';
 import { CHUNK_SIZE } from 'src/utils/misc-utils';
 
 export type StatsFilter =

@@ -10,7 +10,6 @@ import {
 } from 'src/components/editor/Store/hooks';
 import useEntityWorkflowHelpers from 'src/components/shared/Entity/hooks/useEntityWorkflowHelpers';
 import { useMutateDraftSpec } from 'src/components/shared/Entity/MutateDraftSpecContext';
-import { supabaseClient } from 'src/context/GlobalProviders';
 import useJobStatusPoller from 'src/hooks/useJobStatusPoller';
 import useStoreDiscoveredCaptures from 'src/hooks/useStoreDiscoveredCaptures';
 import { DEFAULT_FILTER, logRocketEvent } from 'src/services/shared';
@@ -19,6 +18,7 @@ import {
     JOB_STATUS_POLLER_ERROR,
     TABLES,
 } from 'src/services/supabase';
+import { supabaseClient } from 'src/services/supabaseClient';
 import { CustomEvents } from 'src/services/types';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import {

@@ -4,13 +4,13 @@ import type {
 } from 'src/hooks/useLiveSpecsExt';
 import type { Entity } from 'src/types';
 
-import { supabaseClient } from 'src/context/GlobalProviders';
 import {
     handleFailure,
     handleSuccess,
     supabaseRetry,
     TABLES,
 } from 'src/services/supabase';
+import { supabaseClient } from 'src/services/supabaseClient';
 
 const liveSpecColumns = `id,spec_type,spec,writes_to,reads_from,last_pub_id,updated_at`;
 
