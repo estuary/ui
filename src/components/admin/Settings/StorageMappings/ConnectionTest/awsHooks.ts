@@ -1,8 +1,9 @@
 import { useMemo } from 'react';
 
-import { useStorageMappings } from 'src/api/gql/storageMappings';
-import { useConnectionTest } from 'src/components/admin/Settings/StorageMappings/Dialog/ConnectionTest/ConnectionTestContext';
+import { useConnectionTestContext } from 'src/components/admin/Settings/StorageMappings/ConnectionTest/ConnectionTestContext';
 import { useDataPlanes } from 'src/hooks/dataPlanes/useDataPlanes';
+import { useStorageMappingsQuery } from 'src/hooks/storageMappings/useStorageMappingsQuery';
+import { useTenantStore } from 'src/stores/Tenant';
 
 /**
  * Collects all AWS IAM ARNs that need access to the given bucket,
@@ -11,8 +12,9 @@ import { useDataPlanes } from 'src/hooks/dataPlanes/useDataPlanes';
 export function useAwsArnsForBucket(
     bucket: string | null | undefined
 ): string[] {
-    const { connections: pendingConnections } = useConnectionTest();
-    const { storageMappings } = useStorageMappings();
+    const selectedTenant = useTenantStore((state) => state.selectedTenant);
+    const { connections: pendingConnections } = useConnectionTestContext();
+    const { data: storageMappings } = useStorageMappingsQuery(selectedTenant);
     const { dataPlanes } = useDataPlanes();
 
     return useMemo(() => {
@@ -22,8 +24,8 @@ export function useAwsArnsForBucket(
 
         for (const c of pendingConnections) {
             if (
-                c.store.provider === 'AWS' &&
-                c.store.bucket === bucket &&
+                c.fragmentStore.provider === 'S3' &&
+                c.fragmentStore.bucket === bucket &&
                 c.dataPlane.awsIamUserArn
             ) {
                 arns.add(c.dataPlane.awsIamUserArn);
@@ -31,13 +33,13 @@ export function useAwsArnsForBucket(
         }
 
         for (const mapping of storageMappings) {
-            const usesSameBucket = mapping.spec.fragmentStores.some(
-                (s) => s.provider === 'AWS' && s.bucket === bucket
+            const usesSameBucket = mapping.fragmentStores.some(
+                (s) => s.provider === 'S3' && s.bucket === bucket
             );
 
             if (usesSameBucket) {
-                for (const dpName of mapping.spec.dataPlanes) {
-                    const dp = dataPlanes.find((d) => d.name === dpName);
+                for (const mdp of mapping.dataPlanes) {
+                    const dp = dataPlanes.find((d) => d.name === mdp.name);
                     if (dp?.awsIamUserArn) {
                         arns.add(dp.awsIamUserArn);
                     }
