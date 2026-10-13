@@ -126,7 +126,7 @@ export function MarkdownInstructions({
                 },
             },
         }),
-        [theme.palette.mode]
+        [theme.palette.background.code]
     );
 
     return (
