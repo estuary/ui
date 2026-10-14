@@ -5,20 +5,13 @@ export function useCopyToClipboard() {
 
     const handleCopy = (value: string | null) => {
         if (!value) {
-            return undefined;
+            return;
         }
 
-        return navigator.clipboard.writeText(value).then(
-            () => {
-                setIsCopied(true);
-                setTimeout(() => setIsCopied(false), 3000);
-                return true;
-            },
-            () => {
-                setIsCopied(false);
-                return false;
-            }
-        );
+        void navigator.clipboard.writeText(value).then(() => {
+            setIsCopied(true);
+            setTimeout(() => setIsCopied(false), 3000);
+        });
     };
 
     return { isCopied, handleCopy };
