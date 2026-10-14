@@ -119,4 +119,10 @@ describe('invoiceId', () => {
             invoiceId({ ...invoice, billed_prefix: 'other/' })
         );
     });
+
+    test('is unique for different invoice types', () => {
+        expect(invoiceId(invoice)).not.toBe(
+            invoiceId({ ...invoice, invoice_type: 'manual' })
+        );
+    });
 });

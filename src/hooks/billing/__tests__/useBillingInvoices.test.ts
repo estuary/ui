@@ -1,5 +1,4 @@
 import type { TenantBillingInvoicesQuery } from 'src/gql-types/graphql';
-import type { InvoiceId } from 'src/utils/billing-utils';
 import type * as Urql from 'urql';
 
 import { renderHook, waitFor } from '@testing-library/react';
@@ -8,7 +7,6 @@ import { CombinedError, createRequest, makeOperation, useQuery } from 'urql';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 
 import { useBillingInvoices } from 'src/hooks/billing/useBillingInvoices';
-import { invoiceId } from 'src/utils/billing-utils';
 
 const tenant = vi.hoisted(() => ({ selectedTenant: 'acme/' }));
 
@@ -124,7 +122,7 @@ describe('useBillingInvoices', () => {
         await waitFor(() => expect(result.current.isLoading).toBe(false));
         expect(cursors).toContain('older');
         expect(result.current.invoices).toHaveLength(7);
-        expect(result.current.selectedInvoice?.invoice_type).toBe('preview');
+        expect(result.current.invoices[0].invoice_type).toBe('preview');
         expect(result.current.invoices.at(-1)).toMatchObject({
             invoice_type: 'manual',
             date_start: '2017-01-01',
@@ -134,28 +132,9 @@ describe('useBillingInvoices', () => {
                 (invoice) => invoice.date_start === '2017-02-01'
             )
         ).toBe(false);
-        expect(result.current.selectedInvoice?.line_items[0].description).toBe(
+        expect(result.current.invoices[0].line_items[0].description).toBe(
             'Task Usage'
         );
-    });
-
-    test('selects a manual invoice independently of a final invoice for the same period', async () => {
-        const page = makePage('acme/', [
-            makeNode(),
-            makeNode({ invoiceType: 'MANUAL' }),
-        ]);
-        mockedUseQuery.mockImplementation((args) => makeResult(args, page));
-        const { result, rerender } = renderHook(useBillingInvoices, {
-            initialProps: null as InvoiceId | null,
-        });
-        await waitFor(() => expect(result.current.invoices).toHaveLength(2));
-        const manual = result.current.invoices.find(
-            (invoice) => invoice.invoice_type === 'manual'
-        )!;
-        rerender(invoiceId(manual));
-        expect(result.current.selectedInvoice?.invoice_type).toBe('manual');
-        rerender(null);
-        expect(result.current.selectedInvoice?.invoice_type).toBe('final');
     });
 
     test('reports a later-page failure instead of returning a truncated successful result', async () => {

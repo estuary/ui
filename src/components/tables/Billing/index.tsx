@@ -1,18 +1,27 @@
+import type { useBillingHistory } from 'src/hooks/billing/useBillingHistory';
 import type { TableColumns } from 'src/types';
 import type { InvoiceId } from 'src/utils/billing-utils';
 
 import { useMemo } from 'react';
 
-import { Box, Table, TableContainer } from '@mui/material';
+import {
+    Box,
+    Table,
+    TableContainer,
+    TableFooter,
+    TablePagination,
+    TableRow,
+} from '@mui/material';
 
+import { BILLING_HISTORY_PAGE_SIZE } from 'src/api/gql/billing';
 import Rows from 'src/components/tables/Billing/Rows';
 import EntityTableBody from 'src/components/tables/EntityTable/TableBody';
 import EntityTableHeader from 'src/components/tables/EntityTable/TableHeader';
 import { getTableHeaderWithoutHeaderColor } from 'src/context/Theme';
-import { useBillingInvoices } from 'src/hooks/billing/useBillingInvoices';
 import { TableStatuses } from 'src/types';
 
 interface BillingHistoryTableProps {
+    history: ReturnType<typeof useBillingHistory>;
     selectedInvoiceId: InvoiceId | null;
     onSelectInvoice: (id: InvoiceId) => void;
 }
@@ -42,14 +51,18 @@ const columns: TableColumns[] = [
 ];
 
 function BillingHistoryTable({
+    history,
     selectedInvoiceId,
     onSelectInvoice,
 }: BillingHistoryTableProps) {
     const {
         invoices: billingHistory,
+        page,
+        hasNextPage,
+        onPageChange,
         isLoading,
         networkFailed,
-    } = useBillingInvoices();
+    } = history;
 
     const dataRows = useMemo(
         () =>
@@ -93,6 +106,28 @@ function BillingHistoryTable({
                     loading={isLoading}
                     rows={dataRows}
                 />
+
+                {page > 0 || hasNextPage ? (
+                    <TableFooter>
+                        <TableRow>
+                            <TablePagination
+                                // Unknown until the last page.
+                                count={
+                                    hasNextPage
+                                        ? -1
+                                        : page * BILLING_HISTORY_PAGE_SIZE +
+                                          billingHistory.length
+                                }
+                                page={page}
+                                rowsPerPage={BILLING_HISTORY_PAGE_SIZE}
+                                rowsPerPageOptions={[]}
+                                onPageChange={onPageChange}
+                                // A page's cursor is only known once it loads.
+                                disabled={isLoading}
+                            />
+                        </TableRow>
+                    </TableFooter>
+                ) : null}
             </Table>
         </TableContainer>
     );

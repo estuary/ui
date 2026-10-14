@@ -32,6 +32,39 @@ export const TENANT_BILLING_INVOICES_QUERY = graphql(`
     }
 `);
 
+// Each invoice's Stripe fields cost the server a Stripe search, so the history
+// pages a few invoices at a time.
+export const BILLING_HISTORY_PAGE_SIZE = 4;
+
+export const TENANT_BILLING_HISTORY_QUERY = graphql(`
+    query TenantBillingHistory($tenant: String!, $first: Int!, $after: String) {
+        tenant(name: $tenant) {
+            name
+            billing {
+                invoices(first: $first, after: $after) {
+                    edges {
+                        node {
+                            dateStart
+                            dateEnd
+                            invoiceType
+                            subtotal
+                            lineItems
+                            extra
+                            status
+                            invoicePdf
+                            hostedInvoiceUrl
+                        }
+                    }
+                    pageInfo {
+                        hasNextPage
+                        endCursor
+                    }
+                }
+            }
+        }
+    }
+`);
+
 // Only card or usBankAccount is populated; last4 remains a zero-padded string.
 graphql(`
     fragment BillingPaymentMethodFields on PaymentMethod {

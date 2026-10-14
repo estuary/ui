@@ -1,7 +1,7 @@
-import type { Invoice, StripeInvoice } from 'src/api/billing';
+import type { Invoice } from 'src/api/billing';
 import type { TableColumns } from 'src/types';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 
 import {
     Box,
@@ -13,14 +13,12 @@ import {
 
 import { CreditCard, Download } from 'iconoir-react';
 
-import { getTenantInvoice } from 'src/api/billing';
 import { INVOICE_ROW_HEIGHT } from 'src/components/admin/Billing/shared';
 import Rows from 'src/components/tables/BillLineItems/Rows';
 import TotalLines from 'src/components/tables/BillLineItems/TotalLines';
 import EntityTableBody from 'src/components/tables/EntityTable/TableBody';
 import EntityTableHeader from 'src/components/tables/EntityTable/TableHeader';
 import { getTableHeaderWithoutHeaderColor } from 'src/context/Theme';
-import { useTenantStore } from 'src/stores/Tenant';
 import { TableStatuses } from 'src/types';
 
 const columns: TableColumns[] = [
@@ -51,33 +49,10 @@ interface BillingLineItemsTableProps {
 function BillingLineItemsTable({
     selectedInvoice,
 }: BillingLineItemsTableProps) {
-    const selectedTenant = useTenantStore((state) => state.selectedTenant);
-
     const dataRows = useMemo(
         () => <Rows lineItems={selectedInvoice?.line_items ?? []} />,
         [selectedInvoice]
     );
-
-    const [stripeInvoice, setStripeInvoice] = useState<StripeInvoice | null>(
-        null
-    );
-
-    useEffect(() => {
-        setStripeInvoice(null);
-        void (async () => {
-            if (selectedInvoice && selectedInvoice.invoice_type !== 'preview') {
-                const resp = await getTenantInvoice(
-                    selectedTenant,
-                    selectedInvoice.date_start,
-                    selectedInvoice.date_end,
-                    selectedInvoice.invoice_type
-                );
-                if (resp.data?.invoice) {
-                    setStripeInvoice(resp.data.invoice);
-                }
-            }
-        })();
-    }, [selectedInvoice, selectedTenant]);
 
     return (
         <>
@@ -126,17 +101,20 @@ function BillingLineItemsTable({
                 {selectedInvoice?.invoice_type !== 'preview' ? (
                     <Box>
                         <Button
-                            href={stripeInvoice?.invoice_pdf}
-                            disabled={!stripeInvoice}
+                            href={selectedInvoice?.invoice_pdf ?? undefined}
+                            disabled={!selectedInvoice?.invoice_pdf}
                             startIcon={<Download />}
                             variant="outlined"
                             size="small"
                         >
                             {'Download invoice PDF'}
                         </Button>
-                        {stripeInvoice?.status === 'open' ? (
+                        {selectedInvoice?.status === 'open' ? (
                             <Button
-                                href={stripeInvoice.hosted_invoice_url}
+                                href={
+                                    selectedInvoice.hosted_invoice_url ??
+                                    undefined
+                                }
                                 startIcon={<CreditCard />}
                                 sx={{ marginLeft: 1 }}
                                 variant="outlined"
@@ -144,7 +122,7 @@ function BillingLineItemsTable({
                             >
                                 {'Pay Invoice'}
                             </Button>
-                        ) : stripeInvoice?.status === 'paid' ? (
+                        ) : selectedInvoice?.status === 'paid' ? (
                             <Button
                                 startIcon={<CreditCard />}
                                 disabled

@@ -1,12 +1,10 @@
 import type { Invoice, InvoiceLineItem } from 'src/api/billing';
 import type { TenantBillingInvoicesQuery } from 'src/gql-types/graphql';
-import type { InvoiceId } from 'src/utils/billing-utils';
 
 import { useMemo } from 'react';
 import useConstant from 'use-constant';
 
 import {
-    compareDesc,
     endOfMonth,
     isWithinInterval,
     startOfMonth,
@@ -19,15 +17,10 @@ import {
 } from 'src/api/gql/billing';
 import { useAllPages } from 'src/api/gql/useAllPages';
 import { useTenantStore } from 'src/stores/Tenant';
-import { invoiceId, stripTimeFromDate } from 'src/utils/billing-utils';
+import { stripTimeFromDate } from 'src/utils/billing-utils';
 
 export interface UseBillingInvoicesResult {
     invoices: Invoice[];
-    // The invoice currently shown in the line-item/detail views: the requested
-    // selection if it still exists in this tenant's data, otherwise the newest
-    // invoice. Falling back this way means an org switch self-corrects without
-    // anyone resetting state.
-    selectedInvoice: Invoice | null;
     isLoading: boolean;
     networkFailed: boolean;
     errorExists: boolean;
@@ -44,7 +37,7 @@ interface DateWindow {
 
 // The GQL invoice node is camelCased and omits `billed_prefix` (the tenant is
 // the query parent). Map it back to the shape the billing UI already consumes.
-const mapInvoice = (node: InvoiceNode, tenant: string): Invoice => ({
+export const mapInvoice = (node: InvoiceNode, tenant: string): Invoice => ({
     billed_prefix: tenant,
     date_start: node.dateStart,
     date_end: node.dateEnd,
@@ -72,9 +65,7 @@ const isVisible = (invoice: Invoice, { start, end }: DateWindow): boolean => {
 };
 
 // Read every page before applying the window: older manual invoices must remain visible.
-export function useBillingInvoices(
-    selectedInvoiceId: InvoiceId | null = null
-): UseBillingInvoicesResult {
+export function useBillingInvoices(): UseBillingInvoicesResult {
     const selectedTenant = useTenantStore((state) => state.selectedTenant);
 
     const dateWindow = useConstant<DateWindow>(() => {
@@ -99,32 +90,13 @@ export function useBillingInvoices(
         }
     );
 
-    const invoices = useMemo(() => {
-        return data
-            .filter((invoice) => isVisible(invoice, dateWindow))
-            .sort((a, b) =>
-                compareDesc(
-                    stripTimeFromDate(a.date_start),
-                    stripTimeFromDate(b.date_start)
-                )
-            );
-    }, [data, dateWindow]);
-
-    const selectedInvoice = useMemo(() => {
-        if (invoices.length === 0) {
-            return null;
-        }
-
-        return (
-            invoices.find(
-                (invoice) => invoiceId(invoice) === selectedInvoiceId
-            ) ?? invoices[0]
-        );
-    }, [invoices, selectedInvoiceId]);
+    const invoices = useMemo(
+        () => data.filter((invoice) => isVisible(invoice, dateWindow)),
+        [data, dateWindow]
+    );
 
     return {
         invoices,
-        selectedInvoice,
         isLoading: loading,
         networkFailed: Boolean(error?.networkError),
         errorExists: Boolean(error),

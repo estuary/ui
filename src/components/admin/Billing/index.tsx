@@ -31,7 +31,7 @@ import CardWrapper from 'src/components/shared/CardWrapper';
 import BillingHistoryTable from 'src/components/tables/Billing';
 import BillingLineItemsTable from 'src/components/tables/BillLineItems';
 import { useBillingAccess } from 'src/hooks/billing/useBillingAccess';
-import { useBillingInvoices } from 'src/hooks/billing/useBillingInvoices';
+import { useBillingHistory } from 'src/hooks/billing/useBillingHistory';
 import usePageTitle from 'src/hooks/usePageTitle';
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
@@ -115,10 +115,15 @@ function BillingDetails({
     canEdit,
     showAddPayment,
 }: AdminBillingProps & { canEdit: boolean }) {
+    const history = useBillingHistory();
+    const { invoices, isLoading } = history;
     const [selectedInvoiceId, setSelectedInvoiceId] =
         useState<InvoiceId | null>(null);
-    const { isLoading, selectedInvoice } =
-        useBillingInvoices(selectedInvoiceId);
+    // The selected invoice if it's on this page, otherwise the page's newest.
+    const selectedInvoice =
+        invoices.find((invoice) => invoiceId(invoice) === selectedInvoiceId) ??
+        invoices.at(0) ??
+        null;
 
     return (
         <Grid container spacing={{ xs: 3, md: 2 }} sx={{ py: 2 }}>
@@ -130,6 +135,7 @@ function BillingDetails({
                     message="Recent History"
                 >
                     <BillingHistoryTable
+                        history={history}
                         selectedInvoiceId={
                             selectedInvoice ? invoiceId(selectedInvoice) : null
                         }
@@ -171,12 +177,6 @@ function BillingDetails({
                     {!isLoading ? (
                         <BillingLineItemsTable
                             selectedInvoice={selectedInvoice}
-                            // The key here makes sure that any stateful fetching logic doesn't get confused.
-                            key={
-                                selectedInvoice
-                                    ? invoiceId(selectedInvoice)
-                                    : null
-                            }
                         />
                     ) : (
                         <GraphLoadingState />

@@ -58,11 +58,10 @@ function Row({ row, isSelected, onSelectInvoice }: RowProps) {
     );
 }
 
-// TODO (billing): Remove pagination placeholder when the new RPC is available.
 function Rows({ data, selectedInvoice, onSelectInvoice }: RowsProps) {
     return (
         <>
-            {data.slice(0, 4).map((record, index) => (
+            {data.map((record, index) => (
                 <Row
                     row={record}
                     key={index}

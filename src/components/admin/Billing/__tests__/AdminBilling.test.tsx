@@ -1,7 +1,14 @@
 import type { ReactNode } from 'react';
 import type { CapabilityBit } from 'src/gql-types/graphql';
 
-import { act, render, screen, waitFor, within } from '@testing-library/react';
+import {
+    act,
+    fireEvent,
+    render,
+    screen,
+    waitFor,
+    within,
+} from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, expect, test, vi } from 'vitest';
 
@@ -52,6 +59,53 @@ const capabilities = (bits?: CapabilityBit[]) => ({
     },
 });
 
+const invoice = (month: string, stripe = {}) => ({
+    __typename: 'Invoice' as const,
+    dateStart: `2026-${month}-01`,
+    dateEnd: `2026-${month}-28`,
+    invoiceType: 'FINAL' as const,
+    subtotal: 100,
+    lineItems: [
+        {
+            description: `Usage in ${month}`,
+            count: 1,
+            rate: 100,
+            subtotal: 100,
+        },
+    ],
+    extra: { processed_data_gb: 1, task_usage_hours: 1 },
+    status: null,
+    invoicePdf: null,
+    hostedInvoiceUrl: null,
+    ...stripe,
+});
+
+const invoicesData = (
+    name: string,
+    nodes: ReturnType<typeof invoice>[] = [],
+    endCursor: string | null = null
+) => ({
+    tenant: {
+        __typename: 'Tenant',
+        name,
+        billing: {
+            __typename: 'TenantBilling',
+            invoices: {
+                __typename: 'InvoiceConnection',
+                edges: nodes.map((node) => ({
+                    __typename: 'InvoiceEdge',
+                    node,
+                })),
+                pageInfo: {
+                    __typename: 'PageInfo',
+                    hasNextPage: Boolean(endCursor),
+                    endCursor,
+                },
+            },
+        },
+    },
+});
+
 const grant = (grants: Record<string, CapabilityBit[]>) =>
     server.use(
         billingGraphql.query('BillingCapabilities', ({ variables }) =>
@@ -75,26 +129,11 @@ beforeEach(() => {
     server.use(
         billingGraphql.query('TenantBillingInvoices', ({ variables }) => {
             billingReads.push(variables.tenant);
-            return HttpResponse.json({
-                data: {
-                    tenant: {
-                        __typename: 'Tenant',
-                        name: variables.tenant,
-                        billing: {
-                            __typename: 'TenantBilling',
-                            invoices: {
-                                __typename: 'InvoiceConnection',
-                                edges: [],
-                                pageInfo: {
-                                    __typename: 'PageInfo',
-                                    hasNextPage: false,
-                                    endCursor: null,
-                                },
-                            },
-                        },
-                    },
-                },
-            });
+            return HttpResponse.json({ data: invoicesData(variables.tenant) });
+        }),
+        billingGraphql.query('TenantBillingHistory', ({ variables }) => {
+            billingReads.push(variables.tenant);
+            return HttpResponse.json({ data: invoicesData(variables.tenant) });
         }),
         billingGraphql.query('TenantBillingContact', ({ variables }) => {
             billingReads.push(variables.tenant);
@@ -201,4 +240,57 @@ test('swaps payment actions for locks on switching to a view-only tenant', async
     expect(screen.queryByRole('dialog')).toBeNull();
     expect(screen.queryByRole('button', { name: 'Delete' })).toBeNull();
     expect(setupIntents).not.toContain('viewer/');
+});
+
+test('pages through the invoice history', async () => {
+    grant({ 'acme/': ['ViewBilling'] });
+    const cursors: unknown[] = [];
+    server.use(
+        billingGraphql.query('TenantBillingHistory', ({ variables }) => {
+            cursors.push(variables.after);
+            return HttpResponse.json({
+                data: variables.after
+                    ? invoicesData('acme/', [
+                          invoice('05', {
+                              status: 'paid',
+                              invoicePdf: 'https://pdf/05',
+                          }),
+                      ])
+                    : invoicesData(
+                          'acme/',
+                          [
+                              invoice('09', {
+                                  status: 'open',
+                                  invoicePdf: 'https://pdf/09',
+                                  hostedInvoiceUrl: 'https://pay/09',
+                              }),
+                              invoice('08'),
+                              invoice('07'),
+                              invoice('06'),
+                          ],
+                          'cursor-06'
+                      ),
+            });
+        })
+    );
+    render(<AdminBilling />, { wrapper });
+
+    // Each page shows its newest bill, with that invoice's Stripe links.
+    await screen.findByText('Usage in 09');
+    const link = (name: string) =>
+        screen.getByRole('link', { name }).getAttribute('href');
+    expect(link('Download invoice PDF')).toBe('https://pdf/09');
+    expect(link('Pay Invoice')).toBe('https://pay/09');
+
+    fireEvent.click(screen.getByRole('button', { name: 'Go to next page' }));
+    await screen.findByText('Usage in 05');
+    expect(cursors).toEqual([undefined, 'cursor-06']);
+    expect(link('Download invoice PDF')).toBe('https://pdf/05');
+    expect(screen.getByRole('button', { name: 'Invoice Paid' })).toBeTruthy();
+    expect(screen.getByText('5–5 of 5')).toBeTruthy();
+
+    fireEvent.click(
+        screen.getByRole('button', { name: 'Go to previous page' })
+    );
+    await screen.findByText('Usage in 09');
 });
