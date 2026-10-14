@@ -3,6 +3,7 @@ import type { ErrorDetails } from 'src/components/shared/Error/types';
 import { useState } from 'react';
 
 import {
+    Box,
     Button,
     Dialog,
     DialogContent,
@@ -130,13 +131,14 @@ export function CreateRefreshTokenDialog({ open, onClose, onCreated }: Props) {
                     ) : null}
 
                     {token ? (
-                        <AlertBox severity="info" short data-private>
+                        <AlertBox severity="info" short>
                             <Typography sx={{ mb: 1 }}>
                                 {`Copy this personal token now - you won't be able
                                 to see it again!`}
                             </Typography>
-
-                            <SingleLineCode value={token} />
+                            <Box data-private>
+                                <SingleLineCode value={token} />
+                            </Box>
                         </AlertBox>
                     ) : (
                         <Stack

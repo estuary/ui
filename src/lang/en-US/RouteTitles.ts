@@ -5,7 +5,6 @@ export const RouteTitles: Record<string, string> = {
     'routeTitle.dashboard': `Dashboard`,
     'routeTitle.admin': `Admin`,
     'routeTitle.admin.accessGrants': `Access Grants`,
-    'routeTitle.admin.api': `CLI - API`,
     'routeTitle.admin.billing': `Billing`,
     'routeTitle.admin.settings': `Settings`,
     'routeTitle.captureCreate': `Create Capture`,
@@ -27,7 +26,6 @@ export const RouteTitles: Record<string, string> = {
     'routeTitle.materializationEdit': `Edit Materialization`,
     'routeTitle.materializations': `${CommonMessages['terms.destinations']}`,
     'routeTitle.registration': `Registration`,
-    'routeTitle.settings': `Settings`,
     'routeTitle.settings.personalTokens': `Personal Tokens`,
 
     // The routes with custom prefix values

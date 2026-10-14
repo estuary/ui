@@ -17,7 +17,6 @@ const admin = {
         fullPath: '/admin/accessGrants',
     },
     api: {
-        title: 'routeTitle.admin.api',
         path: 'api',
         fullPath: '/admin/api',
     },
@@ -223,7 +222,6 @@ const pageNotFound = {
 };
 
 const settings = {
-    title: 'routeTitle.settings',
     path: 'settings',
     personalTokens: {
         title: 'routeTitle.settings.personalTokens',
