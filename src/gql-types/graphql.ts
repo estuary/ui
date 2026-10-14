@@ -943,6 +943,33 @@ export type DeriveTransformStats = {
   transform: Scalars['String']['output'];
 };
 
+/** An asynchronous capture discovery that merges its results into a draft. */
+export type Discover = {
+  __typename?: 'Discover';
+  captureName: Scalars['Name']['output'];
+  createdAt: Scalars['DateTime']['output'];
+  dataPlaneName: Scalars['String']['output'];
+  draftId: Scalars['Id']['output'];
+  /** Errors currently recorded on the associated draft. */
+  errors: Array<Error>;
+  id: Scalars['Id']['output'];
+  /**
+   * Discovery logs in timestamp order. Pagination is best effort, and logs
+   * may arrive after discovery completes.
+   * `first` controls page size and cannot exceed 1000 log lines.
+   */
+  logs: LogLineConnection;
+  status: DiscoverStatus;
+  updatedAt: Scalars['DateTime']['output'];
+};
+
+
+/** An asynchronous capture discovery that merges its results into a draft. */
+export type DiscoverLogsArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+};
+
 /** A capture binding that has changed as a result of a discover */
 export type DiscoverChange = {
   __typename?: 'DiscoverChange';
@@ -953,6 +980,20 @@ export type DiscoverChange = {
   /** The target collection of the capture binding that was changed. */
   target: Scalars['Collection']['output'];
 };
+
+export type DiscoverStatus =
+  | 'DEPRECATED_BACKGROUND'
+  | 'DISCOVER_FAILED'
+  | 'IMAGE_FORBIDDEN'
+  | 'MERGE_FAILED'
+  | 'NOT_AUTHORIZED'
+  | 'NO_DATA_PLANE'
+  | 'PULL_FAILED'
+  /** The discover is queued or in progress. */
+  | 'QUEUED'
+  | 'SUCCESS'
+  | 'TAG_FAILED'
+  | 'WRONG_PROTOCOL';
 
 /** A count of documents and their cumulative size. */
 export type DocsAndBytes = {
@@ -1508,6 +1549,30 @@ export type LockFailure = {
   expected: Scalars['Id']['output'];
 };
 
+export type LogLine = {
+  __typename?: 'LogLine';
+  line: Scalars['String']['output'];
+  loggedAt: Scalars['DateTime']['output'];
+  stream: Scalars['String']['output'];
+};
+
+export type LogLineConnection = {
+  __typename?: 'LogLineConnection';
+  /** A list of edges. */
+  edges: Array<LogLineEdge>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+};
+
+/** An edge in a connection. */
+export type LogLineEdge = {
+  __typename?: 'LogLineEdge';
+  /** A cursor for use in pagination */
+  cursor: Scalars['String']['output'];
+  /** The item at the end of the edge */
+  node: LogLine;
+};
+
 /** Stats for one binding of a materialization, keyed by its source collection. */
 export type MaterializeBindingStats = {
   __typename?: 'MaterializeBindingStats';
@@ -1571,6 +1636,11 @@ export type MutationRoot = {
    */
   createApiKey: CreateApiKeyResult;
   createBillingSetupIntent: CreateBillingSetupIntentPayload;
+  /**
+   * Queue discovery for a capture using its staged or live definition.
+   * Discovery updates the given draft with its results.
+   */
+  createDiscover: Discover;
   /** Create an empty private draft owned by the authenticated caller. */
   createDraft: Draft;
   /**
@@ -1848,6 +1918,13 @@ export type MutationRootCreateApiKeyArgs = {
 
 export type MutationRootCreateBillingSetupIntentArgs = {
   tenant: Scalars['String']['input'];
+};
+
+
+export type MutationRootCreateDiscoverArgs = {
+  captureName: Scalars['Name']['input'];
+  dataPlane?: InputMaybe<Scalars['String']['input']>;
+  draftId: Scalars['Id']['input'];
 };
 
 
@@ -2357,6 +2434,8 @@ export type QueryRoot = {
    * omitting it returns both.
    */
   dataPlanes: DataPlaneConnection;
+  /** Returns a discover visible to the caller, or null. */
+  discover?: Maybe<Discover>;
   draft?: Maybe<Draft>;
   /** The caller's own drafts, in stable ID order. */
   drafts: DraftConnection;
@@ -2472,6 +2551,11 @@ export type QueryRootDataPlanesArgs = {
   filter?: InputMaybe<DataPlanesFilter>;
   first?: InputMaybe<Scalars['Int']['input']>;
   last?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type QueryRootDiscoverArgs = {
+  id: Scalars['Id']['input'];
 };
 
 
