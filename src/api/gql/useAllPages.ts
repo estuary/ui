@@ -100,7 +100,7 @@ export function useAllPages<
     } as TVariables;
     const requestKey = createRequest(query, variables).key;
 
-    const [{ fetching, data, error, operation }] = useQuery({
+    const [{ fetching, stale, data, error, operation }] = useQuery({
         query,
         variables,
         pause,
@@ -111,8 +111,9 @@ export function useAllPages<
 
     // Accumulate paginated records, then setResult when we reach the end
     useEffect(() => {
-        // URQL can retain the previous request's data while variables change.
-        if (fetching || !data || operationKey !== requestKey) {
+        // URQL can retain the previous request's data while variables change,
+        // and a stale cached page's cursor may not survive its refresh.
+        if (fetching || stale || !data || operationKey !== requestKey) {
             return;
         }
 
@@ -144,6 +145,7 @@ export function useAllPages<
     }, [
         data,
         fetching,
+        stale,
         variablesKey,
         requestKey,
         operationKey,

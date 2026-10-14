@@ -172,4 +172,27 @@ describe('useAllPages', () => {
         });
         expect(requestedCursors).toContain(undefined);
     });
+
+    test('follows a stale cached page only after its refresh', async () => {
+        // The cached first page advertises a second; the refreshed one doesn't.
+        const cachedPage = makePage(['cached'], 'next');
+        const freshPage = makePage(['fresh']);
+        const secondPage = makePage(['second']);
+        let refreshed = false;
+        mockedUseQuery.mockImplementation(({ variables }) => {
+            const result = variables?.after
+                ? makeResult(secondPage, variables)
+                : makeResult(refreshed ? freshPage : cachedPage, variables);
+            return [
+                { ...result, stale: !variables?.after && !refreshed },
+                vi.fn(),
+            ] as ReturnType<typeof useQuery>;
+        });
+        const { result, rerender } = renderHook(() =>
+            useAllPages(QUERY, options)
+        );
+        refreshed = true;
+        rerender();
+        await waitFor(() => expect(result.current.data).toEqual(['fresh']));
+    });
 });
