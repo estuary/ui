@@ -8,6 +8,7 @@ import { Box, Stack, Typography } from '@mui/material';
 import { DateTime } from 'luxon';
 import { FormattedMessage } from 'react-intl';
 import { NavLink, useLocation } from 'react-router-dom';
+import { useClient } from 'urql';
 
 import { getPaymentMethodsForTenants } from 'src/api/billing';
 import { authenticatedRoutes } from 'src/app/routes';
@@ -25,9 +26,9 @@ const TRIAL_LENGTH = 30;
 // TODO (payment method notification) we should eventually move the "component type stuff" out of here
 //      and into a component that this hook can interact with. This should go into the PaymentMethodWarning.tsx file
 
-// TODO (store payment method info) we load the same thing twice for this and billing. Billing should try to pull these first
 function useTenantMissingPaymentMethodWarning() {
     const { pathname } = useLocation();
+    const client = useClient();
 
     const showedNotificationOnce = useRef(false);
 
@@ -56,13 +57,16 @@ function useTenantMissingPaymentMethodWarning() {
         const fetchData = async () => {
             if (!hasSupportRole && tenantBillingDetails) {
                 setPaymentMethods(
-                    await getPaymentMethodsForTenants(tenantBillingDetails)
+                    await getPaymentMethodsForTenants(
+                        client,
+                        tenantBillingDetails
+                    )
                 );
             }
         };
 
         void fetchData();
-    }, [hasSupportRole, tenantBillingDetails]);
+    }, [client, hasSupportRole, tenantBillingDetails]);
 
     useEffect(() => {
         if (

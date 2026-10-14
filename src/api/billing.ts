@@ -1,18 +1,23 @@
 import type { TenantPaymentDetails } from 'src/types';
+import type { Client } from 'urql';
 
 import pLimit from 'p-limit';
 
-import { FUNCTIONS, invokeSupabase } from 'src/services/supabase';
+import { TENANT_BILLING_PAYMENT_METHODS_QUERY } from 'src/api/gql/billing';
 
-const OPERATIONS = {
-    GET_TENANT_PAYMENT_METHODS: 'get-tenant-payment-methods',
-};
+const getTenantPaymentMethods = async (client: Client, tenant: string) => {
+    const { data, error } = await client
+        .query(TENANT_BILLING_PAYMENT_METHODS_QUERY, { tenant })
+        .toPromise();
 
-const getTenantPaymentMethods = (tenant: string) => {
-    return invokeSupabase<any>(FUNCTIONS.BILLING, {
-        operation: OPERATIONS.GET_TENANT_PAYMENT_METHODS,
-        tenant,
-    });
+    return error
+        ? { error }
+        : {
+              data: {
+                  tenant,
+                  payment_methods: data?.tenant?.billing.paymentMethods,
+              },
+          };
 };
 
 export interface InvoiceLineItem {
@@ -49,6 +54,7 @@ export interface MultiplePaymentMethods {
 //  fetching payment methods for tenants they do now "own"
 export const MAX_TENANTS = 5;
 export const getPaymentMethodsForTenants = async (
+    client: Client,
     tenants: TenantPaymentDetails[]
 ): Promise<MultiplePaymentMethods> => {
     const limiter = pLimit(3);
@@ -73,7 +79,9 @@ export const getPaymentMethodsForTenants = async (
             );
         } else {
             promises.push(
-                limiter(() => getTenantPaymentMethods(tenantDetail.tenant))
+                limiter(() =>
+                    getTenantPaymentMethods(client, tenantDetail.tenant)
+                )
             );
         }
 

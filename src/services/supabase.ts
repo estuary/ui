@@ -93,7 +93,6 @@ export enum RPCS {
 
 export enum FUNCTIONS {
     OAUTH = 'oauth',
-    BILLING = 'billing',
 }
 
 const backslashEscaped = /["\\]/g;
