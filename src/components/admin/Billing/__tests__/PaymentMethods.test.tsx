@@ -421,4 +421,42 @@ describe('billing payments', () => {
         expect(fireGtmEvent).not.toHaveBeenCalled();
         expect(screen.queryByRole('dialog')).toBeNull();
     });
+
+    test('shows a failed read again after switching tenants and back', async () => {
+        let failedReads = 0;
+        server.use(
+            billingGraphql.query(
+                'TenantBillingPaymentMethods',
+                ({ variables }) => {
+                    if (variables.tenant !== 'acme/') {
+                        return HttpResponse.json({
+                            data: queryData(variables.tenant),
+                        });
+                    }
+                    failedReads++;
+                    // `billing` is non-null, so its error nulls the tenant.
+                    return HttpResponse.json({
+                        data: { tenant: null },
+                        errors: [
+                            {
+                                message: 'Payment provider unavailable',
+                                path: ['tenant', 'billing'],
+                            },
+                        ],
+                    });
+                }
+            )
+        );
+        const { rerender } = render(<PricingTierDetails />, { wrapper });
+        await screen.findByText('Pricing information unavailable.');
+
+        tenant.selectedTenant = 'other/';
+        rerender(<PricingTierDetails />);
+        await screen.findByText('Cloud tier');
+        tenant.selectedTenant = 'acme/';
+        rerender(<PricingTierDetails />);
+
+        await screen.findByText('Pricing information unavailable.');
+        expect(failedReads).toBe(2);
+    });
 });

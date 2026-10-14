@@ -89,6 +89,17 @@ function UrqlConfigProvider({ children }: BaseComponentProps) {
                     //         alerts: relayPagination(),
                     //     },
                     // },
+                    resolvers: {
+                        Query: {
+                            // A failed billing read caches `tenant: null`
+                            // without its error. Treat it as uncached, so
+                            // returning to the tenant reads it again instead
+                            // of showing empty billing data.
+                            tenant: (_parent, args, cache) =>
+                                cache.resolve('Query', 'tenant', args) ??
+                                undefined,
+                        },
+                    },
                     // Migration: replace these null keys with real keys — `id`
                     // where the schema has one, otherwise a natural key
                     // (catalogPrefix, token, catalogName, ...). A null key
