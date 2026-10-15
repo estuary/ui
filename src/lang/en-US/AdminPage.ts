@@ -1,6 +1,5 @@
 import { CommonMessages } from 'src/lang/en-US/CommonMessages';
 import { CTAs } from 'src/lang/en-US/CTAs';
-import { Errors } from 'src/lang/en-US/Errors';
 
 export const AdminPage: Record<string, string> = {
     'admin.header': `Administration`,
@@ -34,8 +33,6 @@ export const AdminPage: Record<string, string> = {
     'admin.billing.table.line_items.label.total': `Total Due`,
     'admin.billing.table.line_items.emptyTableDefault.header': `No information found.`,
     'admin.billing.table.line_items.emptyTableDefault.message': `We couldn't find any billing information on file.`,
-
-    'admin.billing.addPaymentMethods.stripeLoadError': `Unable to load the forms from Stripe. ${Errors['error.tryAgain']}`,
 
     'admin.grants.confirmation.alert': `Access to all items will be removed and this action cannot be undone. Please review the list to continue.`,
 
