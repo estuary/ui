@@ -80,6 +80,7 @@ const addPaymentMethodEnabled = () =>
 const view = (showAddPayment = false) => (
     <PaymentMethods
         key={tenant.selectedTenant}
+        canEdit
         showAddPayment={showAddPayment}
     />
 );
