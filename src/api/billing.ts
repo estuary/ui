@@ -1,13 +1,12 @@
 import type { TenantPaymentDetails } from 'src/types';
+import type { Client } from 'urql';
 
-import pLimit from 'p-limit';
-
+import { TENANT_BILLING_PAYMENT_METHODS_QUERY } from 'src/api/gql/billing';
 import { FUNCTIONS, invokeSupabase, TABLES } from 'src/services/supabase';
 import { supabaseClient } from 'src/services/supabaseClient';
 import { formatDateForApi } from 'src/utils/billing-utils';
 
 const OPERATIONS = {
-    GET_TENANT_PAYMENT_METHODS: 'get-tenant-payment-methods',
     GET_TENANT_INVOICE: 'get-tenant-invoice',
 };
 
@@ -37,11 +36,19 @@ export const getTenantInvoice = (
     );
 };
 
-export const getTenantPaymentMethods = (tenant: string) => {
-    return invokeSupabase<any>(FUNCTIONS.BILLING, {
-        operation: OPERATIONS.GET_TENANT_PAYMENT_METHODS,
-        tenant,
-    });
+const getTenantPaymentMethods = async (client: Client, tenant: string) => {
+    const { data, error } = await client
+        .query(TENANT_BILLING_PAYMENT_METHODS_QUERY, { tenant })
+        .toPromise();
+
+    return error
+        ? { error }
+        : {
+              data: {
+                  tenant,
+                  payment_methods: data?.tenant?.billing.paymentMethods,
+              },
+          };
 };
 
 export interface InvoiceLineItem {
@@ -109,39 +116,24 @@ export interface MultiplePaymentMethods {
 //  fetching payment methods for tenants they do now "own"
 export const MAX_TENANTS = 5;
 export const getPaymentMethodsForTenants = async (
+    client: Client,
     tenants: TenantPaymentDetails[]
 ): Promise<MultiplePaymentMethods> => {
-    const limiter = pLimit(3);
-    const promises: Array<Promise<any>> = [];
-    let count = 0;
-
-    tenants.some((tenantDetail) => {
-        if (
+    // Callers pass at most MAX_TENANTS tenants.
+    const responses: any[] = await Promise.all(
+        tenants.map((tenantDetail) =>
             !tenantDetail.trial_start ||
             tenantDetail.payment_provider !== 'stripe' ||
             tenantDetail.gcm_account_id
-        ) {
-            promises.push(
-                new Promise((resolve) => {
-                    resolve({
-                        data: {
-                            tenant: tenantDetail.tenant,
-                            skipPaymentMethod: true,
-                        },
-                    });
-                })
-            );
-        } else {
-            promises.push(
-                limiter(() => getTenantPaymentMethods(tenantDetail.tenant))
-            );
-        }
-
-        count += 1;
-        return count >= MAX_TENANTS;
-    });
-
-    const responses = await Promise.all(promises);
+                ? {
+                      data: {
+                          tenant: tenantDetail.tenant,
+                          skipPaymentMethod: true,
+                      },
+                  }
+                : getTenantPaymentMethods(client, tenantDetail.tenant)
+        )
+    );
 
     return {
         responses: responses.filter((r) => r.data).map((r) => r.data),
