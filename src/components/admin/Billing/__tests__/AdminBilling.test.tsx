@@ -18,6 +18,8 @@ import UrqlConfigProvider from 'src/context/URQL';
 import { useTenantStore } from 'src/stores/Tenant';
 import {
     billingGraphql,
+    completeContact,
+    contactData,
     dropFetchSignals,
     paymentMethodsData,
     setupIntent,
@@ -143,6 +145,9 @@ beforeEach(() => {
         billingGraphql.query('TenantBillingInvoices', () =>
             HttpResponse.json({ data: invoicesData() })
         ),
+        billingGraphql.query('TenantBillingContact', () =>
+            HttpResponse.json({ data: contactData(completeContact) })
+        ),
         billingGraphql.query('TenantBillingPaymentMethods', () =>
             HttpResponse.json({ data: paymentMethodsData() })
         ),
@@ -257,6 +262,7 @@ test.each([
     // The history and the usage graph share this read.
     'TenantBillingInvoices',
     'TenantBillingPaymentMethods',
+    'TenantBillingContact',
 ])('replaces the details with one error when %s fails', async (operation) => {
     server.use(
         billingGraphql.query(operation, () =>
@@ -339,7 +345,7 @@ test('hides edit actions on switching to a view-only tenant', async () => {
     // Editors get the add-payment form from the route, and every action.
     await screen.findByRole('dialog');
     await screen.findByText('Acme card');
-    const actions = ['Add Payment Method', 'Delete', 'Make Primary'];
+    const actions = ['Add Payment Method', 'Delete', 'Make Primary', 'Edit'];
     actions.forEach((name) =>
         expect(screen.getByRole('button', { name })).toBeTruthy()
     );

@@ -1,8 +1,6 @@
-import type { Stripe } from '@stripe/stripe-js';
-
 import { useState } from 'react';
 
-import { Box, Button, Dialog, DialogTitle, useTheme } from '@mui/material';
+import { Box, Button, Dialog, DialogTitle } from '@mui/material';
 
 import { usePostHog } from '@posthog/react';
 import { Elements } from '@stripe/react-stripe-js';
@@ -13,7 +11,10 @@ import {
     INTENT_SECRET_ERROR,
     INTENT_SECRET_LOADING,
 } from 'src/components/admin/Billing/shared';
-import { stripePaymentFormFieldBackgroundDark } from 'src/context/Theme';
+import {
+    getStripe,
+    useStripeAppearance,
+} from 'src/components/admin/Billing/stripe';
 import { fireGtmEvent } from 'src/services/gtm';
 
 interface Props {
@@ -21,7 +22,6 @@ interface Props {
     autoOpen: boolean;
     setupIntentSecret: string;
     onAdded: (id?: string) => Promise<void>;
-    stripePromise: Promise<Stripe | null>;
     tenant: string;
 }
 
@@ -29,15 +29,11 @@ function AddPaymentMethod({
     autoOpen,
     onAdded,
     setupIntentSecret,
-    stripePromise,
     tenant,
 }: Props) {
     const [show, setOpen] = useState(autoOpen);
     const postHog = usePostHog();
-    const theme = useTheme();
-    const isDark = theme.palette.mode === 'dark';
-
-    const flatField = { border: 'none', boxShadow: 'none' };
+    const appearance = useStripeAppearance();
 
     const enable =
         setupIntentSecret !== INTENT_SECRET_LOADING &&
@@ -70,49 +66,11 @@ function AddPaymentMethod({
                 <DialogTitle>Add a payment method</DialogTitle>
                 {enable ? (
                     <Elements
-                        stripe={stripePromise}
+                        stripe={getStripe()}
                         options={{
                             clientSecret: setupIntentSecret,
                             loader: 'auto',
-                            appearance: {
-                                theme: isDark ? 'night' : 'stripe',
-                                variables: {
-                                    colorPrimary: theme.palette.primary.main,
-                                    fontFamily: theme.typography.fontFamily,
-                                    borderRadius: `6px`,
-                                    focusBoxShadow: 'none',
-                                    focusOutline: 'none',
-                                },
-                                ...(isDark && {
-                                    rules: {
-                                        '.Input': {
-                                            ...flatField,
-                                            backgroundColor:
-                                                stripePaymentFormFieldBackgroundDark,
-                                        },
-                                        '.Tab': {
-                                            ...flatField,
-                                            backgroundColor:
-                                                stripePaymentFormFieldBackgroundDark,
-                                        },
-                                        '.Tab--focused': {
-                                            borderColor:
-                                                theme.palette.primary.main,
-                                        },
-                                        '.Block': {
-                                            ...flatField,
-                                            padding: '14px',
-                                            backgroundColor:
-                                                stripePaymentFormFieldBackgroundDark,
-                                        },
-                                        '.PickerItem': {
-                                            ...flatField,
-                                            backgroundColor:
-                                                stripePaymentFormFieldBackgroundDark,
-                                        },
-                                    },
-                                }),
-                            },
+                            appearance,
                         }}
                     >
                         <PaymentForm
