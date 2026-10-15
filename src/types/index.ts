@@ -45,31 +45,6 @@ export interface MuiTabProps<T> {
     value: T;
 }
 
-export interface AppliedDirective<T> {
-    created_at: Date;
-    detail: null;
-    directives?: {
-        type: string;
-        uses_remaining: number | null;
-    };
-    id: string;
-    updated_at: Date;
-    job_status: JobStatus;
-    logs_token: string;
-    directive_id: string;
-    user_id: string;
-    user_claims: T | null;
-}
-
-export interface JoinedAppliedDirective extends AppliedDirective<any> {
-    // FILTERING HACK
-    ['directives.token']: string;
-    ['applied_directives']: AppliedDirective<any>;
-    ['spec->>type']: undefined;
-    ['applied_directives.user_id']: undefined;
-    ['directives.spec->>type']: undefined;
-}
-
 interface StorageMapping {
     stores: StorageMappingStore[];
     data_planes: string[];
@@ -181,17 +156,6 @@ export interface CatalogStats_LastPublished extends BaseCatalogStats {
             lastPublishedAt?: string;
         };
     };
-}
-
-export interface Directive {
-    created_at: Date;
-    detail: null;
-    id: string;
-    updated_at: Date;
-    catalog_prefix: string;
-    single_use: boolean;
-    spec: JobStatus;
-    token: string;
 }
 
 export interface UserGrantsTenantGuard {
