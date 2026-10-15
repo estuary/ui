@@ -7,6 +7,8 @@ import { DateTime } from 'luxon';
 import { useInterval } from 'react-use';
 import { useQuery } from 'urql';
 
+import { usePageVisibility } from 'src/hooks/usePageVisibility';
+
 type UsePollingQueryArgs<
     Variables extends AnyVariables = AnyVariables,
     Data = any,
@@ -14,10 +16,18 @@ type UsePollingQueryArgs<
     pollingIntervalMs?: number;
 };
 
+/**
+ * Executes the given query on the specified interval. Does not run
+ * if `pollingIntervalMs` is falsey. Polling is disabled while the
+ * page is not visible.
+ */
 export function usePollingQuery<
     Data = any,
     Variables extends AnyVariables = AnyVariables,
 >(args: UsePollingQueryArgs<Variables, Data>) {
+    const pageIsVisible = usePageVisibility();
+    const pageWasVisible = useRef(pageIsVisible);
+
     const { pause, pollingIntervalMs } = args;
     const requestPolicy = args.requestPolicy ?? 'cache-first';
     const [{ data, error, fetching, operation }, reexecuteQuery] = useQuery({
@@ -25,11 +35,11 @@ export function usePollingQuery<
         requestPolicy,
     });
 
-    // keep track of the last successful fetch time
-    const [updatedAt, setUpdatedAt] = useState<DateTime | null>(null);
+    const canRefetch = !fetching && !pause && !!pollingIntervalMs;
     const wasFetching = useRef(false);
 
-    // update the `updatedAt` time on sucessful fetch
+    // Keep track of the last successful fetch time.
+    const [updatedAt, setUpdatedAt] = useState<DateTime | null>(null);
     useEffect(() => {
         if (wasFetching.current && !fetching && !error) {
             setUpdatedAt(DateTime.now());
@@ -37,13 +47,23 @@ export function usePollingQuery<
         wasFetching.current = fetching;
     }, [fetching, error]);
 
-    // interval does not run if `pollingIntervalMs` is falsey
-    useInterval(() => {
-        if (fetching || pause) {
-            return;
-        }
+    // Refetch as soon as a hidden tab becomes visible again,
+    // rather than waiting up to a full poll interval.
+    useEffect(() => {
+        const pageBecameVisible = pageIsVisible && !pageWasVisible.current;
+        pageWasVisible.current = pageIsVisible;
 
-        reexecuteQuery({ requestPolicy: 'network-only' });
+        if (pageBecameVisible && canRefetch) {
+            reexecuteQuery({ requestPolicy: 'network-only' });
+        }
+    }, [canRefetch, pageIsVisible, reexecuteQuery]);
+
+    // Execute the query on the specified interval. Does not run if
+    // `pollingIntervalMs` is falsey or if the page is not visible.
+    useInterval(() => {
+        if (canRefetch && pageIsVisible) {
+            reexecuteQuery({ requestPolicy: 'network-only' });
+        }
     }, pollingIntervalMs || null);
 
     // If the variables changed, that will retrigger a fetch, so return
