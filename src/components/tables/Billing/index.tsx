@@ -1,21 +1,30 @@
+import type { useBillingInvoices } from 'src/hooks/billing/useBillingInvoices';
 import type { TableColumns } from 'src/types';
+import type { InvoiceId } from 'src/utils/billing-utils';
 
 import { useMemo } from 'react';
 
-import { Box, Table, TableContainer } from '@mui/material';
+import {
+    Box,
+    Table,
+    TableContainer,
+    TableFooter,
+    TablePagination,
+    TableRow,
+} from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
+import { BILLING_HISTORY_PAGE_SIZE } from 'src/api/gql/billing';
 import Rows from 'src/components/tables/Billing/Rows';
 import EntityTableBody from 'src/components/tables/EntityTable/TableBody';
 import EntityTableHeader from 'src/components/tables/EntityTable/TableHeader';
 import { getTableHeaderWithoutHeaderColor } from 'src/context/Theme';
-import {
-    useBilling_selectedInvoice,
-    useBillingStore,
-} from 'src/stores/Billing';
 import { TableStatuses } from 'src/types';
-import { invoiceId } from 'src/utils/billing-utils';
+
+interface BillingHistoryTableProps {
+    history: ReturnType<typeof useBillingInvoices>;
+    selectedInvoiceId: InvoiceId | null;
+    onSelectInvoice: (id: InvoiceId) => void;
+}
 
 const columns: TableColumns[] = [
     {
@@ -41,35 +50,35 @@ const columns: TableColumns[] = [
     },
 ];
 
-function BillingHistoryTable() {
-    const intl = useIntl();
-
-    const selectedInvoice = useBilling_selectedInvoice();
-
-    const active = useBillingStore((state) => state.active);
-    const hydrated = useBillingStore((state) => state.hydrated);
-    const networkFailed = useBillingStore((state) => state.networkFailed);
-    const billingHistory = useBillingStore((state) => state.invoices);
+function BillingHistoryTable({
+    history,
+    selectedInvoiceId,
+    onSelectInvoice,
+}: BillingHistoryTableProps) {
+    const {
+        invoices: billingHistory,
+        page,
+        hasNextPage,
+        onPageChange,
+        isLoading,
+    } = history;
 
     const dataRows = useMemo(
         () =>
             billingHistory.length > 0 ? (
                 <Rows
                     data={billingHistory}
-                    selectedInvoice={
-                        selectedInvoice ? invoiceId(selectedInvoice) : null
-                    }
+                    selectedInvoice={selectedInvoiceId}
+                    onSelectInvoice={onSelectInvoice}
                 />
             ) : null,
-        [billingHistory, selectedInvoice]
+        [billingHistory, selectedInvoiceId, onSelectInvoice]
     );
 
     return (
         <TableContainer component={Box}>
             <Table
-                aria-label={intl.formatMessage({
-                    id: 'entityTable.title',
-                })}
+                aria-label="Entity Table"
                 size="small"
                 sx={{
                     ...getTableHeaderWithoutHeaderColor(),
@@ -89,13 +98,33 @@ function BillingHistoryTable() {
                     tableState={
                         billingHistory.length > 0
                             ? { status: TableStatuses.DATA_FETCHED }
-                            : networkFailed
-                              ? { status: TableStatuses.NETWORK_FAILED }
-                              : { status: TableStatuses.NO_EXISTING_DATA }
+                            : { status: TableStatuses.NO_EXISTING_DATA }
                     }
-                    loading={Boolean(active || !hydrated)}
+                    loading={isLoading}
                     rows={dataRows}
                 />
+
+                {page > 0 || hasNextPage ? (
+                    <TableFooter>
+                        <TableRow>
+                            <TablePagination
+                                // Unknown until the last page.
+                                count={
+                                    hasNextPage || isLoading
+                                        ? -1
+                                        : page * BILLING_HISTORY_PAGE_SIZE +
+                                          billingHistory.length
+                                }
+                                page={page}
+                                rowsPerPage={BILLING_HISTORY_PAGE_SIZE}
+                                rowsPerPageOptions={[]}
+                                onPageChange={onPageChange}
+                                // A page's cursor is only known once it loads.
+                                disabled={isLoading}
+                            />
+                        </TableRow>
+                    </TableFooter>
+                ) : null}
             </Table>
         </TableContainer>
     );

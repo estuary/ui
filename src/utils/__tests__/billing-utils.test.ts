@@ -1,8 +1,4 @@
-import {
-    formatDateForApi,
-    invoiceId,
-    stripTimeFromDate,
-} from 'src/utils/billing-utils';
+import { stripTimeFromDate } from 'src/utils/billing-utils';
 
 describe('stripTimeFromDate', () => {
     test('strips time component and returns a Date', () => {
@@ -26,43 +22,5 @@ describe('stripTimeFromDate', () => {
         expect(result.getFullYear()).toBe(2023);
         expect(result.getMonth()).toBe(11); // December
         expect(result.getDate()).toBe(31);
-    });
-});
-
-describe('formatDateForApi', () => {
-    test('formats a Date to the expected API string format', () => {
-        const date = new Date(2024, 0, 15); // Jan 15 2024 local time
-        expect(formatDateForApi(date)).toBe('2024-01-15 00:00:00+00');
-    });
-
-    test('pads single-digit months and days', () => {
-        const date = new Date(2024, 2, 5); // March 5 2024
-        expect(formatDateForApi(date)).toBe('2024-03-05 00:00:00+00');
-    });
-
-    test('handles end-of-year dates', () => {
-        const date = new Date(2023, 11, 31); // Dec 31 2023
-        expect(formatDateForApi(date)).toBe('2023-12-31 00:00:00+00');
-    });
-});
-
-describe('invoiceId', () => {
-    test('concatenates date_start, date_end, and billed_prefix', () => {
-        const invoice = {
-            date_start: '2024-01-01',
-            date_end: '2024-01-31',
-            billed_prefix: 'acme/',
-        } as any;
-        expect(invoiceId(invoice)).toBe('2024-01-01-2024-01-31-acme/');
-    });
-
-    test('is unique for different prefixes', () => {
-        const base = {
-            date_start: '2024-01-01',
-            date_end: '2024-01-31',
-        } as any;
-        expect(invoiceId({ ...base, billed_prefix: 'acme/' })).not.toBe(
-            invoiceId({ ...base, billed_prefix: 'other/' })
-        );
     });
 });

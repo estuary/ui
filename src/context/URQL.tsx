@@ -119,6 +119,7 @@ function UrqlConfigProvider({ children }: BaseComponentProps) {
                         MaterializeBindingStats: (_data) => null,
                         Tenant: (_data) => null,
                         TenantBilling: (_data) => null,
+                        Invoice: (_data) => null,
                         PaymentMethodBillingDetails: (_data) => null,
                         CardPaymentMethodDetails: (_data) => null,
                         UsBankAccountPaymentMethodDetails: (_data) => null,
