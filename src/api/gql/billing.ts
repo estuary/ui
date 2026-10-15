@@ -184,6 +184,55 @@ const getTenantPaymentMethods = async (client: Client, tenant: string) => {
           };
 };
 
+// Only registers the fragment with codegen. The contact query and mutation
+// share it so `setBillingContact` returns the fields its cache update writes.
+graphql(`
+    fragment BillingContactFields on BillingContact {
+        name
+        emails
+        address {
+            line1
+            line2
+            city
+            state
+            postalCode
+            country
+        }
+    }
+`);
+
+export const TENANT_BILLING_CONTACT_QUERY = graphql(`
+    query TenantBillingContact($tenant: String!) {
+        tenant(name: $tenant) {
+            billing {
+                contact {
+                    ...BillingContactFields
+                }
+            }
+        }
+    }
+`);
+
+export const SET_BILLING_CONTACT = graphql(`
+    mutation SetBillingContact(
+        $tenant: String!
+        $name: String!
+        $emails: [String!]!
+        $address: BillingAddressInput!
+    ) {
+        setBillingContact(
+            tenant: $tenant
+            name: $name
+            emails: $emails
+            address: $address
+        ) {
+            contact {
+                ...BillingContactFields
+            }
+        }
+    }
+`);
+
 // Billing is checked against the capability bits rather than the legacy read/write/admin level, which misses ViewBilling and EditBilling granted through bundles. `none` keeps grants that carry only bits, and the `in` filter returns just the row at the tenant itself.
 export const BILLING_CAPABILITIES_QUERY = graphql(`
     query BillingCapabilities($tenant: String!) {

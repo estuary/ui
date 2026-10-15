@@ -3,12 +3,13 @@ import type { InvoiceId } from 'src/utils/billing-utils';
 
 import { useState } from 'react';
 
-import { Divider, Grid } from '@mui/material';
+import { Divider, Grid, Stack } from '@mui/material';
 
 import { ErrorBoundary } from 'react-error-boundary';
 
 import { BILLING_HISTORY_PAGE_SIZE } from 'src/api/gql/billing';
 import { authenticatedRoutes } from 'src/app/routes';
+import { BillingContactSection } from 'src/components/admin/Billing/BillingContactSection';
 import DateRange from 'src/components/admin/Billing/DateRange';
 import PaymentMethods from 'src/components/admin/Billing/PaymentMethods';
 import { INVOICE_ROW_HEIGHT } from 'src/components/admin/Billing/shared';
@@ -207,10 +208,13 @@ function BillingDetails({
             </Grid>
 
             <Grid size={{ xs: 12 }}>
-                <PaymentMethods
-                    canEdit={canEdit}
-                    showAddPayment={showAddPayment}
-                />
+                <Stack spacing={3} divider={<Divider />}>
+                    <BillingContactSection canEdit={canEdit} />
+                    <PaymentMethods
+                        canEdit={canEdit}
+                        showAddPayment={showAddPayment}
+                    />
+                </Stack>
             </Grid>
         </Grid>
     );
