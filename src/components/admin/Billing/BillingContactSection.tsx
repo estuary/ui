@@ -132,6 +132,7 @@ export function BillingContactSection({ canEdit }: { canEdit: boolean }) {
                     open={editing}
                     tenant={tenant}
                     contact={contact}
+                    mode="edit"
                     onClose={() => setEditing(false)}
                     onSaved={() => setEditing(false)}
                 />

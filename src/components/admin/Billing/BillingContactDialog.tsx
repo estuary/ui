@@ -29,6 +29,7 @@ import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 import {
     fromStripeAddress,
+    getContactStatus,
     toStripeAddress,
     validateBillingEmail,
 } from 'src/utils/billing-contact-utils';
@@ -37,6 +38,8 @@ interface BillingContactDialogProps {
     open: boolean;
     tenant: string;
     contact: BillingContact | undefined;
+    // `continue` comes before adding a payment method.
+    mode: 'edit' | 'continue';
     onClose: () => void;
     onSaved: () => void;
 }
@@ -78,6 +81,7 @@ export function BillingContactDialog({
 function BillingContactForm({
     tenant,
     contact,
+    mode,
     saving,
     setSaving,
     onClose,
@@ -134,6 +138,12 @@ function BillingContactForm({
         }
     };
 
+    const status = getContactStatus(contact);
+    const subtitle =
+        mode === 'continue'
+            ? `${status === 'missing' ? 'Add' : 'Finish'} your billing contact before adding a payment method. It appears on invoices and receipts.`
+            : `Shown on invoices and receipts for ${tenant}.`;
+
     return (
         <>
             <DialogTitle component="div">
@@ -141,7 +151,7 @@ function BillingContactForm({
                     Billing contact
                 </Typography>
                 <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                    Shown on invoices and receipts for {tenant}.
+                    {subtitle}
                 </Typography>
             </DialogTitle>
 
@@ -201,7 +211,11 @@ function BillingContactForm({
                     loadingPosition="start"
                     disabled={loadError || !elements}
                 >
-                    {saving ? 'Saving…' : 'Save'}
+                    {saving
+                        ? 'Saving…'
+                        : mode === 'continue'
+                          ? 'Save and continue'
+                          : 'Save'}
                 </Button>
             </DialogActions>
         </>
