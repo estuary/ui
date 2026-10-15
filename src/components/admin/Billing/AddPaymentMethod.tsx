@@ -6,15 +6,18 @@ import { usePostHog } from '@posthog/react';
 import { Elements } from '@stripe/react-stripe-js';
 import { Plus } from 'iconoir-react';
 
+import { BillingContactDialog } from 'src/components/admin/Billing/BillingContactDialog';
 import { PaymentForm } from 'src/components/admin/Billing/CapturePaymentMethod';
 import {
     getStripe,
     useStripeAppearance,
 } from 'src/components/admin/Billing/stripe';
+import { useBillingContact } from 'src/hooks/billing/useBillingContact';
 import { fireGtmEvent } from 'src/services/gtm';
+import { getContactStatus } from 'src/utils/billing-contact-utils';
 
 interface Props {
-    // The add-payment route opens the form on arrival.
+    // The add-payment route starts adding a payment method on arrival.
     autoOpen: boolean;
     setupIntentSecret?: string;
     loading: boolean;
@@ -32,6 +35,14 @@ function AddPaymentMethod({
     const [show, setOpen] = useState(autoOpen);
     const postHog = usePostHog();
     const appearance = useStripeAppearance();
+    const { contact, isLoading: contactLoading } = useBillingContact(tenant);
+
+    // Adding a payment method starts with the billing contact when it is
+    // incomplete, once the contact loads.
+    const ready = show && !contactLoading;
+    const complete = getContactStatus(contact) === 'complete';
+    const contactOpen = ready && !complete;
+    const paymentOpen = ready && complete;
 
     return (
         <>
@@ -49,11 +60,21 @@ function AddPaymentMethod({
                 </Button>
             </Box>
 
+            <BillingContactDialog
+                open={contactOpen}
+                tenant={tenant}
+                contact={contact}
+                mode="continue"
+                onClose={() => setOpen(false)}
+                // Saving completes the contact, which opens the payment form.
+                onSaved={() => undefined}
+            />
+
             <Dialog
                 maxWidth="sm"
                 fullWidth
                 sx={{ padding: 2 }}
-                open={show}
+                open={paymentOpen}
                 onClose={() => setOpen(false)}
                 data-private
             >
@@ -68,6 +89,7 @@ function AddPaymentMethod({
                         }}
                     >
                         <PaymentForm
+                            contact={contact}
                             onSuccess={async (id) => {
                                 await onAdded(id);
                                 if (id) {
