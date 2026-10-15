@@ -46,7 +46,10 @@ export function useCatalogStats(
     range: DataByHourRange,
     opts: CatalogStatsOpts = {}
 ) {
-    const names = getCleanCatalogNames(catalogNames);
+    const names = useMemo(
+        () => getCleanCatalogNames(catalogNames),
+        [catalogNames]
+    );
     const { grain } = range;
     const by = toCatalogStatsBy(names, range);
     const { start, end } = by;
@@ -60,8 +63,9 @@ export function useCatalogStats(
     });
 
     const stats = useMemo(
-        () => (data ? convertStatsResponse(data, grain, start, end) : {}),
-        [data, grain, start, end]
+        () =>
+            data ? convertStatsResponse(names, data, grain, start, end) : {},
+        [names, data, grain, start, end]
     );
 
     return { data: stats, fetching, error, updatedAt };
@@ -108,6 +112,7 @@ function convertDateRange(range: DataByHourRange) {
 }
 
 function convertStatsResponse(
+    catalogNames: string[],
     data: CatalogStatsQuery,
     grain: DataGrains,
     start: string,
@@ -141,24 +146,26 @@ function convertStatsResponse(
     // for each catalogName in the response data, iterate through the full
     // interval and fill any holes with an empty stats record
     const statsByCatalogName: Record<string, CatalogStats[]> = {};
-    Object.entries(statsLookupMap).forEach(
-        ([catalogName, statsByTimestamp]) => {
-            interval.forEach((i) => {
-                if (!i.start) {
-                    return;
-                }
+    catalogNames.forEach((catalogName) => {
+        // find the stats for this catalog, or default to empty object
+        // so the interval is still fully built with empty records
+        const statsByTimestamp = statsLookupMap[catalogName] ?? {};
 
-                // find the matching stat, or fill with an empty record
-                const timestamp = i.start.toUnixInteger();
-                const stats =
-                    statsByTimestamp[timestamp] ??
-                    emptyCatalogStats(catalogName, grain, timestamp);
+        interval.forEach((i) => {
+            if (!i.start) {
+                return;
+            }
 
-                statsByCatalogName[catalogName] ??= [];
-                statsByCatalogName[catalogName].push(stats);
-            });
-        }
-    );
+            // find the matching stat, or fill with an empty record
+            const timestamp = i.start.toUnixInteger();
+            const stats =
+                statsByTimestamp[timestamp] ??
+                emptyCatalogStats(catalogName, grain, timestamp);
+
+            statsByCatalogName[catalogName] ??= [];
+            statsByCatalogName[catalogName].push(stats);
+        });
+    });
 
     return statsByCatalogName;
 }
