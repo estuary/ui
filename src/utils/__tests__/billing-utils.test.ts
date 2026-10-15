@@ -1,7 +1,4 @@
-import type { SeriesConfig } from 'src/utils/billing-utils';
-
 import {
-    formatDataVolumeForDisplay,
     formatDateForApi,
     invoiceId,
     stripTimeFromDate,
@@ -46,78 +43,6 @@ describe('formatDateForApi', () => {
     test('handles end-of-year dates', () => {
         const date = new Date(2023, 11, 31); // Dec 31 2023
         expect(formatDateForApi(date)).toBe('2023-12-31 00:00:00+00');
-    });
-});
-
-describe('formatDataVolumeForDisplay', () => {
-    const makeSeries = (
-        overrides: Partial<SeriesConfig> = {}
-    ): SeriesConfig => ({
-        data: [
-            ['2024-01', 5.5],
-            ['2024-02', 10.0],
-        ],
-        seriesName: 'test-series',
-        ...overrides,
-    });
-
-    test('returns GB formatted value when dataVolumeInBytes is false', () => {
-        const series = [makeSeries()];
-        const tooltip = {
-            name: '2024-01',
-            seriesName: 'test-series',
-            value: ['2024-01', 5.5],
-        };
-        expect(formatDataVolumeForDisplay(series, tooltip, false)).toBe(
-            '5.50 GB'
-        );
-    });
-
-    test('returns prettyBytes formatted value when dataVolumeInBytes is true', () => {
-        const series = [makeSeries({ data: [['2024-01', 1073741824]] })];
-        const tooltip = {
-            name: '2024-01',
-            seriesName: 'test-series',
-            value: [],
-        };
-        expect(formatDataVolumeForDisplay(series, tooltip, true)).toBe(
-            '1.07 GB'
-        );
-    });
-
-    test('falls back to tooltipConfig value when month is not found in data', () => {
-        const series = [makeSeries()];
-        const tooltip = {
-            name: '2024-03',
-            seriesName: 'test-series',
-            value: ['2024-03', 7.77],
-        };
-        expect(formatDataVolumeForDisplay(series, tooltip)).toBe('7.77 GB');
-    });
-
-    test('filters by seriesName when multiple series are present', () => {
-        const series = [
-            makeSeries({ seriesName: 'series-a', data: [['2024-01', 1.0]] }),
-            makeSeries({ seriesName: 'series-b', data: [['2024-01', 99.0]] }),
-        ];
-        const tooltip = { name: '2024-01', seriesName: 'series-a', value: [] };
-        expect(formatDataVolumeForDisplay(series, tooltip, false)).toBe(
-            '1.00 GB'
-        );
-    });
-
-    test('uses single series without filtering by seriesName', () => {
-        const series = [
-            makeSeries({ seriesName: 'anything', data: [['2024-01', 3.0]] }),
-        ];
-        const tooltip = {
-            name: '2024-01',
-            seriesName: 'different-name',
-            value: [],
-        };
-        expect(formatDataVolumeForDisplay(series, tooltip, false)).toBe(
-            '3.00 GB'
-        );
     });
 });
 
