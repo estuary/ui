@@ -12,14 +12,8 @@ export const AdminPage: Record<string, string> = {
     'admin.cli_api.message': `Use Refresh and Access tokens to connect to ${CommonMessages.productName} programmatically.`,
     'admin.cli_api.refreshToken.dialog.alert.tokenEncodingFailed': `An issue was encountered displaying your token. Please generate a new token.`,
 
-    'admin.billing.message.freeTier': `The free tier lets you try ${CommonMessages.productName} with up to 2 tasks and 10GB per month without entering a credit card. Usage beyond these limits automatically starts a 30 day free trial.`,
-    'admin.billing.message.paidTier': `Cloud tier`,
-    'admin.billing.message.external': ` `,
-    'admin.billing.message.external.gcp': `GCP Marketplace`,
-    'admin.billing.message.external.aws': `AWS Marketplace`,
     'admin.billing.error.details.header': `There was a network issue.`,
     'admin.billing.error.details.message': `There was an error fetching your billing details. ${Errors['error.tryAgain']}`,
-    'admin.billing.error.paymentMethodsError': `There was an error connecting with our payment provider. Please try again later.`,
 
     'admin.billing.label.lineItems.tooltip': `A connector (AKA "task") is billed based on the pro-rated portion of a month during which it was enabled, as measured in "task-hours". Approximately 720 task-hours accrue for a connector that is running nonstop for an entire month.`,
     'admin.billing.label.lineItems.tooltip.title': `Each active connector counts as a task`,
@@ -51,18 +45,6 @@ export const AdminPage: Record<string, string> = {
     'admin.billing.table.line_items.tooltip.pay_invoice': `Pay Invoice`,
     'admin.billing.table.line_items.tooltip.invoice_paid': `Invoice Paid`,
 
-    'admin.billing.paymentMethods.header': `Payment Information`,
-    'admin.billing.paymentMethods.description': `Enter your payment information. You won't be charged until your account usage exceeds free tier limits.`,
-    'admin.billing.paymentMethods.cta.addPaymentMethod': `Add Payment Method`,
-    'admin.billing.paymentMethods.cta.addPaymentMethod.error': `There was an issue attempting to get a token from Stripe. You cannot currently add a payment method. ${Errors['error.tryAgain']}`,
-    'admin.billing.paymentMethods.table.label.cardType': `Type`,
-    'admin.billing.paymentMethods.table.label.name': `Name`,
-    'admin.billing.paymentMethods.table.label.lastFour': `Last 4 Digits`,
-    'admin.billing.paymentMethods.table.label.details': `Details`,
-    'admin.billing.paymentMethods.table.label.primary': `Primary`,
-    'admin.billing.paymentMethods.table.label.actions': `Actions`,
-    'admin.billing.paymentMethods.table.emptyTableDefault.message': `No payment methods available.`,
-    'admin.billing.addPaymentMethods.title': `Add a payment method`,
     'admin.billing.addPaymentMethods.stripeLoadError': `Unable to load the forms from Stripe. ${Errors['error.tryAgain']}`,
 
     'admin.grants.confirmation.alert': `Access to all items will be removed and this action cannot be undone. Please review the list to continue.`,
