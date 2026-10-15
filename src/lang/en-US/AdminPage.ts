@@ -12,7 +12,6 @@ export const AdminPage: Record<string, string> = {
     'admin.cli_api.message': `Use Refresh and Access tokens to connect to ${CommonMessages.productName} programmatically.`,
     'admin.cli_api.refreshToken.dialog.alert.tokenEncodingFailed': `An issue was encountered displaying your token. Please generate a new token.`,
 
-    'admin.billing.header': `Billing`,
     'admin.billing.message.freeTier': `The free tier lets you try ${CommonMessages.productName} with up to 2 tasks and 10GB per month without entering a credit card. Usage beyond these limits automatically starts a 30 day free trial.`,
     'admin.billing.message.paidTier': `Cloud tier`,
     'admin.billing.message.external': ` `,
@@ -22,18 +21,13 @@ export const AdminPage: Record<string, string> = {
     'admin.billing.error.details.message': `There was an error fetching your billing details. ${Errors['error.tryAgain']}`,
     'admin.billing.error.paymentMethodsError': `There was an error connecting with our payment provider. Please try again later.`,
 
-    'admin.billing.label.lineItems': `Your bill for:`,
-    'admin.billing.label.lineItems.empty': `No bill to display`,
-    'admin.billing.label.lineItems.loading': `Loading your bill`,
     'admin.billing.label.lineItems.tooltip': `A connector (AKA "task") is billed based on the pro-rated portion of a month during which it was enabled, as measured in "task-hours". Approximately 720 task-hours accrue for a connector that is running nonstop for an entire month.`,
     'admin.billing.label.lineItems.tooltip.title': `Each active connector counts as a task`,
 
-    'admin.billing.graph.usageByMonth.header': `Usage by Month`,
     'admin.billing.graph.usageByMonth.dataFormatter': `{value} GB`,
     'admin.billing.graph.usageByMonth.hoursFormatter': `{value} hours`,
     'admin.billing.graph.taskHoursByMonth.formatValue': `{taskUsage} {taskUsage, plural, one {Hour} other {Hours}}`,
     'admin.billing.graph.dataByTask.tooltip': `This graph displays the three, largest data processing tasks over the set interval.`,
-    'admin.billing.table.history.header': `Recent History`,
     'admin.billing.table.history.label.dataVolume': `Data Volume`,
     'admin.billing.table.history.label.date_start': `Start Date`,
     'admin.billing.table.history.label.date_end': `End Date`,
