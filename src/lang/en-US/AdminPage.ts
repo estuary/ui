@@ -12,15 +12,9 @@ export const AdminPage: Record<string, string> = {
     'admin.cli_api.message': `Use Refresh and Access tokens to connect to ${CommonMessages.productName} programmatically.`,
     'admin.cli_api.refreshToken.dialog.alert.tokenEncodingFailed': `An issue was encountered displaying your token. Please generate a new token.`,
 
-    'admin.billing.error.details.header': `There was a network issue.`,
-    'admin.billing.error.details.message': `There was an error fetching your billing details. ${Errors['error.tryAgain']}`,
-
     'admin.billing.label.lineItems.tooltip': `A connector (AKA "task") is billed based on the pro-rated portion of a month during which it was enabled, as measured in "task-hours". Approximately 720 task-hours accrue for a connector that is running nonstop for an entire month.`,
     'admin.billing.label.lineItems.tooltip.title': `Each active connector counts as a task`,
 
-    'admin.billing.graph.usageByMonth.dataFormatter': `{value} GB`,
-    'admin.billing.graph.usageByMonth.hoursFormatter': `{value} hours`,
-    'admin.billing.graph.taskHoursByMonth.formatValue': `{taskUsage} {taskUsage, plural, one {Hour} other {Hours}}`,
     'admin.billing.graph.dataByTask.tooltip': `This graph displays the three, largest data processing tasks over the set interval.`,
     'admin.billing.table.history.label.dataVolume': `Data Volume`,
     'admin.billing.table.history.label.date_start': `Start Date`,
@@ -31,19 +25,15 @@ export const AdminPage: Record<string, string> = {
     'admin.billing.table.history.tooltip.date_end': `This billing period ended on {timestamp}`,
     'admin.billing.table.history.tooltip.dataVolume': `GB of data processed by tasks`,
     'admin.billing.table.history.emptyTableDefault.header': `No information found.`,
-    'admin.billing.table.history.emptyTableDefault.message': `We couldn't find any billing information on file. Only administrators of a tenant are able to review billing information.`,
+    'admin.billing.table.history.emptyTableDefault.message': `We couldn't find any billing information on file.`,
 
-    'admin.billing.table.line_items.title': `Invoice Details`,
     'admin.billing.table.line_items.label.description': `Description`,
     'admin.billing.table.line_items.label.count': `Quantity`,
     'admin.billing.table.line_items.label.rate': `Unit Price`,
     'admin.billing.table.line_items.label.subtotal': `Subtotal`,
     'admin.billing.table.line_items.label.total': `Total Due`,
     'admin.billing.table.line_items.emptyTableDefault.header': `No information found.`,
-    'admin.billing.table.line_items.emptyTableDefault.message': `We couldn't find any billing information on file. Only administrators of a tenant are able to review billing information.`,
-    'admin.billing.table.line_items.tooltip.download_pdf': `Download invoice PDF`,
-    'admin.billing.table.line_items.tooltip.pay_invoice': `Pay Invoice`,
-    'admin.billing.table.line_items.tooltip.invoice_paid': `Invoice Paid`,
+    'admin.billing.table.line_items.emptyTableDefault.message': `We couldn't find any billing information on file.`,
 
     'admin.billing.addPaymentMethods.stripeLoadError': `Unable to load the forms from Stripe. ${Errors['error.tryAgain']}`,
 

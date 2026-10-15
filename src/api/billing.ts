@@ -1,40 +1,8 @@
+import type { TenantBillingInvoicesQuery } from 'src/gql-types/graphql';
 import type { TenantPaymentDetails } from 'src/types';
 import type { Client } from 'urql';
 
 import { TENANT_BILLING_PAYMENT_METHODS_QUERY } from 'src/api/gql/billing';
-import { FUNCTIONS, invokeSupabase, TABLES } from 'src/services/supabase';
-import { supabaseClient } from 'src/services/supabaseClient';
-import { formatDateForApi } from 'src/utils/billing-utils';
-
-const OPERATIONS = {
-    GET_TENANT_INVOICE: 'get-tenant-invoice',
-};
-
-export interface StripeInvoice {
-    id: string;
-    amount_due: number;
-    invoice_pdf: string;
-    hosted_invoice_url: string;
-    status: 'open' | 'paid' | 'void' | 'uncollectable';
-}
-
-export const getTenantInvoice = (
-    tenant: string,
-    date_start: string,
-    date_end: string,
-    type: 'manual' | 'final'
-) => {
-    return invokeSupabase<{ invoice?: StripeInvoice | null }>(
-        FUNCTIONS.BILLING,
-        {
-            operation: OPERATIONS.GET_TENANT_INVOICE,
-            tenant,
-            date_start,
-            date_end,
-            type,
-        }
-    );
-};
 
 const getTenantPaymentMethods = async (client: Client, tenant: string) => {
     const { data, error } = await client
@@ -58,53 +26,9 @@ export interface InvoiceLineItem {
     subtotal: number;
 }
 
-export interface Invoice {
-    billed_prefix: string;
-    date_start: string; // Timestamp
-    date_end: string; // Timestamp
-    line_items: InvoiceLineItem[];
-    subtotal: number;
-    invoice_type: 'final' | 'preview' | 'manual';
-    extra?: {
-        processed_data_gb: number;
-        task_usage_hours: number;
-    };
-}
-
-const invoicesQuery = [
-    'billed_prefix',
-    'date_start',
-    'date_end',
-    'line_items',
-    'subtotal',
-    'invoice_type',
-    'extra',
-].join(', ');
-
-export const getInvoicesBetween = (
-    billed_prefix: string,
-    date_start: Date,
-    date_end: Date
-) => {
-    const formattedStart = formatDateForApi(date_start);
-    const formattedEnd = formatDateForApi(date_end);
-
-    return supabaseClient
-        .from(TABLES.INVOICES_EXT)
-        .select(invoicesQuery)
-        .filter('billed_prefix', 'eq', billed_prefix)
-        .or(
-            `invoice_type.eq.manual,and(${[
-                `date_start.gte.${formattedStart}`,
-                `date_start.lte.${formattedEnd}`,
-                `date_end.gte.${formattedStart}`,
-                `date_end.lte.${formattedEnd}`,
-            ].join(',')})`
-        )
-        .order('date_start', { ascending: false })
-        .throwOnError()
-        .returns<Invoice[]>();
-};
+export type Invoice = NonNullable<
+    TenantBillingInvoicesQuery['tenant']
+>['billing']['invoices']['edges'][number]['node'];
 
 export interface MultiplePaymentMethods {
     responses: any[];
