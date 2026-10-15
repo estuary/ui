@@ -124,7 +124,6 @@
         "readable-numbers": "^1.0.7",
         "retry": "^0.13.1",
         "safe-stable-stringify": "^2.4.3",
-        "stripe": "^12.1.1",
         "swr": "^2.2.5",
         "urql": "^5.0.0",
         "use-constant": "^1.1.1",
