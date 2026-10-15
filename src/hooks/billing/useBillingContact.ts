@@ -1,0 +1,18 @@
+import { useQuery } from 'urql';
+
+import { TENANT_BILLING_CONTACT_QUERY } from 'src/api/gql/billing';
+
+export function useBillingContact(tenant: string) {
+    // Callers remount when the tenant changes, so no earlier tenant's data
+    // is retained here.
+    const [{ data, fetching, error }] = useQuery({
+        query: TENANT_BILLING_CONTACT_QUERY,
+        variables: { tenant },
+    });
+
+    return {
+        contact: data?.tenant?.billing.contact,
+        isLoading: fetching && !data,
+        error,
+    };
+}
