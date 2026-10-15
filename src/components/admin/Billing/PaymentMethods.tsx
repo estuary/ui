@@ -59,7 +59,11 @@ const columns: (TableColumns & { header: string })[] = [
     },
 ];
 
-function PaymentMethods({ showAddPayment }: AdminBillingProps) {
+interface PaymentMethodsProps extends AdminBillingProps {
+    canEdit: boolean;
+}
+
+function PaymentMethods({ canEdit, showAddPayment }: PaymentMethodsProps) {
     const tenant = useTenantStore((state) => state.selectedTenant);
     const stripePromise = useMemo(
         () => loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY ?? ''),
@@ -93,9 +97,12 @@ function PaymentMethods({ showAddPayment }: AdminBillingProps) {
             ? undefined
             : setupData?.createBillingSetupIntent.clientSecret;
 
+    // Without EditBilling the server refuses setup intents, so skip the request.
     useEffect(() => {
-        void createSetupIntent({ tenant });
-    }, [createSetupIntent, tenant]);
+        if (canEdit) {
+            void createSetupIntent({ tenant });
+        }
+    }, [canEdit, createSetupIntent, tenant]);
 
     // Also finishes adding a payment method. Stripe may not report the new
     // method's id, which leaves only the table to refresh.
@@ -172,17 +179,19 @@ function PaymentMethods({ showAddPayment }: AdminBillingProps) {
                     </Typography>
                 </Box>
 
-                <AddPaymentMethod
-                    autoOpen={Boolean(showAddPayment)}
-                    tenant={tenant}
-                    stripePromise={stripePromise}
-                    loading={creatingSetup}
-                    setupIntentSecret={setupIntentSecret}
-                    onAdded={async (id) => {
-                        await makePrimary(id);
-                        void createSetupIntent({ tenant });
-                    }}
-                />
+                {canEdit ? (
+                    <AddPaymentMethod
+                        autoOpen={Boolean(showAddPayment)}
+                        tenant={tenant}
+                        stripePromise={stripePromise}
+                        loading={creatingSetup}
+                        setupIntentSecret={setupIntentSecret}
+                        onAdded={async (id) => {
+                            await makePrimary(id);
+                            void createSetupIntent({ tenant });
+                        }}
+                    />
+                ) : null}
             </Stack>
 
             <TableContainer>
@@ -217,6 +226,7 @@ function PaymentMethods({ showAddPayment }: AdminBillingProps) {
                         ) : methods.length > 0 ? (
                             methods.map((method) => (
                                 <PaymentMethod
+                                    canEdit={canEdit}
                                     busy={settingPrimary || deleting}
                                     pendingAction={
                                         pending?.id === method.id

@@ -183,3 +183,19 @@ const getTenantPaymentMethods = async (client: Client, tenant: string) => {
               },
           };
 };
+
+// Billing is checked against the capability bits rather than the legacy read/write/admin level, which misses ViewBilling and EditBilling granted through bundles. `none` keeps grants that carry only bits, and the `in` filter returns just the row at the tenant itself.
+export const BILLING_CAPABILITIES_QUERY = graphql(`
+    query BillingCapabilities($tenant: String!) {
+        prefixes(
+            by: { minCapability: none }
+            filter: { prefix: { in: [$tenant] } }
+        ) {
+            edges {
+                node {
+                    capabilities
+                }
+            }
+        }
+    }
+`);

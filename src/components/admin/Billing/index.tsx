@@ -21,6 +21,7 @@ import CardWrapper from 'src/components/shared/CardWrapper';
 import TenantSelector from 'src/components/shared/TenantSelector';
 import BillingHistoryTable from 'src/components/tables/Billing';
 import BillingLineItemsTable from 'src/components/tables/BillLineItems';
+import { useBillingAccess } from 'src/hooks/billing/useBillingAccess';
 import { useBillingInvoices } from 'src/hooks/billing/useBillingInvoices';
 import usePageTitle from 'src/hooks/usePageTitle';
 import { logRocketEvent } from 'src/services/shared';
@@ -59,35 +60,78 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
                 </Grid>
             </Grid>
 
-            {/* The selector picks a tenant once the user's tenants load. */}
+            {/* The selector picks a tenant once the user's tenants load. It lists only tenants with a legacy admin grant, which billing-only users lack. */}
             {selectedTenant ? (
                 // Remount per tenant so one tenant's results and errors never
                 // show for the next.
-                <ErrorBoundary
+                <BillingForTenant
                     key={selectedTenant}
-                    fallback={
-                        <AlertBox short severity="error">
-                            There was an error loading your billing information.
-                            Please try again later.
-                        </AlertBox>
-                    }
-                    onError={(error, { componentStack }) => {
-                        logRocketEvent(CustomEvents.ERROR_BOUNDARY_DISPLAYED, {
-                            area: 'Billing',
-                            message: error.message,
-                            stack: error.stack,
-                            componentStack,
-                        });
-                    }}
-                >
-                    <BillingDetails showAddPayment={showAddPayment} />
-                </ErrorBoundary>
+                    tenant={selectedTenant}
+                    showAddPayment={showAddPayment}
+                />
             ) : null}
         </>
     );
 }
 
-function BillingDetails({ showAddPayment }: AdminBillingProps) {
+function BillingForTenant({
+    tenant,
+    showAddPayment,
+}: AdminBillingProps & { tenant: string }) {
+    const access = useBillingAccess(tenant);
+
+    if (access.error) {
+        return (
+            <AlertBox short severity="error">
+                There was an error loading your billing permissions. Please try
+                again later.
+            </AlertBox>
+        );
+    }
+
+    if (access.isLoading) {
+        return null;
+    }
+
+    if (!access.canView) {
+        return (
+            <AlertBox short severity="warning">
+                You don&apos;t have permission to view billing for {tenant}.
+            </AlertBox>
+        );
+    }
+
+    return (
+        <ErrorBoundary
+            fallback={
+                <AlertBox short severity="error">
+                    There was an error loading your billing information. Please
+                    try again later.
+                </AlertBox>
+            }
+            onError={(error, { componentStack }) => {
+                logRocketEvent(CustomEvents.ERROR_BOUNDARY_DISPLAYED, {
+                    area: 'Billing',
+                    message: error.message,
+                    stack: error.stack,
+                    componentStack,
+                });
+            }}
+        >
+            <BillingDetails
+                canEdit={access.canEdit}
+                showAddPayment={showAddPayment}
+            />
+        </ErrorBoundary>
+    );
+}
+
+// Mounted only once the user can view the selected tenant's billing, so none
+// of these queries run without access.
+function BillingDetails({
+    canEdit,
+    showAddPayment,
+}: AdminBillingProps & { canEdit: boolean }) {
     const history = useBillingInvoices({
         pageSize: BILLING_HISTORY_PAGE_SIZE,
         withStripe: true,
@@ -163,7 +207,10 @@ function BillingDetails({ showAddPayment }: AdminBillingProps) {
             </Grid>
 
             <Grid size={{ xs: 12 }}>
-                <PaymentMethods showAddPayment={showAddPayment} />
+                <PaymentMethods
+                    canEdit={canEdit}
+                    showAddPayment={showAddPayment}
+                />
             </Grid>
         </Grid>
     );
