@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import type { CapabilityBit } from 'src/gql-types/graphql';
 
 import {
     act,
@@ -6,6 +7,7 @@ import {
     fireEvent,
     render,
     screen,
+    waitFor,
 } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, expect, test, vi } from 'vitest';
@@ -93,10 +95,51 @@ const wrapper = ({ children }: { children: ReactNode }) => (
 const link = (name: string) =>
     screen.getByRole('link', { name }).getAttribute('href');
 
+// Each GraphQL operation the page sent, with its tenant.
+let operations: string[];
+server.events.on('request:start', ({ request }) => {
+    void request
+        .clone()
+        .json()
+        .then(({ operationName, variables }) =>
+            operations.push(`${operationName} ${variables.tenant}`)
+        );
+});
+const billingReads = () =>
+    operations.filter((name) => !name.startsWith('BillingCapabilities '));
+
+// The server returns the row at the requested tenant, if a grant lands there.
+const capabilities = (bits?: CapabilityBit[]) => ({
+    prefixes: {
+        __typename: 'PrefixRefConnection',
+        edges: bits
+            ? [
+                  {
+                      __typename: 'PrefixRefEdge',
+                      node: { __typename: 'PrefixRef', capabilities: bits },
+                  },
+              ]
+            : [],
+    },
+});
+
+const grant = (grants: Record<string, CapabilityBit[]>) =>
+    server.use(
+        billingGraphql.query('BillingCapabilities', ({ variables }) =>
+            HttpResponse.json({ data: capabilities(grants[variables.tenant]) })
+        )
+    );
+
 beforeEach(() => {
     dropFetchSignals();
+    operations = [];
     useTenantStore.setState({ selectedTenant: 'acme/' });
     server.use(
+        billingGraphql.query('BillingCapabilities', () =>
+            HttpResponse.json({
+                data: capabilities(['ViewBilling', 'EditBilling']),
+            })
+        ),
         billingGraphql.query('TenantBillingInvoices', () =>
             HttpResponse.json({ data: invoicesData() })
         ),
@@ -235,4 +278,79 @@ test.each([
         /There was an error loading your billing information/
     );
     expect(screen.queryByText('Recent History')).toBeNull();
+});
+
+test('reads no billing data until access loads', async () => {
+    let requested = false;
+    let release!: () => void;
+    const pending = new Promise<void>((resolve) => {
+        release = resolve;
+    });
+    server.use(
+        billingGraphql.query('BillingCapabilities', async () => {
+            requested = true;
+            await pending;
+            return HttpResponse.json({
+                data: capabilities(['ViewBilling']),
+            });
+        })
+    );
+    render(<AdminBilling />, { wrapper });
+
+    expect(screen.queryByText('Payment Information')).toBeNull();
+    await waitFor(() => expect(requested).toBe(true));
+    expect(billingReads()).toEqual([]);
+
+    release();
+    await screen.findByText('Acme card');
+});
+
+test.each([
+    {
+        state: 'a permission error',
+        body: { errors: [{ message: 'Capabilities unavailable' }] },
+        message:
+            'There was an error loading your billing permissions. Please try again later.',
+    },
+    {
+        state: 'EditBilling but not ViewBilling',
+        body: { data: capabilities(['EditBilling']) },
+        message: "You don't have permission to view billing for acme/.",
+    },
+])('reads no billing data with $state', async ({ body, message }) => {
+    server.use(
+        billingGraphql.query('BillingCapabilities', () =>
+            HttpResponse.json(body)
+        )
+    );
+    render(<AdminBilling />, { wrapper });
+
+    await screen.findByText(message);
+    expect(billingReads()).toEqual([]);
+});
+
+test('hides edit actions on switching to a view-only tenant', async () => {
+    grant({
+        'acme/': ['ViewBilling', 'EditBilling'],
+        'viewer/': ['ViewBilling'],
+    });
+    render(<AdminBilling showAddPayment />, { wrapper });
+
+    // Editors get the add-payment form from the route, and every action.
+    await screen.findByRole('dialog');
+    await screen.findByText('Acme card');
+    const actions = ['Add Payment Method', 'Delete', 'Make Primary'];
+    actions.forEach((name) =>
+        expect(screen.getByRole('button', { name })).toBeTruthy()
+    );
+
+    // Viewers on the same route get no actions, setup or form.
+    act(() => useTenantStore.setState({ selectedTenant: 'viewer/' }));
+
+    await screen.findByRole('row', { name: /Acme card/ });
+    actions.forEach((name) =>
+        expect(screen.queryByRole('button', { name })).toBeNull()
+    );
+    expect(screen.queryByRole('dialog')).toBeNull();
+    expect(operations).not.toContain('CreateBillingSetupIntent viewer/');
 });

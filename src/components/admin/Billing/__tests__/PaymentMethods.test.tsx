@@ -86,6 +86,7 @@ const view = (showAddPayment = false) => (
         </div>
         <PaymentMethods
             key={tenant.selectedTenant}
+            canEdit
             showAddPayment={showAddPayment}
         />
     </>

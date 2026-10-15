@@ -22,6 +22,7 @@ import CardWrapper from 'src/components/shared/CardWrapper';
 import TenantSelector from 'src/components/shared/TenantSelector';
 import BillingHistoryTable from 'src/components/tables/Billing';
 import BillingLineItemsTable from 'src/components/tables/BillLineItems';
+import { useBillingAccess } from 'src/hooks/billing/useBillingAccess';
 import { useBillingInvoices } from 'src/hooks/billing/useBillingInvoices';
 import usePageTitle from 'src/hooks/usePageTitle';
 import { logRocketEvent } from 'src/services/shared';
@@ -42,6 +43,16 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
     });
 
     const selectedTenant = useTenantStore((state) => state.selectedTenant);
+    const access = useBillingAccess(selectedTenant);
+    // The selector picks a tenant once the user's tenants load. It lists only
+    // tenants with a legacy admin grant, which billing-only users lack.
+    const status = access.error
+        ? 'error'
+        : !selectedTenant || access.isLoading
+          ? 'loading'
+          : access.canView
+            ? 'granted'
+            : 'denied';
 
     return (
         <>
@@ -54,7 +65,9 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
                     </Typography>
 
                     {/* Remount per tenant, like the details below. */}
-                    <PricingTierDetails key={selectedTenant} />
+                    {status === 'granted' ? (
+                        <PricingTierDetails key={selectedTenant} />
+                    ) : null}
                 </Grid>
 
                 <Grid
@@ -65,8 +78,7 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
                 </Grid>
             </Grid>
 
-            {/* The selector picks a tenant once the user's tenants load. */}
-            {selectedTenant ? (
+            {status === 'granted' ? (
                 // Remount per tenant so one tenant's results and errors never
                 // show for the next.
                 <ErrorBoundary
@@ -86,14 +98,32 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
                         );
                     }}
                 >
-                    <BillingDetails showAddPayment={showAddPayment} />
+                    <BillingDetails
+                        canEdit={access.canEdit}
+                        showAddPayment={showAddPayment}
+                    />
                 </ErrorBoundary>
+            ) : status === 'error' ? (
+                <AlertBox short severity="error">
+                    There was an error loading your billing permissions. Please
+                    try again later.
+                </AlertBox>
+            ) : status === 'denied' ? (
+                <AlertBox short severity="warning">
+                    You don&apos;t have permission to view billing for{' '}
+                    {selectedTenant}.
+                </AlertBox>
             ) : null}
         </>
     );
 }
 
-function BillingDetails({ showAddPayment }: AdminBillingProps) {
+// Mounted only once the user can view the selected tenant's billing, so none
+// of these queries run without access.
+function BillingDetails({
+    canEdit,
+    showAddPayment,
+}: AdminBillingProps & { canEdit: boolean }) {
     const history = useBillingInvoices({
         pageSize: BILLING_HISTORY_PAGE_SIZE,
         withStripe: true,
@@ -169,7 +199,10 @@ function BillingDetails({ showAddPayment }: AdminBillingProps) {
             </Grid>
 
             <Grid size={{ xs: 12 }}>
-                <PaymentMethods showAddPayment={showAddPayment} />
+                <PaymentMethods
+                    canEdit={canEdit}
+                    showAddPayment={showAddPayment}
+                />
             </Grid>
         </Grid>
     );
