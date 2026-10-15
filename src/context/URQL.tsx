@@ -1,5 +1,9 @@
 import type { Cache } from '@urql/exchange-graphcache';
-import type { QueryRoot } from 'src/gql-types/graphql';
+import type {
+    DeleteBillingPaymentMethodMutation,
+    QueryRoot,
+    SetBillingPaymentMethodMutation,
+} from 'src/gql-types/graphql';
 import type { BaseComponentProps } from 'src/types';
 
 import { useMemo } from 'react';
@@ -8,6 +12,7 @@ import { cacheExchange } from '@urql/exchange-graphcache';
 import { requestPolicyExchange } from '@urql/exchange-request-policy';
 import { Client, fetchExchange, Provider } from 'urql';
 
+import { TENANT_BILLING_PAYMENT_METHODS_QUERY } from 'src/api/gql/billing';
 import { authedFetch } from 'src/services/gql';
 import { getGqlUrl } from 'src/utils/env-utils';
 
@@ -19,6 +24,34 @@ function invalidateQuery(
         .inspectFields('Query')
         .filter((f) => f.fieldName === queryName)
         .forEach((f) => cache.invalidate('Query', f.fieldName, f.arguments));
+}
+
+function updateBillingPaymentMethods(
+    cache: Cache,
+    tenant: string,
+    billing: SetBillingPaymentMethodMutation['setBillingPaymentMethod']
+) {
+    cache.updateQuery(
+        {
+            query: TENANT_BILLING_PAYMENT_METHODS_QUERY,
+            variables: { tenant },
+        },
+        (data) =>
+            data?.tenant
+                ? {
+                      ...data,
+                      tenant: {
+                          ...data.tenant,
+                          billing: {
+                              ...data.tenant.billing,
+                              primaryPaymentMethod:
+                                  billing.primaryPaymentMethod,
+                              paymentMethods: billing.paymentMethods,
+                          },
+                      },
+                  }
+                : data
+    );
 }
 
 function UrqlConfigProvider({ children }: BaseComponentProps) {
@@ -45,6 +78,17 @@ function UrqlConfigProvider({ children }: BaseComponentProps) {
                     //         alerts: relayPagination(),
                     //     },
                     // },
+                    resolvers: {
+                        Query: {
+                            // A failed billing read caches `tenant: null`
+                            // without its error. Treat it as uncached, so
+                            // returning to the tenant reads it again instead
+                            // of showing empty billing data.
+                            tenant: (_parent, args, cache) =>
+                                cache.resolve('Query', 'tenant', args) ??
+                                undefined,
+                        },
+                    },
                     // Migration: replace these null keys with real keys — `id`
                     // where the schema has one, otherwise a natural key
                     // (catalogPrefix, token, catalogName, ...). A null key
@@ -73,6 +117,13 @@ function UrqlConfigProvider({ children }: BaseComponentProps) {
                         CatalogTaskStats: (_data) => null,
                         CaptureBindingStats: (_data) => null,
                         MaterializeBindingStats: (_data) => null,
+                        Tenant: (_data) => null,
+                        TenantBilling: (_data) => null,
+                        PaymentMethodBillingDetails: (_data) => null,
+                        CardPaymentMethodDetails: (_data) => null,
+                        UsBankAccountPaymentMethodDetails: (_data) => null,
+                        BillingPaymentMethodPayload: (_data) => null,
+                        CreateBillingSetupIntentPayload: (_data) => null,
                     },
                     // Normalization only merges update results into entities
                     // already in the cache. Creates and deletes need updaters
@@ -80,6 +131,23 @@ function UrqlConfigProvider({ children }: BaseComponentProps) {
                     // deleted one is not evicted on its own.
                     updates: {
                         Mutation: {
+                            setBillingPaymentMethod(result, args, cache) {
+                                updateBillingPaymentMethods(
+                                    cache,
+                                    args.tenant as string,
+                                    (result as SetBillingPaymentMethodMutation)
+                                        .setBillingPaymentMethod
+                                );
+                            },
+                            deleteBillingPaymentMethod(result, args, cache) {
+                                updateBillingPaymentMethods(
+                                    cache,
+                                    args.tenant as string,
+                                    (
+                                        result as DeleteBillingPaymentMethodMutation
+                                    ).deleteBillingPaymentMethod
+                                );
+                            },
                             createInviteLink(_result, _args, cache) {
                                 invalidateQuery(cache, 'inviteLinks');
                             },

@@ -2,10 +2,8 @@ import { useMemo } from 'react';
 
 import { Skeleton, Typography } from '@mui/material';
 
-import { FormattedMessage } from 'react-intl';
-
 import { useTenantUsesExternalPayment } from 'src/context/fetcher/TenantBillingDetails';
-import { useBillingStore } from 'src/stores/Billing';
+import { useBillingPaymentMethods } from 'src/hooks/billing/useBillingPaymentMethods';
 import { useTenantStore } from 'src/stores/Tenant';
 
 function PricingTierDetails() {
@@ -13,45 +11,43 @@ function PricingTierDetails() {
     const [externalPaymentMethod, marketPlaceProvider] =
         useTenantUsesExternalPayment(selectedTenant);
 
-    const billingStoreHydrated = useBillingStore((state) => state.hydrated);
-    const paymentMethodExists = useBillingStore(
-        (state) => state.paymentMethodExists
+    const { billing, isLoading, error } = useBillingPaymentMethods(
+        externalPaymentMethod ? '' : selectedTenant
     );
+    const paymentMethodExists = Boolean(billing?.paymentMethods.length);
 
-    const messageId = useMemo(() => {
+    const message = useMemo(() => {
         if (externalPaymentMethod) {
             if (marketPlaceProvider === 'gcp') {
-                return 'admin.billing.message.external.gcp';
+                return 'GCP Marketplace';
             }
 
             if (marketPlaceProvider === 'aws') {
-                return 'admin.billing.message.external.aws';
+                return 'AWS Marketplace';
             }
 
-            return 'admin.billing.message.external';
+            return ' ';
         }
 
         if (paymentMethodExists) {
-            return 'admin.billing.message.paidTier';
+            return 'Cloud tier';
         }
 
-        return 'admin.billing.message.freeTier';
+        return 'The free tier lets you try Estuary with up to 2 tasks and 10GB per month without entering a credit card. Usage beyond these limits automatically starts a 30 day free trial.';
     }, [externalPaymentMethod, marketPlaceProvider, paymentMethodExists]);
 
-    if (!billingStoreHydrated || typeof paymentMethodExists !== 'boolean') {
+    if (!externalPaymentMethod && error) {
+        return <Typography>Pricing information unavailable.</Typography>;
+    }
+
+    if (!externalPaymentMethod && isLoading) {
         return (
             <Skeleton>
-                <Typography>
-                    <FormattedMessage id={messageId} />
-                </Typography>
+                <Typography>{message}</Typography>
             </Skeleton>
         );
     } else {
-        return (
-            <Typography>
-                <FormattedMessage id={messageId} />
-            </Typography>
-        );
+        return <Typography>{message}</Typography>;
     }
 }
 

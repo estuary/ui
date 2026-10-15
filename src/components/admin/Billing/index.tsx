@@ -61,7 +61,8 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
                         {'Billing'}
                     </Typography>
 
-                    <PricingTierDetails />
+                    {/* Remount per tenant, like the details below. */}
+                    <PricingTierDetails key={selectedTenant} />
                 </Grid>
 
                 <Grid
