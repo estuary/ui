@@ -1,28 +1,23 @@
 import { useState } from 'react';
 
-import { logRocketEvent } from 'src/services/shared';
-
-// TODO: use React Context to pass component name instead of an argument
-export function useCopyToClipboard(componentName: string) {
+export function useCopyToClipboard() {
     const [isCopied, setIsCopied] = useState(false);
 
     const handleCopy = (value: string | null) => {
-        if (value) {
-            navigator.clipboard.writeText(value).then(
-                () => {
-                    setIsCopied(true);
-                    setTimeout(() => setIsCopied(false), 3000);
-                },
-                () => {
-                    setIsCopied(false);
-                    logRocketEvent('Error_Silent', {
-                        copiedValue: value,
-                        component: componentName,
-                    });
-                }
-            );
+        if (!value) {
+            return;
         }
+
+        void navigator.clipboard
+            .writeText(value)
+            .then(() => {
+                setIsCopied(true);
+                setTimeout(() => setIsCopied(false), 3000);
+            })
+            .catch(() => {
+                // Clipboard writes can fail when permission is denied.
+            });
     };
 
-    return { isCopied, setIsCopied, handleCopy };
+    return { isCopied, handleCopy };
 }

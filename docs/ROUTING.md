@@ -40,6 +40,8 @@ navigate(authenticatedRoutes.captures.create.fullPath);
 /materializations/...      same shape as captures
 
 /admin/...                 admin pages (access grants, billing, etc.)
+/admin/api                 legacy redirect to /settings/personalTokens
+/settings/personalTokens   personal tokens
 /beta/...                  beta features (may be phased out)
 ```
 

@@ -4,7 +4,7 @@ import SingleLineCode from 'src/components/content/SingleLineCode';
 import ExternalLink from 'src/components/shared/ExternalLink';
 import { useUserStore } from 'src/context/User/useUserContextStore';
 
-function AccessToken() {
+export function AccessToken() {
     const session = useUserStore((state) => state.session);
 
     return (
@@ -28,10 +28,7 @@ function AccessToken() {
                 Access tokens enable authentication using flowctl.
             </Typography>
 
-            {/* TODO (defect): Display an error in the event the access token does not exist. */}
             <SingleLineCode value={session?.access_token ?? ''} />
         </Box>
     );
 }
-
-export default AccessToken;
