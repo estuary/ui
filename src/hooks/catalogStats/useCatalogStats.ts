@@ -91,7 +91,9 @@ function getCleanCatalogNames(catalogNames: string | string[]) {
     const names: string[] = Array.isArray(catalogNames)
         ? catalogNames
         : [catalogNames];
-    return names.filter(Boolean);
+
+    // dedupe and remove empty/falsey names
+    return [...new Set(names.filter(Boolean))];
 }
 
 function convertDateRange(range: DataByHourRange) {
