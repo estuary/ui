@@ -144,8 +144,6 @@ export const CommonMessages: Record<string, string> = {
     'status.error.low': `Low`,
     'status.error.medium': `Medium`,
 
-    // Leaves autocomplete validation
-
     'defaults.tenant': `acmeCo`,
     'defaults.schema': `anvils`,
     'defaults.table': `orders`,
