@@ -17,6 +17,7 @@ const cardLogos: Record<string, string> = {
 };
 
 export interface PaymentMethodProps {
+    canEdit: boolean;
     method: BillingPaymentMethodFieldsFragment;
     onDelete(): void;
     onPrimary(): void;
@@ -24,6 +25,7 @@ export interface PaymentMethodProps {
 }
 
 export const PaymentMethod = ({
+    canEdit,
     method: { type, billingDetails, card, usBankAccount },
     onDelete,
     onPrimary,
@@ -63,13 +65,21 @@ export const PaymentMethod = ({
             </TableCell>
             <TableCell>{primary ? <Check /> : ''}</TableCell>
             <TableCell>
-                <Button size="small" variant="text" onClick={onDelete}>
-                    Delete
-                </Button>
-                {!primary ? (
-                    <Button size="small" variant="text" onClick={onPrimary}>
-                        Make Primary
-                    </Button>
+                {canEdit ? (
+                    <>
+                        <Button size="small" variant="text" onClick={onDelete}>
+                            Delete
+                        </Button>
+                        {!primary ? (
+                            <Button
+                                size="small"
+                                variant="text"
+                                onClick={onPrimary}
+                            >
+                                Make Primary
+                            </Button>
+                        ) : null}
+                    </>
                 ) : null}
             </TableCell>
         </TableRow>

@@ -6,6 +6,7 @@ import {
     render,
     screen,
     waitFor,
+    within,
 } from '@testing-library/react';
 import { IntlProvider } from 'react-intl';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
@@ -15,9 +16,14 @@ import PricingTierDetails from 'src/components/admin/Billing/PricingTierDetails'
 import UrqlConfigProvider from 'src/context/URQL';
 import { fireGtmEvent } from 'src/services/gtm';
 import {
+    austin,
     billing,
     billingGraphql,
+    completeContact,
+    contactData,
     dropFetchSignals,
+    handleContactSaves,
+    incompleteContact,
     paymentMethod,
     paymentMethodsData,
     setupIntent,
@@ -25,7 +31,11 @@ import {
 import { HttpResponse, server } from 'src/test/server/test-server';
 
 const tenant = vi.hoisted(() => ({ selectedTenant: 'acme/' }));
-const stripe = vi.hoisted(() => ({ confirmSetup: vi.fn(), update: vi.fn() }));
+const stripe = vi.hoisted(() => ({
+    confirmSetup: vi.fn(),
+    update: vi.fn(),
+    getValue: vi.fn(),
+}));
 vi.mock('src/stores/Tenant', () => ({
     useTenantStore: (selector: (state: typeof tenant) => unknown) =>
         selector(tenant),
@@ -54,7 +64,11 @@ vi.mock('@stripe/react-stripe-js', () => ({
     PaymentElement: () => null,
     useStripe: () => stripe,
     useElements: () => ({
-        getElement: () => ({ update: stripe.update, on: vi.fn() }),
+        getElement: () => ({
+            update: stripe.update,
+            on: vi.fn(),
+            getValue: stripe.getValue,
+        }),
     }),
 }));
 
@@ -86,6 +100,7 @@ const view = (showAddPayment = false) => (
         </div>
         <PaymentMethods
             key={tenant.selectedTenant}
+            canEdit
             showAddPayment={showAddPayment}
         />
     </>
@@ -105,6 +120,9 @@ beforeEach(() => {
     server.use(
         billingGraphql.query('TenantBillingPaymentMethods', () =>
             HttpResponse.json({ data: paymentMethodsData() })
+        ),
+        billingGraphql.query('TenantBillingContact', () =>
+            HttpResponse.json({ data: contactData(completeContact) })
         ),
         billingGraphql.mutation('CreateBillingSetupIntent', () =>
             setupIntent()
@@ -288,5 +306,88 @@ describe('billing payments', () => {
 
         await screen.findByText('Pricing information unavailable.');
         expect(failedReads).toBe(2);
+    });
+});
+
+describe('billing contact', () => {
+    // The payment method is billed to the address entered in Stripe's form.
+    const billedToAustin = {
+        name: 'Acme Texas',
+        email: 'billing@acme.co',
+        address: { ...austin.value.address, line2: '' },
+    };
+    const billingDetails = () =>
+        stripe.confirmSetup.mock.calls[0][0].confirmParams.payment_method_data
+            .billing_details;
+
+    beforeEach(() => {
+        stripe.getValue.mockResolvedValue(austin);
+    });
+
+    test('is finished before adding a payment method and bills it', async () => {
+        server.use(
+            billingGraphql.query('TenantBillingContact', () =>
+                HttpResponse.json({ data: contactData(incompleteContact) })
+            )
+        );
+        handleContactSaves();
+        render(<PaymentMethods canEdit />, { wrapper });
+        await addPaymentMethodEnabled();
+        fireEvent.click(
+            screen.getByRole('button', { name: 'Add Payment Method' })
+        );
+
+        const contactDialog = await screen.findByRole('dialog');
+        expect(within(contactDialog).getByText('Billing contact')).toBeTruthy();
+        fireEvent.click(
+            within(contactDialog).getByRole('button', {
+                name: 'Save and continue',
+            })
+        );
+
+        await screen.findByText('Add a payment method');
+        fireEvent.click(screen.getByRole('button', { name: 'Submit' }));
+        await waitFor(() =>
+            expect(stripe.confirmSetup).toHaveBeenCalledTimes(1)
+        );
+        expect(billingDetails()).toEqual(billedToAustin);
+        // Only the contact dialog read the address form. The payment form
+        // billed the saved contact.
+        expect(stripe.getValue).toHaveBeenCalledTimes(1);
+    });
+
+    test('can be replaced by a different address for one payment method', async () => {
+        render(<PaymentMethods canEdit />, { wrapper });
+        await addPaymentMethodEnabled();
+        fireEvent.click(
+            screen.getByRole('button', { name: 'Add Payment Method' })
+        );
+
+        const dialog = await screen.findByRole('dialog');
+        fireEvent.click(
+            within(dialog).getByRole('checkbox', {
+                name: 'Use a different billing address',
+            })
+        );
+        fireEvent.click(within(dialog).getByRole('button', { name: 'Submit' }));
+
+        await waitFor(() =>
+            expect(stripe.confirmSetup).toHaveBeenCalledTimes(1)
+        );
+        expect(billingDetails()).toEqual(billedToAustin);
+    });
+
+    test('is asked for first by the add-payment route', async () => {
+        server.use(
+            billingGraphql.query('TenantBillingContact', () =>
+                HttpResponse.json({ data: contactData(incompleteContact) })
+            )
+        );
+        render(<PaymentMethods canEdit showAddPayment />, { wrapper });
+
+        const dialog = await screen.findByRole('dialog');
+        expect(
+            within(dialog).getByRole('button', { name: 'Save and continue' })
+        ).toBeTruthy();
     });
 });

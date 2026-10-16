@@ -1,7 +1,7 @@
 import type { AdminBillingProps } from 'src/components/admin/Billing/types';
 import type { TableColumns } from 'src/types';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import {
     Box,
@@ -15,7 +15,6 @@ import {
     Typography,
 } from '@mui/material';
 
-import { loadStripe } from '@stripe/stripe-js';
 import { useMutation } from 'urql';
 
 import {
@@ -63,12 +62,12 @@ const columns: (TableColumns & { header: string })[] = [
     },
 ];
 
-function PaymentMethods({ showAddPayment }: AdminBillingProps) {
+interface PaymentMethodsProps extends AdminBillingProps {
+    canEdit: boolean;
+}
+
+function PaymentMethods({ canEdit, showAddPayment }: PaymentMethodsProps) {
     const tenant = useTenantStore((state) => state.selectedTenant);
-    const stripePromise = useMemo(
-        () => loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY ?? ''),
-        []
-    );
     const {
         billing,
         isLoading,
@@ -86,20 +85,23 @@ function PaymentMethods({ showAddPayment }: AdminBillingProps) {
     const methods = billing?.paymentMethods ?? [];
     const primaryId = billing?.primaryPaymentMethod?.id;
 
+    // Viewers cannot create setup intents, so skip the request.
     useEffect(() => {
         let current = true;
-        void createSetupIntent({ tenant }).then((result) => {
-            if (current) {
-                setSetupIntentSecret(
-                    result.data?.createBillingSetupIntent.clientSecret ??
-                        INTENT_SECRET_ERROR
-                );
-            }
-        });
+        if (canEdit) {
+            void createSetupIntent({ tenant }).then((result) => {
+                if (current) {
+                    setSetupIntentSecret(
+                        result.data?.createBillingSetupIntent.clientSecret ??
+                            INTENT_SECRET_ERROR
+                    );
+                }
+            });
+        }
         return () => {
             current = false;
         };
-    }, [createSetupIntent, tenant, refreshCounter]);
+    }, [canEdit, createSetupIntent, tenant, refreshCounter]);
 
     const refreshSetup = () => {
         setRefreshCounter((value) => value + 1);
@@ -178,13 +180,14 @@ function PaymentMethods({ showAddPayment }: AdminBillingProps) {
                     </Typography>
                 </Box>
 
-                <AddPaymentMethod
-                    autoOpen={Boolean(showAddPayment)}
-                    tenant={tenant}
-                    stripePromise={stripePromise}
-                    setupIntentSecret={setupIntentSecret}
-                    onAdded={makePrimary}
-                />
+                {canEdit ? (
+                    <AddPaymentMethod
+                        autoOpen={Boolean(showAddPayment)}
+                        tenant={tenant}
+                        setupIntentSecret={setupIntentSecret}
+                        onAdded={makePrimary}
+                    />
+                ) : null}
             </Stack>
 
             <TableContainer>
@@ -219,6 +222,7 @@ function PaymentMethods({ showAddPayment }: AdminBillingProps) {
                         ) : methods.length > 0 ? (
                             methods.map((method) => (
                                 <PaymentMethod
+                                    canEdit={canEdit}
                                     onDelete={() => void remove(method.id)}
                                     onPrimary={() =>
                                         void makePrimary(method.id)
