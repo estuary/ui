@@ -21,7 +21,7 @@ function invalidateQuery(
         .forEach((f) => cache.invalidate('Query', f.fieldName, f.arguments));
 }
 
-function UrqlConfigProvider({ children }: BaseComponentProps) {
+export function UrqlConfigProvider({ children }: BaseComponentProps) {
     const gqlClient = useMemo(() => {
         return new Client({
             url: getGqlUrl(),
@@ -121,5 +121,3 @@ function UrqlConfigProvider({ children }: BaseComponentProps) {
 
     return <Provider value={gqlClient}>{children}</Provider>;
 }
-
-export default UrqlConfigProvider;

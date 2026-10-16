@@ -9,7 +9,7 @@ const { getSession } = vi.hoisted(() => ({ getSession: vi.fn() }));
 // rather than a string makes TypeScript check the path, so moving or deleting
 // that module fails type checking here instead of silently leaving the real
 // client in place.
-vi.mock(import('src/context/GlobalProviders'), () => ({
+vi.mock(import('src/services/supabaseClient'), () => ({
     supabaseClient: { auth: { getSession } } as never,
 }));
 

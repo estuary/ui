@@ -5,8 +5,8 @@ import { useMemo } from 'react';
 
 import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
 
-import { supabaseClient } from 'src/context/GlobalProviders';
 import { TABLES } from 'src/services/supabase';
+import { supabaseClient } from 'src/services/supabaseClient';
 
 // TODO: Consider consolidating query interface instances.
 export interface LiveSpecsExtQuery {

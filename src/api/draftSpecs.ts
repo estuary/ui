@@ -12,7 +12,6 @@ import type { Entity } from 'src/types';
 
 import pLimit from 'p-limit';
 
-import { supabaseClient } from 'src/context/GlobalProviders';
 import {
     DEFAULT_PAGING_SIZE,
     handleFailure,
@@ -25,6 +24,7 @@ import {
     TABLES,
     updateSupabase,
 } from 'src/services/supabase';
+import { supabaseClient } from 'src/services/supabaseClient';
 import { CHUNK_SIZE } from 'src/utils/misc-utils';
 
 export const createDraftSpec = (

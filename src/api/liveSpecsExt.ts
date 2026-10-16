@@ -14,7 +14,6 @@ import { DateTime } from 'luxon';
 import pLimit from 'p-limit';
 
 import { CONNECTOR_IMAGE, CONNECTOR_TITLE } from 'src/api/shared';
-import { supabaseClient } from 'src/context/GlobalProviders';
 import {
     defaultTableFilter,
     handleFailure,
@@ -26,6 +25,7 @@ import {
     supabaseRetry,
     TABLES,
 } from 'src/services/supabase';
+import { supabaseClient } from 'src/services/supabaseClient';
 import { CHUNK_SIZE, DEMO_TENANT } from 'src/utils/misc-utils';
 import { getCountSettings } from 'src/utils/table-utils';
 

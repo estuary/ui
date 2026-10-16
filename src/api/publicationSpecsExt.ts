@@ -1,8 +1,8 @@
 import type { PostgrestResponse } from '@supabase/postgrest-js';
 import type { Schema } from 'src/types';
 
-import { supabaseClient } from 'src/context/GlobalProviders';
 import { supabaseRetry, TABLES } from 'src/services/supabase';
+import { supabaseClient } from 'src/services/supabaseClient';
 
 export interface PublicationSpecsExt_PublicationHistory {
     live_spec_id: string;

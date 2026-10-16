@@ -27,10 +27,10 @@ import Logo from 'src/components/navigation/Logo';
 import { OnboardingSurvey } from 'src/components/onboarding/Survey';
 import AlertBox from 'src/components/shared/AlertBox';
 import ExternalLink from 'src/components/shared/ExternalLink';
-import { supabaseClient } from 'src/context/GlobalProviders';
 import { useUserInfoSummaryStore } from 'src/context/UserInfoSummary/useUserInfoSummaryStore';
 import { fireGtmEvent } from 'src/services/gtm';
 import { logRocketEvent } from 'src/services/shared';
+import { supabaseClient } from 'src/services/supabaseClient';
 import { CustomEvents } from 'src/services/types';
 import { getUrls } from 'src/utils/env-utils';
 
