@@ -22,7 +22,7 @@ import AlertBox from 'src/components/shared/AlertBox';
 import { CatalogIdentityEditor } from 'src/components/shared/CatalogIdentity';
 import { CatalogPath } from 'src/components/shared/CatalogPath';
 import DialogTitleWithClose from 'src/components/shared/Dialog/TitleWithClose';
-import { defaultOutline } from 'src/context/Theme';
+import { codeBackground, defaultOutline } from 'src/context/Theme';
 import { generateAlliterativeName } from 'src/utils/alliterate';
 import { hasLength } from 'src/utils/misc-utils';
 
@@ -134,7 +134,8 @@ export function CreateServiceAccountDialog({
                             px: 2,
                             py: 1.5,
                             borderRadius: (theme) => theme.radius.md,
-                            bgcolor: (theme) => theme.palette.background.code,
+                            bgcolor: (theme) =>
+                                codeBackground[theme.palette.mode],
                         }}
                     >
                         <CatalogIdentityEditor

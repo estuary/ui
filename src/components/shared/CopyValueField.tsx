@@ -12,11 +12,7 @@ import { useCopyToClipboard } from 'src/hooks/useCopyToClipboard';
 interface CopyValueFieldProps {
     label: string;
     value: string | null;
-    /** Renders the value as plain text with no copy affordance. */
-    showCopyButton?: boolean;
-    /** Called once the value has actually reached the clipboard. */
     onCopied?: () => void;
-    /** Merged onto the monospace value text. */
     valueSx?: SystemStyleObject<Theme>;
 }
 
@@ -24,12 +20,10 @@ interface CopyValueFieldProps {
  * A labeled read-only value that copies itself: the whole field is the click
  * target, the copy icon fades in on hover, and a check confirms the copy in
  * place. Suits dense detail views where a button per value would be noise.
- * For a prominent standalone copy action, see `CopyValueButton`.
  */
 export function CopyValueField({
     label,
     value,
-    showCopyButton = true,
     onCopied,
     valueSx,
 }: CopyValueFieldProps) {
@@ -38,25 +32,20 @@ export function CopyValueField({
     const [isFocused, setIsFocused] = useState(false);
 
     const copyValue = () => {
-        void handleCopy(value)?.then((copied) => {
-            if (copied) {
-                onCopied?.();
-            }
-        });
+        handleCopy(value);
+        onCopied?.();
     };
 
     return (
         <Stack
-            component={showCopyButton ? 'button' : 'div'}
-            type={showCopyButton ? 'button' : undefined}
-            aria-label={showCopyButton ? `Copy ${label}` : undefined}
-            onClick={showCopyButton ? copyValue : undefined}
-            onFocus={showCopyButton ? () => setIsFocused(true) : undefined}
-            onBlur={showCopyButton ? () => setIsFocused(false) : undefined}
-            onMouseEnter={showCopyButton ? () => setIsHovered(true) : undefined}
-            onMouseLeave={
-                showCopyButton ? () => setIsHovered(false) : undefined
-            }
+            component="button"
+            type="button"
+            aria-label={`Copy ${label}`}
+            onClick={copyValue}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
             sx={{
                 'width': '100%',
                 'minWidth': 0,
@@ -67,7 +56,7 @@ export function CopyValueField({
                 'color': 'inherit',
                 'font': 'inherit',
                 'textAlign': 'left',
-                'cursor': showCopyButton && value ? 'pointer' : 'default',
+                'cursor': value ? 'pointer' : 'default',
                 '&:focus-visible': {
                     outline: '2px solid',
                     outlineColor: 'primary.main',
@@ -78,37 +67,31 @@ export function CopyValueField({
             <Typography variant="subtitle2" fontWeight={600} gutterBottom>
                 {label}
             </Typography>
-            {showCopyButton ? (
-                <Stack
-                    direction="row"
-                    alignItems="center"
-                    spacing={1}
-                    sx={{ 'minWidth': 0, '& > :last-child': { flexShrink: 0 } }}
+            <Stack
+                direction="row"
+                alignItems="center"
+                spacing={1}
+                sx={{ 'minWidth': 0, '& > :last-child': { flexShrink: 0 } }}
+            >
+                <TechnicalEmphasis
+                    sx={{
+                        color: 'text.secondary',
+                        fontSize: 12,
+                        lineHeight: 1,
+                        ...valueSx,
+                        minWidth: 0,
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap',
+                    }}
                 >
-                    <TechnicalEmphasis
-                        sx={{
-                            color: 'text.secondary',
-                            fontSize: 12,
-                            lineHeight: 1,
-                            ...valueSx,
-                            minWidth: 0,
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis',
-                            whiteSpace: 'nowrap',
-                        }}
-                    >
-                        {value}
-                    </TechnicalEmphasis>
-                    <CopyIconIndicator
-                        isCopied={isCopied}
-                        isHovered={isHovered || isFocused}
-                    />
-                </Stack>
-            ) : (
-                <Typography color="text.secondary" noWrap>
-                    {value ?? '-'}
-                </Typography>
-            )}
+                    {value}
+                </TechnicalEmphasis>
+                <CopyIconIndicator
+                    isCopied={isCopied}
+                    isHovered={isHovered || isFocused}
+                />
+            </Stack>
         </Stack>
     );
 }

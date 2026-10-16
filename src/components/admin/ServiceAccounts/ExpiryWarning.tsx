@@ -1,4 +1,3 @@
-import type { SxProps, Theme, TypographyProps } from '@mui/material';
 import type { ServiceAccount } from 'src/gql-types/graphql';
 
 import { Stack, Typography } from '@mui/material';
@@ -61,17 +60,11 @@ export function soonestExpiry(
 
 interface ExpiryWarningProps {
     expiresAt: string | null | undefined;
-    variant?: TypographyProps['variant'];
-    sx?: SxProps<Theme>;
 }
 
 // Triangle + colored label shown when a token is expired (red) or expiring
 // within 7 days (yellow). Renders nothing otherwise.
-export function ExpiryWarning({
-    expiresAt,
-    variant = 'caption',
-    sx,
-}: ExpiryWarningProps) {
+export function ExpiryWarning({ expiresAt }: ExpiryWarningProps) {
     const alert = tokenExpiry(expiresAt);
 
     if (!alert) {
@@ -82,20 +75,17 @@ export function ExpiryWarning({
         <Stack
             direction="row"
             spacing={0.5}
-            sx={[
-                {
-                    alignItems: 'center',
-                    color:
-                        alert.severity === 'expired'
-                            ? 'error.main'
-                            : 'warning.main',
-                },
-                ...(Array.isArray(sx) ? sx : [sx]),
-            ]}
+            sx={{
+                alignItems: 'center',
+                color:
+                    alert.severity === 'expired'
+                        ? 'error.main'
+                        : 'warning.main',
+            }}
         >
             <WarningTriangle width={15} height={15} />
             <Typography
-                variant={variant}
+                variant="caption"
                 color="inherit"
                 sx={{
                     fontWeight: 600,

@@ -19,6 +19,7 @@ import { CapabilitySelector } from 'src/components/admin/ServiceAccounts/Capabil
 import AlertBox from 'src/components/shared/AlertBox';
 import DialogTitleWithClose from 'src/components/shared/Dialog/TitleWithClose';
 import { LeavesAutocomplete } from 'src/components/shared/LeavesAutocomplete/LeavesAutocomplete';
+import { codeBackground } from 'src/context/Theme';
 import { hasLength } from 'src/utils/misc-utils';
 
 const TITLE_ID = 'service-account-grant-dialog';
@@ -132,7 +133,7 @@ export function GrantDialog({
                                     borderRadius: (theme) => theme.radius.sm,
                                     color: 'text.secondary',
                                     bgcolor: (theme) =>
-                                        theme.palette.background.code,
+                                        codeBackground[theme.palette.mode],
                                 }}
                             >
                                 <Lock width={15} height={15} />

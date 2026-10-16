@@ -1,4 +1,4 @@
-import type { SxProps, Theme } from '@mui/material';
+import type { Theme } from '@mui/material';
 import type { SystemStyleObject } from '@mui/system/styleFunctionSx';
 import type { ReactNode } from 'react';
 
@@ -107,11 +107,6 @@ interface CatalogIdentityEditorProps {
     location: string;
     onLocationChange: (location: string) => void;
     /**
-     * Shown in place of the location while the name is being edited. It takes
-     * the location's line, so keep it to one line's worth of text.
-     */
-    nameHelperText?: string;
-    /**
      * Shown in place of the name while the location is being edited. It takes
      * the name's line, so keep it to one line's worth of text.
      */
@@ -120,7 +115,6 @@ interface CatalogIdentityEditorProps {
     leaves: string[];
     /** Draws a new name for the account. */
     onRegenerate: () => void;
-    sx?: SxProps<Theme>;
 }
 
 /**
@@ -134,11 +128,9 @@ export function CatalogIdentityEditor({
     onNameChange,
     location,
     onLocationChange,
-    nameHelperText,
     locationHelperText,
     leaves,
     onRegenerate,
-    sx,
 }: CatalogIdentityEditorProps) {
     const {
         cardSx,
@@ -241,11 +233,7 @@ export function CatalogIdentityEditor({
     };
 
     return (
-        <Stack
-            direction="row"
-            spacing={1.5}
-            sx={[cardSx, ...(Array.isArray(sx) ? sx : [sx ?? {}])]}
-        >
+        <Stack direction="row" spacing={1.5} sx={cardSx}>
             <Box
                 sx={{
                     ...monogramSx,
@@ -375,7 +363,6 @@ export function CatalogIdentityEditor({
                 </Stack>
 
                 <SwapLine
-                    helperText={nameHelperText}
                     helperVisible={showNameHelper}
                     helperSx={locationHelperSx}
                     helperId={nameHelperId}

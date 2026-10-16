@@ -24,10 +24,6 @@ interface SecretRevealProps {
     onDone: () => void;
 }
 
-// The reveal phase of the create API key dialog: shows a freshly minted key
-// exactly once. Dismissing loses the secret for good, so Done stays locked
-// until the key has been copied. The copied gate needs no reset - this
-// component unmounts with its dialog.
 export function SecretReveal({
     secret,
     description,
