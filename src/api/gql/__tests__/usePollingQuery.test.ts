@@ -497,6 +497,57 @@ describe('usePollingQuery', () => {
 
             expect(reexecuteQuery).toHaveBeenCalledTimes(2);
         });
+
+        test('restarts the interval on return so it does not tick right after the refetch', () => {
+            mockQuery();
+            renderPolling();
+
+            // Leave just before the original timer would have fired
+            advance(INTERVAL_MS - 1000);
+            setPageHidden(true);
+            setPageHidden(false);
+            expect(reexecuteQuery).toHaveBeenCalledTimes(1);
+
+            advance(1000);
+            expect(reexecuteQuery).toHaveBeenCalledTimes(1);
+
+            advance(INTERVAL_MS - 1000);
+            expect(reexecuteQuery).toHaveBeenCalledTimes(2);
+        });
+
+        test('skips the refetch on return while the data is still fresh', () => {
+            mockQuery();
+            const { rerender } = renderPolling();
+            completeFetch(rerender);
+
+            setPageHidden(true);
+            setPageHidden(false);
+            setPageHidden(true);
+            setPageHidden(false);
+
+            expect(reexecuteQuery).not.toHaveBeenCalled();
+        });
+
+        test('refetches on return once the data is older than the interval', () => {
+            mockQuery();
+            const { rerender } = renderPolling();
+            completeFetch(rerender);
+
+            setPageHidden(true);
+            advance(INTERVAL_MS);
+            setPageHidden(false);
+
+            expect(reexecuteQuery).toHaveBeenCalledTimes(1);
+        });
+
+        test('stops the timer while the tab is hidden', () => {
+            mockQuery();
+            renderPolling();
+            expect(vi.getTimerCount()).toBe(1);
+
+            setPageHidden(true);
+            expect(vi.getTimerCount()).toBe(0);
+        });
     });
 
     test('leaves updatedAt unset while the query is paused', () => {

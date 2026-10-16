@@ -28,13 +28,17 @@ export function usePollingQuery<
     const pageIsVisible = usePageVisibility();
     const pageWasVisible = useRef(pageIsVisible);
 
-    const { pause, pollingIntervalMs } = args;
     const requestPolicy = args.requestPolicy ?? 'cache-first';
     const [{ data, error, fetching, operation }, reexecuteQuery] = useQuery({
         ...args,
         requestPolicy,
     });
 
+    // Treat a polling interval of 0 the same as null, which disables the
+    // polling instead of looping indefinitely.
+    const pollingIntervalMs = args.pollingIntervalMs || null;
+
+    const { pause } = args;
     const canRefetch = !fetching && !pause && !!pollingIntervalMs;
     const wasFetching = useRef(false);
 
@@ -53,18 +57,34 @@ export function usePollingQuery<
         const pageBecameVisible = pageIsVisible && !pageWasVisible.current;
         pageWasVisible.current = pageIsVisible;
 
-        if (pageBecameVisible && canRefetch) {
+        // Skip refetching if the data is still fresh, to avoid unnecessary calls
+        // if the user flips quickly between the page being visible and hidden.
+        const isStale =
+            !updatedAt ||
+            DateTime.now().diff(updatedAt).toMillis() >=
+                (pollingIntervalMs ?? 0);
+
+        if (pageBecameVisible && canRefetch && isStale) {
             reexecuteQuery({ requestPolicy: 'network-only' });
         }
-    }, [canRefetch, pageIsVisible, reexecuteQuery]);
+    }, [
+        canRefetch,
+        pageIsVisible,
+        pollingIntervalMs,
+        updatedAt,
+        reexecuteQuery,
+    ]);
 
     // Execute the query on the specified interval. Does not run if
     // `pollingIntervalMs` is falsey or if the page is not visible.
+    // The timer is reset when the page becomes visible to avoid it
+    // potentially ticking right after the refetch above.
+    const intervalMs = pageIsVisible ? pollingIntervalMs : null;
     useInterval(() => {
-        if (canRefetch && pageIsVisible) {
+        if (canRefetch) {
             reexecuteQuery({ requestPolicy: 'network-only' });
         }
-    }, pollingIntervalMs || null);
+    }, intervalMs);
 
     // If the variables changed, that will retrigger a fetch, so return
     // no data with fetching = true to indicate that and force downstream
