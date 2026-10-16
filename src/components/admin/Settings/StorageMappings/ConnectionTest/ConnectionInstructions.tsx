@@ -1,19 +1,18 @@
-import type { Connection } from 'src/components/admin/Settings/StorageMappings/Dialog/ConnectionTest/ConnectionTestContext';
-import type { CloudProvider } from 'src/utils/cloudRegions';
+import type { StorageMappingConnection } from 'src/api/gql/storageMappings';
 
 import { useMemo } from 'react';
 
 import {
     useAwsArnsForBucket,
     useBucketPolicy,
-} from 'src/components/admin/Settings/StorageMappings/Dialog/ConnectionTest/awsHooks';
-import awsMarkdown from 'src/components/admin/Settings/StorageMappings/Dialog/ConnectionTest/instructions/aws.md?raw';
-import azureMarkdown from 'src/components/admin/Settings/StorageMappings/Dialog/ConnectionTest/instructions/azure.md?raw';
-import gcpMarkdown from 'src/components/admin/Settings/StorageMappings/Dialog/ConnectionTest/instructions/gcp.md?raw';
+} from 'src/components/admin/Settings/StorageMappings/ConnectionTest/awsHooks';
+import awsMarkdown from 'src/components/admin/Settings/StorageMappings/ConnectionTest/instructions/aws.md?raw';
+import azureMarkdown from 'src/components/admin/Settings/StorageMappings/ConnectionTest/instructions/azure.md?raw';
+import gcpMarkdown from 'src/components/admin/Settings/StorageMappings/ConnectionTest/instructions/gcp.md?raw';
 import { MarkdownInstructions } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/MarkdownInstructions';
 
-function Aws({ connection }: { connection: Connection }) {
-    const { bucket, region } = connection.store;
+function Aws({ connection }: { connection: StorageMappingConnection }) {
+    const { bucket, region } = connection.fragmentStore;
 
     const allAwsArns = useAwsArnsForBucket(bucket);
     const policy = useBucketPolicy(bucket ?? '', allAwsArns);
@@ -33,8 +32,8 @@ function Aws({ connection }: { connection: Connection }) {
     );
 }
 
-function Azure({ connection }: { connection: Connection }) {
-    const { storageAccountName, accountTenantId } = connection.store;
+function Azure({ connection }: { connection: StorageMappingConnection }) {
+    const { storageAccountName, accountTenantId } = connection.fragmentStore;
     const { azureApplicationClientId, azureApplicationName } =
         connection.dataPlane;
 
@@ -58,8 +57,8 @@ function Azure({ connection }: { connection: Connection }) {
     );
 }
 
-function Gcp({ connection }: { connection: Connection }) {
-    const { bucket } = connection.store;
+function Gcp({ connection }: { connection: StorageMappingConnection }) {
+    const { bucket } = connection.fragmentStore;
     const { gcpServiceAccountEmail } = connection.dataPlane;
 
     const variables = useMemo(
@@ -78,17 +77,18 @@ function Gcp({ connection }: { connection: Connection }) {
 export function ConnectionInstructions({
     connection,
 }: {
-    connection: Connection;
+    connection: StorageMappingConnection;
 }) {
-    const { provider } = connection.store;
+    const { provider } = connection.fragmentStore;
 
-    switch (provider as CloudProvider) {
-        case 'AWS':
+    switch (provider) {
+        case 'S3':
             return <Aws connection={connection} />;
         case 'AZURE':
             return <Azure connection={connection} />;
-        case 'GCP':
+        case 'GCS':
             return <Gcp connection={connection} />;
+        default:
+            return null;
     }
-    return null;
 }

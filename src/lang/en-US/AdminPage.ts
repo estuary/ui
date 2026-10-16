@@ -168,9 +168,6 @@ export const AdminPage: Record<string, string> = {
     'storageMappings.dialog.create.description.docLink': `documentation`,
 
     // Connection tests
-    'storageMappings.dialog.connectionTests.title': `Connection Tests`,
-    'storageMappings.dialog.connectionTests.runTests': `Run tests`,
-    'storageMappings.dialog.connectionTests.allMustPass': `All tests must pass before saving changes.`,
     'storageMappings.dialog.connectionTests.retry': `Retry`,
     'storageMappings.dialog.connectionTests.testFailed': `Connection test failed`,
 
@@ -183,33 +180,8 @@ export const AdminPage: Record<string, string> = {
     'storageMappings.dialog.dataPlanes.allowPublic': `Allow public`,
 
     // Storage locations card
-    'storageMappings.dialog.storageLocations.title': `Storage Locations`,
-    'storageMappings.dialog.storageLocations.changePrimary': `Change primary store`,
     'storageMappings.dialog.storageLocations.inactive': `Inactive`,
     'storageMappings.dialog.storageLocations.primary': `Primary`,
     'storageMappings.dialog.storageLocations.accept': `Accept`,
     'storageMappings.dialog.storageLocations.cancel': `Cancel`,
-    'storageMappings.dialog.storageLocations.historicalNote': `Previous stores are kept for historical data. New data will be directed to the primary store.`,
-
-    // Storage fields
-    'storageMappings.dialog.storageFields.cloudProvider': `Cloud Provider`,
-    'storageMappings.dialog.storageFields.region': `Region`,
-    'storageMappings.dialog.storageFields.accountTenantId': `Account Tenant ID`,
-    'storageMappings.dialog.storageFields.storageAccountName': `Storage Account Name`,
-    'storageMappings.dialog.storageFields.containerName': `Container Name`,
-    'storageMappings.dialog.storageFields.bucket': `Bucket`,
-    'storageMappings.dialog.storageFields.storagePrefix': `Storage Prefix`,
-    'storageMappings.dialog.storageFields.bucketHelperText': `Destination for Estuary collection data`,
-    'storageMappings.dialog.storageFields.storagePrefixHelperText': `Optional prefix of keys written to the bucket`,
-    'storageMappings.dialog.storageFields.mismatchWarning': `The selected cloud provider / region do not match the default data plane. This may result in additional egress fees.`,
-    'storageMappings.dialog.storageFields.matchDefault': `Match default data plane`,
-    'storageMappings.dialog.storageFields.validation.cloudProviderRequired': `Cloud provider is required`,
-    'storageMappings.dialog.storageFields.validation.regionRequired': `Region is required`,
-
-    // Prefix card
-    'storageMappings.dialog.prefix.label': `Estuary Prefix`,
-    'storageMappings.dialog.prefix.validation.invalidCharacters': `Invalid prefix - only letters, numbers, dashes, underscores, and periods are allowed.`,
-    'storageMappings.dialog.prefix.validation.required': `Estuary prefix is required.`,
-    'storageMappings.dialog.prefix.validation.duplicate': `A storage mapping already exists at this prefix. [Click here to see it.]({link})`,
-    'storageMappings.dialog.prefix.validation.uncoveredSpecs': `{count} live spec(s) would be impacted by creating this storage mapping. Choose an empty prefix or contact support for help.`,
 };

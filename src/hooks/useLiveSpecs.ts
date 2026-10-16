@@ -1,7 +1,5 @@
 import type { Entity, Schema } from 'src/types';
 
-import { useMemo } from 'react';
-
 import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
 
 import { supabaseClient } from 'src/context/GlobalProviders';
@@ -16,36 +14,6 @@ interface LiveSpecsQuery extends Schema {
 
 const queryColumns = ['catalog_name', 'spec_type'];
 const defaultResponse: LiveSpecsQuery[] = [];
-
-function useLiveSpecs(specType?: Entity, matchName?: string) {
-    const draftSpecQuery = useMemo(() => {
-        if (!specType) {
-            return null;
-        }
-
-        let queryBuilder = supabaseClient
-            .from(TABLES.LIVE_SPECS_EXT)
-            .select(queryColumns.join(','))
-            .eq('spec_type', specType)
-            .order('updated_at', {
-                ascending: false,
-            });
-
-        if (matchName) {
-            queryBuilder = queryBuilder.like('catalog_name', `${matchName}%`);
-        }
-
-        return queryBuilder.returns<LiveSpecsQuery[]>();
-    }, [matchName, specType]);
-
-    const { data, error, isValidating } = useQuery(draftSpecQuery);
-
-    return {
-        liveSpecs: data ?? defaultResponse,
-        error,
-        isValidating,
-    };
-}
 
 // A binding of a capture or materialization, as stored in the live spec. The
 // collection name is `target` on captures and `source` on materializations, and
@@ -113,4 +81,4 @@ function useLiveSpecs_details(specType: Entity, catalogName: string) {
     };
 }
 
-export { useLiveSpecs, useLiveSpecs_details };
+export { useLiveSpecs_details };

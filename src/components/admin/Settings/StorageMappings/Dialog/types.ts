@@ -1,9 +1,8 @@
-import type { DataPlaneNode } from 'src/api/gql/dataPlanes';
-import type { FragmentStore } from 'src/api/gql/storageMappings';
+import type { StorageMapping } from 'src/api/gql/storageMappings';
 
 export interface StorageMappingFormData {
-    catalogPrefix: string;
-    dataPlanes: DataPlaneNode[];
-    fragmentStores: FragmentStore[];
+    catalogPrefix: StorageMapping['catalogPrefix'];
+    dataPlanes: StorageMapping['dataPlanes'];
+    fragmentStores: StorageMapping['fragmentStores'];
     allowPublic: boolean;
 }
