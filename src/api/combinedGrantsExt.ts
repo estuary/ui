@@ -68,8 +68,6 @@ const getGrants_Users = (
             }
         )
         .or('user_email.neq.null,user_full_name.neq.null')
-        // A NOT LIKE test against a null email evaluates to unknown, which drops
-        // the row. Users can have a name without an email, so admit null emails.
         .or(
             `user_email.is.null,user_email.not.like.${SERVICE_ACCOUNT_EMAIL_PATTERN}`
         );

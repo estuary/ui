@@ -2,6 +2,8 @@ import type { TechnicalEmphasisProps } from 'src/components/derivation/Create/ty
 
 import { Typography } from '@mui/material';
 
+import { codeBackground } from 'src/context/Theme';
+
 function TechnicalEmphasis({
     enableBackground,
     children,
@@ -13,7 +15,7 @@ function TechnicalEmphasis({
             component="code"
             sx={{
                 bgcolor: enableBackground
-                    ? (theme) => theme.palette.background.code
+                    ? (theme) => codeBackground[theme.palette.mode]
                     : undefined,
                 fontWeight: 500,
                 fontFamily: 'Monospace',

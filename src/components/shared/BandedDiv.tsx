@@ -159,8 +159,6 @@ interface BandedDivProps {
     label?: ReactNode;
     /** Makes the whole frame a button, and the band's color hover-driven. */
     onClick?: () => void;
-    /** Corner radius shared by the frame and the face. */
-    radius?: 'sm' | 'md' | 'lg' | 'xl';
     /**
      * Merged onto the face, over its default padded paper surface. Keep any
      * background override opaque: the band tucks behind the face, and anything
@@ -185,7 +183,6 @@ export function BandedDiv({
     bandColor,
     label,
     onClick,
-    radius = 'lg',
     faceSx,
     sx,
     children,
@@ -222,11 +219,11 @@ export function BandedDiv({
             </Box>
         );
 
-    const cornerRadius = (theme: Theme) => theme.radius[radius];
+    const cornerRadius = (theme: Theme) => theme.radius.lg;
     const overlap = (theme: Theme) =>
-        `calc(${theme.radius[radius]} + ${BAND_OVERLAP_GAP}px)`;
+        `calc(${theme.radius.lg} + ${BAND_OVERLAP_GAP}px)`;
     const minThickness = (theme: Theme) =>
-        `calc(${theme.radius[radius]} + ${BAND_OVERLAP_GAP + BAND_MIN_VISIBLE}px)`;
+        `calc(${theme.radius.lg} + ${BAND_OVERLAP_GAP + BAND_MIN_VISIBLE}px)`;
 
     // The negative margin tucks the band under the face by one corner radius;
     // the matching padding keeps the label out past the overlap.

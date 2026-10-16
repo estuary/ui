@@ -7,23 +7,18 @@ import OutlinedToggleButtonGroup from 'src/components/shared/OutlinedToggleButto
 interface CapabilitySelectorProps {
     value: Capability;
     onChange: (capability: Capability) => void;
-    size?: 'small' | 'medium';
-    disabled?: boolean;
 }
 
 // Segmented read / admin control.
 export function CapabilitySelector({
     value,
     onChange,
-    size = 'small',
-    disabled,
 }: CapabilitySelectorProps) {
     return (
         <OutlinedToggleButtonGroup
             exclusive
-            size={size}
+            size="small"
             value={value}
-            disabled={disabled}
             onChange={(_event, next: Capability | null) => {
                 if (next) {
                     onChange(next);

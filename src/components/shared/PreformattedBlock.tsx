@@ -2,6 +2,8 @@ import type { BaseComponentProps } from 'src/types';
 
 import { Box, useTheme } from '@mui/material';
 
+import { codeBackground } from 'src/context/Theme';
+
 function PreformattedBlock({ children }: BaseComponentProps) {
     const theme = useTheme();
     return (
@@ -10,7 +12,7 @@ function PreformattedBlock({ children }: BaseComponentProps) {
             sx={{
                 p: 2,
                 borderRadius: 2,
-                bgcolor: theme.palette.background.code,
+                bgcolor: codeBackground[theme.palette.mode],
                 overflow: 'auto',
                 fontFamily: 'monospace',
                 fontSize: 12,
