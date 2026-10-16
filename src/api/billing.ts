@@ -1,73 +1,22 @@
+import type { TenantBillingInvoicesQuery } from 'src/gql-types/graphql';
 import type { TenantPaymentDetails } from 'src/types';
+import type { Client } from 'urql';
 
-import pLimit from 'p-limit';
+import { TENANT_BILLING_PAYMENT_METHODS_QUERY } from 'src/api/gql/billing';
 
-import { supabaseClient } from 'src/context/GlobalProviders';
-import { FUNCTIONS, invokeSupabase, TABLES } from 'src/services/supabase';
-import { formatDateForApi } from 'src/utils/billing-utils';
+const getTenantPaymentMethods = async (client: Client, tenant: string) => {
+    const { data, error } = await client
+        .query(TENANT_BILLING_PAYMENT_METHODS_QUERY, { tenant })
+        .toPromise();
 
-const OPERATIONS = {
-    SETUP_INTENT: 'setup-intent',
-    GET_TENANT_PAYMENT_METHODS: 'get-tenant-payment-methods',
-    DELETE_TENANT_PAYMENT_METHODS: 'delete-tenant-payment-method',
-    SET_PRIMARY: 'set-tenant-primary-payment-method',
-    GET_TENANT_INVOICE: 'get-tenant-invoice',
-};
-
-export interface StripeInvoice {
-    id: string;
-    amount_due: number;
-    invoice_pdf: string;
-    hosted_invoice_url: string;
-    status: 'open' | 'paid' | 'void' | 'uncollectable';
-}
-
-export const getTenantInvoice = (
-    tenant: string,
-    date_start: string,
-    date_end: string,
-    type: 'manual' | 'final'
-) => {
-    return invokeSupabase<{ invoice?: StripeInvoice | null }>(
-        FUNCTIONS.BILLING,
-        {
-            operation: OPERATIONS.GET_TENANT_INVOICE,
-            tenant,
-            date_start,
-            date_end,
-            type,
-        }
-    );
-};
-
-export const getSetupIntentSecret = (tenant: string) => {
-    return invokeSupabase<any>(FUNCTIONS.BILLING, {
-        operation: OPERATIONS.SETUP_INTENT,
-        tenant,
-    });
-};
-
-export const getTenantPaymentMethods = (tenant: string) => {
-    return invokeSupabase<any>(FUNCTIONS.BILLING, {
-        operation: OPERATIONS.GET_TENANT_PAYMENT_METHODS,
-        tenant,
-    });
-};
-
-export const deleteTenantPaymentMethod = (tenant: string, id: string) => {
-    return invokeSupabase<any>(FUNCTIONS.BILLING, {
-        operation: OPERATIONS.DELETE_TENANT_PAYMENT_METHODS,
-        tenant,
-        id,
-    });
-};
-
-export const setTenantPrimaryPaymentMethod = (tenant: string, id: string) => {
-    return invokeSupabase<any>(FUNCTIONS.BILLING, {
-        operation: OPERATIONS.SET_PRIMARY,
-        tenant,
-        id,
-    });
+    return error
+        ? { error }
+        : {
+              data: {
+                  tenant,
+                  payment_methods: data?.tenant?.billing.paymentMethods,
+              },
+          };
 };
 
 export interface InvoiceLineItem {
@@ -77,53 +26,9 @@ export interface InvoiceLineItem {
     subtotal: number;
 }
 
-export interface Invoice {
-    billed_prefix: string;
-    date_start: string; // Timestamp
-    date_end: string; // Timestamp
-    line_items: InvoiceLineItem[];
-    subtotal: number;
-    invoice_type: 'final' | 'preview' | 'manual';
-    extra?: {
-        processed_data_gb: number;
-        task_usage_hours: number;
-    };
-}
-
-const invoicesQuery = [
-    'billed_prefix',
-    'date_start',
-    'date_end',
-    'line_items',
-    'subtotal',
-    'invoice_type',
-    'extra',
-].join(', ');
-
-export const getInvoicesBetween = (
-    billed_prefix: string,
-    date_start: Date,
-    date_end: Date
-) => {
-    const formattedStart = formatDateForApi(date_start);
-    const formattedEnd = formatDateForApi(date_end);
-
-    return supabaseClient
-        .from(TABLES.INVOICES_EXT)
-        .select(invoicesQuery)
-        .filter('billed_prefix', 'eq', billed_prefix)
-        .or(
-            `invoice_type.eq.manual,and(${[
-                `date_start.gte.${formattedStart}`,
-                `date_start.lte.${formattedEnd}`,
-                `date_end.gte.${formattedStart}`,
-                `date_end.lte.${formattedEnd}`,
-            ].join(',')})`
-        )
-        .order('date_start', { ascending: false })
-        .throwOnError()
-        .returns<Invoice[]>();
-};
+export type Invoice = NonNullable<
+    TenantBillingInvoicesQuery['tenant']
+>['billing']['invoices']['edges'][number]['node'];
 
 export interface MultiplePaymentMethods {
     responses: any[];
@@ -135,39 +40,24 @@ export interface MultiplePaymentMethods {
 //  fetching payment methods for tenants they do now "own"
 export const MAX_TENANTS = 5;
 export const getPaymentMethodsForTenants = async (
+    client: Client,
     tenants: TenantPaymentDetails[]
 ): Promise<MultiplePaymentMethods> => {
-    const limiter = pLimit(3);
-    const promises: Array<Promise<any>> = [];
-    let count = 0;
-
-    tenants.some((tenantDetail) => {
-        if (
+    // Callers pass at most MAX_TENANTS tenants.
+    const responses: any[] = await Promise.all(
+        tenants.map((tenantDetail) =>
             !tenantDetail.trial_start ||
             tenantDetail.payment_provider !== 'stripe' ||
             tenantDetail.gcm_account_id
-        ) {
-            promises.push(
-                new Promise((resolve) => {
-                    resolve({
-                        data: {
-                            tenant: tenantDetail.tenant,
-                            skipPaymentMethod: true,
-                        },
-                    });
-                })
-            );
-        } else {
-            promises.push(
-                limiter(() => getTenantPaymentMethods(tenantDetail.tenant))
-            );
-        }
-
-        count += 1;
-        return count >= MAX_TENANTS;
-    });
-
-    const responses = await Promise.all(promises);
+                ? {
+                      data: {
+                          tenant: tenantDetail.tenant,
+                          skipPaymentMethod: true,
+                      },
+                  }
+                : getTenantPaymentMethods(client, tenantDetail.tenant)
+        )
+    );
 
     return {
         responses: responses.filter((r) => r.data).map((r) => r.data),

@@ -25,7 +25,6 @@ export enum TablePrefixes {
     alertHistoryForTenant = 'tah',
     alertHistoryForEntity = 'eah',
     alertsForEntity = 'aah',
-    billing = 'bil',
     captures = 'cap',
     collections = 'col',
     connectors = 'con',
