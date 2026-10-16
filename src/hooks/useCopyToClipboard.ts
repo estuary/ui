@@ -8,10 +8,15 @@ export function useCopyToClipboard() {
             return;
         }
 
-        void navigator.clipboard.writeText(value).then(() => {
-            setIsCopied(true);
-            setTimeout(() => setIsCopied(false), 3000);
-        });
+        void navigator.clipboard
+            .writeText(value)
+            .then(() => {
+                setIsCopied(true);
+                setTimeout(() => setIsCopied(false), 3000);
+            })
+            .catch(() => {
+                // Clipboard writes can fail when permission is denied.
+            });
     };
 
     return { isCopied, handleCopy };
