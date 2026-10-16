@@ -35,7 +35,7 @@ function PrefixInvitationDialog({ open, setOpen }: BaseDialogProps) {
     return (
         <Dialog
             open={open}
-            maxWidth="sm"
+            maxWidth="md"
             fullWidth
             aria-labelledby={TITLE_ID}
             onClose={closeDialog}
@@ -48,7 +48,7 @@ function PrefixInvitationDialog({ open, setOpen }: BaseDialogProps) {
                     justifyContent: 'space-between',
                 }}
             >
-                <Typography variant="h6">Invite Users</Typography>
+                <Typography variant="h6">Add Users</Typography>
 
                 <IconButton onClick={closeDialog}>
                     <Xmark

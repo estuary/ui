@@ -17,12 +17,13 @@ import {
 
 import { useCreateServiceAccount } from 'src/api/gql/serviceAccounts';
 import { CapabilitySelector } from 'src/components/admin/ServiceAccounts/CapabilitySelector';
-import { usePrefixLeaves } from 'src/components/admin/ServiceAccounts/usePrefixLeaves';
 import AlertBox from 'src/components/shared/AlertBox';
 import { CatalogIdentityEditor } from 'src/components/shared/CatalogIdentity';
 import { CatalogPath } from 'src/components/shared/CatalogPath';
 import DialogTitleWithClose from 'src/components/shared/Dialog/TitleWithClose';
 import { codeBackground, defaultOutline } from 'src/context/Theme';
+import { usePrefixes } from 'src/hooks/usePrefixes';
+import { useTenantStore } from 'src/stores/Tenant';
 import { generateAlliterativeName } from 'src/utils/alliterate';
 import { hasLength } from 'src/utils/misc-utils';
 
@@ -39,7 +40,8 @@ export function CreateServiceAccountDialog({
     onClose,
     onCreated,
 }: CreateServiceAccountDialogProps) {
-    const { leaves, selectedTenant } = usePrefixLeaves();
+    const leaves = usePrefixes();
+    const selectedTenant = useTenantStore((state) => state.selectedTenant);
 
     const [{ fetching }, createServiceAccount] = useCreateServiceAccount();
 
@@ -206,9 +208,9 @@ export function CreateServiceAccountDialog({
                             color="text.secondary"
                             sx={{ display: 'block', mt: 1.5 }}
                         >
-                            Grant access to the service account's home prefix.
+                            {`Grant access to the service account's home prefix.
                             Need different or multiple prefixes? Add grants
-                            later from the account details page.
+                            later from the account details page.`}
                         </Typography>
                     </Box>
                 </Stack>

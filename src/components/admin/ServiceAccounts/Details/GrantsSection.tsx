@@ -24,9 +24,9 @@ import {
     useRevokeAllApiKeys,
 } from 'src/api/gql/serviceAccounts';
 import { GrantDialog } from 'src/components/admin/ServiceAccounts/GrantDialog';
-import { usePrefixLeaves } from 'src/components/admin/ServiceAccounts/usePrefixLeaves';
 import AlertBox from 'src/components/shared/AlertBox';
 import { CatalogPath } from 'src/components/shared/CatalogPath';
+import { usePrefixes } from 'src/hooks/usePrefixes';
 
 interface GrantsSectionProps {
     catalogName: string;
@@ -47,7 +47,7 @@ export function GrantsSection({
     grants,
     tokenCount,
 }: GrantsSectionProps) {
-    const { leaves } = usePrefixLeaves();
+    const leaves = usePrefixes();
 
     const [dialog, setDialog] = useState<GrantDialogState | null>(null);
     const [removeTarget, setRemoveTarget] = useState<UserGrant | null>(null);
