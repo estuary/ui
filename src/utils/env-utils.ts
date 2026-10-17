@@ -132,6 +132,17 @@ export const getEncryptionSettings = () => {
     }
 };
 
+// Exact trusted OAuth issuer origins. An empty list disables consent because
+// these origins receive the user's session bearer.
+export const getOAuthSettings = () => ({
+    allowedIssuerOrigins: (
+        import.meta.env.VITE_OAUTH_ALLOWED_ISSUER_ORIGINS ?? ''
+    )
+        .split(',')
+        .map((origin: string) => origin.trim())
+        .filter((origin: string) => origin.length > 0),
+});
+
 export const getMarketplaceSettings = () => {
     const verifyURL = import.meta.env.VITE_MARKETPLACE_VERIFY_URL;
 

@@ -141,6 +141,11 @@ const dataPlaneAuth = {
     path: '/data-plane-auth-req',
 };
 
+const mcpAuth = {
+    title: 'routeTitle.mcpAuthReq',
+    path: '/mcp-auth',
+};
+
 const home = {
     title: 'routeTitle.home',
     path: '/welcome',
@@ -251,6 +256,7 @@ export const authenticatedRoutes = {
     collections,
     dataPlaneAuth,
     home,
+    mcpAuth,
     materializations,
     marketplace: marketplace.authenticated,
     user,
