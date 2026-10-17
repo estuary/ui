@@ -36,7 +36,6 @@ export const CommonMessages: Record<string, string> = {
     'common.version': `version`,
     'common.tenant': `Prefix`,
     'common.recommended': `Recommended`,
-    'common.copied': `Copied`,
     'common.synchronizing': `Synchronizing`,
     'common.synchronized': `Synchronized`,
     'common.outOfSync': `Out of Sync`,
@@ -115,7 +114,6 @@ export const CommonMessages: Record<string, string> = {
     'alert.info': 'Important',
 
     // Used in directives
-    'directives.returning': `Welcome back. You still need to provide some information before using the application.`,
     'directives.grant.skipped.title': `Access Grant Token Skipped`,
     'directives.grant.skipped.message': `The access grant link you submitted was not applied as you already have the requested access.`,
 
@@ -145,10 +143,6 @@ export const CommonMessages: Record<string, string> = {
     'status.error.high': `High`,
     'status.error.low': `Low`,
     'status.error.medium': `Medium`,
-
-    // Leaves autocomplete validation
-    'leavesAutocomplete.mustStartWith.single': `Must start with "{root}"`,
-    'leavesAutocomplete.mustStartWith.multiple': `Must start with one of: {roots}`,
 
     'defaults.tenant': `acmeCo`,
     'defaults.schema': `anvils`,

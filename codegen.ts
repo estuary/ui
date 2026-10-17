@@ -13,7 +13,11 @@ const config: CodegenConfig = {
             } satisfies Partial<IntrospectionOptions> as Types.UrlSchemaOptions,
         },
     ],
-    documents: 'src/**/*.{ts,tsx}',
+    documents: [
+        'src/**/*.{ts,tsx}',
+        '!src/**/*.test.{ts,tsx}', // Explicitly exclude test files
+        '!src/**/*.spec.{ts,tsx}', // Explicitly exclude spec files
+    ],
     generates: {
         './src/gql-types/schema.graphql': {
             plugins: ['schema-ast'], // converts the json response from introspection query to a .graphql file

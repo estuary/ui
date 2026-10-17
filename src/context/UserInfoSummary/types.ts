@@ -2,7 +2,6 @@ import type { PostgrestSingleResponse } from '@supabase/postgrest-js';
 import type { KeyedMutator } from 'swr';
 
 export interface UserInfoSummary {
-    hasDemoAccess: boolean;
     hasSupportAccess: boolean;
     hasAnyAccess: boolean;
 }
@@ -13,5 +12,4 @@ export interface UserInfoStore extends UserInfoSummary {
     setMutate: (
         newVal: KeyedMutator<PostgrestSingleResponse<UserInfoSummary>>
     ) => void;
-    setHasDemoAccess: (newVal: boolean) => void;
 }
