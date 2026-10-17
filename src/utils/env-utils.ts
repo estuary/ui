@@ -132,21 +132,16 @@ export const getEncryptionSettings = () => {
     }
 };
 
-// An origin on this list can have a short-lived credential minted for it,
-// so it FAILS CLOSED — an unset variable authorizes nothing rather than everything.
-//
-// Exact origins, comma-separated, e.g.
-//   VITE_MCP_ALLOWED_SERVER_ORIGINS=https://mcp.estuary.dev
-export const getMcpSettings = () => {
-    const configured = import.meta.env.VITE_MCP_ALLOWED_SERVER_ORIGINS ?? '';
-
-    return {
-        allowedMcpServerOrigins: configured
-            .split(',')
-            .map((origin: string) => origin.trim())
-            .filter((origin: string) => origin.length > 0),
-    };
-};
+// Exact trusted OAuth issuer origins. An empty list disables consent because
+// these origins receive the user's session bearer.
+export const getOAuthSettings = () => ({
+    allowedIssuerOrigins: (
+        import.meta.env.VITE_OAUTH_ALLOWED_ISSUER_ORIGINS ?? ''
+    )
+        .split(',')
+        .map((origin: string) => origin.trim())
+        .filter((origin: string) => origin.length > 0),
+});
 
 export const getMarketplaceSettings = () => {
     const verifyURL = import.meta.env.VITE_MARKETPLACE_VERIFY_URL;

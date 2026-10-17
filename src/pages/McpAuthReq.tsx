@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import {
     Alert,
@@ -13,21 +13,16 @@ import {
 
 import { useSearchParams } from 'react-router-dom';
 
-import { useCreateRefreshToken } from 'src/api/gql/refreshTokens';
 import { authenticatedRoutes } from 'src/app/routes';
+import { useUserStore } from 'src/context/User/useUserContextStore';
 import usePageTitle from 'src/hooks/usePageTitle';
-import { logRocketConsole } from 'src/services/shared';
-import { getMcpSettings } from 'src/utils/env-utils';
+import { getOAuthSettings } from 'src/utils/env-utils';
 import { getURL } from 'src/utils/misc-utils';
-
-// Each use renews the token's two-day idle lifetime.
-const MCP_TOKEN_VALIDITY = 'P2D';
 
 interface ConsentContext {
     client_name: string;
-    client_host: string;
+    client_host: string | null;
     client_id: string;
-    client_uri: string | null;
     resource: string;
 }
 
@@ -36,124 +31,147 @@ export const McpAuthReq = () => {
 
     const [searchParams] = useSearchParams();
 
-    const adapter = searchParams.get('adapter');
-    const state = searchParams.get('state');
+    const issuer = searchParams.get('issuer');
+    const request = searchParams.get('request');
+    const accessToken = useUserStore((store) => store.session?.access_token);
+    const issuerOrigin = validateIssuerOrigin(issuer);
+    const requestKey = JSON.stringify([issuerOrigin, request, accessToken]);
 
-    const [, createRefreshToken] = useCreateRefreshToken();
-
-    const [consent, setConsent] = useState<ConsentContext | null>(null);
+    const [loadedConsent, setLoadedConsent] = useState<{
+        key: string;
+        context: ConsentContext;
+    } | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [submitting, setSubmitting] = useState(false);
-
-    const adapterOrigin = validateAdapterOrigin(adapter);
+    const submittingRef = useRef(false);
+    const consent =
+        loadedConsent?.key === requestKey ? loadedConsent.context : null;
 
     useEffect(() => {
-        if (!adapter || !state) {
-            setError(`This authorization link is missing required parameters.`);
-
-            return;
-        }
-
-        if (!adapterOrigin) {
-            logRocketConsole('mcp auth: rejected adapter origin', { adapter });
-            setError(
-                `Refusing to authorize ${adapter}: it is not a recognized Estuary MCP server. This link may not be genuine.`
-            );
-
-            return;
-        }
-
-        const url = new URL('/oauth/consent-context', adapterOrigin);
-        url.searchParams.set('state', state);
-
-        let active = true;
-        setConsent(null);
+        setLoadedConsent(null);
         setError(null);
+        if (!issuer || !request) {
+            setError('This authorization link is missing required parameters.');
+            return;
+        }
+        if (!issuerOrigin) {
+            setError(
+                'This authorization link does not use a recognized Estuary authorization server.'
+            );
+            return;
+        }
+        if (!accessToken) {
+            setError('Sign in to authorize this application.');
+            return;
+        }
 
+        const controller = new AbortController();
+        const url = new URL('/oauth/consent-context', issuerOrigin);
+        url.searchParams.set('request', request);
         const loadConsent = async () => {
             try {
                 const response = await fetch(url.toString(), {
+                    headers: { Authorization: `Bearer ${accessToken}` },
                     credentials: 'omit',
+                    redirect: 'error',
+                    signal: controller.signal,
                 });
                 if (!response.ok) {
-                    throw new globalThis.Error(
-                        `This authorization request is unknown or has expired. Start the connection again from your MCP client.`
+                    throw new Error(
+                        response.status === 401 || response.status === 403
+                            ? 'An unrestricted Estuary user session is required. Sign in again to continue.'
+                            : 'This authorization request is unknown or has expired. Start the connection again from your MCP client.'
                     );
                 }
                 const context: ConsentContext = await response.json();
-                if (active) {
-                    setConsent(context);
+                if (
+                    typeof context.client_id !== 'string' ||
+                    typeof context.client_name !== 'string' ||
+                    (context.client_host !== null &&
+                        typeof context.client_host !== 'string') ||
+                    typeof context.resource !== 'string'
+                ) {
+                    throw new Error(
+                        'The authorization server returned an invalid consent request.'
+                    );
+                }
+                if (!controller.signal.aborted) {
+                    setLoadedConsent({ key: requestKey, context });
                 }
             } catch (fetchError) {
-                if (active) {
+                if (!controller.signal.aborted) {
                     setError(
-                        `Could not reach the Estuary MCP server: ${String(fetchError)}`
+                        fetchError instanceof Error
+                            ? fetchError.message
+                            : 'Could not load the authorization request.'
                     );
                 }
             }
         };
         void loadConsent();
-        return () => {
-            active = false;
-        };
-    }, [adapter, adapterOrigin, state]);
+        return () => controller.abort();
+    }, [issuer, issuerOrigin, request, accessToken, requestKey]);
 
-    // Return the browser to the adapter. This is the only exit from this page,
-    // for approval and denial alike: the adapter is holding a parked
-    // authorization request that must be resolved either way, or the MCP client
-    // waits on its loopback listener until it times out.
-    const returnToAdapter = useCallback(
-        (params: Record<string, string>) => {
-            const url = new URL('/oauth/dashboard-callback', adapterOrigin!);
-            url.searchParams.set('state', state!);
-
-            Object.entries(params).forEach(([key, value]) =>
-                url.searchParams.set(key, value)
-            );
-
-            window.location.replace(url.toString());
+    const submitConsent = useCallback(
+        async (approve: boolean) => {
+            if (
+                !consent ||
+                !issuerOrigin ||
+                !request ||
+                !accessToken ||
+                submittingRef.current
+            ) {
+                return;
+            }
+            submittingRef.current = true;
+            setSubmitting(true);
+            setError(null);
+            try {
+                const response = await fetch(
+                    new URL('/oauth/consent', issuerOrigin).toString(),
+                    {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${accessToken}`,
+                            'Content-Type': 'application/json',
+                        },
+                        credentials: 'omit',
+                        redirect: 'error',
+                        body: JSON.stringify({ request, approve }),
+                    }
+                );
+                if (!response.ok) {
+                    throw new Error(
+                        response.status === 401 || response.status === 403
+                            ? 'An unrestricted Estuary user session is required. Sign in again to continue.'
+                            : 'Could not complete authorization. Start the connection again from your MCP client.'
+                    );
+                }
+                const result: { redirect_uri: string } = await response.json();
+                const redirect =
+                    typeof result.redirect_uri === 'string'
+                        ? getURL(result.redirect_uri)
+                        : null;
+                if (
+                    !redirect ||
+                    !['http:', 'https:'].includes(redirect.protocol)
+                ) {
+                    throw new Error(
+                        'The authorization server returned an invalid redirect. Start the connection again from your MCP client.'
+                    );
+                }
+                window.location.replace(result.redirect_uri);
+            } catch (submitError) {
+                setError(
+                    submitError instanceof Error
+                        ? submitError.message
+                        : 'Could not complete authorization.'
+                );
+                setSubmitting(false);
+                submittingRef.current = false;
+            }
         },
-        [adapterOrigin, state]
-    );
-
-    const approve = useCallback(async () => {
-        setSubmitting(true);
-        setError(null);
-
-        const result = await createRefreshToken({
-            multiUse: true,
-            validFor: MCP_TOKEN_VALIDITY,
-            // Surfaced in the user's token list, so it must say what this token
-            // is for and which client caused it.
-            detail: consent?.client_name
-                ? `Estuary MCP — ${consent.client_name}`
-                : 'Estuary MCP',
-        });
-
-        if (result.error || !result.data?.createRefreshToken) {
-            setSubmitting(false);
-            setError(
-                result.error?.message ??
-                    `Could not issue a credential for this application.`
-            );
-
-            return;
-        }
-
-        const { id, secret } = result.data.createRefreshToken;
-
-        // Encode the token for the MCP server to use directly as an Estuary
-        // bearer credential, using the same format as the CLI.
-        const handoff = Buffer.from(JSON.stringify({ id, secret })).toString(
-            'base64'
-        );
-
-        returnToAdapter({ handoff });
-    }, [consent, createRefreshToken, returnToAdapter]);
-
-    const deny = useCallback(
-        () => returnToAdapter({ error: 'access_denied' }),
-        [returnToAdapter]
+        [accessToken, consent, issuerOrigin, request]
     );
 
     return (
@@ -175,7 +193,7 @@ export const McpAuthReq = () => {
                     </Typography>
                 ) : null}
 
-                {!error && consent ? (
+                {consent ? (
                     <Card sx={{ maxWidth: 640 }}>
                         <CardContent>
                             <Stack spacing={2}>
@@ -187,18 +205,29 @@ export const McpAuthReq = () => {
                                     that cannot be forged, so it is shown as
                                     prominently as the name it chose. */}
                                 <Alert severity="info">
-                                    {`${consent.client_name} identifies itself using a client-metadata document served by ${consent.client_host}. Only continue if you recognize that address.`}
+                                    {consent.client_host
+                                        ? `${consent.client_name} identifies itself using a client-metadata document served by ${consent.client_host}. Only continue if you recognize that address.`
+                                        : `Registered client: ${consent.client_id}. Only continue if you recognize this application.`}
                                 </Alert>
 
                                 <Typography>
-                                    {`Approving lets this application read and change your Estuary catalog with the same access you have. You can revoke it at any time from Admin -> CLI & API. After two days without use, you will need to connect again.`}
+                                    This application can act with all of your
+                                    existing Estuary permissions, including
+                                    reading data, changing resources,
+                                    administering grants, and creating sandboxes
+                                    where permitted.
+                                </Typography>
+                                <Typography>{`Resource: ${consent.resource}`}</Typography>
+                                <Typography>
+                                    This authorization expires after 90 days.
+                                    Connecting again will require your approval.
                                 </Typography>
 
                                 <Stack direction="row" spacing={2}>
                                     <Button
                                         variant="contained"
                                         disabled={submitting}
-                                        onClick={approve}
+                                        onClick={() => void submitConsent(true)}
                                     >
                                         {`Approve`}
                                     </Button>
@@ -206,7 +235,9 @@ export const McpAuthReq = () => {
                                     <Button
                                         variant="outlined"
                                         disabled={submitting}
-                                        onClick={deny}
+                                        onClick={() =>
+                                            void submitConsent(false)
+                                        }
                                     >
                                         Cancel
                                     </Button>
@@ -220,22 +251,27 @@ export const McpAuthReq = () => {
     );
 };
 
-// Reduce `adapter` to its origin, or null when it is not one this deployment
-// trusts. Compared as an exact origin string: a `startsWith` check would accept
-// `https://mcp.estuary.dev.evil.test`, which is the classic way this goes wrong.
-function validateAdapterOrigin(adapter: string | null): string | null {
-    if (!adapter) {
+// Validate the entire issuer before sending it a session bearer. Never trust
+// a prefix match or silently discard credentials, paths, queries, or fragments.
+function validateIssuerOrigin(issuer: string | null): string | null {
+    if (!issuer) return null;
+    const parsed = getURL(issuer);
+    if (
+        !parsed ||
+        parsed.username ||
+        parsed.password ||
+        parsed.pathname !== '/' ||
+        parsed.search ||
+        parsed.hash ||
+        !(
+            parsed.protocol === 'https:' ||
+            (parsed.protocol === 'http:' &&
+                ['localhost', '127.0.0.1', '[::1]'].includes(parsed.hostname))
+        )
+    ) {
         return null;
     }
-
-    const parsed = getURL(adapter);
-    if (!parsed) {
-        return null;
-    }
-
-    const { allowedMcpServerOrigins } = getMcpSettings();
-
-    return allowedMcpServerOrigins.includes(parsed.origin)
+    return getOAuthSettings().allowedIssuerOrigins.includes(parsed.origin)
         ? parsed.origin
         : null;
 }
