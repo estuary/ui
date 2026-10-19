@@ -1,4 +1,3 @@
-import { supabaseClient } from 'src/context/GlobalProviders';
 import {
     handleFailure,
     handleSuccess,
@@ -6,6 +5,7 @@ import {
     supabaseRetry,
     TABLES,
 } from 'src/services/supabase';
+import { supabaseClient } from 'src/services/supabaseClient';
 
 const createEntityDraft = (entityName: string) => {
     return insertSupabase(TABLES.DRAFTS, {

@@ -11,7 +11,7 @@ import SwrConfigProvider from 'src/context/SWR';
 import { TableSettingsProvider } from 'src/context/TableSettings';
 import ThemeProvider from 'src/context/Theme';
 import { UpdateHelmetProvider } from 'src/context/UpdateHelmet';
-import UrqlConfigProvider from 'src/context/URQL';
+import { UrqlConfigProvider } from 'src/context/URQL';
 import { UserStoreProvider } from 'src/context/User';
 
 const AppProviders = ({ children }: BaseComponentProps) => {

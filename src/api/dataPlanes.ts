@@ -1,10 +1,10 @@
-import { supabaseClient } from 'src/context/GlobalProviders';
 import {
     handleFailure,
     handleSuccess,
     supabaseRetry,
     TABLES,
 } from 'src/services/supabase';
+import { supabaseClient } from 'src/services/supabaseClient';
 
 export interface AwsDnsEntry {
     dns_name: string;

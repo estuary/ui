@@ -23,7 +23,6 @@ import { useUnmount } from 'react-use';
 import AlertBox from 'src/components/shared/AlertBox';
 import WrapperWithHeader from 'src/components/shared/Entity/WrapperWithHeader';
 import PageContainer from 'src/components/shared/PageContainer';
-import { supabaseClient } from 'src/context/GlobalProviders';
 import { jsonFormsPadding } from 'src/context/Theme';
 import { WorkflowContextProvider } from 'src/context/Workflow';
 import {
@@ -32,6 +31,7 @@ import {
 } from 'src/services/jsonforms';
 import { jsonFormsDefaults } from 'src/services/jsonforms/defaults';
 import { TABLES } from 'src/services/supabase';
+import { supabaseClient } from 'src/services/supabaseClient';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 
 const TestJsonForms = () => {

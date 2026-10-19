@@ -8,7 +8,7 @@ import { FormattedMessage } from 'react-intl';
 
 import MagicLinkInputs from 'src/components/login/MagicLinkInputs';
 import useRedirectPath from 'src/components/login/useRedirectPath';
-import { supabaseClient } from 'src/context/GlobalProviders';
+import { supabaseClient } from 'src/services/supabaseClient';
 import { getLoginSettings } from 'src/utils/env-utils';
 
 const loginSettings = getLoginSettings();

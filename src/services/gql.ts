@@ -1,5 +1,5 @@
-import { supabaseClient } from 'src/context/GlobalProviders';
 import { graphql } from 'src/gql-types';
+import { supabaseClient } from 'src/services/supabaseClient';
 
 const REASON_PHRASES: Record<number, string> = {
     400: 'Bad Request',

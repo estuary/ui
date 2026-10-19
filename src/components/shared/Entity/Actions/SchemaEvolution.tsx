@@ -17,7 +17,6 @@ import {
     useEditorStore_queryResponse_mutate,
 } from 'src/components/editor/Store/hooks';
 import { useEntityType } from 'src/context/EntityContext';
-import { supabaseClient } from 'src/context/GlobalProviders';
 import { entityHeaderButtonSx } from 'src/context/Theme';
 import { useEntityWorkflow_Editing } from 'src/context/Workflow';
 import useJobStatusPoller from 'src/hooks/useJobStatusPoller';
@@ -29,6 +28,7 @@ import {
     JOB_STATUS_POLLER_ERROR,
     TABLES,
 } from 'src/services/supabase';
+import { supabaseClient } from 'src/services/supabaseClient';
 import { useBindingStore } from 'src/stores/Binding/Store';
 import {
     useFormStateStore_isActive,

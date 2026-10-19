@@ -12,8 +12,8 @@ import type {
 import { forEach } from 'lodash';
 import retry from 'retry';
 
-import { supabaseClient } from 'src/context/GlobalProviders';
 import { logRocketEvent, retryAfterFailure } from 'src/services/shared';
+import { supabaseClient } from 'src/services/supabaseClient';
 import { CustomEvents } from 'src/services/types';
 
 // Little helper string that fetches the name from open graph

@@ -11,8 +11,8 @@ import { useMount } from 'react-use';
 import FullPageWrapper from 'src/app/FullPageWrapper';
 import MessageWithLink from 'src/components/content/MessageWithLink';
 import Error from 'src/components/shared/Error';
-import { supabaseClient } from 'src/context/GlobalProviders';
 import { logRocketEvent } from 'src/services/shared';
+import { supabaseClient } from 'src/services/supabaseClient';
 import { CustomEvents } from 'src/services/types';
 
 interface Props {
