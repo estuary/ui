@@ -25,6 +25,10 @@ import { useTenantCreate } from 'src/api/gql/tenant';
 import { unauthenticatedRoutes } from 'src/app/routes';
 import Logo from 'src/components/navigation/Logo';
 import { OnboardingSurvey } from 'src/components/onboarding/Survey';
+import {
+    normalizeTenantName,
+    validateTenantName,
+} from 'src/components/onboarding/tenantName';
 import AlertBox from 'src/components/shared/AlertBox';
 import ExternalLink from 'src/components/shared/ExternalLink';
 import { useUserInfoSummaryStore } from 'src/context/UserInfoSummary/useUserInfoSummaryStore';
@@ -86,12 +90,8 @@ export const TenantCreate = () => {
         dataPlanes.some((plane) => plane.name === selectedDataPlane);
 
     const submit = handleSubmit(
-        async ({
-            name: requestedTenant,
-            dataPlane,
-            origin,
-            acceptedDocuments,
-        }) => {
+        async ({ name, dataPlane, origin, acceptedDocuments }) => {
+            const requestedTenant = normalizeTenantName(name);
             setServerError(null);
 
             if (!dataPlaneReady) {
@@ -206,8 +206,14 @@ export const TenantCreate = () => {
                     <Controller
                         name="name"
                         control={control}
-                        rules={{ required: true }}
-                        render={({ field: { ref, ...field } }) => (
+                        rules={{
+                            required: 'Enter an organization name.',
+                            validate: validateTenantName,
+                        }}
+                        render={({
+                            field: { ref, ...field },
+                            fieldState: { error },
+                        }) => (
                             <FormControl>
                                 <FormLabel
                                     htmlFor="organization-name"
@@ -226,25 +232,27 @@ export const TenantCreate = () => {
                                     required
                                     disabled={saving}
                                     size="small"
-                                    onChange={(event) => {
-                                        const value = event.target.value
-                                            .normalize('NFD')
-                                            .replace(/\s/g, '_')
-                                            .replace(/[^a-zA-Z0-9._-]/g, '');
-                                        if (value !== field.value)
-                                            field.onChange(value);
-                                    }}
+                                    error={Boolean(error)}
                                     variant="outlined"
                                     helperText={
-                                        field.value
+                                        error?.message ??
+                                        (field.value
                                             .toLowerCase()
                                             .includes('test')
                                             ? 'Organization names are permanent. Consider a name without the word "test".'
-                                            : undefined
+                                            : normalizeTenantName(
+                                                    field.value
+                                                ) !== field.value
+                                              ? `Your organization will be created as "${normalizeTenantName(field.value)}".`
+                                              : undefined)
                                     }
                                     slotProps={{
                                         formHelperText: {
-                                            'sx': { color: 'warning.main' },
+                                            'sx': {
+                                                color: error
+                                                    ? 'error.main'
+                                                    : 'warning.main',
+                                            },
                                             'aria-live': 'polite',
                                         },
                                     }}
