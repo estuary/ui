@@ -207,7 +207,7 @@ export const TenantCreate = () => {
                         name="name"
                         control={control}
                         rules={{
-                            required: 'Enter an organization name.',
+                            required: true,
                             validate: validateTenantName,
                         }}
                         render={({
@@ -232,7 +232,7 @@ export const TenantCreate = () => {
                                     required
                                     disabled={saving}
                                     size="small"
-                                    error={Boolean(error)}
+                                    error={Boolean(error?.message)}
                                     variant="outlined"
                                     helperText={
                                         error?.message ??

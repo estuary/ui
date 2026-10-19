@@ -14,7 +14,7 @@ export const normalizeTenantName = (name: string) =>
         .replace(/\s/g, '_')
         .replace(/[^a-zA-Z0-9._-]/g, '');
 
-export const validateTenantName = (name: string): true | string => {
+export const validateTenantName = (name: string): boolean | string => {
     let skeleton = name.normalize('NFKD').replace(/\p{M}/gu, '');
     for (const [characters, replacement] of RESERVED_NAME_CONFUSABLES) {
         skeleton = skeleton.replace(characters, replacement);
@@ -27,7 +27,5 @@ export const validateTenantName = (name: string): true | string => {
         return 'Organization names cannot contain "estuary" or look-alike variants.';
     }
 
-    return (
-        normalizeTenantName(name).length > 0 || 'Enter an organization name.'
-    );
+    return normalizeTenantName(name).length > 0;
 };
