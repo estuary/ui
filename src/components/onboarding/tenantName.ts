@@ -8,13 +8,13 @@ const RESERVED_NAME_CONFUSABLES: [RegExp, string][] = [
     [/[ɣʏΥγУуҮүߌყᎩᎽᶌỿⲨⲩㄚ丫ꓬꭚ𐊲𐰠𑢤𑣄𑣜𖽃𜳮]/gu, 'y'],
 ];
 
-export const normalizeTenantName = (name: string) =>
+const normalizeTenantName = (name: string) =>
     name
         .normalize('NFD')
         .replace(/\s/g, '_')
         .replace(/[^a-zA-Z0-9._-]/g, '');
 
-export const validateTenantName = (name: string): boolean | string => {
+export const validateTenantName = (name: string): true | string => {
     let skeleton = name.normalize('NFKD').replace(/\p{M}/gu, '');
     for (const [characters, replacement] of RESERVED_NAME_CONFUSABLES) {
         skeleton = skeleton.replace(characters, replacement);
@@ -24,8 +24,8 @@ export const validateTenantName = (name: string): boolean | string => {
         /estuary/i.test(skeleton) ||
         /estuary/i.test(normalizeTenantName(name))
     ) {
-        return 'Organization names cannot contain "estuary" or look-alike variants.';
+        return 'Organization names cannot contain "estuary".';
     }
 
-    return normalizeTenantName(name).length > 0;
+    return true;
 };

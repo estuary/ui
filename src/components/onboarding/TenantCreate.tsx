@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
 import {
     Button,
@@ -25,10 +25,7 @@ import { useTenantCreate } from 'src/api/gql/tenant';
 import { unauthenticatedRoutes } from 'src/app/routes';
 import Logo from 'src/components/navigation/Logo';
 import { OnboardingSurvey } from 'src/components/onboarding/Survey';
-import {
-    normalizeTenantName,
-    validateTenantName,
-} from 'src/components/onboarding/tenantName';
+import { validateTenantName } from 'src/components/onboarding/tenantName';
 import AlertBox from 'src/components/shared/AlertBox';
 import ExternalLink from 'src/components/shared/ExternalLink';
 import { useUserInfoSummaryStore } from 'src/context/UserInfoSummary/useUserInfoSummaryStore';
@@ -43,6 +40,7 @@ const NAME_TAKEN_MESSAGE = 'is already in use';
 const EVENT_NAME = 'Tenant:Create';
 
 export const TenantCreate = () => {
+    const rawTenantName = useRef('');
     const refreshUserInfo = useUserInfoSummaryStore((state) => state.mutate);
     const postHog = usePostHog();
     const [creation, createTenant] = useTenantCreate();
@@ -90,8 +88,12 @@ export const TenantCreate = () => {
         dataPlanes.some((plane) => plane.name === selectedDataPlane);
 
     const submit = handleSubmit(
-        async ({ name, dataPlane, origin, acceptedDocuments }) => {
-            const requestedTenant = normalizeTenantName(name);
+        async ({
+            name: requestedTenant,
+            dataPlane,
+            origin,
+            acceptedDocuments,
+        }) => {
             setServerError(null);
 
             if (!dataPlaneReady) {
@@ -208,7 +210,8 @@ export const TenantCreate = () => {
                         control={control}
                         rules={{
                             required: true,
-                            validate: validateTenantName,
+                            validate: () =>
+                                validateTenantName(rawTenantName.current),
                         }}
                         render={({
                             field: { ref, ...field },
@@ -232,6 +235,16 @@ export const TenantCreate = () => {
                                     required
                                     disabled={saving}
                                     size="small"
+                                    onChange={(event) => {
+                                        // Check before normalization discards non-ASCII look-alikes.
+                                        rawTenantName.current =
+                                            event.target.value;
+                                        const value = event.target.value
+                                            .normalize('NFD')
+                                            .replace(/\s/g, '_')
+                                            .replace(/[^a-zA-Z0-9._-]/g, '');
+                                        field.onChange(value);
+                                    }}
                                     error={Boolean(error?.message)}
                                     variant="outlined"
                                     helperText={
@@ -240,16 +253,12 @@ export const TenantCreate = () => {
                                             .toLowerCase()
                                             .includes('test')
                                             ? 'Organization names are permanent. Consider a name without the word "test".'
-                                            : normalizeTenantName(
-                                                    field.value
-                                                ) !== field.value
-                                              ? `Your organization will be created as "${normalizeTenantName(field.value)}".`
-                                              : undefined)
+                                            : undefined)
                                     }
                                     slotProps={{
                                         formHelperText: {
                                             'sx': {
-                                                color: error
+                                                color: error?.message
                                                     ? 'error.main'
                                                     : 'warning.main',
                                             },
