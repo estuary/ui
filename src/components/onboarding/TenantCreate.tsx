@@ -266,7 +266,6 @@ export const TenantCreate = () => {
                                         },
                                     }}
                                     sx={{
-                                        // 'maxWidth': 424,
                                         '& .MuiOutlinedInput-root': {
                                             'bgcolor': 'background.default',
                                             'borderRadius': 3,
@@ -316,6 +315,10 @@ export const TenantCreate = () => {
                                         'bgcolor': 'background.default',
                                         'borderRadius': 3,
                                         '& fieldset': { border: 'none' },
+                                        '&.Mui-focused fieldset': {
+                                            border: '2px solid',
+                                            borderColor: 'primary.main',
+                                        },
                                     }}
                                 >
                                     <MenuItem value="" disabled>
