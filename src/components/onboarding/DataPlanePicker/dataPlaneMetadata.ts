@@ -77,7 +77,7 @@ export const groupDataPlanes = (
         // Falls back for a provider added to the API before codegen catches up.
         label: GROUP_LABELS[provider] ?? provider,
         choices: groupPlanes.map((plane) => {
-            const region = getRegion(provider, plane.region);
+            const [label, country] = getRegion(provider, plane.region) ?? [];
             const sharesRegion =
                 groupPlanes.filter(
                     ({ region: other }) => other === plane.region
@@ -85,11 +85,11 @@ export const groupDataPlanes = (
 
             return {
                 plane,
-                label: region?.[0] ?? plane.region,
-                country: region?.[1] ?? null,
+                label: label ?? plane.region,
+                country: country ?? null,
                 // An unknown region's label is already its code.
                 detail: [
-                    region ? plane.region : null,
+                    label ? plane.region : null,
                     sharesRegion ? getCluster(plane) : null,
                 ]
                     .filter(Boolean)

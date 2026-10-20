@@ -178,7 +178,8 @@ export default defineConfig({
 
         // Build/Deploy stuff
         writeVersionToFile(),
-        viteImageOptimizer({}),
+        // No SVGs: svgo isn't installed, so each one logs an error.
+        viteImageOptimizer({ test: /\.(jpe?g|png|gif|tiff|webp|avif)$/i }),
         sri(), // make sure this is before compression
         compression({
             algorithm: 'gzip',
