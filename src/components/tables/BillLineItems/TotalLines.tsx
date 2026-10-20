@@ -1,4 +1,4 @@
-import type { Invoice } from 'src/api/billing';
+import type { Invoice } from 'src/api/gql/billing';
 
 import { Box, Divider, Typography } from '@mui/material';
 

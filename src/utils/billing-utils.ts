@@ -1,4 +1,4 @@
-import type { Invoice } from 'src/api/billing';
+import type { Invoice } from 'src/api/gql/billing';
 
 import { parseISO } from 'date-fns';
 

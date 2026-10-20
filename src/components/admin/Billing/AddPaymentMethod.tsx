@@ -9,17 +9,14 @@ import { Elements } from '@stripe/react-stripe-js';
 import { Plus } from 'iconoir-react';
 
 import { PaymentForm } from 'src/components/admin/Billing/CapturePaymentMethod';
-import {
-    INTENT_SECRET_ERROR,
-    INTENT_SECRET_LOADING,
-} from 'src/components/admin/Billing/shared';
 import { stripePaymentFormFieldBackgroundDark } from 'src/context/Theme';
 import { fireGtmEvent } from 'src/services/gtm';
 
 interface Props {
     // The add-payment route opens the form on arrival.
     autoOpen: boolean;
-    setupIntentSecret: string;
+    setupIntentSecret?: string;
+    loading: boolean;
     onAdded: (id?: string) => Promise<void>;
     stripePromise: Promise<Stripe | null>;
     tenant: string;
@@ -28,6 +25,7 @@ interface Props {
 function AddPaymentMethod({
     autoOpen,
     onAdded,
+    loading,
     setupIntentSecret,
     stripePromise,
     tenant,
@@ -39,17 +37,13 @@ function AddPaymentMethod({
 
     const flatField = { border: 'none', boxShadow: 'none' };
 
-    const enable =
-        setupIntentSecret !== INTENT_SECRET_LOADING &&
-        setupIntentSecret !== INTENT_SECRET_ERROR;
-
     return (
         <>
             <Box>
                 <Button
                     loadingPosition="start"
-                    disabled={!enable}
-                    loading={setupIntentSecret === INTENT_SECRET_LOADING}
+                    disabled={!setupIntentSecret}
+                    loading={loading}
                     onClick={() => setOpen(true)}
                     startIcon={<Plus style={{ fontSize: 15 }} />}
                     sx={{ whiteSpace: 'nowrap' }}
@@ -68,7 +62,7 @@ function AddPaymentMethod({
                 data-private
             >
                 <DialogTitle>Add a payment method</DialogTitle>
-                {enable ? (
+                {setupIntentSecret ? (
                     <Elements
                         stripe={stripePromise}
                         options={{

@@ -18,7 +18,6 @@ import { JsonForms } from 'src/lang/en-US/JsonForms';
 import { Materializations } from 'src/lang/en-US/Materializations';
 import { MonacoEditor } from 'src/lang/en-US/MonacoEditor';
 import { Navigation } from 'src/lang/en-US/Navigation';
-import { Notifications } from 'src/lang/en-US/Notifications';
 import { Ops } from 'src/lang/en-US/Ops';
 import { PrefixedName } from 'src/lang/en-US/PrefixedName';
 import { RouteTitles } from 'src/lang/en-US/RouteTitles';
@@ -48,7 +47,6 @@ const enUSMessages: Record<string, string> = {
     ...Materializations,
     ...MonacoEditor,
     ...Navigation,
-    ...Notifications,
     ...Ops,
     ...PrefixedName,
     ...RouteTitles,

@@ -25,10 +25,6 @@ import {
 } from 'src/api/gql/billing';
 import AddPaymentMethod from 'src/components/admin/Billing/AddPaymentMethod';
 import { PaymentMethod } from 'src/components/admin/Billing/PaymentMethodRow';
-import {
-    INTENT_SECRET_ERROR,
-    INTENT_SECRET_LOADING,
-} from 'src/components/admin/Billing/shared';
 import AlertBox from 'src/components/shared/AlertBox';
 import TableLoadingRows from 'src/components/tables/Loading';
 import { useBillingPaymentMethods } from 'src/hooks/billing/useBillingPaymentMethods';
@@ -75,16 +71,15 @@ function PaymentMethods({ showAddPayment }: AdminBillingProps) {
         error,
         refresh: refreshPaymentMethods,
     } = useBillingPaymentMethods(tenant);
-    const [, createSetupIntent] = useMutation(CREATE_BILLING_SETUP_INTENT);
+    const [
+        { fetching: creatingSetup, error: setupError, data: setupData },
+        createSetupIntent,
+    ] = useMutation(CREATE_BILLING_SETUP_INTENT);
     const [{ fetching: settingPrimary }, setPrimary] = useMutation(
         SET_BILLING_PAYMENT_METHOD
     );
     const [{ fetching: deleting }, deleteMethod] = useMutation(
         DELETE_BILLING_PAYMENT_METHOD
-    );
-    const [refreshCounter, setRefreshCounter] = useState(0);
-    const [setupIntentSecret, setSetupIntentSecret] = useState(
-        INTENT_SECRET_LOADING
     );
     const [actionError, setActionError] = useState<string>();
     const [pending, setPending] = useState<{
@@ -93,25 +88,14 @@ function PaymentMethods({ showAddPayment }: AdminBillingProps) {
     } | null>(null);
     const methods = billing?.paymentMethods ?? [];
     const primaryId = billing?.primaryPaymentMethod?.id;
+    const setupIntentSecret =
+        creatingSetup || setupError
+            ? undefined
+            : setupData?.createBillingSetupIntent.clientSecret;
 
     useEffect(() => {
-        let current = true;
-        void createSetupIntent({ tenant }).then((result) => {
-            if (current) {
-                setSetupIntentSecret(
-                    result.data?.createBillingSetupIntent.clientSecret ??
-                        INTENT_SECRET_ERROR
-                );
-            }
-        });
-        return () => {
-            current = false;
-        };
-    }, [createSetupIntent, tenant, refreshCounter]);
-
-    const refreshSetup = () => {
-        setRefreshCounter((value) => value + 1);
-    };
+        void createSetupIntent({ tenant });
+    }, [createSetupIntent, tenant]);
 
     // Also finishes adding a payment method. Stripe may not report the new
     // method's id, which leaves only the table to refresh.
@@ -129,7 +113,6 @@ function PaymentMethods({ showAddPayment }: AdminBillingProps) {
                 );
             }
         }
-        refreshSetup();
         setPending(null);
     };
 
@@ -143,7 +126,6 @@ function PaymentMethods({ showAddPayment }: AdminBillingProps) {
                     'Unable to delete the payment method. Please try again.'
             );
         }
-        refreshSetup();
         setPending(null);
     };
 
@@ -153,7 +135,7 @@ function PaymentMethods({ showAddPayment }: AdminBillingProps) {
 
     return (
         <Stack spacing={3}>
-            {setupIntentSecret === INTENT_SECRET_ERROR ? (
+            {setupError ? (
                 <AlertBox short severity="error">
                     <Typography component="div">
                         There was an issue attempting to get a token from
@@ -194,8 +176,12 @@ function PaymentMethods({ showAddPayment }: AdminBillingProps) {
                     autoOpen={Boolean(showAddPayment)}
                     tenant={tenant}
                     stripePromise={stripePromise}
+                    loading={creatingSetup}
                     setupIntentSecret={setupIntentSecret}
-                    onAdded={makePrimary}
+                    onAdded={async (id) => {
+                        await makePrimary(id);
+                        void createSetupIntent({ tenant });
+                    }}
                 />
             </Stack>
 

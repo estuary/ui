@@ -1,16 +1,14 @@
-import type { MultiplePaymentMethods } from 'src/api/billing';
-import type { Schema } from 'src/types';
+import type { MultiplePaymentMethods } from 'src/api/gql/billing';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { Box, Stack, Typography } from '@mui/material';
 
 import { DateTime } from 'luxon';
-import { FormattedMessage } from 'react-intl';
 import { NavLink, useLocation } from 'react-router-dom';
 import { useClient } from 'urql';
 
-import { getPaymentMethodsForTenants } from 'src/api/billing';
+import { getPaymentMethodsForTenants } from 'src/api/gql/billing';
 import { authenticatedRoutes } from 'src/app/routes';
 import { useTenantBillingDetails } from 'src/context/fetcher/TenantBillingDetails';
 import { useUserInfoSummaryStore } from 'src/context/UserInfoSummary/useUserInfoSummaryStore';
@@ -156,29 +154,36 @@ function useTenantMissingPaymentMethodWarning() {
                     // Since if we have daysleft so we can set the alert as a warning and not an error
                     const trialCurrent = daysLeft > 0;
 
-                    const descriptionID = trialCurrent
-                        ? 'notifications.paymentMethods.missing.trialCurrent'
+                    const tenantName = (
+                        <Box component="span" sx={{ fontWeight: 'bold' }}>
+                            {currentTenant}
+                        </Box>
+                    );
+                    const description = trialCurrent ? (
+                        <>
+                            The free trial for {tenantName} ends in {daysLeft}{' '}
+                            days, but no payment method has been added to your
+                            account.
+                        </>
+                    ) : daysLeft === 0 ? (
+                        <>
+                            The free trial for {tenantName} ends today, but no
+                            payment method has been added to your account.
+                        </>
+                    ) : (
+                        <>
+                            {tenantName} is past its free trial without a
+                            payment method.
+                        </>
+                    );
+                    const timing = trialCurrent
+                        ? 'before your trial ends '
                         : daysLeft === 0
-                          ? 'notifications.paymentMethods.missing.trialEndsToday'
-                          : 'notifications.paymentMethods.missing.trialPast';
-
-                    // Just always pass the same values even if all the messages do not need them
-                    const descriptionValues: Schema = {
-                        daysLeft,
-                        tenant: (
-                            <Box
-                                component="span"
-                                sx={{
-                                    fontWeight: 'bold',
-                                }}
-                            >
-                                {currentTenant}
-                            </Box>
-                        ),
-                    };
+                          ? 'today '
+                          : '';
 
                     const cta = alreadyOnBilling ? (
-                        <FormattedMessage id="notifications.paymentMethods.missing.cta.alreadyThere" />
+                        'add a payment method below'
                     ) : (
                         <NavLink
                             onClick={() => {
@@ -192,7 +197,7 @@ function useTenantMissingPaymentMethodWarning() {
                                 }
                             )}
                         >
-                            <FormattedMessage id="notifications.paymentMethods.missing.cta" />
+                            add a payment method
                         </NavLink>
                     );
 
@@ -205,25 +210,16 @@ function useTenantMissingPaymentMethodWarning() {
                         severity: trialCurrent ? 'warning' : 'error',
                         description: (
                             <Stack spacing={1} sx={{ mt: 1 }}>
+                                <Box>{description}</Box>
                                 <Box>
-                                    <FormattedMessage
-                                        id={descriptionID}
-                                        values={descriptionValues}
-                                    />
-                                </Box>
-                                <Box>
-                                    <FormattedMessage
-                                        id={`${descriptionID}.instructions`}
-                                        values={{
-                                            cta,
-                                        }}
-                                    />
+                                    Please {cta} {timing}to continue using
+                                    Estuary.
                                 </Box>
                             </Stack>
                         ),
                         title: (
                             <Typography sx={{ fontWeight: 'bold' }}>
-                                <FormattedMessage id="notifications.paymentMethods.missing.title" />
+                                Missing Payment Method
                             </Typography>
                         ),
                     });

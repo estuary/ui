@@ -1,4 +1,4 @@
-import type { Invoice } from 'src/api/billing';
+import type { Invoice } from 'src/api/gql/billing';
 import type { InvoiceId } from 'src/utils/billing-utils';
 
 import { TableCell, TableRow, Typography } from '@mui/material';

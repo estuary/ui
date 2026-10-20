@@ -134,6 +134,7 @@ describe('billing payments', () => {
                     ? billing([otherMethod], otherMethod.id)
                     : billing([paymentMethod, otherMethod], paymentMethod.id);
             let mutations = 0;
+            let setups = 0;
             const mutate = async (field: string) => {
                 mutations++;
                 await pending;
@@ -145,6 +146,10 @@ describe('billing payments', () => {
                 });
             };
             server.use(
+                billingGraphql.mutation('CreateBillingSetupIntent', () => {
+                    setups++;
+                    return setupIntent();
+                }),
                 billingGraphql.query('TenantBillingPaymentMethods', () =>
                     HttpResponse.json({
                         data: paymentMethodsData(
@@ -197,6 +202,7 @@ describe('billing payments', () => {
                 ).toBe(true);
             });
             expect(mutations).toBe(1);
+            expect(setups).toBe(1);
             expect(screen.getByText('Other card')).toBeTruthy();
             expect(screen.queryByText('Acme card') !== null).toBe(
                 fails || action === 'Make Primary'
@@ -267,12 +273,18 @@ describe('billing payments', () => {
         const pending = new Promise<void>((resolve) => {
             release = resolve;
         });
+        let releaseReplacement!: () => void;
+        const replacement = new Promise<void>((resolve) => {
+            releaseReplacement = resolve;
+        });
         let setups = 0;
         server.use(
             billingGraphql.mutation('CreateBillingSetupIntent', async () => {
                 const attempt = ++setups;
                 if (attempt === 1) {
                     await pending;
+                } else {
+                    await replacement;
                 }
                 return setupIntent(`secret_${attempt}`);
             })
@@ -292,9 +304,29 @@ describe('billing payments', () => {
                 'data-secret'
             )
         ).toBe('secret_1');
-        fireEvent.click(screen.getByRole('button', { name: 'Submit' }));
-        await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
-        await waitFor(() => expect(setups).toBe(2));
+        try {
+            fireEvent.click(screen.getByRole('button', { name: 'Submit' }));
+            await waitFor(() =>
+                expect(screen.queryByRole('dialog')).toBeNull()
+            );
+            await waitFor(() => expect(setups).toBe(2));
+            expect(
+                screen
+                    .getByRole('button', { name: 'Add Payment Method' })
+                    .hasAttribute('disabled')
+            ).toBe(true);
+        } finally {
+            await act(async () => releaseReplacement());
+        }
+        await addPaymentMethodEnabled();
+        fireEvent.click(
+            screen.getByRole('button', { name: 'Add Payment Method' })
+        );
+        expect(
+            (await screen.findByTestId('stripe-form')).getAttribute(
+                'data-secret'
+            )
+        ).toBe('secret_2');
         expect(fireGtmEvent).toHaveBeenCalledWith('Payment_Entered', {
             tenant: 'acme/',
         });
