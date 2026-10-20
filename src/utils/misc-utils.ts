@@ -117,6 +117,10 @@ export const appendWithForwardSlash = (value: string): string =>
 export const replaceWhitespacesWithUnderscores = (value: string): string =>
     value.replaceAll(/\s/g, '_');
 
+// Normalize a catalog name's leaf segment, preserving case and excluding slashes.
+export const normalizeCatalogName = (value: string): string =>
+    replaceWhitespacesWithUnderscores(value).replace(/[^a-z0-9._-]/gi, '');
+
 // Spread onto the native input's props to discourage browser autofill and
 // password-manager suggestions on fields that are not login credentials.
 export function getAutofillIgnoreProps() {
