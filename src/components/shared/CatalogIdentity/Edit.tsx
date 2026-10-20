@@ -32,7 +32,11 @@ import {
 } from 'src/components/shared/CatalogIdentity/layout';
 import { LeavesAutocomplete } from 'src/components/shared/LeavesAutocomplete/LeavesAutocomplete';
 import { useDebouncedValue } from 'src/hooks/useDebouncedValue';
-import { appendWithForwardSlash, hasLength } from 'src/utils/misc-utils';
+import {
+    appendWithForwardSlash,
+    hasLength,
+    replaceWhitespacesWithUnderscores,
+} from 'src/utils/misc-utils';
 
 // How long typing has to pause before the monogram color moves.
 const NAME_COLOR_DEBOUNCE_MS = 400;
@@ -269,9 +273,9 @@ export function CatalogIdentityEditor({
                                 value={name}
                                 onChange={(event) =>
                                     onNameChange(
-                                        event.target.value
-                                            .replace(/[^a-z0-9-]/gi, '')
-                                            .toLowerCase()
+                                        replaceWhitespacesWithUnderscores(
+                                            event.target.value
+                                        ).replace(/[^a-z0-9._-]/gi, '')
                                     )
                                 }
                                 onBlur={() => setEditingName(false)}
