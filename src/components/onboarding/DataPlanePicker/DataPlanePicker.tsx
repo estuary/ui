@@ -202,6 +202,7 @@ export const DataPlanePicker = ({
                 )
             }
             MenuProps={{
+                transitionDuration: 0,
                 slotProps: {
                     paper: { sx: { maxHeight: menuMaxHeight } },
                     list: { sx: { py: 0 } },
