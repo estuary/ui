@@ -85,9 +85,31 @@ describe('groupDataPlanes', () => {
         ]);
     });
 
-    test('renders unknown regions by code, without a flag, after known ones', () => {
+    test('names regions from the expanded tables for every provider', () => {
+        const [aws, gcp, azure] = groupDataPlanes([
+            plane('AWS', 'eu-central-1'),
+            plane('GCP', 'europe-west1'),
+            plane('AZURE', 'westeurope'),
+        ]);
+
+        expect(aws.choices[0]).toMatchObject({
+            label: 'Europe (Frankfurt)',
+            country: 'DE',
+        });
+        expect(gcp.choices[0]).toMatchObject({
+            label: 'Belgium',
+            country: 'BE',
+        });
+        expect(azure.choices[0]).toMatchObject({
+            label: 'West Europe (Netherlands)',
+            country: 'NL',
+        });
+    });
+
+    test('sorts unranked regions, known or not, after ranked ones by code', () => {
         const [aws] = groupDataPlanes([
             plane('AWS', 'us-west-2'),
+            plane('AWS', 'xx-moon-1'),
             plane('AWS', 'sa-east-1'),
             plane('AWS', 'ca-central-1'),
             plane('AWS', 'us-east-1'),
@@ -98,30 +120,43 @@ describe('groupDataPlanes', () => {
         ).toEqual([
             ['US East (N. Virginia)', 'US'],
             ['US West (Oregon)', 'US'],
-            ['ca-central-1', null],
-            ['sa-east-1', null],
+            ['Canada (Central)', 'CA'],
+            ['South America (São Paulo)', 'BR'],
+            ['xx-moon-1', null],
         ]);
     });
 
-    test('puts unknown providers in their own groups at the end, alphabetically', () => {
+    test('renders an unknown region by its code, without a country', () => {
+        const [gcp] = groupDataPlanes([plane('GCP', 'mars-north1')]);
+
+        expect(gcp.choices[0]).toMatchObject({
+            label: 'mars-north1',
+            country: null,
+            providerKnown: true,
+        });
+    });
+
+    test('puts unknown providers in title-cased groups at the end, alphabetically', () => {
         const groups = groupDataPlanes([
             plane('LOCAL', 'cluster'),
             plane('AZURE', 'centralus'),
-            plane('ORACLE', 'us-ashburn-1'),
+            plane('IBM_CLOUD', 'us-south'),
             plane('AWS', 'us-east-1'),
         ]);
 
         expect(groups.map(({ provider, label }) => [provider, label])).toEqual([
             ['AWS', 'Amazon Web Services'],
             ['AZURE', 'Microsoft Azure'],
-            ['LOCAL', 'LOCAL'],
-            ['ORACLE', 'ORACLE'],
+            ['IBM_CLOUD', 'Ibm Cloud'],
+            ['LOCAL', 'Local'],
         ]);
-        expect(groups[2].choices[0]).toMatchObject({
+        expect(groups[3].choices[0]).toMatchObject({
             label: 'cluster',
             country: null,
             disambiguator: null,
+            providerKnown: false,
         });
+        expect(groups[0].choices[0].providerKnown).toBe(true);
     });
 
     test('returns no groups for no planes', () => {

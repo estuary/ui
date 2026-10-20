@@ -110,7 +110,10 @@ export const UnknownProviderAndRegion: Story = {
     args: {
         dataPlanes: [
             ...PRODUCTION_PLANES,
-            plane('AWS', 'ca-central-1'),
+            // Known from the region tables, but not ranked.
+            plane('AWS', 'eu-central-1'),
+            // Not in the region tables.
+            plane('AWS', 'xx-moon-1'),
             {
                 name: 'ops/dp/public/local-cluster',
                 cloudProvider: 'LOCAL',

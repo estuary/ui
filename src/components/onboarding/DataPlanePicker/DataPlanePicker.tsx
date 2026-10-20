@@ -17,7 +17,7 @@ import {
     Typography,
 } from '@mui/material';
 
-import { Check, NavArrowDown } from 'iconoir-react';
+import { Check, Cloud, NavArrowDown } from 'iconoir-react';
 
 import { CountryFlag } from 'src/components/onboarding/DataPlanePicker/CountryFlag';
 import { groupDataPlanes } from 'src/components/onboarding/DataPlanePicker/dataPlaneMetadata';
@@ -63,11 +63,21 @@ const RegionCode = ({ choice }: { choice: DataPlaneChoice }) => (
 
 const ChoiceIcons = ({ choice }: { choice: DataPlaneChoice }) => (
     <>
-        <DataPlaneIcon
-            provider={choice.plane.cloudProvider}
-            scope="public"
-            hideScopeIcon
-        />
+        {choice.providerKnown ? (
+            <DataPlaneIcon
+                provider={choice.plane.cloudProvider}
+                scope="public"
+                hideScopeIcon
+            />
+        ) : (
+            // A neutral cloud rather than DataPlaneIcon's question mark.
+            <Box
+                component="span"
+                sx={{ display: 'flex', flexShrink: 0, color: mutedText }}
+            >
+                <Cloud width={20} height={20} />
+            </Box>
+        )}
         <CountryFlag country={choice.country} />
     </>
 );
