@@ -46,7 +46,7 @@ export function CreateServiceAccountDialog({
     const [{ fetching }, createServiceAccount] = useCreateServiceAccount();
 
     const [name, setName] = useState('');
-    const [location, setLocation] = useState('');
+    const [homePrefix, setHomePrefix] = useState('');
     const [grantOn, setGrantOn] = useState(true);
     const [quickCapability, setQuickCapability] = useState<Capability>('read');
     const [error, setError] = useState<string | null>(null);
@@ -68,15 +68,15 @@ export function CreateServiceAccountDialog({
 
         if (open) {
             setName(generateAlliterativeName());
-            setLocation(selectedTenant);
+            setHomePrefix(selectedTenant);
             setGrantOn(true);
             setQuickCapability('read');
             setError(null);
         }
     }
 
-    const catalogName = `${location}${name}`;
-    const identityComplete = hasLength(name) && hasLength(location);
+    const catalogName = `${homePrefix}${name}`;
+    const identityComplete = hasLength(name) && hasLength(homePrefix);
 
     const handleSubmit = async () => {
         setError(null);
@@ -86,7 +86,7 @@ export function CreateServiceAccountDialog({
         }
 
         const grants = grantOn
-            ? [{ prefix: location, capability: quickCapability }]
+            ? [{ prefix: homePrefix, capability: quickCapability }]
             : [];
 
         const result = await createServiceAccount({ catalogName, grants });
@@ -143,10 +143,10 @@ export function CreateServiceAccountDialog({
                         <CatalogIdentityEditor
                             name={name}
                             onNameChange={setName}
-                            location={location}
-                            onLocationChange={setLocation}
+                            homePrefix={homePrefix}
+                            onHomePrefixChange={setHomePrefix}
                             // nameHelperText="Lowercase letters, numbers, and dashes"
-                            // locationHelperText="The home prefix - controls who may manage the service account"
+                            // homePrefixHelperText="The home prefix - controls who may manage the service account"
                             leaves={leaves}
                             onRegenerate={regenerateName}
                         />
@@ -181,9 +181,9 @@ export function CreateServiceAccountDialog({
                                     justifyContent: 'space-between',
                                 }}
                             >
-                                {location ? (
+                                {homePrefix ? (
                                     <CatalogPath
-                                        path={location}
+                                        path={homePrefix}
                                         variant="body2"
                                         color="text.secondary"
                                     />

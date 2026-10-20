@@ -35,12 +35,6 @@ import {
     replaceWhitespacesWithUnderscores,
 } from 'src/utils/misc-utils';
 
-// The measurements of the card a catalog entity is presented as: a monogram tile
-// over its stable color, with the leaf name above the prefix it lives under.
-// Used by the single rendering component behind CatalogIdentityEditor and
-// CatalogIdentity, so an entity looks the same before and after it is created.
-
-// How long the monogram takes to cross-fade to a new color.
 const MONOGRAM_FADE_MS = 1000;
 
 const TRUNCATE_SX = {
@@ -50,30 +44,25 @@ const TRUNCATE_SX = {
     textOverflow: 'ellipsis',
 } as const;
 
-// Every measurement at scale 1, the size an entity is named at.
 const BASE = {
     cardHeight: 72,
     nameFontSize: 18,
     nameLineHeight: 24,
-    locationFontSize: 14,
-    locationLineHeight: 22,
+    homePrefixFontSize: 14,
+    homePrefixLineHeight: 22,
     monogramFontSize: 20,
     helperFontSize: 12,
 };
 
-// How long typing has to pause before the monogram color moves.
 const NAME_COLOR_DEBOUNCE_MS = 400;
 
 const NAME_PLACEHOLDER = 'name';
-const LOCATION_PLACEHOLDER = 'No home prefix selected';
+const HOME_PREFIX_PLACEHOLDER = 'No home prefix selected';
 
 const HELPER_FADE_MS = 150;
 
 const EDIT_ICON_CLASS = 'catalog-identity-inline-edit';
 
-// A field at rest while it can still be changed: plain text, with a pencil that
-// keeps its place in the layout at all times and only fades in on hover, so
-// revealing it does not shift the text beside it.
 const EDITABLE_TEXT_SX: SystemStyleObject<Theme> = {
     minWidth: 0,
     gap: 0.75,
@@ -81,8 +70,6 @@ const EDITABLE_TEXT_SX: SystemStyleObject<Theme> = {
     cursor: 'pointer',
     [`& .${EDIT_ICON_CLASS}`]: {
         flex: 'none',
-        // Muted against the text it sits beside, so it reads as an affordance
-        // rather than part of the value.
         color: 'text.secondary',
         opacity: 0,
         transition: 'opacity 150ms ease',
@@ -92,22 +79,14 @@ const EDITABLE_TEXT_SX: SystemStyleObject<Theme> = {
     },
 };
 
-// The fields sit directly on the card surface, with no border of their own, so
-// the block reads as the account's card rather than as a form.
 const INLINE_INPUT_SX: SystemStyleObject<Theme> = {
     'borderRadius': (theme) => theme.radius.sm,
     '&:hover': { borderColor: 'text.disabled' },
     '&:focus-within': { borderColor: 'primary.main' },
 };
 
-// The shared autocomplete ships a floating label and a two-line helper-text
-// reservation. Neither fits on a single row, so the label is hidden from sight
-// but left for screen readers, and the underline and helper slot are collapsed.
+// Custom LeavesAutocomplete styling
 const INLINE_AUTOCOMPLETE_SX: SystemStyleObject<Theme> = {
-    // The standard variant reserves 16px above itself for a floating label that
-    // is hidden here. Left in, it pushes the column past the card's padding. Its
-    // 1px of bottom padding, meant to sit above the underline, goes with it —
-    // there is no underline, and it lifts the text off the read-mode baseline.
     [`&&& .${inputBaseClasses.formControl}`]: { mt: 0, pb: 0 },
     [`& .${inputLabelClasses.root}`]: {
         position: 'absolute',
@@ -123,21 +102,14 @@ const INLINE_AUTOCOMPLETE_SX: SystemStyleObject<Theme> = {
 };
 
 interface CatalogIdentityEditorProps {
-    /** The account's leaf name, without its prefix. */
     name: string;
     onNameChange: (name: string) => void;
-    /** The catalog prefix the account lives under, trailing slash included. */
-    location: string;
-    onLocationChange: (location: string) => void;
-    /**
-     * Shown in place of the name while the location is being edited. It takes
-     * the name's line, so keep it to one line's worth of text.
-     */
-    locationHelperText?: string;
-    /** Prefixes offered while editing the location. */
+    homePrefix: string;
+    onHomePrefixChange: (homePrefix: string) => void;
+    homePrefixHelperText?: string;
     leaves: string[];
     /** Draws a new name for the account. */
-    onRegenerate: () => void;
+    onRegenerate?: () => void;
 }
 
 export interface CatalogIdentityDisplayProps {
@@ -161,7 +133,7 @@ export function CatalogIdentityContent(props: CatalogIdentityContentProps) {
     const displayProps = mode === 'display' ? props : undefined;
     const { prefix, leaf } = splitCatalogName(displayProps?.catalogName ?? '');
     const name = editProps?.name ?? leaf;
-    const location = editProps?.location ?? prefix;
+    const homePrefix = editProps?.homePrefix ?? prefix;
     const scale = displayProps?.scale ?? 1;
     const sx = displayProps?.sx;
     // Round scaled measurements to whole pixels to keep text aligned when
@@ -170,7 +142,7 @@ export function CatalogIdentityContent(props: CatalogIdentityContentProps) {
 
     const cardHeight = px(BASE.cardHeight);
     const nameLineHeight = px(BASE.nameLineHeight);
-    const locationLineHeight = px(BASE.locationLineHeight);
+    const homePrefixLineHeight = px(BASE.homePrefixLineHeight);
 
     const nameTextSx = {
         fontFamily: 'monospace',
@@ -179,10 +151,10 @@ export function CatalogIdentityContent(props: CatalogIdentityContentProps) {
         lineHeight: `${nameLineHeight}px`,
     } as const;
 
-    const locationTextSx = {
+    const homePrefixTextSx = {
         fontFamily: 'monospace',
-        fontSize: px(BASE.locationFontSize),
-        lineHeight: `${locationLineHeight}px`,
+        fontSize: px(BASE.homePrefixFontSize),
+        lineHeight: `${homePrefixLineHeight}px`,
     } as const;
 
     // A field's helper text stands in for the line it is not on while that field
@@ -199,9 +171,9 @@ export function CatalogIdentityContent(props: CatalogIdentityContentProps) {
         lineHeight: `${nameLineHeight}px`,
     } as const;
 
-    const locationHelperSx = {
+    const homePrefixHelperSx = {
         ...helperTextSx,
-        lineHeight: `${locationLineHeight}px`,
+        lineHeight: `${homePrefixLineHeight}px`,
     } as const;
 
     const cardSx: SystemStyleObject<Theme> = {
@@ -211,7 +183,7 @@ export function CatalogIdentityContent(props: CatalogIdentityContentProps) {
     };
 
     // Stretched to the monogram so the name's line box starts at its top edge
-    // and the location ends at its bottom, rather than the pair floating
+    // and the home prefix ends at its bottom, rather than the pair floating
     // centered against it.
     const columnSx: SystemStyleObject<Theme> = {
         minWidth: 0,
@@ -241,7 +213,7 @@ export function CatalogIdentityContent(props: CatalogIdentityContentProps) {
         transition: `background ${MONOGRAM_FADE_MS}ms ease, border-color ${MONOGRAM_FADE_MS}ms ease, color ${MONOGRAM_FADE_MS}ms ease`,
     };
 
-    const locationIconSize = px(BASE.locationFontSize);
+    const homePrefixIconSize = px(BASE.homePrefixFontSize);
 
     // The catalog name the two lines add up to, and what the tile's color is
     // hashed from. An unnamed entity stands in its placeholder, so the card
@@ -251,17 +223,12 @@ export function CatalogIdentityContent(props: CatalogIdentityContentProps) {
     // slash is added here too. Without it the name the color comes from changes
     // on the way out of the edit, and the tile would settle on one color while
     // typing and then move to another.
-    const catalogName = `${appendWithForwardSlash(location)}${
+    const catalogName = `${appendWithForwardSlash(homePrefix)}${
         hasLength(name) ? name : NAME_PLACEHOLDER
     }`;
 
     const [editingName, setEditingName] = useState(false);
-    const [editingLocation, setEditingLocation] = useState(false);
-
-    // Held so Escape can put the value back. Without it Escape would reach the
-    // surrounding dialog and close the whole thing mid-edit.
-    const [nameBeforeEdit, setNameBeforeEdit] = useState(name);
-    const [locationBeforeEdit, setLocationBeforeEdit] = useState(location);
+    const [editingHomePrefix, setEditingHomePrefix] = useState(false);
 
     const nameInputRef = useRef<HTMLInputElement>(null);
 
@@ -270,10 +237,10 @@ export function CatalogIdentityContent(props: CatalogIdentityContentProps) {
     // place, and the help sits on the line the reader is not using.
     // Each helper is mounted for as long as its field is editable, so it has
     // something to fade out to when the edit ends.
-    const showLocationHelper = Boolean(editProps) && editingLocation;
+    const showHomePrefixHelper = Boolean(editProps) && editingHomePrefix;
     const showNameHelper = Boolean(editProps) && editingName;
 
-    // The name's helper renders on the location's line, away from the input it
+    // The name's helper renders on the home prefix's line, away from the input it
     // belongs to, so the input points at it.
     const generatedId = useId();
     const nameHelperId = `${generatedId}-name-helper`;
@@ -323,8 +290,8 @@ export function CatalogIdentityContent(props: CatalogIdentityContentProps) {
         color: 'text.primary',
     };
 
-    const locationSx = {
-        ...locationTextSx,
+    const homePrefixSx = {
+        ...homePrefixTextSx,
         // Fills the row beside the home icon, so the whole line is a click
         // target for the edit it opens.
         flex: 1,
@@ -357,8 +324,8 @@ export function CatalogIdentityContent(props: CatalogIdentityContentProps) {
                     sx={{ alignItems: 'center' }}
                 >
                     <SwapLine
-                        helperText={editProps?.locationHelperText}
-                        helperVisible={showLocationHelper}
+                        helperText={editProps?.homePrefixHelperText}
+                        helperVisible={showHomePrefixHelper}
                         helperSx={nameHelperSx}
                         sx={{ flex: 1, minWidth: 0 }}
                     >
@@ -384,16 +351,6 @@ export function CatalogIdentityContent(props: CatalogIdentityContentProps) {
                                     onBlur={() => setEditingName(false)}
                                     onKeyDown={(event) => {
                                         if (event.key === 'Enter') {
-                                            setEditingName(false);
-                                        }
-
-                                        if (event.key === 'Escape') {
-                                            // Kept off the dialog, which would take it
-                                            // as a request to close.
-                                            event.stopPropagation();
-                                            editProps?.onNameChange(
-                                                nameBeforeEdit
-                                            );
                                             setEditingName(false);
                                         }
                                     }}
@@ -440,7 +397,6 @@ export function CatalogIdentityContent(props: CatalogIdentityContentProps) {
                                     onEdit={
                                         editProps
                                             ? () => {
-                                                  setNameBeforeEdit(name);
                                                   setEditingName(true);
                                               }
                                             : undefined
@@ -450,18 +406,13 @@ export function CatalogIdentityContent(props: CatalogIdentityContentProps) {
                         </Box>
                     </SwapLine>
                     {editProps && editingName ? (
-                        <Tooltip title="Randomize name">
+                        <Tooltip title="Generate name">
                             <IconButton
                                 size="small"
                                 onClick={editProps?.onRegenerate}
-                                // Keep focus on the input, so regenerating does
-                                // not blur out of edit mode.
+                                // Keep focus on the input
                                 onMouseDown={(event) => event.preventDefault()}
-                                aria-label="Randomize name"
-                                // Boxed to the name's line height. Left at its
-                                // natural size it is the tallest thing on the
-                                // row and pushes the name down off the
-                                // monogram's top edge.
+                                aria-label="Generate name"
                                 sx={{
                                     flex: 'none',
                                     p: 0,
@@ -481,7 +432,7 @@ export function CatalogIdentityContent(props: CatalogIdentityContentProps) {
                 <SwapLine
                     helperVisible={showNameHelper}
                     helperId={nameHelperId}
-                    helperSx={locationHelperSx}
+                    helperSx={homePrefixHelperSx}
                     sx={{ flex: 'none' }}
                 >
                     <Stack
@@ -497,20 +448,20 @@ export function CatalogIdentityContent(props: CatalogIdentityContentProps) {
                             }}
                         >
                             <Home
-                                width={locationIconSize}
-                                height={locationIconSize}
+                                width={homePrefixIconSize}
+                                height={homePrefixIconSize}
                             />
                         </Box>
                         <Box
                             sx={{
-                                ...locationTextSx,
+                                ...homePrefixTextSx,
                                 display: 'flex',
                                 minWidth: 0,
                                 flex: 1,
                                 color: 'text.secondary',
                             }}
                         >
-                            {editProps && editingLocation ? (
+                            {editProps && editingHomePrefix ? (
                                 <Box
                                     sx={[
                                         INLINE_INPUT_SX,
@@ -529,35 +480,22 @@ export function CatalogIdentityContent(props: CatalogIdentityContentProps) {
                                                     // MUI pins the input at 1.4375em, which
                                                     // overrides the line box.
                                                     height: 'auto',
-                                                    ...locationTextSx,
+                                                    ...homePrefixTextSx,
                                                     color: 'text.secondary',
                                                 },
                                         },
                                     ]}
-                                    // Enter and Tab are the autocomplete's own:
-                                    // Enter takes the highlighted prefix and
-                                    // leaves the field, Tab takes it and stays for
-                                    // the next segment.
-                                    onKeyDown={(event) => {
-                                        if (event.key === 'Escape') {
-                                            // Kept off the dialog, which would take it as a
-                                            // request to close.
-                                            event.stopPropagation();
-                                            editProps?.onLocationChange(
-                                                locationBeforeEdit
-                                            );
-                                            setEditingLocation(false);
-                                        }
-                                    }}
                                 >
                                     <LeavesAutocomplete
                                         leaves={editProps?.leaves ?? []}
-                                        value={location}
+                                        value={homePrefix}
                                         onChange={(value) =>
-                                            editProps?.onLocationChange(value)
+                                            editProps?.onHomePrefixChange(value)
                                         }
-                                        onBlur={() => setEditingLocation(false)}
-                                        label="Catalog location"
+                                        onBlur={() =>
+                                            setEditingHomePrefix(false)
+                                        }
+                                        label="Home prefix"
                                         textFieldVariant="standard"
                                         autoFocus
                                         required
@@ -565,19 +503,16 @@ export function CatalogIdentityContent(props: CatalogIdentityContentProps) {
                                 </Box>
                             ) : (
                                 <FieldText
-                                    value={location}
+                                    value={homePrefix}
                                     placeholder={
-                                        editProps ? LOCATION_PLACEHOLDER : ''
+                                        editProps ? HOME_PREFIX_PLACEHOLDER : ''
                                     }
-                                    label="catalog location"
-                                    textSx={locationSx}
+                                    label="home prefix"
+                                    textSx={homePrefixSx}
                                     onEdit={
                                         editProps
                                             ? () => {
-                                                  setLocationBeforeEdit(
-                                                      location
-                                                  );
-                                                  setEditingLocation(true);
+                                                  setEditingHomePrefix(true);
                                               }
                                             : undefined
                                     }
