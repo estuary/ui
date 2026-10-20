@@ -26,9 +26,6 @@ vi.mock('src/components/admin/Tabs', () => ({ default: () => null }));
 vi.mock('src/components/graphs/UsageByMonthGraph', () => ({
     default: () => null,
 }));
-vi.mock('src/context/fetcher/TenantBillingDetails', () => ({
-    useTenantUsesExternalPayment: () => [false, null],
-}));
 vi.mock('@stripe/stripe-js', () => ({
     loadStripe: () => Promise.resolve(null),
 }));

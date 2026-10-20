@@ -7,11 +7,11 @@ import {
     screen,
     waitFor,
 } from '@testing-library/react';
+import { ErrorBoundary } from 'react-error-boundary';
 import { IntlProvider } from 'react-intl';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
 import PaymentMethods from 'src/components/admin/Billing/PaymentMethods';
-import PricingTierDetails from 'src/components/admin/Billing/PricingTierDetails';
 import { UrqlConfigProvider } from 'src/context/URQL';
 import { fireGtmEvent } from 'src/services/gtm';
 import {
@@ -29,9 +29,6 @@ const stripe = vi.hoisted(() => ({ confirmSetup: vi.fn(), update: vi.fn() }));
 vi.mock('src/stores/Tenant', () => ({
     useTenantStore: (selector: (state: typeof tenant) => unknown) =>
         selector(tenant),
-}));
-vi.mock('src/context/fetcher/TenantBillingDetails', () => ({
-    useTenantUsesExternalPayment: () => [false, null],
 }));
 vi.mock('@posthog/react', () => ({ usePostHog: () => ({ capture: vi.fn() }) }));
 vi.mock('src/services/gtm', () => ({ fireGtmEvent: vi.fn() }));
@@ -78,17 +75,12 @@ const addPaymentMethodEnabled = () =>
         ).toBe(false)
     );
 
-// Like the page, remount both sections for each tenant.
+// Like the page, remount for each tenant.
 const view = (showAddPayment = false) => (
-    <>
-        <div data-testid="pricing">
-            <PricingTierDetails key={tenant.selectedTenant} />
-        </div>
-        <PaymentMethods
-            key={tenant.selectedTenant}
-            showAddPayment={showAddPayment}
-        />
-    </>
+    <PaymentMethods
+        key={tenant.selectedTenant}
+        showAddPayment={showAddPayment}
+    />
 );
 const wrapper = ({ children }: { children: ReactNode }) => (
     <IntlProvider locale="en">
@@ -116,7 +108,7 @@ beforeEach(() => {
 });
 
 describe('billing payments', () => {
-    test('shares primary and delete results with the table and pricing', async () => {
+    test('updates the payment table after making a method primary and deleting it', async () => {
         let paymentReads = 0;
         server.use(
             billingGraphql.query('TenantBillingPaymentMethods', () => {
@@ -131,7 +123,6 @@ describe('billing payments', () => {
         );
         render(view(), { wrapper });
         await screen.findByText('Acme card');
-        expect(screen.getByText('Cloud tier')).toBeTruthy();
         expect(screen.getByText('0042')).toBeTruthy();
         fireEvent.click(screen.getByRole('button', { name: 'Make Primary' }));
         await waitFor(() =>
@@ -141,7 +132,6 @@ describe('billing payments', () => {
         );
         fireEvent.click(screen.getByRole('button', { name: 'Delete' }));
         await screen.findByText('No payment methods available.');
-        expect(screen.queryByText('Cloud tier')).toBeNull();
         expect(paymentReads).toBe(1);
     });
 
@@ -274,19 +264,24 @@ describe('billing payments', () => {
                 }
             )
         );
-        const pricing = () => (
-            <PricingTierDetails key={tenant.selectedTenant} />
+        const paymentMethods = () => (
+            <ErrorBoundary
+                key={tenant.selectedTenant}
+                fallbackRender={({ error }) => <div>{error.message}</div>}
+            >
+                {view()}
+            </ErrorBoundary>
         );
-        const { rerender } = render(pricing(), { wrapper });
-        await screen.findByText('Pricing information unavailable.');
+        const { rerender } = render(paymentMethods(), { wrapper });
+        await screen.findByText(/Payment provider unavailable/);
 
         tenant.selectedTenant = 'other/';
-        rerender(pricing());
-        await screen.findByText('Cloud tier');
+        rerender(paymentMethods());
+        await screen.findByText('Acme card');
         tenant.selectedTenant = 'acme/';
-        rerender(pricing());
+        rerender(paymentMethods());
 
-        await screen.findByText('Pricing information unavailable.');
+        await screen.findByText(/Payment provider unavailable/);
         expect(failedReads).toBe(2);
     });
 });

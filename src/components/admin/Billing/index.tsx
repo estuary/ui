@@ -3,7 +3,7 @@ import type { InvoiceId } from 'src/utils/billing-utils';
 
 import { useState } from 'react';
 
-import { Divider, Grid, Typography } from '@mui/material';
+import { Divider, Grid } from '@mui/material';
 
 import { ErrorBoundary } from 'react-error-boundary';
 
@@ -11,7 +11,6 @@ import { BILLING_HISTORY_PAGE_SIZE } from 'src/api/gql/billing';
 import { authenticatedRoutes } from 'src/app/routes';
 import DateRange from 'src/components/admin/Billing/DateRange';
 import PaymentMethods from 'src/components/admin/Billing/PaymentMethods';
-import PricingTierDetails from 'src/components/admin/Billing/PricingTierDetails';
 import { INVOICE_ROW_HEIGHT } from 'src/components/admin/Billing/shared';
 import AdminTabs from 'src/components/admin/Tabs';
 import GraphLoadingState from 'src/components/graphs/states/Loading';
@@ -47,16 +46,11 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
         <>
             <AdminTabs />
 
-            <Grid container spacing={{ xs: 3, md: 2 }} sx={{ py: 2 }}>
-                <Grid size={{ xs: 12, md: 9 }}>
-                    <Typography variant="h6" sx={{ mb: 0.5 }}>
-                        {'Billing'}
-                    </Typography>
-
-                    {/* Remount per tenant, like the details below. */}
-                    <PricingTierDetails key={selectedTenant} />
-                </Grid>
-
+            <Grid
+                container
+                spacing={{ xs: 3, md: 2 }}
+                sx={{ py: 2, justifyContent: 'flex-end' }}
+            >
                 <Grid
                     size={{ xs: 12, md: 3 }}
                     sx={{ display: 'flex', alignItems: 'end' }}
