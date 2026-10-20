@@ -44,12 +44,22 @@ const mutedText = (theme: Theme) =>
 
 const NAME_SX = { fontSize: 15, lineHeight: 1.35 };
 
+// The generic `monospace` alone resolves to Courier in Chrome on macOS.
+const MONOSPACE_FONT = [
+    'ui-monospace',
+    'SFMono-Regular',
+    'Menlo',
+    'Consolas',
+    '"Liberation Mono"',
+    'monospace',
+].join(',');
+
 const RegionCode = ({ choice }: { choice: DataPlaneChoice }) => (
     <Typography
         component="span"
         sx={{
             display: 'block',
-            fontFamily: 'monospace',
+            fontFamily: MONOSPACE_FONT,
             fontSize: 12,
             lineHeight: 1.35,
             color: mutedText,
@@ -202,10 +212,11 @@ export const DataPlanePicker = ({
                         pt: 1.5,
                         pb: 0.5,
                         lineHeight: 1.4,
-                        fontSize: 12,
-                        fontWeight: 500,
-                        letterSpacing: '0.08em',
-                        textTransform: 'uppercase',
+                        // Sentence case, smaller and bolder than the option
+                        // names and in muted grey, so it reads as a label.
+                        fontSize: 13,
+                        fontWeight: 600,
+                        letterSpacing: '0.01em',
                         color: mutedText,
                         borderTop: index > 0 ? 1 : 0,
                         borderColor: 'divider',
