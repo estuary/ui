@@ -4,7 +4,7 @@ import type {
     PublicDataPlane,
 } from 'src/components/onboarding/DataPlanePicker/dataPlaneMetadata';
 
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 
 import {
     Box,
@@ -61,6 +61,12 @@ const ChoiceIcons = ({ choice }: { choice: DataPlaneChoice }) => (
     </>
 );
 
+// The menu opens below the field, as in the design, and scrolls when the
+// space below is short. MUI would otherwise shift it up over the field.
+// Below this height, let MUI reposition it instead.
+const MIN_MENU_HEIGHT = 240;
+const MENU_VIEWPORT_GUTTER = 16;
+
 // Sized to 1em so MUI's `.MuiSelect-icon` centering and open-state rotation
 // apply as they do to its own icon.
 const ChevronIcon = ({ className }: { className?: string }) => (
@@ -84,6 +90,8 @@ export const DataPlanePicker = ({
     onChange,
     value,
 }: DataPlanePickerProps) => {
+    const [menuMaxHeight, setMenuMaxHeight] = useState<number>();
+
     const groups = useMemo(() => groupDataPlanes(dataPlanes), [dataPlanes]);
 
     const choicesByName = useMemo(
@@ -107,6 +115,18 @@ export const DataPlanePicker = ({
             value={selectedChoice ? value : ''}
             onChange={(event) => onChange(event.target.value)}
             onBlur={onBlur}
+            onOpen={(event) => {
+                const { bottom } = (
+                    event.currentTarget as HTMLElement
+                ).getBoundingClientRect();
+
+                setMenuMaxHeight(
+                    Math.max(
+                        MIN_MENU_HEIGHT,
+                        window.innerHeight - bottom - MENU_VIEWPORT_GUTTER
+                    )
+                );
+            }}
             disabled={disabled}
             displayEmpty
             IconComponent={ChevronIcon}
@@ -130,7 +150,7 @@ export const DataPlanePicker = ({
             }
             MenuProps={{
                 slotProps: {
-                    paper: { sx: { mt: 0.5 } },
+                    paper: { sx: { mt: 0.5, maxHeight: menuMaxHeight } },
                     list: { sx: { py: 0 } },
                 },
             }}
