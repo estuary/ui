@@ -8,6 +8,10 @@ import { Box } from '@mui/material';
 const WIDTH = 20;
 const HEIGHT = 14;
 
+// Displayed slightly smaller than the canvas, as in the design.
+const DISPLAY_WIDTH = 18;
+const DISPLAY_HEIGHT = 13;
+
 const US_STRIPE = HEIGHT / 13;
 
 const UnitedStates = (
@@ -92,10 +96,10 @@ export const CountryFlag = ({ country }: CountryFlagProps) => {
         <Box
             sx={{
                 flexShrink: 0,
-                width: WIDTH,
-                height: HEIGHT,
+                width: DISPLAY_WIDTH,
+                height: DISPLAY_HEIGHT,
                 display: 'flex',
-                borderRadius: '2px',
+                borderRadius: '1.5px',
                 overflow: 'hidden',
                 boxShadow: flag
                     ? (theme) => `0 0 0 1px ${theme.palette.divider}`
@@ -104,9 +108,10 @@ export const CountryFlag = ({ country }: CountryFlagProps) => {
         >
             {flag ? (
                 <svg
-                    width={WIDTH}
-                    height={HEIGHT}
+                    width={DISPLAY_WIDTH}
+                    height={DISPLAY_HEIGHT}
                     viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
+                    preserveAspectRatio="none"
                     aria-hidden
                 >
                     {flag}

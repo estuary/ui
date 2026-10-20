@@ -1,3 +1,4 @@
+import type { Theme } from '@mui/material';
 import type { Ref } from 'react';
 import type {
     DataPlaneChoice,
@@ -35,13 +36,23 @@ interface DataPlanePickerProps {
     onBlur?: () => void;
 }
 
+// Neutral grey for the provider headers and region codes. `text.secondary`
+// is navy in light mode, and `text.disabled` is too faint for text people
+// need to read.
+const mutedText = (theme: Theme) =>
+    theme.palette.grey[theme.palette.mode === 'light' ? 700 : 500];
+
+const NAME_SX = { fontSize: 15, lineHeight: 1.35 };
+
 const RegionCode = ({ choice }: { choice: DataPlaneChoice }) => (
     <Typography
         component="span"
         sx={{
+            display: 'block',
             fontFamily: 'monospace',
             fontSize: 12,
-            color: 'text.secondary',
+            lineHeight: 1.35,
+            color: mutedText,
             whiteSpace: 'nowrap',
         }}
     >
@@ -135,13 +146,13 @@ export const DataPlanePicker = ({
                 selectedChoice ? (
                     <Stack direction="row" spacing={1.5} alignItems="center">
                         <ChoiceIcons choice={selectedChoice} />
-                        <Typography component="span" noWrap>
+                        <Typography component="span" noWrap sx={NAME_SX}>
                             {selectedChoice.label}
                         </Typography>
                         <RegionCode choice={selectedChoice} />
                     </Stack>
                 ) : (
-                    <Typography component="span" color="text.secondary">
+                    <Typography component="span" sx={NAME_SX}>
                         {loading
                             ? 'Loading data planes…'
                             : 'Select a data plane'}
@@ -150,7 +161,7 @@ export const DataPlanePicker = ({
             }
             MenuProps={{
                 slotProps: {
-                    paper: { sx: { mt: 0.5, maxHeight: menuMaxHeight } },
+                    paper: { sx: { maxHeight: menuMaxHeight } },
                     list: { sx: { py: 0 } },
                 },
             }}
@@ -161,7 +172,12 @@ export const DataPlanePicker = ({
                     display: 'flex',
                     alignItems: 'center',
                     minHeight: 24,
-                    py: 1.25,
+                    py: 1.5,
+                    // Lines the closed field's icons up with the options'.
+                    pl: 2,
+                },
+                [`&.${outlinedInputClasses.focused}`]: {
+                    bgcolor: 'background.paper',
                 },
                 // Borderless at rest, like the other onboarding fields; MUI's
                 // primary focus outline shows while focused or open.
@@ -175,12 +191,12 @@ export const DataPlanePicker = ({
                     sx={{
                         pt: 1.5,
                         pb: 0.5,
-                        lineHeight: 1.5,
-                        fontSize: 11,
+                        lineHeight: 1.4,
+                        fontSize: 12,
                         fontWeight: 500,
-                        letterSpacing: '0.1em',
+                        letterSpacing: '0.08em',
                         textTransform: 'uppercase',
-                        color: 'text.secondary',
+                        color: mutedText,
                         borderTop: index > 0 ? 1 : 0,
                         borderColor: 'divider',
                         // The sticky header paints its own background; in dark
@@ -196,7 +212,7 @@ export const DataPlanePicker = ({
                         value={choice.plane.name}
                         sx={{
                             'gap': 1.5,
-                            'py': 1,
+                            'py': 0.75,
                             '&.Mui-selected': { bgcolor: 'primary.alpha_12' },
                             '&.Mui-selected:hover, &.Mui-selected.Mui-focusVisible':
                                 { bgcolor: 'primary.alpha_26' },
@@ -204,7 +220,9 @@ export const DataPlanePicker = ({
                     >
                         <ChoiceIcons choice={choice} />
                         <Box sx={{ flexGrow: 1, minWidth: 0 }}>
-                            <Typography noWrap>{choice.label}</Typography>
+                            <Typography noWrap sx={NAME_SX}>
+                                {choice.label}
+                            </Typography>
                             <RegionCode choice={choice} />
                         </Box>
                         {choice.plane.name === value ? (
@@ -212,7 +230,7 @@ export const DataPlanePicker = ({
                                 component="span"
                                 sx={{ display: 'flex', color: 'primary.main' }}
                             >
-                                <Check width={18} height={18} />
+                                <Check width={18} height={18} strokeWidth={2} />
                             </Box>
                         ) : null}
                     </MenuItem>
