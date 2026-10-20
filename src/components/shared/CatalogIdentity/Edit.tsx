@@ -1,4 +1,4 @@
-import type { Theme } from '@mui/material';
+import type { SxProps, Theme } from '@mui/material';
 import type { SystemStyleObject } from '@mui/system/styleFunctionSx';
 import type { ReactNode } from 'react';
 
@@ -25,11 +25,8 @@ import {
     monogram,
     MONOGRAM_TEXT_COLOR,
     monogramColor,
+    splitCatalogName,
 } from 'src/components/shared/CatalogIdentity/catalogName';
-import {
-    identityLayout,
-    TRUNCATE_SX,
-} from 'src/components/shared/CatalogIdentity/layout';
 import { LeavesAutocomplete } from 'src/components/shared/LeavesAutocomplete/LeavesAutocomplete';
 import { useDebouncedValue } from 'src/hooks/useDebouncedValue';
 import {
@@ -38,17 +35,39 @@ import {
     replaceWhitespacesWithUnderscores,
 } from 'src/utils/misc-utils';
 
+// The measurements of the card a catalog entity is presented as: a monogram tile
+// over its stable color, with the leaf name above the prefix it lives under.
+// Used by the single rendering component behind CatalogIdentityEditor and
+// CatalogIdentity, so an entity looks the same before and after it is created.
+
+// How long the monogram takes to cross-fade to a new color.
+const MONOGRAM_FADE_MS = 1000;
+
+const TRUNCATE_SX = {
+    display: 'block',
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+} as const;
+
+// Every measurement at scale 1, the size an entity is named at.
+const BASE = {
+    cardHeight: 72,
+    nameFontSize: 18,
+    nameLineHeight: 24,
+    locationFontSize: 14,
+    locationLineHeight: 22,
+    monogramFontSize: 20,
+    helperFontSize: 12,
+};
+
 // How long typing has to pause before the monogram color moves.
 const NAME_COLOR_DEBOUNCE_MS = 400;
-
-// How long a line takes to cross over between its value and a helper text.
-const HELPER_FADE_MS = 150;
 
 const NAME_PLACEHOLDER = 'name';
 const LOCATION_PLACEHOLDER = 'No home prefix selected';
 
-// An entity is named at one size, so the measurements are taken once.
-const LAYOUT = identityLayout();
+const HELPER_FADE_MS = 150;
 
 const EDIT_ICON_CLASS = 'catalog-identity-inline-edit';
 
@@ -121,32 +140,108 @@ interface CatalogIdentityEditorProps {
     onRegenerate: () => void;
 }
 
-/**
- * A catalog entity being named: a monogram tile over the color its catalog name
- * hashes to, with the leaf name above the prefix it lives under. Both lines are
- * edited in place, so the entity looks like the one it is about to become — the
- * same card `CatalogIdentity` shows once it exists.
- */
-export function CatalogIdentityEditor({
-    name,
-    onNameChange,
-    location,
-    onLocationChange,
-    locationHelperText,
-    leaves,
-    onRegenerate,
-}: CatalogIdentityEditorProps) {
-    const {
-        cardSx,
-        columnSx,
-        monogramSx,
-        nameTextSx,
-        nameLineHeight,
-        locationTextSx,
-        nameHelperSx,
-        locationHelperSx,
-        locationIconSize,
-    } = LAYOUT;
+export interface CatalogIdentityDisplayProps {
+    catalogName: string;
+    scale?: number;
+    sx?: SxProps<Theme>;
+}
+
+type CatalogIdentityContentProps =
+    | ({ mode: 'edit' } & CatalogIdentityEditorProps)
+    | ({ mode: 'display' } & CatalogIdentityDisplayProps);
+
+export function CatalogIdentityEditor(props: CatalogIdentityEditorProps) {
+    return <CatalogIdentityContent mode="edit" {...props} />;
+}
+
+// Both public interfaces use this component; display mode renders static text.
+export function CatalogIdentityContent(props: CatalogIdentityContentProps) {
+    const { mode } = props;
+    const editProps = mode === 'edit' ? props : undefined;
+    const displayProps = mode === 'display' ? props : undefined;
+    const { prefix, leaf } = splitCatalogName(displayProps?.catalogName ?? '');
+    const name = editProps?.name ?? leaf;
+    const location = editProps?.location ?? prefix;
+    const scale = displayProps?.scale ?? 1;
+    const sx = displayProps?.sx;
+    // Round scaled measurements to whole pixels to keep text aligned when
+    // switching between static text and inputs.
+    const px = (value: number) => Math.round(value * scale);
+
+    const cardHeight = px(BASE.cardHeight);
+    const nameLineHeight = px(BASE.nameLineHeight);
+    const locationLineHeight = px(BASE.locationLineHeight);
+
+    const nameTextSx = {
+        fontFamily: 'monospace',
+        fontWeight: 600,
+        fontSize: px(BASE.nameFontSize),
+        lineHeight: `${nameLineHeight}px`,
+    } as const;
+
+    const locationTextSx = {
+        fontFamily: 'monospace',
+        fontSize: px(BASE.locationFontSize),
+        lineHeight: `${locationLineHeight}px`,
+    } as const;
+
+    // A field's helper text stands in for the line it is not on while that field
+    // is being edited, so it takes that line's box and the card keeps its
+    // height. It reads as prose about the field rather than as a catalog value,
+    // so it drops the monospace face.
+    const helperTextSx = {
+        fontFamily: 'inherit',
+        fontSize: px(BASE.helperFontSize),
+    } as const;
+
+    const nameHelperSx = {
+        ...helperTextSx,
+        lineHeight: `${nameLineHeight}px`,
+    } as const;
+
+    const locationHelperSx = {
+        ...helperTextSx,
+        lineHeight: `${locationLineHeight}px`,
+    } as const;
+
+    const cardSx: SystemStyleObject<Theme> = {
+        alignItems: 'center',
+        height: cardHeight,
+        overflow: 'hidden',
+    };
+
+    // Stretched to the monogram so the name's line box starts at its top edge
+    // and the location ends at its bottom, rather than the pair floating
+    // centered against it.
+    const columnSx: SystemStyleObject<Theme> = {
+        minWidth: 0,
+        flex: 1,
+        py: 0.25,
+        alignSelf: 'stretch',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-around',
+    };
+
+    // Squared off the card height, so the two track together.
+    const monogramSx: SystemStyleObject<Theme> = {
+        height: '100%',
+        aspectRatio: '1 / 1',
+        flex: 'none',
+        borderRadius: (theme) => theme.radius.md,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontSize: px(BASE.monogramFontSize),
+        fontWeight: 700,
+        color: MONOGRAM_TEXT_COLOR,
+        // Carried in both states so the tile keeps its footprint, and so an
+        // unnamed account can fade in and out rather than snap.
+        border: '1px dashed transparent',
+        transition: `background ${MONOGRAM_FADE_MS}ms ease, border-color ${MONOGRAM_FADE_MS}ms ease, color ${MONOGRAM_FADE_MS}ms ease`,
+    };
+
+    const locationIconSize = px(BASE.locationFontSize);
 
     // The catalog name the two lines add up to, and what the tile's color is
     // hashed from. An unnamed entity stands in its placeholder, so the card
@@ -175,8 +270,8 @@ export function CatalogIdentityEditor({
     // place, and the help sits on the line the reader is not using.
     // Each helper is mounted for as long as its field is editable, so it has
     // something to fade out to when the edit ends.
-    const showLocationHelper = editingLocation;
-    const showNameHelper = editingName;
+    const showLocationHelper = Boolean(editProps) && editingLocation;
+    const showNameHelper = Boolean(editProps) && editingName;
 
     // The name's helper renders on the location's line, away from the input it
     // belongs to, so the input points at it.
@@ -218,7 +313,8 @@ export function CatalogIdentityEditor({
     // settled value. Reading the state from the live name instead would paint
     // the tile a keystroke before its color resolved, and the fade would pass
     // through whatever color the stale value still held.
-    const painted = hasLength(settledIdentity);
+    const colorIdentity = displayProps?.catalogName ?? settledIdentity;
+    const painted = hasLength(colorIdentity);
 
     const nameSx = {
         ...nameTextSx,
@@ -237,25 +333,23 @@ export function CatalogIdentityEditor({
     };
 
     return (
-        <Stack direction="row" spacing={1.5} sx={cardSx}>
+        <Stack
+            direction="row"
+            spacing={1.5}
+            sx={[cardSx, ...(Array.isArray(sx) ? sx : [sx ?? {}])]}
+        >
             <Box
                 sx={{
                     ...monogramSx,
                     background: painted
-                        ? monogramColor(settledIdentity)
+                        ? monogramColor(colorIdentity)
                         : 'transparent',
                     borderColor: painted ? 'transparent' : 'text.disabled',
                     color: painted ? MONOGRAM_TEXT_COLOR : 'text.secondary',
                 }}
             >
-                {/* The letter tracks the live name, so it lands on the
-                    keystroke rather than waiting out the debounce. It comes off
-                    the name on its own: a prefix mid-edit has no trailing slash
-                    yet, and reading the two as one catalog name would take the
-                    letter from the half-typed prefix instead. */}
                 {hasLength(name) ? monogram(name) : null}
             </Box>
-
             <Box sx={columnSx}>
                 <Stack
                     direction="row"
@@ -263,84 +357,103 @@ export function CatalogIdentityEditor({
                     sx={{ alignItems: 'center' }}
                 >
                     <SwapLine
-                        helperText={locationHelperText}
+                        helperText={editProps?.locationHelperText}
                         helperVisible={showLocationHelper}
                         helperSx={nameHelperSx}
                         sx={{ flex: 1, minWidth: 0 }}
                     >
-                        {editingName ? (
-                            <InputBase
-                                value={name}
-                                onChange={(event) =>
-                                    onNameChange(
-                                        replaceWhitespacesWithUnderscores(
-                                            event.target.value
-                                        ).replace(/[^a-z0-9._-]/gi, '')
-                                    )
-                                }
-                                onBlur={() => setEditingName(false)}
-                                onKeyDown={(event) => {
-                                    if (event.key === 'Enter') {
-                                        setEditingName(false);
+                        <Box
+                            sx={{
+                                ...nameTextSx,
+                                display: 'flex',
+                                minWidth: 0,
+                                flex: 1,
+                                color: 'text.primary',
+                            }}
+                        >
+                            {editProps && editingName ? (
+                                <InputBase
+                                    value={name}
+                                    onChange={(event) =>
+                                        editProps?.onNameChange(
+                                            replaceWhitespacesWithUnderscores(
+                                                event.target.value
+                                            ).replace(/[^a-z0-9._-]/gi, '')
+                                        )
                                     }
+                                    onBlur={() => setEditingName(false)}
+                                    onKeyDown={(event) => {
+                                        if (event.key === 'Enter') {
+                                            setEditingName(false);
+                                        }
 
-                                    if (event.key === 'Escape') {
-                                        // Kept off the dialog, which would take it
-                                        // as a request to close.
-                                        event.stopPropagation();
-                                        onNameChange(nameBeforeEdit);
-                                        setEditingName(false);
+                                        if (event.key === 'Escape') {
+                                            // Kept off the dialog, which would take it
+                                            // as a request to close.
+                                            event.stopPropagation();
+                                            editProps?.onNameChange(
+                                                nameBeforeEdit
+                                            );
+                                            setEditingName(false);
+                                        }
+                                    }}
+                                    placeholder={
+                                        editProps ? NAME_PLACEHOLDER : ''
                                     }
-                                }}
-                                placeholder={NAME_PLACEHOLDER}
-                                inputRef={nameInputRef}
-                                inputProps={{
-                                    'aria-label': 'Name',
-                                    'aria-describedby': showNameHelper
-                                        ? nameHelperId
-                                        : undefined,
-                                    // A bare "name" field reads as a login form
-                                    // to password managers. Each manager has
-                                    // its own opt-out attribute; the browser
-                                    // follows autoComplete.
-                                    'data-1p-ignore': true,
-                                    'data-lpignore': 'true',
-                                    'data-bwignore': true,
-                                    'data-form-type': 'other',
-                                    'autoComplete': 'off',
-                                }}
-                                sx={{
-                                    ...INLINE_INPUT_SX,
-                                    ...nameSx,
-                                    minWidth: 0,
-                                    // MUI fixes the input at 1.4375em, which
-                                    // overrides the line box and leaves it a pixel
-                                    // shorter than the read-only span.
-                                    [`& .${inputBaseClasses.input}`]: {
-                                        p: 0,
-                                        height: 'auto',
-                                    },
-                                }}
-                            />
-                        ) : (
-                            <FieldText
-                                value={name}
-                                placeholder={NAME_PLACEHOLDER}
-                                label="name"
-                                textSx={nameSx}
-                                onEdit={() => {
-                                    setNameBeforeEdit(name);
-                                    setEditingName(true);
-                                }}
-                            />
-                        )}
+                                    inputRef={nameInputRef}
+                                    inputProps={{
+                                        'aria-label': 'Name',
+                                        'aria-describedby': showNameHelper
+                                            ? nameHelperId
+                                            : undefined,
+                                        // A bare "name" field reads as a login form
+                                        // to password managers. Each manager has
+                                        // its own opt-out attribute; the browser
+                                        // follows autoComplete.
+                                        'data-1p-ignore': true,
+                                        'data-lpignore': 'true',
+                                        'data-bwignore': true,
+                                        'data-form-type': 'other',
+                                        'autoComplete': 'off',
+                                    }}
+                                    sx={{
+                                        ...INLINE_INPUT_SX,
+                                        ...nameSx,
+                                        minWidth: 0,
+                                        // MUI fixes the input at 1.4375em, which
+                                        // overrides the line box and leaves it a pixel
+                                        // shorter than the read-only span.
+                                        [`& .${inputBaseClasses.input}`]: {
+                                            p: 0,
+                                            height: 'auto',
+                                        },
+                                    }}
+                                />
+                            ) : (
+                                <FieldText
+                                    value={name}
+                                    placeholder={
+                                        editProps ? NAME_PLACEHOLDER : ''
+                                    }
+                                    label="name"
+                                    textSx={nameSx}
+                                    onEdit={
+                                        editProps
+                                            ? () => {
+                                                  setNameBeforeEdit(name);
+                                                  setEditingName(true);
+                                              }
+                                            : undefined
+                                    }
+                                />
+                            )}
+                        </Box>
                     </SwapLine>
-
-                    {editingName ? (
+                    {editProps && editingName ? (
                         <Tooltip title="Randomize name">
                             <IconButton
                                 size="small"
-                                onClick={onRegenerate}
+                                onClick={editProps?.onRegenerate}
                                 // Keep focus on the input, so regenerating does
                                 // not blur out of edit mode.
                                 onMouseDown={(event) => event.preventDefault()}
@@ -365,11 +478,10 @@ export function CatalogIdentityEditor({
                         </Tooltip>
                     ) : null}
                 </Stack>
-
                 <SwapLine
                     helperVisible={showNameHelper}
-                    helperSx={locationHelperSx}
                     helperId={nameHelperId}
+                    helperSx={locationHelperSx}
                     sx={{ flex: 'none' }}
                 >
                     <Stack
@@ -389,68 +501,89 @@ export function CatalogIdentityEditor({
                                 height={locationIconSize}
                             />
                         </Box>
-
-                        {editingLocation ? (
-                            <Box
-                                sx={[
-                                    INLINE_INPUT_SX,
-                                    INLINE_AUTOCOMPLETE_SX,
-                                    {
-                                        flex: 1,
-                                        minWidth: 0,
-                                        // The autocomplete's own size-small rule for
-                                        // this input carries four classes, so it needs
-                                        // to be outranked rather than tied — a tie
-                                        // loses on source order, since MUI's styles are
-                                        // injected after these.
-                                        [`&&& .${autocompleteClasses.inputRoot} .${autocompleteClasses.input}`]:
-                                            {
-                                                p: 0,
-                                                // MUI pins the input at 1.4375em, which
-                                                // overrides the line box.
-                                                height: 'auto',
-                                                ...locationTextSx,
-                                                color: 'text.secondary',
-                                            },
-                                    },
-                                ]}
-                                // Enter and Tab are the autocomplete's own:
-                                // Enter takes the highlighted prefix and
-                                // leaves the field, Tab takes it and stays for
-                                // the next segment.
-                                onKeyDown={(event) => {
-                                    if (event.key === 'Escape') {
-                                        // Kept off the dialog, which would take it as a
-                                        // request to close.
-                                        event.stopPropagation();
-                                        onLocationChange(locationBeforeEdit);
-                                        setEditingLocation(false);
-                                    }
-                                }}
-                            >
-                                <LeavesAutocomplete
-                                    leaves={leaves}
+                        <Box
+                            sx={{
+                                ...locationTextSx,
+                                display: 'flex',
+                                minWidth: 0,
+                                flex: 1,
+                                color: 'text.secondary',
+                            }}
+                        >
+                            {editProps && editingLocation ? (
+                                <Box
+                                    sx={[
+                                        INLINE_INPUT_SX,
+                                        INLINE_AUTOCOMPLETE_SX,
+                                        {
+                                            flex: 1,
+                                            minWidth: 0,
+                                            // The autocomplete's own size-small rule for
+                                            // this input carries four classes, so it needs
+                                            // to be outranked rather than tied — a tie
+                                            // loses on source order, since MUI's styles are
+                                            // injected after these.
+                                            [`&&& .${autocompleteClasses.inputRoot} .${autocompleteClasses.input}`]:
+                                                {
+                                                    p: 0,
+                                                    // MUI pins the input at 1.4375em, which
+                                                    // overrides the line box.
+                                                    height: 'auto',
+                                                    ...locationTextSx,
+                                                    color: 'text.secondary',
+                                                },
+                                        },
+                                    ]}
+                                    // Enter and Tab are the autocomplete's own:
+                                    // Enter takes the highlighted prefix and
+                                    // leaves the field, Tab takes it and stays for
+                                    // the next segment.
+                                    onKeyDown={(event) => {
+                                        if (event.key === 'Escape') {
+                                            // Kept off the dialog, which would take it as a
+                                            // request to close.
+                                            event.stopPropagation();
+                                            editProps?.onLocationChange(
+                                                locationBeforeEdit
+                                            );
+                                            setEditingLocation(false);
+                                        }
+                                    }}
+                                >
+                                    <LeavesAutocomplete
+                                        leaves={editProps?.leaves ?? []}
+                                        value={location}
+                                        onChange={(value) =>
+                                            editProps?.onLocationChange(value)
+                                        }
+                                        onBlur={() => setEditingLocation(false)}
+                                        label="Catalog location"
+                                        textFieldVariant="standard"
+                                        autoFocus
+                                        required
+                                    />
+                                </Box>
+                            ) : (
+                                <FieldText
                                     value={location}
-                                    onChange={onLocationChange}
-                                    onBlur={() => setEditingLocation(false)}
-                                    label="Catalog location"
-                                    textFieldVariant="standard"
-                                    autoFocus
-                                    required
+                                    placeholder={
+                                        editProps ? LOCATION_PLACEHOLDER : ''
+                                    }
+                                    label="catalog location"
+                                    textSx={locationSx}
+                                    onEdit={
+                                        editProps
+                                            ? () => {
+                                                  setLocationBeforeEdit(
+                                                      location
+                                                  );
+                                                  setEditingLocation(true);
+                                              }
+                                            : undefined
+                                    }
                                 />
-                            </Box>
-                        ) : (
-                            <FieldText
-                                value={location}
-                                placeholder={LOCATION_PLACEHOLDER}
-                                label="catalog location"
-                                textSx={locationSx}
-                                onEdit={() => {
-                                    setLocationBeforeEdit(location);
-                                    setEditingLocation(true);
-                                }}
-                            />
-                        )}
+                            )}
+                        </Box>
                     </Stack>
                 </SwapLine>
             </Box>
@@ -529,7 +662,7 @@ interface FieldTextProps {
     placeholder: string;
     label: string;
     textSx: SystemStyleObject<Theme>;
-    onEdit: () => void;
+    onEdit?: () => void;
 }
 
 // One of the card's two lines at rest: the value as a button, carrying the
@@ -542,6 +675,14 @@ function FieldText({
     onEdit,
 }: FieldTextProps) {
     const filled = hasLength(value);
+
+    if (!onEdit) {
+        return (
+            <Box component="span" sx={{ ...textSx, ...TRUNCATE_SX }}>
+                {value}
+            </Box>
+        );
+    }
 
     return (
         <ButtonBase

@@ -146,7 +146,7 @@ export function CreateServiceAccountDialog({
                             location={location}
                             onLocationChange={setLocation}
                             // nameHelperText="Lowercase letters, numbers, and dashes"
-                            locationHelperText="The home prefix - controls who may manage the service account"
+                            // locationHelperText="The home prefix - controls who may manage the service account"
                             leaves={leaves}
                             onRegenerate={regenerateName}
                         />
@@ -172,36 +172,34 @@ export function CreateServiceAccountDialog({
                             label="Grant access to the home prefix"
                         />
                         <Collapse in={grantOn}>
-                            <>
-                                <Stack
-                                    direction="row"
-                                    spacing={1.5}
-                                    sx={{
-                                        mt: 1,
-                                        alignItems: 'center',
-                                        justifyContent: 'space-between',
-                                    }}
-                                >
-                                    {location ? (
-                                        <CatalogPath
-                                            path={location}
-                                            variant="body2"
-                                            color="text.secondary"
-                                        />
-                                    ) : (
-                                        <Typography
-                                            variant="body2"
-                                            color="text.disabled"
-                                        >
-                                            No home prefix selected
-                                        </Typography>
-                                    )}
-                                    <CapabilitySelector
-                                        value={quickCapability}
-                                        onChange={setQuickCapability}
+                            <Stack
+                                direction="row"
+                                spacing={1.5}
+                                sx={{
+                                    mt: 1,
+                                    alignItems: 'center',
+                                    justifyContent: 'space-between',
+                                }}
+                            >
+                                {location ? (
+                                    <CatalogPath
+                                        path={location}
+                                        variant="body2"
+                                        color="text.secondary"
                                     />
-                                </Stack>
-                            </>
+                                ) : (
+                                    <Typography
+                                        variant="body2"
+                                        color="text.disabled"
+                                    >
+                                        No home prefix selected
+                                    </Typography>
+                                )}
+                                <CapabilitySelector
+                                    value={quickCapability}
+                                    onChange={setQuickCapability}
+                                />
+                            </Stack>
                         </Collapse>{' '}
                         <Typography
                             variant="caption"
