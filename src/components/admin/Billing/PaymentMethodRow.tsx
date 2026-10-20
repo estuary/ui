@@ -17,6 +17,8 @@ const cardLogos: Record<string, string> = {
 };
 
 export interface PaymentMethodProps {
+    busy: boolean;
+    pendingAction?: 'delete' | 'primary';
     method: BillingPaymentMethodFieldsFragment;
     onDelete(): void;
     onPrimary(): void;
@@ -24,6 +26,8 @@ export interface PaymentMethodProps {
 }
 
 export const PaymentMethod = ({
+    busy,
+    pendingAction,
     method: { type, billingDetails, card, usBankAccount },
     onDelete,
     onPrimary,
@@ -63,11 +67,25 @@ export const PaymentMethod = ({
             </TableCell>
             <TableCell>{primary ? <Check /> : ''}</TableCell>
             <TableCell>
-                <Button size="small" variant="text" onClick={onDelete}>
+                <Button
+                    size="small"
+                    variant="text"
+                    onClick={onDelete}
+                    disabled={busy}
+                    loading={pendingAction === 'delete'}
+                    loadingPosition="start"
+                >
                     Delete
                 </Button>
                 {!primary ? (
-                    <Button size="small" variant="text" onClick={onPrimary}>
+                    <Button
+                        size="small"
+                        variant="text"
+                        onClick={onPrimary}
+                        disabled={busy}
+                        loading={pendingAction === 'primary'}
+                        loadingPosition="start"
+                    >
                         Make Primary
                     </Button>
                 ) : null}

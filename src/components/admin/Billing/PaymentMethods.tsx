@@ -76,13 +76,21 @@ function PaymentMethods({ showAddPayment }: AdminBillingProps) {
         refresh: refreshPaymentMethods,
     } = useBillingPaymentMethods(tenant);
     const [, createSetupIntent] = useMutation(CREATE_BILLING_SETUP_INTENT);
-    const [, setPrimary] = useMutation(SET_BILLING_PAYMENT_METHOD);
-    const [, deleteMethod] = useMutation(DELETE_BILLING_PAYMENT_METHOD);
+    const [{ fetching: settingPrimary }, setPrimary] = useMutation(
+        SET_BILLING_PAYMENT_METHOD
+    );
+    const [{ fetching: deleting }, deleteMethod] = useMutation(
+        DELETE_BILLING_PAYMENT_METHOD
+    );
     const [refreshCounter, setRefreshCounter] = useState(0);
     const [setupIntentSecret, setSetupIntentSecret] = useState(
         INTENT_SECRET_LOADING
     );
     const [actionError, setActionError] = useState<string>();
+    const [pending, setPending] = useState<{
+        id: string;
+        action: 'delete' | 'primary';
+    } | null>(null);
     const methods = billing?.paymentMethods ?? [];
     const primaryId = billing?.primaryPaymentMethod?.id;
 
@@ -108,6 +116,7 @@ function PaymentMethods({ showAddPayment }: AdminBillingProps) {
     // Also finishes adding a payment method. Stripe may not report the new
     // method's id, which leaves only the table to refresh.
     const makePrimary = async (id?: string) => {
+        if (id) setPending({ id, action: 'primary' });
         setActionError(undefined);
         const result =
             id && (await setPrimary({ tenant, paymentMethodId: id }));
@@ -121,9 +130,11 @@ function PaymentMethods({ showAddPayment }: AdminBillingProps) {
             }
         }
         refreshSetup();
+        setPending(null);
     };
 
     const remove = async (id: string) => {
+        setPending({ id, action: 'delete' });
         setActionError(undefined);
         const result = await deleteMethod({ tenant, paymentMethodId: id });
         if (result.error) {
@@ -133,6 +144,7 @@ function PaymentMethods({ showAddPayment }: AdminBillingProps) {
             );
         }
         refreshSetup();
+        setPending(null);
     };
 
     if (error) {
@@ -219,6 +231,12 @@ function PaymentMethods({ showAddPayment }: AdminBillingProps) {
                         ) : methods.length > 0 ? (
                             methods.map((method) => (
                                 <PaymentMethod
+                                    busy={settingPrimary || deleting}
+                                    pendingAction={
+                                        pending?.id === method.id
+                                            ? pending.action
+                                            : undefined
+                                    }
                                     onDelete={() => void remove(method.id)}
                                     onPrimary={() =>
                                         void makePrimary(method.id)

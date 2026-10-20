@@ -6,6 +6,7 @@ import {
     render,
     screen,
     waitFor,
+    within,
 } from '@testing-library/react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { IntlProvider } from 'react-intl';
@@ -108,6 +109,101 @@ beforeEach(() => {
 });
 
 describe('billing payments', () => {
+    test.each([
+        ['Make Primary', false],
+        ['Make Primary', true],
+        ['Delete', false],
+        ['Delete', true],
+    ] as const)(
+        'blocks table actions during %s and restores them afterward (fails: %s)',
+        async (action, fails) => {
+            const otherMethod = {
+                ...paymentMethod,
+                id: 'pm_other',
+                billingDetails: {
+                    ...paymentMethod.billingDetails,
+                    name: 'Other card',
+                },
+            };
+            let release!: () => void;
+            const pending = new Promise<void>((resolve) => {
+                release = resolve;
+            });
+            const updated =
+                action === 'Delete'
+                    ? billing([otherMethod], otherMethod.id)
+                    : billing([paymentMethod, otherMethod], paymentMethod.id);
+            let mutations = 0;
+            const mutate = async (field: string) => {
+                mutations++;
+                await pending;
+                if (fails) return failure();
+                return HttpResponse.json<{
+                    data: Record<string, ReturnType<typeof payload>>;
+                }>({
+                    data: { [field]: payload(updated) },
+                });
+            };
+            server.use(
+                billingGraphql.query('TenantBillingPaymentMethods', () =>
+                    HttpResponse.json({
+                        data: paymentMethodsData(
+                            billing(
+                                [paymentMethod, otherMethod],
+                                otherMethod.id
+                            )
+                        ),
+                    })
+                ),
+                billingGraphql.mutation('SetBillingPaymentMethod', () =>
+                    mutate('setBillingPaymentMethod')
+                ),
+                billingGraphql.mutation('DeleteBillingPaymentMethod', () =>
+                    mutate('deleteBillingPaymentMethod')
+                )
+            );
+            render(view(), { wrapper });
+            const table = screen.getByRole('table', { name: 'simple table' });
+            const actions = () =>
+                within(table).getAllByRole('button', {
+                    name: /^(Delete|Make Primary)$/,
+                });
+            try {
+                await screen.findByText('Acme card');
+                const row = screen.getByRole('row', { name: /Acme card/ });
+                fireEvent.click(
+                    within(row).getByRole('button', { name: action })
+                );
+                await within(row).findByRole('progressbar');
+                await waitFor(() => expect(mutations).toBe(1));
+                expect(actions()).toHaveLength(3);
+                for (const button of actions()) {
+                    expect(button.hasAttribute('disabled')).toBe(true);
+                    fireEvent.click(button);
+                }
+                expect(within(table).getAllByRole('progressbar')).toHaveLength(
+                    1
+                );
+            } finally {
+                await act(async () => release());
+            }
+            if (fails) await screen.findByText('Payment provider unavailable');
+            await waitFor(() => {
+                expect(within(table).queryByRole('progressbar')).toBeNull();
+                expect(
+                    actions().every(
+                        (button) => !button.hasAttribute('disabled')
+                    )
+                ).toBe(true);
+            });
+            expect(mutations).toBe(1);
+            expect(screen.getByText('Other card')).toBeTruthy();
+            expect(screen.queryByText('Acme card') !== null).toBe(
+                fails || action === 'Make Primary'
+            );
+        }
+    );
+
     test('updates the payment table after making a method primary and deleting it', async () => {
         let paymentReads = 0;
         server.use(
