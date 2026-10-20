@@ -4,11 +4,9 @@ import { Box, ButtonBase, Stack } from '@mui/material';
 
 import { Lock } from 'iconoir-react';
 
-import {
-    monogram,
-    splitCatalogName,
-} from 'src/components/shared/CatalogIdentity';
+import { Monogram } from 'src/components/shared/CatalogIdentity';
 import { defaultOutline, defaultOutline_hovered } from 'src/context/Theme';
+import { splitCatalogName } from 'src/utils/misc-utils';
 
 interface CompactAccountCardProps {
     serviceAccount: ServiceAccount;
@@ -45,26 +43,18 @@ export function CompactAccountCard({
             }}
         >
             <Stack direction="row" spacing={1.25} sx={{ alignItems: 'center' }}>
-                <Box
+                <Monogram
+                    catalogName={serviceAccount.catalogName}
+                    size={32}
                     sx={{
-                        width: 32,
-                        height: 32,
-                        flex: 'none',
                         borderRadius: (theme) => theme.radius.sm,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        fontSize: 12,
-                        fontWeight: 700,
                         color: 'text.secondary',
                         background: (theme) =>
                             theme.palette.mode === 'dark'
                                 ? 'rgba(247, 249, 252, 0.08)'
                                 : 'rgba(11, 19, 30, 0.06)',
                     }}
-                >
-                    {monogram(serviceAccount.catalogName)}
-                </Box>
+                />
 
                 <Box
                     component="span"

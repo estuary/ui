@@ -1,8 +1,7 @@
 import type { SxProps, Theme } from '@mui/material';
 import type { SystemStyleObject } from '@mui/system/styleFunctionSx';
-import type { ReactNode } from 'react';
 
-import { useEffect, useId, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import {
     autocompleteClasses,
@@ -21,21 +20,15 @@ import {
 
 import { EditPencil, Home, Refresh } from 'iconoir-react';
 
-import {
-    monogram,
-    MONOGRAM_TEXT_COLOR,
-    monogramColor,
-    splitCatalogName,
-} from 'src/components/shared/CatalogIdentity/catalogName';
+import { Monogram } from 'src/components/shared/CatalogIdentity/Monogram';
 import { LeavesAutocomplete } from 'src/components/shared/LeavesAutocomplete/LeavesAutocomplete';
-import { useDebouncedValue } from 'src/hooks/useDebouncedValue';
 import {
     appendWithForwardSlash,
+    getAutofillIgnoreProps,
     hasLength,
     replaceWhitespacesWithUnderscores,
+    splitCatalogName,
 } from 'src/utils/misc-utils';
-
-const MONOGRAM_FADE_MS = 1000;
 
 const TRUNCATE_SX = {
     display: 'block',
@@ -50,11 +43,8 @@ const BASE = {
     nameLineHeight: 24,
     homePrefixFontSize: 14,
     homePrefixLineHeight: 22,
-    monogramFontSize: 20,
     helperFontSize: 12,
 };
-
-const NAME_COLOR_DEBOUNCE_MS = 400;
 
 const NAME_PLACEHOLDER = 'name';
 const HOME_PREFIX_PLACEHOLDER = 'No home prefix selected';
@@ -171,11 +161,6 @@ export function CatalogIdentityContent(props: CatalogIdentityContentProps) {
         lineHeight: `${nameLineHeight}px`,
     } as const;
 
-    const homePrefixHelperSx = {
-        ...helperTextSx,
-        lineHeight: `${homePrefixLineHeight}px`,
-    } as const;
-
     const cardSx: SystemStyleObject<Theme> = {
         alignItems: 'center',
         height: cardHeight,
@@ -193,24 +178,6 @@ export function CatalogIdentityContent(props: CatalogIdentityContentProps) {
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-around',
-    };
-
-    // Squared off the card height, so the two track together.
-    const monogramSx: SystemStyleObject<Theme> = {
-        height: '100%',
-        aspectRatio: '1 / 1',
-        flex: 'none',
-        borderRadius: (theme) => theme.radius.md,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontSize: px(BASE.monogramFontSize),
-        fontWeight: 700,
-        color: MONOGRAM_TEXT_COLOR,
-        // Carried in both states so the tile keeps its footprint, and so an
-        // unnamed account can fade in and out rather than snap.
-        border: '1px dashed transparent',
-        transition: `background ${MONOGRAM_FADE_MS}ms ease, border-color ${MONOGRAM_FADE_MS}ms ease, color ${MONOGRAM_FADE_MS}ms ease`,
     };
 
     const homePrefixIconSize = px(BASE.homePrefixFontSize);
@@ -232,18 +199,8 @@ export function CatalogIdentityContent(props: CatalogIdentityContentProps) {
 
     const nameInputRef = useRef<HTMLInputElement>(null);
 
-    // Each field's helper text takes the other field's line while that field is
-    // being edited. The card keeps its height, the value being typed keeps its
-    // place, and the help sits on the line the reader is not using.
-    // Each helper is mounted for as long as its field is editable, so it has
-    // something to fade out to when the edit ends.
+    // Show the home prefix's helper on the name row while editing the prefix.
     const showHomePrefixHelper = Boolean(editProps) && editingHomePrefix;
-    const showNameHelper = Boolean(editProps) && editingName;
-
-    // The name's helper renders on the home prefix's line, away from the input it
-    // belongs to, so the input points at it.
-    const generatedId = useId();
-    const nameHelperId = `${generatedId}-name-helper`;
 
     // Focus lands here rather than on `autoFocus` so the caret can be placed
     // deliberately: at the end of the name, ready to be extended. The effect is
@@ -258,30 +215,6 @@ export function CatalogIdentityContent(props: CatalogIdentityContentProps) {
         node.focus();
         node.setSelectionRange(node.value.length, node.value.length);
     }, [editingName]);
-
-    // The tile color is derived per keystroke, so it settles once typing pauses
-    // and crossfades to its new value instead of strobing through a hue per
-    // character.
-    //
-    // The debounce lives in this component, so it has to unmount when the
-    // surface holding it closes. Held somewhere longer-lived, the next time the
-    // surface opened the tile would start on the last session's color and fade
-    // off it.
-    //
-    // `catalogName` substitutes a placeholder leaf for an unnamed entity.
-    // Hashing that placeholder would assign a color the entity will never
-    // wear, so the unnamed case is carried through as an empty string.
-    const settledIdentity = useDebouncedValue(
-        hasLength(name) ? catalogName : '',
-        NAME_COLOR_DEBOUNCE_MS
-    );
-
-    // The tile's color and its painted/unpainted state both come off the
-    // settled value. Reading the state from the live name instead would paint
-    // the tile a keystroke before its color resolved, and the fade would pass
-    // through whatever color the stale value still held.
-    const colorIdentity = displayProps?.catalogName ?? settledIdentity;
-    const painted = hasLength(colorIdentity);
 
     const nameSx = {
         ...nameTextSx,
@@ -305,106 +238,119 @@ export function CatalogIdentityContent(props: CatalogIdentityContentProps) {
             spacing={1.5}
             sx={[cardSx, ...(Array.isArray(sx) ? sx : [sx ?? {}])]}
         >
-            <Box
-                sx={{
-                    ...monogramSx,
-                    background: painted
-                        ? monogramColor(colorIdentity)
-                        : 'transparent',
-                    borderColor: painted ? 'transparent' : 'text.disabled',
-                    color: painted ? MONOGRAM_TEXT_COLOR : 'text.secondary',
-                }}
-            >
-                {hasLength(name) ? monogram(name) : null}
-            </Box>
+            <Monogram
+                catalogName={
+                    displayProps?.catalogName ??
+                    (hasLength(name) ? catalogName : '')
+                }
+                size={cardHeight}
+            />
             <Box sx={columnSx}>
                 <Stack
                     direction="row"
                     spacing={1}
                     sx={{ alignItems: 'center' }}
                 >
-                    <SwapLine
-                        helperText={editProps?.homePrefixHelperText}
-                        helperVisible={showHomePrefixHelper}
-                        helperSx={nameHelperSx}
-                        sx={{ flex: 1, minWidth: 0 }}
+                    <Box
+                        sx={{
+                            position: 'relative',
+                            display: 'flex',
+                            flex: 1,
+                            minWidth: 0,
+                        }}
                     >
-                        <Box
-                            sx={{
-                                ...nameTextSx,
-                                display: 'flex',
-                                minWidth: 0,
-                                flex: 1,
-                                color: 'text.primary',
-                            }}
+                        <Fade
+                            in={
+                                !hasLength(editProps?.homePrefixHelperText) ||
+                                !showHomePrefixHelper
+                            }
+                            timeout={HELPER_FADE_MS}
+                            appear={false}
                         >
-                            {editProps && editingName ? (
-                                <InputBase
-                                    value={name}
-                                    onChange={(event) =>
-                                        editProps?.onNameChange(
-                                            replaceWhitespacesWithUnderscores(
-                                                event.target.value
-                                            ).replace(/[^a-z0-9._-]/gi, '')
-                                        )
-                                    }
-                                    onBlur={() => setEditingName(false)}
-                                    onKeyDown={(event) => {
-                                        if (event.key === 'Enter') {
-                                            setEditingName(false);
+                            <Box
+                                sx={{
+                                    ...nameTextSx,
+                                    display: 'flex',
+                                    minWidth: 0,
+                                    flex: 1,
+                                    color: 'text.primary',
+                                }}
+                            >
+                                {editProps && editingName ? (
+                                    <InputBase
+                                        value={name}
+                                        onChange={(event) =>
+                                            editProps?.onNameChange(
+                                                replaceWhitespacesWithUnderscores(
+                                                    event.target.value
+                                                ).replace(/[^a-z0-9._-]/gi, '')
+                                            )
                                         }
-                                    }}
-                                    placeholder={
-                                        editProps ? NAME_PLACEHOLDER : ''
-                                    }
-                                    inputRef={nameInputRef}
-                                    inputProps={{
-                                        'aria-label': 'Name',
-                                        'aria-describedby': showNameHelper
-                                            ? nameHelperId
-                                            : undefined,
-                                        // A bare "name" field reads as a login form
-                                        // to password managers. Each manager has
-                                        // its own opt-out attribute; the browser
-                                        // follows autoComplete.
-                                        'data-1p-ignore': true,
-                                        'data-lpignore': 'true',
-                                        'data-bwignore': true,
-                                        'data-form-type': 'other',
-                                        'autoComplete': 'off',
-                                    }}
+                                        onBlur={() => setEditingName(false)}
+                                        onKeyDown={(event) => {
+                                            if (event.key === 'Enter') {
+                                                setEditingName(false);
+                                            }
+                                        }}
+                                        placeholder={
+                                            editProps ? NAME_PLACEHOLDER : ''
+                                        }
+                                        inputRef={nameInputRef}
+                                        inputProps={{
+                                            'aria-label': 'Name',
+                                            ...getAutofillIgnoreProps(),
+                                        }}
+                                        sx={{
+                                            ...INLINE_INPUT_SX,
+                                            ...nameSx,
+                                            minWidth: 0,
+                                            // MUI fixes the input at 1.4375em, which
+                                            // overrides the line box and leaves it a pixel
+                                            // shorter than the read-only span.
+                                            [`& .${inputBaseClasses.input}`]: {
+                                                p: 0,
+                                                height: 'auto',
+                                            },
+                                        }}
+                                    />
+                                ) : (
+                                    <FieldText
+                                        value={name}
+                                        placeholder={
+                                            editProps ? NAME_PLACEHOLDER : ''
+                                        }
+                                        label="name"
+                                        textSx={nameSx}
+                                        onEdit={
+                                            editProps
+                                                ? () => {
+                                                      setEditingName(true);
+                                                  }
+                                                : undefined
+                                        }
+                                    />
+                                )}
+                            </Box>
+                        </Fade>
+                        {hasLength(editProps?.homePrefixHelperText) ? (
+                            <Fade
+                                in={showHomePrefixHelper}
+                                timeout={HELPER_FADE_MS}
+                            >
+                                <Box
                                     sx={{
-                                        ...INLINE_INPUT_SX,
-                                        ...nameSx,
-                                        minWidth: 0,
-                                        // MUI fixes the input at 1.4375em, which
-                                        // overrides the line box and leaves it a pixel
-                                        // shorter than the read-only span.
-                                        [`& .${inputBaseClasses.input}`]: {
-                                            p: 0,
-                                            height: 'auto',
-                                        },
+                                        ...nameHelperSx,
+                                        ...TRUNCATE_SX,
+                                        position: 'absolute',
+                                        inset: 0,
+                                        color: 'text.secondary',
                                     }}
-                                />
-                            ) : (
-                                <FieldText
-                                    value={name}
-                                    placeholder={
-                                        editProps ? NAME_PLACEHOLDER : ''
-                                    }
-                                    label="name"
-                                    textSx={nameSx}
-                                    onEdit={
-                                        editProps
-                                            ? () => {
-                                                  setEditingName(true);
-                                              }
-                                            : undefined
-                                    }
-                                />
-                            )}
-                        </Box>
-                    </SwapLine>
+                                >
+                                    {editProps?.homePrefixHelperText}
+                                </Box>
+                            </Fade>
+                        ) : null}
+                    </Box>
                     {editProps && editingName ? (
                         <Tooltip title="Generate name">
                             <IconButton
@@ -429,166 +375,91 @@ export function CatalogIdentityContent(props: CatalogIdentityContentProps) {
                         </Tooltip>
                     ) : null}
                 </Stack>
-                <SwapLine
-                    helperVisible={showNameHelper}
-                    helperId={nameHelperId}
-                    helperSx={homePrefixHelperSx}
-                    sx={{ flex: 'none' }}
+                <Stack
+                    direction="row"
+                    spacing={0.75}
+                    sx={{ alignItems: 'center', minWidth: 0, flex: 'none' }}
                 >
-                    <Stack
-                        direction="row"
-                        spacing={0.75}
-                        sx={{ alignItems: 'center', minWidth: 0, flex: 1 }}
-                    >
-                        <Box
-                            sx={{
-                                display: 'flex',
-                                flex: 'none',
-                                color: 'text.secondary',
-                            }}
-                        >
-                            <Home
-                                width={homePrefixIconSize}
-                                height={homePrefixIconSize}
-                            />
-                        </Box>
-                        <Box
-                            sx={{
-                                ...homePrefixTextSx,
-                                display: 'flex',
-                                minWidth: 0,
-                                flex: 1,
-                                color: 'text.secondary',
-                            }}
-                        >
-                            {editProps && editingHomePrefix ? (
-                                <Box
-                                    sx={[
-                                        INLINE_INPUT_SX,
-                                        INLINE_AUTOCOMPLETE_SX,
-                                        {
-                                            flex: 1,
-                                            minWidth: 0,
-                                            // The autocomplete's own size-small rule for
-                                            // this input carries four classes, so it needs
-                                            // to be outranked rather than tied — a tie
-                                            // loses on source order, since MUI's styles are
-                                            // injected after these.
-                                            [`&&& .${autocompleteClasses.inputRoot} .${autocompleteClasses.input}`]:
-                                                {
-                                                    p: 0,
-                                                    // MUI pins the input at 1.4375em, which
-                                                    // overrides the line box.
-                                                    height: 'auto',
-                                                    ...homePrefixTextSx,
-                                                    color: 'text.secondary',
-                                                },
-                                        },
-                                    ]}
-                                >
-                                    <LeavesAutocomplete
-                                        leaves={editProps?.leaves ?? []}
-                                        value={homePrefix}
-                                        onChange={(value) =>
-                                            editProps?.onHomePrefixChange(value)
-                                        }
-                                        onBlur={() =>
-                                            setEditingHomePrefix(false)
-                                        }
-                                        label="Home prefix"
-                                        textFieldVariant="standard"
-                                        autoFocus
-                                        required
-                                    />
-                                </Box>
-                            ) : (
-                                <FieldText
-                                    value={homePrefix}
-                                    placeholder={
-                                        editProps ? HOME_PREFIX_PLACEHOLDER : ''
-                                    }
-                                    label="home prefix"
-                                    textSx={homePrefixSx}
-                                    onEdit={
-                                        editProps
-                                            ? () => {
-                                                  setEditingHomePrefix(true);
-                                              }
-                                            : undefined
-                                    }
-                                />
-                            )}
-                        </Box>
-                    </Stack>
-                </SwapLine>
-            </Box>
-        </Stack>
-    );
-}
-
-interface SwapLineProps {
-    /** Faded in over the line's value. Omit to leave the value on its own. */
-    helperText?: string;
-    helperVisible: boolean;
-    helperSx: SystemStyleObject<Theme>;
-    /** Set when an input elsewhere on the card describes itself with it. */
-    helperId?: string;
-    sx: SystemStyleObject<Theme>;
-    children: ReactNode;
-}
-
-// One line of the card, crossfading between its value and a helper text. The
-// value keeps its place in the layout and the helper is laid over it, so the
-// card holds its height through the swap. A faded-out layer is hidden outright,
-// which keeps its pencil off the tab order and its text out of the reading
-// order.
-function SwapLine({
-    helperText,
-    helperVisible,
-    helperSx,
-    helperId,
-    sx,
-    children,
-}: SwapLineProps) {
-    const hasHelper = hasLength(helperText);
-
-    return (
-        <Box sx={{ position: 'relative', display: 'flex', minWidth: 0, ...sx }}>
-            <Fade
-                in={!hasHelper || !helperVisible}
-                timeout={HELPER_FADE_MS}
-                // The card paints its value straight away; only the swap fades.
-                appear={false}
-            >
-                <Box
-                    sx={{
-                        'display': 'flex',
-                        'flex': 1,
-                        'minWidth': 0,
-                        '& > *': { flex: 1, minWidth: 0 },
-                    }}
-                >
-                    {children}
-                </Box>
-            </Fade>
-
-            {hasHelper ? (
-                <Fade in={helperVisible} timeout={HELPER_FADE_MS}>
                     <Box
-                        id={helperId}
                         sx={{
-                            ...helperSx,
-                            ...TRUNCATE_SX,
-                            position: 'absolute',
-                            inset: 0,
+                            display: 'flex',
+                            flex: 'none',
                             color: 'text.secondary',
                         }}
                     >
-                        {helperText}
+                        <Home
+                            width={homePrefixIconSize}
+                            height={homePrefixIconSize}
+                        />
                     </Box>
-                </Fade>
-            ) : null}
-        </Box>
+                    <Box
+                        sx={{
+                            ...homePrefixTextSx,
+                            display: 'flex',
+                            minWidth: 0,
+                            flex: 1,
+                            color: 'text.secondary',
+                        }}
+                    >
+                        {editProps && editingHomePrefix ? (
+                            <Box
+                                sx={[
+                                    INLINE_INPUT_SX,
+                                    INLINE_AUTOCOMPLETE_SX,
+                                    {
+                                        flex: 1,
+                                        minWidth: 0,
+                                        // The autocomplete's own size-small rule for
+                                        // this input carries four classes, so it needs
+                                        // to be outranked rather than tied — a tie
+                                        // loses on source order, since MUI's styles are
+                                        // injected after these.
+                                        [`&&& .${autocompleteClasses.inputRoot} .${autocompleteClasses.input}`]:
+                                            {
+                                                p: 0,
+                                                // MUI pins the input at 1.4375em, which
+                                                // overrides the line box.
+                                                height: 'auto',
+                                                ...homePrefixTextSx,
+                                                color: 'text.secondary',
+                                            },
+                                    },
+                                ]}
+                            >
+                                <LeavesAutocomplete
+                                    leaves={editProps?.leaves ?? []}
+                                    value={homePrefix}
+                                    onChange={(value) =>
+                                        editProps?.onHomePrefixChange(value)
+                                    }
+                                    onBlur={() => setEditingHomePrefix(false)}
+                                    label="Home prefix"
+                                    textFieldVariant="standard"
+                                    autoFocus
+                                    required
+                                />
+                            </Box>
+                        ) : (
+                            <FieldText
+                                value={homePrefix}
+                                placeholder={
+                                    editProps ? HOME_PREFIX_PLACEHOLDER : ''
+                                }
+                                label="home prefix"
+                                textSx={homePrefixSx}
+                                onEdit={
+                                    editProps
+                                        ? () => {
+                                              setEditingHomePrefix(true);
+                                          }
+                                        : undefined
+                                }
+                            />
+                        )}
+                    </Box>
+                </Stack>
+            </Box>
+        </Stack>
     );
 }
 

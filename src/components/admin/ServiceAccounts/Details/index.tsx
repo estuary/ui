@@ -15,14 +15,12 @@ import { ApiKeysSection } from 'src/components/admin/ServiceAccounts/Details/Api
 import { GrantsSection } from 'src/components/admin/ServiceAccounts/Details/GrantsSection';
 import { UsageIndicator } from 'src/components/admin/ServiceAccounts/UsageIndicator';
 import AlertBox from 'src/components/shared/AlertBox';
-import {
-    CatalogIdentity,
-    splitCatalogName,
-} from 'src/components/shared/CatalogIdentity';
+import { CatalogIdentity } from 'src/components/shared/CatalogIdentity';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'src/hooks/searchParams/useGlobalSearchParams';
 import usePageTitle from 'src/hooks/usePageTitle';
+import { splitCatalogName } from 'src/utils/misc-utils';
 
 const META_LABEL_SX = {
     fontSize: 10,

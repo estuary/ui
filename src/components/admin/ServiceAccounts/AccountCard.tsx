@@ -17,12 +17,7 @@ import {
     BandedDiv,
     desaturate,
 } from 'src/components/shared/BandedDiv';
-import {
-    monogram,
-    MONOGRAM_TEXT_COLOR,
-    monogramColor,
-    splitCatalogName,
-} from 'src/components/shared/CatalogIdentity';
+import { Monogram } from 'src/components/shared/CatalogIdentity';
 import { CatalogPath } from 'src/components/shared/CatalogPath';
 import {
     defaultOutline,
@@ -31,6 +26,7 @@ import {
     diminishedTextColor,
     semiTransparentBackground_oneLayerElevated,
 } from 'src/context/Theme';
+import { splitCatalogName } from 'src/utils/misc-utils';
 
 interface AccountCardProps {
     serviceAccount: ServiceAccount;
@@ -92,23 +88,7 @@ export function AccountCard({
         <Stack spacing={1.75} sx={{ flex: 1 }}>
             {/* Identity */}
             <Stack direction="row" spacing={1.5} sx={{ alignItems: 'center' }}>
-                <Box
-                    sx={{
-                        width: 42,
-                        height: 42,
-                        flex: 'none',
-                        borderRadius: theme.radius.md,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        fontSize: 14,
-                        fontWeight: 700,
-                        color: MONOGRAM_TEXT_COLOR,
-                        background: monogramColor(serviceAccount.catalogName),
-                    }}
-                >
-                    {monogram(serviceAccount.catalogName)}
-                </Box>
+                <Monogram catalogName={serviceAccount.catalogName} size={42} />
 
                 <Box sx={{ minWidth: 0, flex: 1 }}>
                     <Box
