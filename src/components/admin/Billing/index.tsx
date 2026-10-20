@@ -71,13 +71,13 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
                             Please try again later.
                         </AlertBox>
                     }
-                    onError={(errorLoadingPaymentMethods) => {
-                        logRocketEvent(
-                            CustomEvents.ERROR_BOUNDARY_PAYMENT_METHODS,
-                            {
-                                stack: errorLoadingPaymentMethods.stack,
-                            }
-                        );
+                    onError={(error, { componentStack }) => {
+                        logRocketEvent(CustomEvents.ERROR_BOUNDARY_DISPLAYED, {
+                            area: 'Billing',
+                            message: error.message,
+                            stack: error.stack,
+                            componentStack,
+                        });
                     }}
                 >
                     <BillingDetails showAddPayment={showAddPayment} />
