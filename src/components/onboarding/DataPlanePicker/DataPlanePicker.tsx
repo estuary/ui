@@ -17,7 +17,7 @@ import {
     Typography,
 } from '@mui/material';
 
-import { Check, Cloud, NavArrowDown } from 'iconoir-react';
+import { Check, Cloud } from 'iconoir-react';
 
 import { CountryFlag } from 'src/components/onboarding/DataPlanePicker/CountryFlag';
 import { groupDataPlanes } from 'src/components/onboarding/DataPlanePicker/dataPlaneMetadata';
@@ -98,17 +98,6 @@ const ChoiceIcons = ({ choice }: { choice: DataPlaneChoice }) => (
 const MIN_MENU_HEIGHT = 240;
 const MENU_VIEWPORT_GUTTER = 16;
 
-// Sized to 1em so MUI's `.MuiSelect-icon` centering and open-state rotation
-// apply as they do to its own icon.
-const ChevronIcon = ({ className }: { className?: string }) => (
-    <NavArrowDown
-        className={className}
-        width="1em"
-        height="1em"
-        style={{ fontSize: 20 }}
-    />
-);
-
 export const DataPlanePicker = ({
     dataPlanes,
     disabled,
@@ -160,19 +149,28 @@ export const DataPlanePicker = ({
             }}
             disabled={disabled}
             displayEmpty
-            IconComponent={ChevronIcon}
+            size="small"
             variant="outlined"
             renderValue={() =>
                 selectedChoice ? (
                     <Stack direction="row" spacing={1.5} alignItems="center">
                         <ChoiceIcons choice={selectedChoice} />
-                        <Typography component="span" noWrap sx={NAME_SX}>
+                        <Typography component="span" variant="inherit" noWrap>
                             {selectedChoice.label}
                         </Typography>
                         <RegionCode choice={selectedChoice} />
                     </Stack>
                 ) : (
-                    <Typography component="span" sx={NAME_SX}>
+                    // Styled like MUI's input placeholder, as on the
+                    // Organization Name field.
+                    <Typography
+                        component="span"
+                        variant="inherit"
+                        sx={{
+                            opacity: (theme) =>
+                                theme.palette.mode === 'light' ? 0.42 : 0.5,
+                        }}
+                    >
                         {loading
                             ? 'Loading data planes…'
                             : 'Select a data plane'}
@@ -186,23 +184,15 @@ export const DataPlanePicker = ({
                 },
             }}
             sx={{
-                bgcolor: 'background.default',
-                borderRadius: 3,
+                'bgcolor': 'background.default',
+                'borderRadius': 3,
+                // Laid out as a row so the icons sit beside the name.
                 [`& .${outlinedInputClasses.input}`]: {
                     display: 'flex',
                     alignItems: 'center',
-                    minHeight: 24,
-                    py: 1.5,
-                    // Lines the closed field's icons up with the options'.
-                    pl: 2,
                 },
-                [`&.${outlinedInputClasses.focused}`]: {
-                    bgcolor: 'background.paper',
-                },
-                // Borderless at rest, like the other onboarding fields; MUI's
-                // primary focus outline shows while focused or open.
-                [`&:not(.${outlinedInputClasses.focused}) .${outlinedInputClasses.notchedOutline}`]:
-                    { borderColor: 'transparent' },
+                // Borderless in every state, like the Organization Name field.
+                '& fieldset': { border: 'none' },
             }}
         >
             {groups.flatMap((group, index) => [
