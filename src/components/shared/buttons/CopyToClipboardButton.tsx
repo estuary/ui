@@ -17,9 +17,7 @@ function CopyToClipboardButton({
 }: CopyToClipboardButtonProps) {
     const theme = useTheme();
 
-    const { isCopied, handleCopy } = useCopyToClipboard(
-        'CopyToClipboardButton'
-    );
+    const { isCopied, handleCopy } = useCopyToClipboard();
     const icon = getButtonIcon(theme, isCopied ? 'success' : undefined);
 
     if (!children) {

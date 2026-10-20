@@ -8,8 +8,6 @@ export const AdminPage: Record<string, string> = {
     'admin.roles.message.docLink': `authorization settings`,
     'admin.roles.message.docPath': `https://go.estuary.dev/provision`,
 
-    'admin.cli_api.header': `Programmatic Access to ${CommonMessages.productName}`,
-    'admin.cli_api.message': `Use Refresh and Access tokens to connect to ${CommonMessages.productName} programmatically.`,
     'admin.cli_api.refreshToken.dialog.alert.tokenEncodingFailed': `An issue was encountered displaying your token. Please generate a new token.`,
 
     'admin.billing.header': `Billing`,
@@ -109,7 +107,6 @@ export const AdminPage: Record<string, string> = {
 
     'admin.tabs.users': `Account Access`,
     'admin.tabs.notifications': `Notifications`,
-    'admin.tabs.api': `CLI-API`,
     'admin.tabs.billing': `Billing`,
     'admin.tabs.settings': `Settings`,
 
