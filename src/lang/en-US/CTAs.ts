@@ -11,7 +11,6 @@ export const CTAs: Record<string, string> = {
     'cta.logout': `Logout`,
     'cta.materialize': `Materialize`,
     'cta.register': `Sign up`,
-    'cta.registerFinish': `Complete Registration`,
     'cta.resetPassword': `Reset Password`,
     'cta.magicLink': `Sign in with magic link`,
     'cta.verifyOTP': `Sign in with OTP`,
@@ -57,7 +56,6 @@ export const CTAs: Record<string, string> = {
     'cta.manualSelect': `Manually Select`,
     'cta.modify': `modify`,
     'cta.rename': `Rename`,
-    'cta.inviteLink': `Invite Link`,
     'cta.redact': `Redact`,
     'cta.accept': `Accept`,
 };

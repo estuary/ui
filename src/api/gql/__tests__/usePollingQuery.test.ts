@@ -388,6 +388,168 @@ describe('usePollingQuery', () => {
         expect(result.current.updatedAt).toBeNull();
     });
 
+    describe('page visibility', () => {
+        function setPageHidden(hidden: boolean) {
+            act(() => {
+                Object.defineProperty(document, 'hidden', {
+                    configurable: true,
+                    get: () => hidden,
+                });
+                document.dispatchEvent(new Event('visibilitychange'));
+            });
+        }
+
+        afterEach(() => {
+            // Drop the override so jsdom's own (visible) value applies again
+            delete (document as { hidden?: boolean }).hidden;
+        });
+
+        const renderPolling = ({ pause }: { pause?: boolean } = {}) =>
+            renderPollingQuery({
+                pause,
+                pollingIntervalMs: INTERVAL_MS,
+            } as Partial<UseQueryArgs>);
+
+        test('skips ticks while the tab is hidden', () => {
+            mockQuery();
+            renderPolling();
+
+            setPageHidden(true);
+            advance(INTERVAL_MS * 3);
+
+            expect(reexecuteQuery).not.toHaveBeenCalled();
+        });
+
+        test('refetches as soon as the tab becomes visible again', () => {
+            mockQuery();
+            renderPolling();
+
+            setPageHidden(true);
+            setPageHidden(false);
+
+            expect(reexecuteQuery).toHaveBeenCalledTimes(1);
+            expect(reexecuteQuery).toHaveBeenCalledWith({
+                requestPolicy: 'network-only',
+            });
+        });
+
+        test('refetches only once per return to the tab', () => {
+            mockQuery();
+            const { rerender } = renderPolling();
+
+            setPageHidden(true);
+            setPageHidden(false);
+            expect(reexecuteQuery).toHaveBeenCalledTimes(1);
+
+            // The refetch runs and settles; that alone must not refetch again
+            completeFetch(rerender);
+            completeFetch(rerender);
+
+            expect(reexecuteQuery).toHaveBeenCalledTimes(1);
+        });
+
+        test('does not refetch on mount or when the tab is hidden', () => {
+            mockQuery();
+            renderPolling();
+            expect(reexecuteQuery).not.toHaveBeenCalled();
+
+            setPageHidden(true);
+            expect(reexecuteQuery).not.toHaveBeenCalled();
+        });
+
+        test('does not refetch on visibility when polling is disabled', () => {
+            mockQuery();
+            renderPollingQuery();
+
+            setPageHidden(true);
+            setPageHidden(false);
+
+            expect(reexecuteQuery).not.toHaveBeenCalled();
+        });
+
+        test('does not refetch on visibility while paused', () => {
+            mockQuery();
+            renderPolling({ pause: true });
+
+            setPageHidden(true);
+            setPageHidden(false);
+
+            expect(reexecuteQuery).not.toHaveBeenCalled();
+        });
+
+        test('does not refetch on visibility while a fetch is in flight', () => {
+            mockQuery({ fetching: true });
+            renderPolling();
+
+            setPageHidden(true);
+            setPageHidden(false);
+
+            expect(reexecuteQuery).not.toHaveBeenCalled();
+        });
+
+        test('resumes the regular interval after becoming visible', () => {
+            mockQuery();
+            renderPolling();
+
+            setPageHidden(true);
+            setPageHidden(false);
+            advance(INTERVAL_MS);
+
+            expect(reexecuteQuery).toHaveBeenCalledTimes(2);
+        });
+
+        test('restarts the interval on return so it does not tick right after the refetch', () => {
+            mockQuery();
+            renderPolling();
+
+            // Leave just before the original timer would have fired
+            advance(INTERVAL_MS - 1000);
+            setPageHidden(true);
+            setPageHidden(false);
+            expect(reexecuteQuery).toHaveBeenCalledTimes(1);
+
+            advance(1000);
+            expect(reexecuteQuery).toHaveBeenCalledTimes(1);
+
+            advance(INTERVAL_MS - 1000);
+            expect(reexecuteQuery).toHaveBeenCalledTimes(2);
+        });
+
+        test('skips the refetch on return while the data is still fresh', () => {
+            mockQuery();
+            const { rerender } = renderPolling();
+            completeFetch(rerender);
+
+            setPageHidden(true);
+            setPageHidden(false);
+            setPageHidden(true);
+            setPageHidden(false);
+
+            expect(reexecuteQuery).not.toHaveBeenCalled();
+        });
+
+        test('refetches on return once the data is older than the interval', () => {
+            mockQuery();
+            const { rerender } = renderPolling();
+            completeFetch(rerender);
+
+            setPageHidden(true);
+            advance(INTERVAL_MS);
+            setPageHidden(false);
+
+            expect(reexecuteQuery).toHaveBeenCalledTimes(1);
+        });
+
+        test('stops the timer while the tab is hidden', () => {
+            mockQuery();
+            renderPolling();
+            expect(vi.getTimerCount()).toBe(1);
+
+            setPageHidden(true);
+            expect(vi.getTimerCount()).toBe(0);
+        });
+    });
+
     test('leaves updatedAt unset while the query is paused', () => {
         mockQuery();
 

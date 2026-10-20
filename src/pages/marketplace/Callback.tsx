@@ -6,9 +6,9 @@ import { useNavigate } from 'react-router-dom';
 
 import { authenticatedRoutes, unauthenticatedRoutes } from 'src/app/routes';
 import FullPageSpinner from 'src/components/fullPage/Spinner';
-import { supabaseClient } from 'src/context/GlobalProviders';
 import useMarketplaceLocalStorage from 'src/hooks/useMarketplaceLocalStorage';
 import { logRocketConsole } from 'src/services/shared';
+import { supabaseClient } from 'src/services/supabaseClient';
 
 // Expanding Marketplace Providers
 // Once we add more providers the idea is to do something like this

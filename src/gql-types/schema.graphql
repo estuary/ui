@@ -1021,6 +1021,29 @@ type DeriveTransformStats {
   transform: String!
 }
 
+"""
+An asynchronous capture discovery that merges its results into a draft.
+"""
+type Discover {
+  captureName: Name!
+  createdAt: DateTime!
+  dataPlaneName: String!
+  draftId: Id!
+
+  """Errors currently recorded on the associated draft."""
+  errors: [Error!]!
+  id: Id!
+
+  """
+  Discovery logs in timestamp order. Pagination is best effort, and logs
+  may arrive after discovery completes.
+  `first` controls page size and cannot exceed 1000 log lines.
+  """
+  logs(after: String, first: Int): LogLineConnection!
+  status: DiscoverStatus!
+  updatedAt: DateTime!
+}
+
 """A capture binding that has changed as a result of a discover"""
 type DiscoverChange {
   """Whether the capture binding is disabled."""
@@ -1033,6 +1056,22 @@ type DiscoverChange {
 
   """The target collection of the capture binding that was changed."""
   target: Collection!
+}
+
+enum DiscoverStatus {
+  DEPRECATED_BACKGROUND
+  DISCOVER_FAILED
+  IMAGE_FORBIDDEN
+  MERGE_FAILED
+  NOT_AUTHORIZED
+  NO_DATA_PLANE
+  PULL_FAILED
+
+  """The discover is queued or in progress."""
+  QUEUED
+  SUCCESS
+  TAG_FAILED
+  WRONG_PROTOCOL
 }
 
 """A count of documents and their cumulative size."""
@@ -1505,16 +1544,10 @@ type LiveSpecRef {
   status: LiveSpecStatus
 
   """
-  The current user's capability to the referent. Null indicates no access.
-  A query can obtain a reference to a catalog spec that the user has no
-  access to, which happens in scenarios where a LiveSpec that the user
-  does have access to references a spec in a different catalog namespace
-  that the user cannot access. It can also happen simply by listing by
-  name, and passing a name that the user cannot access. In either case,
-  the result would be `userCapability: null`, and all other fields on the
-  LiveSpecRef would also be null.
+  The current user's legacy capability to the referent, retained for compatibility.
+  Authorization is evaluated independently using the CatalogRead capability bit.
   """
-  userCapability: Capability
+  userCapability: Capability @deprecated(reason: "Legacy capability reporting does not reflect effective permissions.")
 }
 
 type LiveSpecRefConnection {
@@ -1575,6 +1608,29 @@ type LockFailure {
   matched.
   """
   expected: Id!
+}
+
+type LogLine {
+  line: String!
+  loggedAt: DateTime!
+  stream: String!
+}
+
+type LogLineConnection {
+  """A list of edges."""
+  edges: [LogLineEdge!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+}
+
+"""An edge in a connection."""
+type LogLineEdge {
+  """A cursor for use in pagination"""
+  cursor: String!
+
+  """The item at the end of the edge"""
+  node: LogLine!
 }
 
 """
@@ -1654,6 +1710,20 @@ type MutationRoot {
     validFor: String!
   ): CreateApiKeyResult!
   createBillingSetupIntent(tenant: String!): CreateBillingSetupIntentPayload!
+
+  """
+  Queue discovery for a capture using its staged or live definition.
+  Discovery updates the given draft with its results.
+  """
+  createDiscover(
+    captureName: Name!
+
+    """
+    Optional data plane name for discovery. Selected automatically when omitted.
+    """
+    dataPlane: String
+    draftId: Id!
+  ): Discover!
 
   """Create an empty private draft owned by the authenticated caller."""
   createDraft(detail: String): Draft!
@@ -1873,6 +1943,9 @@ type MutationRoot {
   tenant-admin grant cannot provision another tenant.
   """
   tenantCreate(
+    """Full catalog name of an open public data plane to use by default."""
+    dataPlane: String!
+
     """Organization name as a single catalog token, without a trailing slash."""
     name: String!
 
@@ -2064,6 +2137,15 @@ type PrefixRefEdge {
 input PrefixesBy {
   """Filter returned prefixes by user capability."""
   minCapability: Capability!
+}
+
+"""
+Optional filter for the `prefixes` query. A filter only narrows the
+prefixes the caller can reach.
+"""
+input PrefixesFilter {
+  """Filter on the returned prefix."""
+  prefix: PrefixFilter
 }
 
 """
@@ -2305,6 +2387,9 @@ type QueryRoot {
   omitting it returns both.
   """
   dataPlanes(after: String, before: String, filter: DataPlanesFilter, first: Int, last: Int): DataPlaneConnection!
+
+  """Returns a discover visible to the caller, or null."""
+  discover(id: Id!): Discover
   draft(id: Id!): Draft
 
   """The caller's own drafts, in stable ID order."""
@@ -2338,7 +2423,7 @@ type QueryRoot {
   has for the given spec.
   """
   liveSpecs(after: String, before: String, by: LiveSpecsBy!, first: Int, last: Int): LiveSpecRefConnection!
-  prefixes(after: String, by: PrefixesBy!, first: Int): PrefixRefConnection!
+  prefixes(after: String, by: PrefixesBy!, filter: PrefixesFilter, first: Int): PrefixRefConnection!
 
   """
   Returns all public data planes.

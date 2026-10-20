@@ -26,10 +26,6 @@ export enum FormStateStoreNames {
     MATERIALIZATION_EDIT = 'Materialization-Edit-Form-State',
 }
 
-export enum OnboardingStoreNames {
-    GENERAL = 'Onboarding',
-}
-
 export enum SchemaEvolutionStoreNames {
     GENERAL = 'general-schema-evolution',
 }
@@ -74,7 +70,6 @@ export type StoreName =
     | FormStateStoreNames
     | GlobalStoreNames
     | JournalDataStoreNames
-    | OnboardingStoreNames
     | SchemaEvolutionStoreNames
     | SelectTableStoreNames
     | ShardDetailStoreNames

@@ -1,10 +1,10 @@
-import { supabaseClient } from 'src/context/GlobalProviders';
 import { DEFAULT_FILTER } from 'src/services/shared';
 import {
     insertSupabase,
     JOB_STATUS_COLUMNS,
     TABLES,
 } from 'src/services/supabase';
+import { supabaseClient } from 'src/services/supabaseClient';
 import { hasLength } from 'src/utils/misc-utils';
 
 interface PublicationRequest {

@@ -18,9 +18,9 @@ import { HalfMoon, LogOut, MoreHoriz, SunLight } from 'iconoir-react';
 
 import { navButtonSx } from 'src/components/navigation/NavItems';
 import UserAvatar from 'src/components/shared/UserAvatar';
-import { supabaseClient } from 'src/context/GlobalProviders';
 import { useColorMode } from 'src/context/Theme';
 import { useUserStore } from 'src/context/User/useUserContextStore';
+import { supabaseClient } from 'src/services/supabaseClient';
 
 interface UserButtonProps {
     onClick: (event: MouseEvent<HTMLElement>) => void;

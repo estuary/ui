@@ -11,9 +11,9 @@ import { unauthenticatedRoutes } from 'src/app/routes';
 import FullPageDialog from 'src/components/fullPage/Dialog';
 import { redirectToBase } from 'src/components/login/useRedirectPath';
 import Error from 'src/components/shared/Error';
-import { supabaseClient } from 'src/context/GlobalProviders';
 import HeaderMessage from 'src/pages/login/HeaderMessage';
 import { logRocketEvent } from 'src/services/shared';
+import { supabaseClient } from 'src/services/supabaseClient';
 
 // Note: this component intentionally does not handle grant tokens (invite links).
 // Invite redemption is handled by the GQL mutation which independently checks SSO

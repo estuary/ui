@@ -3,7 +3,6 @@ import type {
     AlertSubscription as LegacyAlertSubscription,
 } from 'src/types';
 
-import { supabaseClient } from 'src/context/GlobalProviders';
 import { graphql } from 'src/gql-types';
 import {
     deleteSupabase,
@@ -14,6 +13,7 @@ import {
     TABLES,
     updateSupabase,
 } from 'src/services/supabase';
+import { supabaseClient } from 'src/services/supabaseClient';
 
 const AlertConfigQuery = graphql(`
     query AlertConfigs(

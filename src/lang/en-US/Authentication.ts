@@ -80,53 +80,13 @@ export const Authentication: Record<string, string> = {
     'login.registerFailed.github': 'Failed to register with GitHub',
     'login.userNotFound': 'User not found. Please sign up below.',
 
-    'login.progress.indicator': 'Step {step} of {totalSteps}',
-
     'login.marketPlace.loggedOut': `To apply marketplace subscription, please login below.`,
-
-    // Legal
-    'legal.heading': `Legal Stuff`,
-    'legal.heading.outdated': `Updated Legal Stuff`,
-    'legal.message': `Please use the links below to open and review the documents before you continue.`,
-    'legal.message.outdated': `There have been changes to our legal documents you need to review. Please use the links below to view the documents before you continue.`,
-    'legal.docs.terms': `Terms of Service`,
-    'legal.docs.privacy': `Privacy Policy`,
-    'legal.docs.accept': 'I accept the {privacy} and {terms}',
-    'legal.docs.errorTitle': 'Please accept',
-    'legal.docs.errorMessage':
-        'Before you can continue using the application you must accept the listed documents.',
-    'legal.error.failedToFetch.message': `There was an issue while checking if you have accepted the latest {privacy} and {terms}.`,
 
     // Tenant
     'tenant.message.1': `The organization name will be used as a prefix for everything you create within Estuary. It will only be public if you share data with other organizations.`,
 
-    'tenant.expectations': `You can use ${CommonMessages['catalogName.limitations']}`,
-    'tenant.expectations.error': `Sorry, only letters(a-z), numbers(0-9), periods(.), underscores(_), and hyphens(-) allowed.`,
-
-    'tenant.input.label': `Organization Name`,
-    'tenant.input.placeholder': `acmeCo`,
-    'tenant.errorMessage.empty': `You must provide an organization name before continuing.`,
-    'tenant.errorMessage.invalid': `Your organization name is invalid.`,
-    'tenant.origin.errorMessage.empty': `Please let us know where you heard about us.`,
-    'tenant.warningMessage.problematic': `Looks like your organization name contains "test". This is generally not recommended as you cannot rename your organization later.`,
-
     'tenant.docs.message': `To see a detailed explanation please view our {link}`,
     'tenant.docs.message.link': `https://docs.estuary.dev/concepts/catalogs/#namespace`,
-
-    'tenant.customer.quote': `We're a big fan of Estuary's real-time, no code model. It's magic that we're getting real time data without much effort and we don't have to spend time thinking about broken pipelines. We've also experienced fantastic support!`,
-
-    'tenant.origin.radioGroup.label': `Where did you hear about ${CommonMessages.company}?`,
-
-    'tenant.origin.radio.browserSearch.label': `Google / Search Engine`,
-    'tenant.origin.radio.socialMedia.label': `Social Media`,
-    'tenant.origin.radio.ai.label': `AI Assistant`,
-    'tenant.origin.radio.paidAdvertising.label': `Online Ads`,
-    'tenant.origin.radio.content.label': `Blog`,
-    'tenant.origin.radio.referral.label': `Word of Mouth`,
-    'tenant.origin.radio.webinar.label': `Webinar`,
-    'tenant.origin.radio.reddit.label': `Reddit`,
-    'tenant.origin.radio.linkedIn.label': `LinkedIn`,
-    'tenant.origin.radio.other.label': `Other`,
 
     'tenant.grantDirective.message': `You now have {grantedCapability} access to the following tenant:`,
     'tenant.grantDirective.success.header': `Access Granted`,

@@ -1,7 +1,6 @@
 import type { PostgrestSingleResponse } from '@supabase/postgrest-js';
 import type { StorageMappingsQuery } from 'src/types';
 
-import { supabaseClient } from 'src/context/GlobalProviders';
 import {
     handleFailure,
     handleSuccess,
@@ -9,6 +8,7 @@ import {
     supabaseRetry,
     TABLES,
 } from 'src/services/supabase';
+import { supabaseClient } from 'src/services/supabaseClient';
 
 const getStorageMapping = (catalog_prefix: string) => {
     return supabaseClient

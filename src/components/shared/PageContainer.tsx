@@ -98,7 +98,6 @@ function PageContainer({ children, hideBackground }: Props) {
     return (
         <Box
             sx={{
-                pr: 2,
                 display: 'flex',
                 flexDirection: 'column',
                 height: '100%',

@@ -86,7 +86,10 @@ function AppLayout() {
                                 : undefined,
                         }}
                     >
-                        <Box className="pane-content" sx={{ height: '100%' }}>
+                        <Box
+                            className="pane-content"
+                            sx={{ height: '100%', pr: 2 }}
+                        >
                             <ErrorBoundryWrapper>
                                 <PageContainer>
                                     <Outlet />

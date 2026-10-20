@@ -11,10 +11,10 @@ import {
     unauthenticatedRoutes,
 } from 'src/app/routes';
 import FullPageSpinner from 'src/components/fullPage/Spinner';
-import { supabaseClient } from 'src/context/GlobalProviders';
 import { useUserStore } from 'src/context/User/useUserContextStore';
 import useBrowserTitle from 'src/hooks/useBrowserTitle';
 import { logRocketEvent } from 'src/services/shared';
+import { supabaseClient } from 'src/services/supabaseClient';
 import { CustomEvents } from 'src/services/types';
 
 const trackEvent = (status: CommonStatuses) => {
