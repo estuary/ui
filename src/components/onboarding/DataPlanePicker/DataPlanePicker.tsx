@@ -112,8 +112,7 @@ const GroupHeader = ({
             color: mutedText,
             borderTop: divider ? 1 : 0,
             borderColor: 'divider',
-            // The sticky header paints over the menu paper's dark-mode
-            // elevation overlay.
+            // Its opaque background would hide the menu's dark-mode overlay.
             backgroundImage: 'var(--Paper-overlay)',
         }}
     >

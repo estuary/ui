@@ -1,8 +1,7 @@
 import { Box } from '@mui/material';
 
-// Emits each flag as its own asset, fetched only when shown; `?no-inline`
-// stops Vite base64-inlining them into the bundle. Globbed from disk because
-// the package's `exports` map omits the SVGs.
+// One asset per flag, fetched only when shown; `?no-inline` keeps Vite from
+// inlining them. Globbed by path because the package `exports` omit the SVGs.
 const FLAG_URLS: Partial<Record<string, string>> = import.meta.glob<string>(
     '/node_modules/country-flag-icons/3x2/*.svg',
     { eager: true, import: 'default', query: '?no-inline' }
