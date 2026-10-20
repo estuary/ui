@@ -74,7 +74,8 @@ export const groupDataPlanes = (
 
     return Array.from(groups, ([provider, groupPlanes]) => ({
         provider,
-        label: GROUP_LABELS[provider],
+        // Falls back for a provider added to the API before codegen catches up.
+        label: GROUP_LABELS[provider] ?? provider,
         choices: groupPlanes.map((plane) => {
             const region = getRegion(provider, plane.region);
             const sharesRegion =

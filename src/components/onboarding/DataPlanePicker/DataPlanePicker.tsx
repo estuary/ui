@@ -91,6 +91,39 @@ const ChoiceIcons = ({ choice }: { choice: DataPlaneChoice }) => (
     </>
 );
 
+// Select stamps `role="option"` and click handlers onto every child, so the
+// header takes only its own props.
+const GroupHeader = ({
+    divider,
+    label,
+}: {
+    divider: boolean;
+    label: string;
+}) => (
+    <ListSubheader
+        role="none"
+        sx={{
+            pt: 1.5,
+            pb: 0.5,
+            lineHeight: 1.4,
+            fontSize: 13,
+            fontWeight: 600,
+            letterSpacing: '0.01em',
+            color: mutedText,
+            borderTop: divider ? 1 : 0,
+            borderColor: 'divider',
+            // The sticky header paints over the menu paper's dark-mode
+            // elevation overlay.
+            backgroundImage: 'var(--Paper-overlay)',
+        }}
+    >
+        {label}
+    </ListSubheader>
+);
+
+// Keeps MenuList from focusing the header when the menu opens.
+GroupHeader.muiSkipListHighlight = true;
+
 export const DataPlanePicker = ({
     dataPlanes,
     disabled,
@@ -180,25 +213,11 @@ export const DataPlanePicker = ({
             }}
         >
             {groups.flatMap((group, index) => [
-                <ListSubheader
+                <GroupHeader
                     key={`group-${group.provider}`}
-                    sx={{
-                        pt: 1.5,
-                        pb: 0.5,
-                        lineHeight: 1.4,
-                        fontSize: 13,
-                        fontWeight: 600,
-                        letterSpacing: '0.01em',
-                        color: mutedText,
-                        borderTop: index > 0 ? 1 : 0,
-                        borderColor: 'divider',
-                        // The sticky header paints over the menu paper's
-                        // dark-mode elevation overlay.
-                        backgroundImage: 'var(--Paper-overlay)',
-                    }}
-                >
-                    {group.label}
-                </ListSubheader>,
+                    divider={index > 0}
+                    label={group.label}
+                />,
                 ...group.choices.map((choice) => (
                     <MenuItem
                         key={choice.plane.name}
