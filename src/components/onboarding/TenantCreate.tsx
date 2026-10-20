@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import {
     Button,
@@ -7,8 +7,6 @@ import {
     FormControlLabel,
     FormHelperText,
     FormLabel,
-    MenuItem,
-    Select,
     Stack,
     TextField,
     Toolbar,
@@ -24,6 +22,8 @@ import { usePublicDataPlanes } from 'src/api/gql/publicDataPlanes';
 import { useTenantCreate } from 'src/api/gql/tenant';
 import { unauthenticatedRoutes } from 'src/app/routes';
 import Logo from 'src/components/navigation/Logo';
+import { getDefaultDataPlane } from 'src/components/onboarding/DataPlanePicker/dataPlaneMetadata';
+import { DataPlanePicker } from 'src/components/onboarding/DataPlanePicker/DataPlanePicker';
 import { OnboardingSurvey } from 'src/components/onboarding/Survey';
 import AlertBox from 'src/components/shared/AlertBox';
 import ExternalLink from 'src/components/shared/ExternalLink';
@@ -71,9 +71,20 @@ export const TenantCreate = () => {
         control,
         getValues,
         handleSubmit,
+        setValue,
         watch,
         formState: { isSubmitting, isValid },
     } = methods;
+
+    useEffect(() => {
+        const defaultDataPlane = getDefaultDataPlane(dataPlanes);
+
+        if (defaultDataPlane && !getValues('dataPlane')) {
+            setValue('dataPlane', defaultDataPlane.name, {
+                shouldValidate: true,
+            });
+        }
+    }, [dataPlanes, getValues, setValue]);
 
     const [serverError, setServerError] = useState<string | null>(null);
     const saving = isSubmitting || creation.data?.tenantCreate === true;
@@ -273,49 +284,20 @@ export const TenantCreate = () => {
                                 >
                                     Data plane
                                 </FormLabel>
-                                <Select
+                                <DataPlanePicker
                                     {...field}
                                     inputRef={ref}
                                     labelId="data-plane-label"
                                     id="data-plane"
-                                    value={
-                                        dataPlanes.some(
-                                            (plane) =>
-                                                plane.name === field.value
-                                        )
-                                            ? field.value
-                                            : ''
-                                    }
+                                    dataPlanes={dataPlanes}
+                                    loading={dataPlanesLoading}
                                     disabled={
                                         saving ||
                                         dataPlanesLoading ||
                                         Boolean(dataPlanesError) ||
                                         !dataPlanes.length
                                     }
-                                    displayEmpty
-                                    size="small"
-                                    variant="outlined"
-                                    sx={{
-                                        'bgcolor': 'background.default',
-                                        'borderRadius': 3,
-                                        '& fieldset': { border: 'none' },
-                                    }}
-                                >
-                                    <MenuItem value="" disabled>
-                                        {dataPlanesLoading
-                                            ? 'Loading data planes…'
-                                            : 'Select a data plane'}
-                                    </MenuItem>
-                                    {dataPlanes.map((plane) => (
-                                        <MenuItem
-                                            key={plane.name}
-                                            value={plane.name}
-                                        >
-                                            {plane.cloudProvider} —{' '}
-                                            {plane.region}
-                                        </MenuItem>
-                                    ))}
-                                </Select>
+                                />
                                 <FormHelperText>
                                     Choose where your organization’s data
                                     processing runs.
