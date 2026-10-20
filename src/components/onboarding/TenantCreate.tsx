@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import {
     Button,
@@ -22,6 +22,7 @@ import { usePublicDataPlanes } from 'src/api/gql/publicDataPlanes';
 import { useTenantCreate } from 'src/api/gql/tenant';
 import { unauthenticatedRoutes } from 'src/app/routes';
 import Logo from 'src/components/navigation/Logo';
+import { getDefaultDataPlane } from 'src/components/onboarding/DataPlanePicker/dataPlaneMetadata';
 import { DataPlanePicker } from 'src/components/onboarding/DataPlanePicker/DataPlanePicker';
 import { OnboardingSurvey } from 'src/components/onboarding/Survey';
 import AlertBox from 'src/components/shared/AlertBox';
@@ -70,9 +71,20 @@ export const TenantCreate = () => {
         control,
         getValues,
         handleSubmit,
+        setValue,
         watch,
         formState: { isSubmitting, isValid },
     } = methods;
+
+    useEffect(() => {
+        const defaultDataPlane = getDefaultDataPlane(dataPlanes);
+
+        if (defaultDataPlane && !getValues('dataPlane')) {
+            setValue('dataPlane', defaultDataPlane.name, {
+                shouldValidate: true,
+            });
+        }
+    }, [dataPlanes, getValues, setValue]);
 
     const [serverError, setServerError] = useState<string | null>(null);
     const saving = isSubmitting || creation.data?.tenantCreate === true;

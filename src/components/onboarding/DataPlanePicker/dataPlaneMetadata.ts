@@ -57,6 +57,23 @@ const getCluster = ({ cloudProvider, name, region }: PublicDataPlane) => {
     return suffix.startsWith(prefix) ? suffix.slice(prefix.length) : suffix;
 };
 
+const getClusterNumber = (plane: PublicDataPlane) => {
+    const match = /^c(\d+)$/.exec(getCluster(plane));
+
+    return match ? Number(match[1]) : -1;
+};
+
+// The newest us-east-1 cluster, so a replacement cluster becomes the default.
+export const getDefaultDataPlane = (planes: readonly PublicDataPlane[]) =>
+    planes
+        .filter(
+            ({ cloudProvider, region }) =>
+                cloudProvider === 'AWS' && region === 'us-east-1'
+        )
+        .reduce<
+            PublicDataPlane | undefined
+        >((best, plane) => (!best || getClusterNumber(plane) > getClusterNumber(best) ? plane : best), undefined);
+
 export const groupDataPlanes = (
     planes: readonly PublicDataPlane[]
 ): DataPlaneGroup[] => {

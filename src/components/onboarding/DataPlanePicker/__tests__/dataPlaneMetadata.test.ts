@@ -1,6 +1,9 @@
 import type { PublicDataPlane } from 'src/components/onboarding/DataPlanePicker/dataPlaneMetadata';
 
-import { groupDataPlanes } from 'src/components/onboarding/DataPlanePicker/dataPlaneMetadata';
+import {
+    getDefaultDataPlane,
+    groupDataPlanes,
+} from 'src/components/onboarding/DataPlanePicker/dataPlaneMetadata';
 
 const plane = (
     cloudProvider: PublicDataPlane['cloudProvider'],
@@ -88,5 +91,40 @@ describe('groupDataPlanes', () => {
             'us-east-1 · a',
             'us-east-1 · b',
         ]);
+    });
+});
+
+describe('getDefaultDataPlane', () => {
+    test.each([
+        [['c2', 'c3'], 'c3'],
+        [['c10', 'c9'], 'c10'],
+        [['c2'], 'c2'],
+    ])('picks the highest us-east-1 cluster from %j', (clusters, expected) => {
+        expect(
+            getDefaultDataPlane([
+                plane('AWS', 'eu-west-1', 'c9'),
+                ...clusters.map((cluster) =>
+                    plane('AWS', 'us-east-1', cluster)
+                ),
+            ])?.name
+        ).toBe(plane('AWS', 'us-east-1', expected).name);
+    });
+
+    test('ranks a plane without a cluster number lowest', () => {
+        expect(
+            getDefaultDataPlane([
+                plane('AWS', 'us-east-1', 'c1'),
+                plane('AWS', 'us-east-1', 'blue'),
+            ])?.name
+        ).toBe(plane('AWS', 'us-east-1', 'c1').name);
+    });
+
+    test('returns nothing without an AWS us-east-1 plane', () => {
+        expect(
+            getDefaultDataPlane([
+                plane('AWS', 'us-west-2'),
+                plane('GCP', 'us-east1'),
+            ])
+        ).toBeUndefined();
     });
 });
