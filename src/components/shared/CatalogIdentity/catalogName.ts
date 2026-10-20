@@ -7,16 +7,15 @@ export function splitCatalogName(catalogName: string): {
     prefix: string;
     leaf: string;
 } {
-    const trimmed = catalogName.replace(/\/$/, '');
-    const lastSlash = trimmed.lastIndexOf('/');
+    const lastSlash = catalogName.lastIndexOf('/');
 
     if (lastSlash === -1) {
-        return { prefix: '', leaf: trimmed };
+        return { prefix: '', leaf: catalogName };
     }
 
     return {
-        prefix: trimmed.slice(0, lastSlash + 1),
-        leaf: trimmed.slice(lastSlash + 1),
+        prefix: catalogName.slice(0, lastSlash + 1),
+        leaf: catalogName.slice(lastSlash + 1),
     };
 }
 

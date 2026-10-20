@@ -17,17 +17,11 @@ import {
 } from 'src/components/shared/CatalogIdentity/layout';
 
 interface CatalogIdentityProps {
-    /** The entity's catalog name, prefix included. */
     catalogName: string;
-    /** Multiplies every measurement. 1 is the size an entity is named at. */
     scale?: number;
     sx?: SxProps<Theme>;
 }
 
-/**
- * How a catalog entity is presented: a monogram tile over the color its catalog
- * name hashes to, with the leaf name above the prefix it lives under.
- */
 export function CatalogIdentity({
     catalogName,
     scale = 1,
@@ -42,8 +36,6 @@ export function CatalogIdentity({
         locationIconSize,
     } = useMemo(() => identityLayout(scale), [scale]);
 
-    // The color is hashed from the whole catalog name, so two entities with the
-    // same leaf under different prefixes wear different tiles.
     const { prefix, leaf } = splitCatalogName(catalogName);
 
     return (
@@ -52,11 +44,13 @@ export function CatalogIdentity({
             spacing={1.5}
             sx={[cardSx, ...(Array.isArray(sx) ? sx : [sx ?? {}])]}
         >
+            {/* Monogram */}
             <Box sx={{ ...monogramSx, background: monogramColor(catalogName) }}>
                 {monogram(leaf)}
             </Box>
 
             <Box sx={columnSx}>
+                {/* Name */}
                 <Box
                     sx={{
                         ...nameTextSx,
@@ -68,6 +62,7 @@ export function CatalogIdentity({
                     {leaf}
                 </Box>
 
+                {/* Home prefix */}
                 <Stack
                     direction="row"
                     spacing={0.75}
