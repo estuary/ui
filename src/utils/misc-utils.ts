@@ -111,8 +111,15 @@ export const hasLength = (val: string | any[] | null | undefined): boolean => {
     return Boolean(val && val.length > 0);
 };
 
+/**
+ * @deprecated Use ensureTrailingSlash instead. It returns '/' for empty input,
+ * whereas this helper preserves the empty string.
+ */
 export const appendWithForwardSlash = (value: string): string =>
     hasLength(value) && !value.endsWith('/') ? `${value}/` : value;
+
+export const ensureTrailingSlash = (value: string): string =>
+    !value.endsWith('/') ? `${value}/` : value;
 
 export const replaceWhitespacesWithUnderscores = (value: string): string =>
     value.replaceAll(/\s/g, '_');

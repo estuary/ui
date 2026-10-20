@@ -145,8 +145,7 @@ export function CreateServiceAccountDialog({
                             onNameChange={setName}
                             homePrefix={homePrefix}
                             onHomePrefixChange={setHomePrefix}
-                            // nameHelperText="Lowercase letters, numbers, and dashes"
-                            // homePrefixHelperText="The home prefix - controls who may manage the service account"
+                            homePrefixHelperText="The home prefix - controls who may manage the service account"
                             leaves={leaves}
                             onRegenerate={regenerateName}
                         />

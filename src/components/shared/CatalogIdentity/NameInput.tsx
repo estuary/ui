@@ -21,6 +21,7 @@ interface NameInputProps {
     onChange: (value: string) => void;
     onRegenerate?: () => void;
     onFinishEditing: () => void;
+    onTabForward: () => void;
     placeholder: string;
     inputSx: SystemStyleObject<Theme>;
     buttonSize: number;
@@ -31,6 +32,7 @@ export function NameInput({
     onChange,
     onRegenerate,
     onFinishEditing,
+    onTabForward,
     placeholder,
     inputSx,
     buttonSize,
@@ -52,6 +54,13 @@ export function NameInput({
                 }
                 onBlur={onFinishEditing}
                 onKeyDown={(event) => {
+                    if (event.key === 'Tab' && !event.shiftKey) {
+                        // Move focus before blur unmounts the input and Generate button.
+                        event.preventDefault();
+                        onTabForward();
+                        onFinishEditing();
+                    }
+
                     if (event.key === 'Enter') {
                         onFinishEditing();
                     }

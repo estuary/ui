@@ -1,8 +1,8 @@
 import type { SxProps, Theme } from '@mui/material';
 import type { SystemStyleObject } from '@mui/system/styleFunctionSx';
-import type { ReactNode } from 'react';
+import type { ReactNode, Ref } from 'react';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
 import {
     autocompleteClasses,
@@ -141,10 +141,6 @@ export function CatalogIdentityContent(props: CatalogIdentityContentProps) {
         lineHeight: `${homePrefixLineHeight}px`,
     } as const;
 
-    // A field's helper text stands in for the line it is not on while that field
-    // is being edited, so it takes that line's box and the card keeps its
-    // height. It reads as prose about the field rather than as a catalog value,
-    // so it drops the monospace face.
     const nameHelperSx = {
         fontFamily: 'inherit',
         fontSize: px(BASE.helperFontSize),
@@ -185,6 +181,7 @@ export function CatalogIdentityContent(props: CatalogIdentityContentProps) {
     }`;
 
     const [showHomePrefixHelper, setShowHomePrefixHelper] = useState(false);
+    const homePrefixButtonRef = useRef<HTMLButtonElement>(null);
 
     const nameSx = {
         ...nameTextSx,
@@ -252,6 +249,9 @@ export function CatalogIdentityContent(props: CatalogIdentityContentProps) {
                                                 editProps?.onRegenerate
                                             }
                                             onFinishEditing={finishEditing}
+                                            onTabForward={() =>
+                                                homePrefixButtonRef.current?.focus()
+                                            }
                                             placeholder={NAME_PLACEHOLDER}
                                             inputSx={{
                                                 ...INLINE_INPUT_SX,
@@ -316,6 +316,7 @@ export function CatalogIdentityContent(props: CatalogIdentityContentProps) {
                         <FieldText
                             editable={Boolean(editProps)}
                             onEditingChange={setShowHomePrefixHelper}
+                            buttonRef={homePrefixButtonRef}
                             renderEditField={(finishEditing) => (
                                 <Box
                                     sx={[
@@ -324,16 +325,10 @@ export function CatalogIdentityContent(props: CatalogIdentityContentProps) {
                                         {
                                             flex: 1,
                                             minWidth: 0,
-                                            // The autocomplete's own size-small rule for
-                                            // this input carries four classes, so it needs
-                                            // to be outranked rather than tied — a tie
-                                            // loses on source order, since MUI's styles are
-                                            // injected after these.
+                                            // Outrank MUI's small-input padding rule.
                                             [`&&& .${autocompleteClasses.inputRoot} .${autocompleteClasses.input}`]:
                                                 {
                                                     p: 0,
-                                                    // MUI pins the input at 1.4375em, which
-                                                    // overrides the line box.
                                                     height: 'auto',
                                                     ...homePrefixTextSx,
                                                     color: 'text.secondary',
@@ -370,6 +365,7 @@ export function CatalogIdentityContent(props: CatalogIdentityContentProps) {
 }
 
 interface FieldTextProps {
+    buttonRef?: Ref<HTMLButtonElement>;
     value: string;
     placeholder: string;
     label: string;
@@ -381,6 +377,7 @@ interface FieldTextProps {
 
 // Render static text, an editable value, or the active input for a card field.
 function FieldText({
+    buttonRef,
     value,
     placeholder,
     label,
@@ -410,6 +407,7 @@ function FieldText({
 
     return (
         <ButtonBase
+            ref={buttonRef}
             onClick={() => changeEditing(true)}
             disableRipple
             aria-label={`Edit ${label}, currently ${filled ? value : 'unset'}`}
