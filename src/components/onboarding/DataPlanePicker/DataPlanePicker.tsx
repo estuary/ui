@@ -19,7 +19,10 @@ import {
 
 import { Check, Cloud } from 'iconoir-react';
 
-import { CountryFlag } from 'src/components/onboarding/DataPlanePicker/CountryFlag';
+import {
+    CountryFlag,
+    useFlagsPreloaded,
+} from 'src/components/onboarding/DataPlanePicker/CountryFlag';
 import { groupDataPlanes } from 'src/components/onboarding/DataPlanePicker/dataPlaneMetadata';
 import DataPlaneIcon from 'src/components/shared/Entity/DataPlaneIcon';
 import { PROVIDER_LABELS } from 'src/utils/cloudRegions';
@@ -139,9 +142,12 @@ export const DataPlanePicker = ({
 
     const groups = groupDataPlanes(dataPlanes);
 
-    const selectedChoice = groups
-        .flatMap(({ choices }) => choices)
-        .find(({ plane }) => plane.name === value);
+    const choices = groups.flatMap((group) => group.choices);
+    const selectedChoice = choices.find(({ plane }) => plane.name === value);
+
+    const flagsLoading = !useFlagsPreloaded(
+        choices.map(({ country }) => country)
+    );
 
     return (
         <Select
@@ -166,7 +172,7 @@ export const DataPlanePicker = ({
                     )
                 );
             }}
-            disabled={disabled}
+            disabled={disabled || flagsLoading}
             displayEmpty
             size="small"
             variant="outlined"
@@ -189,7 +195,7 @@ export const DataPlanePicker = ({
                                 theme.palette.mode === 'light' ? 0.42 : 0.5,
                         }}
                     >
-                        {loading
+                        {loading || flagsLoading
                             ? 'Loading data planes…'
                             : 'Select a data plane'}
                     </Typography>
