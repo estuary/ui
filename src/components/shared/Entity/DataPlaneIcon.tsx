@@ -13,7 +13,7 @@ import gcpLogo from 'src/images/data-plane-providers/google_cloud.png';
 
 const DEFAULT_AVATAR_SIZE = 20;
 
-const getProviderIconPath = (
+export const getProviderIconPath = (
     provider: string | undefined,
     colorMode: PaletteMode
 ) => {

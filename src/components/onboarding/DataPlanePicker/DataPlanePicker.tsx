@@ -15,16 +15,20 @@ import {
     Select,
     Stack,
     Typography,
+    useTheme,
 } from '@mui/material';
 
 import { Check, Cloud } from 'iconoir-react';
 
 import {
     CountryFlag,
-    useFlagsPreloaded,
+    getFlagUrl,
 } from 'src/components/onboarding/DataPlanePicker/CountryFlag';
 import { groupDataPlanes } from 'src/components/onboarding/DataPlanePicker/dataPlaneMetadata';
-import DataPlaneIcon from 'src/components/shared/Entity/DataPlaneIcon';
+import { useImagesPreloaded } from 'src/components/onboarding/DataPlanePicker/useImagesPreloaded';
+import DataPlaneIcon, {
+    getProviderIconPath,
+} from 'src/components/shared/Entity/DataPlaneIcon';
 import { PROVIDER_LABELS } from 'src/utils/cloudRegions';
 
 interface DataPlanePickerProps {
@@ -138,6 +142,7 @@ export const DataPlanePicker = ({
     onChange,
     value,
 }: DataPlanePickerProps) => {
+    const { palette } = useTheme();
     const [menuMaxHeight, setMenuMaxHeight] = useState<number>();
 
     const groups = groupDataPlanes(dataPlanes);
@@ -145,8 +150,11 @@ export const DataPlanePicker = ({
     const choices = groups.flatMap((group) => group.choices);
     const selectedChoice = choices.find(({ plane }) => plane.name === value);
 
-    const flagsLoading = !useFlagsPreloaded(
-        choices.map(({ country }) => country)
+    const imagesLoading = !useImagesPreloaded(
+        choices.flatMap(({ country, plane }) => [
+            getFlagUrl(country),
+            getProviderIconPath(plane.cloudProvider, palette.mode),
+        ])
     );
 
     return (
@@ -172,7 +180,7 @@ export const DataPlanePicker = ({
                     )
                 );
             }}
-            disabled={disabled || flagsLoading}
+            disabled={disabled || imagesLoading}
             displayEmpty
             size="small"
             variant="outlined"
@@ -195,7 +203,7 @@ export const DataPlanePicker = ({
                                 theme.palette.mode === 'light' ? 0.42 : 0.5,
                         }}
                     >
-                        {loading || flagsLoading
+                        {loading || imagesLoading
                             ? 'Loading data planes…'
                             : 'Select a data plane'}
                     </Typography>
