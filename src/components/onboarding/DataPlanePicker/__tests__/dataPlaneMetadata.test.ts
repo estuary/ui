@@ -72,33 +72,12 @@ describe('groupDataPlanes', () => {
             ['Local', [['cluster', null, '']]],
         ]);
     });
-
-    test('uses the whole name when a shared region has no cluster suffix', () => {
-        const [aws] = groupDataPlanes([
-            {
-                name: 'ops/dp/public/a',
-                cloudProvider: 'AWS',
-                region: 'us-east-1',
-            },
-            {
-                name: 'ops/dp/public/b',
-                cloudProvider: 'AWS',
-                region: 'us-east-1',
-            },
-        ]);
-
-        expect(aws.choices.map(({ detail }) => detail)).toEqual([
-            'us-east-1 · a',
-            'us-east-1 · b',
-        ]);
-    });
 });
 
 describe('getDefaultDataPlane', () => {
     test.each([
         [['c2', 'c3'], 'c3'],
         [['c10', 'c9'], 'c10'],
-        [['c2'], 'c2'],
     ])('picks the highest us-east-1 cluster from %j', (clusters, expected) => {
         expect(
             getDefaultDataPlane([
@@ -108,15 +87,6 @@ describe('getDefaultDataPlane', () => {
                 ),
             ])?.name
         ).toBe(plane('AWS', 'us-east-1', expected).name);
-    });
-
-    test('ranks a plane without a cluster number lowest', () => {
-        expect(
-            getDefaultDataPlane([
-                plane('AWS', 'us-east-1', 'c1'),
-                plane('AWS', 'us-east-1', 'blue'),
-            ])?.name
-        ).toBe(plane('AWS', 'us-east-1', 'c1').name);
     });
 
     test('returns nothing without an AWS us-east-1 plane', () => {

@@ -180,7 +180,7 @@ const AZURE_REGIONS: RegionTable = {
     southafricawest: ['South Africa West (Cape Town)', 'ZA'],
 };
 
-export const CLOUD_REGIONS: Record<CloudProvider, RegionTable> = {
+const CLOUD_REGIONS: Record<CloudProvider, RegionTable> = {
     AWS: AWS_REGIONS,
     GCP: GCP_REGIONS,
     AZURE: AZURE_REGIONS,
