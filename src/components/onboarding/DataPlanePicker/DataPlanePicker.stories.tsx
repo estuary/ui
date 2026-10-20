@@ -7,8 +7,6 @@ import { Controller, useForm } from 'react-hook-form';
 
 import { DataPlanePicker } from 'src/components/onboarding/DataPlanePicker/DataPlanePicker';
 
-// ── Mock data ───────────────────────────────────────────────────────
-
 const plane = (
     cloudProvider: PublicDataPlane['cloudProvider'],
     region: string,
@@ -19,7 +17,6 @@ const plane = (
     region,
 });
 
-// Production's planes, in the order the API returns them.
 const PRODUCTION_PLANES = [
     plane('AWS', 'ap-southeast-2'),
     plane('AWS', 'eu-west-1'),
@@ -29,8 +26,6 @@ const PRODUCTION_PLANES = [
     plane('AZURE', 'centralus'),
     plane('GCP', 'us-central1'),
 ];
-
-// ── Form wrapper ────────────────────────────────────────────────────
 
 interface DemoProps {
     dataPlanes: PublicDataPlane[];
@@ -81,8 +76,6 @@ function Demo({ dataPlanes, defaultValue = '', disabled, loading }: DemoProps) {
     );
 }
 
-// ── Stories ──────────────────────────────────────────────────────────
-
 const meta: Meta<typeof Demo> = {
     title: 'Onboarding/DataPlanePicker',
     component: Demo,
@@ -110,9 +103,7 @@ export const UnknownProviderAndRegion: Story = {
     args: {
         dataPlanes: [
             ...PRODUCTION_PLANES,
-            // Known from the region tables, but not ranked.
             plane('AWS', 'eu-central-1'),
-            // Not in the region tables.
             plane('AWS', 'xx-moon-1'),
             {
                 name: 'ops/dp/public/local-cluster',
@@ -125,8 +116,4 @@ export const UnknownProviderAndRegion: Story = {
 
 export const Loading: Story = {
     args: { dataPlanes: [], loading: true, disabled: true },
-};
-
-export const Empty: Story = {
-    args: { dataPlanes: [], disabled: true },
 };
