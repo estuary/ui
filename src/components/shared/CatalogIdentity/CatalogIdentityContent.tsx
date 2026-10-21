@@ -1,13 +1,11 @@
 import type { SxProps, Theme } from '@mui/material';
 import type { SystemStyleObject } from '@mui/system/styleFunctionSx';
-import type { KeyboardEvent, ReactNode, Ref } from 'react';
 
 import { useRef, useState } from 'react';
 
 import {
     autocompleteClasses,
     Box,
-    ButtonBase,
     Fade,
     formHelperTextClasses,
     inputBaseClasses,
@@ -16,14 +14,15 @@ import {
     Stack,
 } from '@mui/material';
 
-import { EditPencil, Home } from 'iconoir-react';
+import { Home } from 'iconoir-react';
 import { flushSync } from 'react-dom';
 
+import { InlineEditableField } from 'src/components/shared/CatalogIdentity/InlineEditableField';
 import { Monogram } from 'src/components/shared/CatalogIdentity/Monogram';
 import { NameInput } from 'src/components/shared/CatalogIdentity/NameInput';
 import { LeavesAutocomplete } from 'src/components/shared/LeavesAutocomplete/LeavesAutocomplete';
 import {
-    appendWithForwardSlash,
+    ensureTrailingSlash,
     hasLength,
     splitCatalogName,
 } from 'src/utils/misc-utils';
@@ -48,23 +47,6 @@ const NAME_PLACEHOLDER = 'name';
 const HOME_PREFIX_PLACEHOLDER = 'No home prefix selected';
 
 const HELPER_FADE_MS = 150;
-
-const EDIT_ICON_CLASS = 'catalog-identity-inline-edit';
-
-const EDITABLE_TEXT_SX: SystemStyleObject<Theme> = {
-    minWidth: 0,
-    gap: 0.75,
-    justifyContent: 'flex-start',
-    [`& .${EDIT_ICON_CLASS}`]: {
-        flex: 'none',
-        color: 'text.secondary',
-        opacity: 0,
-        transition: 'opacity 150ms ease',
-    },
-    [`&:hover .${EDIT_ICON_CLASS}, &:focus-visible .${EDIT_ICON_CLASS}`]: {
-        opacity: 0.7,
-    },
-};
 
 const INLINE_INPUT_SX: SystemStyleObject<Theme> = {
     borderRadius: (theme) => theme.radius.sm,
@@ -93,7 +75,6 @@ interface CatalogIdentityEditorProps {
     onHomePrefixChange: (homePrefix: string) => void;
     homePrefixHelperText?: string;
     leaves: string[];
-    /** Draws a new name for the account. */
     onRegenerate?: () => void;
 }
 
@@ -154,9 +135,6 @@ export function CatalogIdentityContent(props: CatalogIdentityContentProps) {
         overflow: 'hidden',
     };
 
-    // Stretched to the monogram so the name's line box starts at its top edge
-    // and the home prefix ends at its bottom, rather than the pair floating
-    // centered against it.
     const columnSx: SystemStyleObject<Theme> = {
         minWidth: 0,
         flex: 1,
@@ -169,15 +147,7 @@ export function CatalogIdentityContent(props: CatalogIdentityContentProps) {
 
     const homePrefixIconSize = px(BASE.homePrefixFontSize);
 
-    // The catalog name the two lines add up to, and what the tile's color is
-    // hashed from. An unnamed entity stands in its placeholder, so the card
-    // always has something to hash.
-    //
-    // A prefix picks up its trailing slash when the edit is committed, so the
-    // slash is added here too. Without it the name the color comes from changes
-    // on the way out of the edit, and the tile would settle on one color while
-    // typing and then move to another.
-    const catalogName = `${appendWithForwardSlash(homePrefix)}${
+    const catalogName = `${homePrefix ? ensureTrailingSlash(homePrefix) : ''}${
         hasLength(name) ? name : NAME_PLACEHOLDER
     }`;
 
@@ -187,15 +157,12 @@ export function CatalogIdentityContent(props: CatalogIdentityContentProps) {
 
     const nameSx = {
         ...nameTextSx,
-        // Fills the row beside the randomize button.
         flex: 1,
         color: 'text.primary',
     };
 
     const homePrefixSx = {
         ...homePrefixTextSx,
-        // Fills the row beside the home icon, so the whole line is a click
-        // target for the edit it opens.
         flex: 1,
         minWidth: 0,
         color: 'text.secondary',
@@ -239,7 +206,7 @@ export function CatalogIdentityContent(props: CatalogIdentityContentProps) {
                                     flex: 1,
                                 }}
                             >
-                                <FieldText
+                                <InlineEditableField
                                     buttonRef={nameButtonRef}
                                     onTab={(event) => {
                                         if (!event.shiftKey) {
@@ -319,7 +286,7 @@ export function CatalogIdentityContent(props: CatalogIdentityContentProps) {
                             flex: 1,
                         }}
                     >
-                        <FieldText
+                        <InlineEditableField
                             editable={Boolean(editProps)}
                             onEditingChange={setShowHomePrefixHelper}
                             buttonRef={homePrefixButtonRef}
@@ -377,86 +344,5 @@ export function CatalogIdentityContent(props: CatalogIdentityContentProps) {
                 </Stack>
             </Box>
         </Stack>
-    );
-}
-
-interface FieldTextProps {
-    buttonRef?: Ref<HTMLButtonElement>;
-    onTab?: (event: KeyboardEvent<HTMLDivElement>) => void;
-    value: string;
-    placeholder: string;
-    label: string;
-    textSx: SystemStyleObject<Theme>;
-    editable: boolean;
-    onEditingChange?: (editing: boolean) => void;
-    renderEditField: (finishEditing: () => void) => ReactNode;
-}
-
-// Render static text, an editable value, or the active input for a card field.
-function FieldText({
-    buttonRef,
-    onTab,
-    value,
-    placeholder,
-    label,
-    textSx,
-    editable,
-    onEditingChange,
-    renderEditField,
-}: FieldTextProps) {
-    const [editing, setEditing] = useState(false);
-    const changeEditing = (next: boolean) => {
-        setEditing(next);
-        onEditingChange?.(next);
-    };
-    const filled = hasLength(value);
-
-    if (!editable) {
-        return (
-            <Box component="span" sx={{ ...textSx, ...TRUNCATE_SX }}>
-                {value}
-            </Box>
-        );
-    }
-
-    if (editing) {
-        return (
-            <Box
-                sx={{ display: 'flex', flex: 1, minWidth: 0 }}
-                onKeyDown={(event) => {
-                    if (event.key !== 'Tab' || event.defaultPrevented) return;
-
-                    onTab?.(event);
-                    if (event.defaultPrevented) {
-                        changeEditing(false);
-                    }
-                }}
-            >
-                {renderEditField(() => changeEditing(false))}
-            </Box>
-        );
-    }
-
-    return (
-        <ButtonBase
-            ref={buttonRef}
-            onFocus={() => changeEditing(true)}
-            onClick={() => changeEditing(true)}
-            disableRipple
-            aria-label={`Edit ${label}, currently ${filled ? value : 'unset'}`}
-            sx={[EDITABLE_TEXT_SX, textSx]}
-        >
-            <Box
-                component="span"
-                sx={{
-                    ...TRUNCATE_SX,
-                    color: filled ? 'inherit' : 'text.disabled',
-                }}
-            >
-                {filled ? value : placeholder}
-            </Box>
-
-            <EditPencil width={14} height={14} className={EDIT_ICON_CLASS} />
-        </ButtonBase>
     );
 }

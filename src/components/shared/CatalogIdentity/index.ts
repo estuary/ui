@@ -1,3 +1,3 @@
 export { CatalogIdentity } from './Display';
-export { CatalogIdentityEditor } from './Edit';
+export { CatalogIdentityEditor } from './CatalogIdentityContent';
 export { Monogram } from './Monogram';
