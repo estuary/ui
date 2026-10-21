@@ -25,13 +25,6 @@ export const Ops: Record<string, string> = {
     'ops.hydrationWarning.offsetNot.instructions.docLink': `${CTAs['cta.support']}`,
     'ops.hydrationWarning.offsetNot.instructions.docPath': `${CommonMessages['support.email']}`,
 
-    // Keys generated inside WaitingForRowBase
-    'ops.logsTable.waitingForLogs.old.failed': `A network error occurred. Please reload.`,
-    'ops.logsTable.waitingForLogs.new.failed': `A network error occurred. Please reload.`,
-    'ops.logsTable.waitingForLogs.old.complete': `All older logs read`,
-    'ops.logsTable.waitingForLogs.old': `Fetching older logs`,
-    'ops.logsTable.waitingForLogs.new': `Waiting for new logs`,
-
     'ops.shouldNotShowLogs': `This kind of entity does not support logs`,
 
     // Journals
