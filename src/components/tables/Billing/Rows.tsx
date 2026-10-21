@@ -1,45 +1,42 @@
-import type { Invoice } from 'src/api/billing';
+import type { Invoice } from 'src/api/gql/billing';
 import type { InvoiceId } from 'src/utils/billing-utils';
 
 import { TableCell, TableRow, Typography } from '@mui/material';
 
-import { FormattedMessage } from 'react-intl';
-
 import DataVolume from 'src/components/tables/cells/billing/DataVolume';
 import TimeStamp from 'src/components/tables/cells/billing/TimeStamp';
 import MonetaryValue from 'src/components/tables/cells/MonetaryValue';
-import { useBillingStore } from 'src/stores/Billing';
 import { invoiceId } from 'src/utils/billing-utils';
 
 interface RowProps {
     row: Invoice;
     isSelected: boolean;
+    onSelectInvoice: (id: InvoiceId) => void;
 }
 
 interface RowsProps {
     data: Invoice[];
     selectedInvoice: InvoiceId | null;
+    onSelectInvoice: (id: InvoiceId) => void;
 }
 
-function Row({ row, isSelected }: RowProps) {
-    const setSelectedInvoice = useBillingStore(
-        (state) => state.setSelectedInvoice
-    );
+function Row({ row, isSelected, onSelectInvoice }: RowProps) {
+    const taskUsage = row.extra?.task_usage_hours ?? 0;
 
     return (
         <TableRow
             hover
             selected={isSelected}
-            onClick={() => setSelectedInvoice(invoiceId(row))}
+            onClick={() => onSelectInvoice(invoiceId(row))}
             sx={{ cursor: 'pointer' }}
         >
             <TimeStamp
-                date={row.date_start}
+                date={row.dateStart}
                 asLink
                 tooltipMessageId="admin.billing.table.history.tooltip.date_start"
             />
             <TimeStamp
-                date={row.date_end}
+                date={row.dateEnd}
                 asLink
                 tooltipMessageId="admin.billing.table.history.tooltip.date_end"
             />
@@ -48,10 +45,7 @@ function Row({ row, isSelected }: RowProps) {
 
             <TableCell>
                 <Typography>
-                    <FormattedMessage
-                        id="admin.billing.graph.taskHoursByMonth.formatValue"
-                        values={{ taskUsage: row.extra?.task_usage_hours ?? 0 }}
-                    />
+                    {taskUsage} {taskUsage === 1 ? 'Hour' : 'Hours'}
                 </Typography>
             </TableCell>
 
@@ -60,15 +54,15 @@ function Row({ row, isSelected }: RowProps) {
     );
 }
 
-// TODO (billing): Remove pagination placeholder when the new RPC is available.
-function Rows({ data, selectedInvoice }: RowsProps) {
+function Rows({ data, selectedInvoice, onSelectInvoice }: RowsProps) {
     return (
         <>
-            {data.slice(0, 4).map((record, index) => (
+            {data.map((record, index) => (
                 <Row
                     row={record}
                     key={index}
                     isSelected={invoiceId(record) === selectedInvoice}
+                    onSelectInvoice={onSelectInvoice}
                 />
             ))}
         </>
