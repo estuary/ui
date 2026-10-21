@@ -57,7 +57,7 @@ export function RevokeDialog({ open, onClose, id, detail }: Props) {
             maxWidth="xs"
             fullWidth
         >
-            <DialogTitle>Remove Refresh Token</DialogTitle>
+            <DialogTitle>Remove Personal Token</DialogTitle>
             <DialogContent>
                 <Stack spacing={1}>
                     {error ? (
@@ -65,8 +65,8 @@ export function RevokeDialog({ open, onClose, id, detail }: Props) {
                     ) : null}
                     <Typography>
                         {detail
-                            ? `Remove the refresh token "${detail}"?`
-                            : 'Remove this refresh token?'}
+                            ? `Remove the personal token "${detail}"?`
+                            : 'Remove this personal token?'}
                     </Typography>
                     <Typography>This action is permanent.</Typography>
                 </Stack>

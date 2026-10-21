@@ -15,7 +15,7 @@ function SingleLineCode({
 }: SingleLineCodeProps) {
     const theme = useTheme();
 
-    const { isCopied, handleCopy } = useCopyToClipboard('SingleLineCode');
+    const { isCopied, handleCopy } = useCopyToClipboard();
 
     return (
         <Box
