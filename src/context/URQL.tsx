@@ -73,6 +73,10 @@ export function UrqlConfigProvider({ children }: BaseComponentProps) {
                         CatalogTaskStats: (_data) => null,
                         CaptureBindingStats: (_data) => null,
                         MaterializeBindingStats: (_data) => null,
+                        ServiceAccount: (data) => data.catalogName as string,
+                        ServiceAccountApiKey: (data) => data.id as string,
+                        UserGrant: (_data) => null,
+                        CreateApiKeyResult: (_data) => null,
                     },
                     // Normalization only merges update results into entities
                     // already in the cache. Creates and deletes need updaters
@@ -109,6 +113,9 @@ export function UrqlConfigProvider({ children }: BaseComponentProps) {
                             },
                             updateStorageMapping(_result, _args, cache) {
                                 invalidateQuery(cache, 'storageMappings');
+                            },
+                            createServiceAccount(_result, _args, cache) {
+                                invalidateQuery(cache, 'serviceAccounts');
                             },
                         },
                     },

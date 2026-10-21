@@ -77,6 +77,29 @@ export const stripPathing = (stringVal: string, tenantOnly?: boolean) => {
     );
 };
 
+// Split a catalog name into its containing prefix (including the trailing
+// slash) and its leaf segment, e.g. "acmeCo/staging/ci-bot" ->
+// { prefix: "acmeCo/staging/", leaf: "ci-bot" }.
+export function splitCatalogName(catalogName: string): {
+    prefix: string;
+    leaf: string;
+} {
+    const lastSlash = catalogName.lastIndexOf('/');
+
+    if (lastSlash === -1) {
+        return { prefix: '', leaf: catalogName };
+    }
+
+    return {
+        prefix: catalogName.slice(0, lastSlash + 1),
+        leaf: catalogName.slice(lastSlash + 1),
+    };
+}
+
+/**
+ * @deprecated Use splitCatalogName, which returns { prefix, leaf }.
+ * Unlike this helper's empty array, it returns empty strings for empty input.
+ */
 export const splitPathAndName = (stringVal: string): string[] => {
     if (!stringVal) return [];
 
@@ -88,11 +111,34 @@ export const hasLength = (val: string | any[] | null | undefined): boolean => {
     return Boolean(val && val.length > 0);
 };
 
+/**
+ * @deprecated Use ensureTrailingSlash instead. It returns '/' for empty input,
+ * whereas this helper preserves the empty string.
+ */
 export const appendWithForwardSlash = (value: string): string =>
     hasLength(value) && !value.endsWith('/') ? `${value}/` : value;
 
+export const ensureTrailingSlash = (value: string): string =>
+    !value.endsWith('/') ? `${value}/` : value;
+
 export const replaceWhitespacesWithUnderscores = (value: string): string =>
     value.replaceAll(/\s/g, '_');
+
+// Normalize a catalog name's leaf segment, preserving case and excluding slashes.
+export const normalizeCatalogName = (value: string): string =>
+    replaceWhitespacesWithUnderscores(value).replace(/[^a-z0-9._-]/gi, '');
+
+// Spread onto the native input's props to discourage browser autofill and
+// password-manager suggestions on fields that are not login credentials.
+export function getAutofillIgnoreProps() {
+    return {
+        'data-1p-ignore': true,
+        'data-lpignore': 'true',
+        'data-bwignore': true,
+        'data-form-type': 'other',
+        'autoComplete': 'off',
+    } as const;
+}
 
 export const encodeParamVal = (val: any) => {
     if (typeof val === 'boolean') {
