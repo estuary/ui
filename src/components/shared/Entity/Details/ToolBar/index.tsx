@@ -3,6 +3,7 @@ import { Box, Stack, Tooltip, Typography } from '@mui/material';
 import CopyToClipboardButton from 'src/components/shared/buttons/CopyToClipboardButton';
 import EditButton from 'src/components/shared/Entity/Details/ToolBar/EditButton';
 import MaterializeButton from 'src/components/shared/Entity/Details/ToolBar/MaterializeButton';
+import SyncNowButton from 'src/components/shared/Entity/Details/ToolBar/SyncNowButton';
 import { truncateTextSx } from 'src/context/Theme';
 import useGlobalSearchParams, {
     GlobalSearchParams,
@@ -40,7 +41,12 @@ function DetailsToolBar() {
                 </Tooltip>
             </Stack>
 
-            <Stack direction="row" sx={{ flexShrink: 0 }}>
+            <Stack
+                direction="row"
+                spacing={1}
+                sx={{ flexShrink: 0, alignItems: 'flex-start' }}
+            >
+                <SyncNowButton taskName={catalogName} />
                 <EditButton buttonVariant="outlined" />
 
                 <MaterializeButton />
