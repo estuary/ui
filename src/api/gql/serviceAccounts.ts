@@ -8,13 +8,8 @@ import { graphql } from 'src/gql-types';
 
 const DEFAULT_SERVICE_ACCOUNTS: ServiceAccount[] = [];
 
-// Service accounts are few per tenant in practice, so the list fetches a single
-// generous page and shows them all.
 const SERVICE_ACCOUNTS_LIMIT = 100;
 
-// The ServiceAccount fields every query and entity-returning mutation selects.
-// Mutations return the updated account, so the normalized cache (keyed by
-// catalogName) reconciles the list and detail views without a refetch.
 export const SERVICE_ACCOUNT_FRAGMENT = graphql(`
     fragment ServiceAccountFields on ServiceAccount {
         catalogName
@@ -51,9 +46,6 @@ const SERVICE_ACCOUNTS_QUERY = graphql(`
     }
 `);
 
-// The list shows every account the caller may query, across organizations:
-// the schema has no way to narrow it to one. Callers holding accounts in
-// several organizations see them all in one list.
 export function useServiceAccounts() {
     const [{ fetching, data, error }] = useQuery({
         query: SERVICE_ACCOUNTS_QUERY,
@@ -70,34 +62,26 @@ export function useServiceAccounts() {
     return { serviceAccounts, fetching, error };
 }
 
-// The schema exposes service accounts only as a paginated connection — there is
-// no by-name lookup yet. The detail page loads a generous page and finds the
-// account client-side, which is fine for realistic account counts. A dedicated
-// `serviceAccount(catalogName)` field would make this an O(1) fetch.
-const SERVICE_ACCOUNT_LOOKUP_LIMIT = 250;
+const SERVICE_ACCOUNT_QUERY = graphql(`
+    query ServiceAccount($catalogName: Name!) {
+        serviceAccount(catalogName: $catalogName) {
+            ...ServiceAccountFields
+        }
+    }
+`);
 
 export function useServiceAccount(catalogName: string | null) {
     const [{ fetching, data, error }] = useQuery({
-        query: SERVICE_ACCOUNTS_QUERY,
-        variables: { first: SERVICE_ACCOUNT_LOOKUP_LIMIT },
+        query: SERVICE_ACCOUNT_QUERY,
+        variables: { catalogName: catalogName ?? '' },
         pause: !catalogName,
     });
 
-    const serviceAccount = useMemo(
-        () =>
-            catalogName
-                ? (data?.serviceAccounts?.edges
-                      ?.map((edge) => edge.node)
-                      .find((node) => node.catalogName === catalogName) ?? null)
-                : null,
-        [data, catalogName]
-    );
+    const serviceAccount = catalogName ? (data?.serviceAccount ?? null) : null;
 
     return { serviceAccount, fetching, error };
 }
 
-// A service account is homed at `catalogName` (its management anchor) and
-// seeded with one or more grants, each granting a capability on a prefix.
 const CREATE_SERVICE_ACCOUNT = graphql(`
     mutation CreateServiceAccount(
         $catalogName: Name!
@@ -110,8 +94,6 @@ const CREATE_SERVICE_ACCOUNT = graphql(`
     }
 `);
 
-// Mints an API key (a multi-use refresh token) owned by the account. The secret
-// is returned exactly once and cannot be retrieved again.
 const CREATE_API_KEY = graphql(`
     mutation CreateApiKey(
         $catalogName: Name!
