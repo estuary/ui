@@ -99,6 +99,7 @@ export function LeavesAutocomplete({
             onOpen={() => {
                 setIsOpen(true);
             }}
+            disableClearable
             disableCloseOnSelect={true}
             filterOptions={(options) =>
                 options.filter(

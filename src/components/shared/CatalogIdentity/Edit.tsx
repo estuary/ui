@@ -1,6 +1,6 @@
 import type { SxProps, Theme } from '@mui/material';
 import type { SystemStyleObject } from '@mui/system/styleFunctionSx';
-import type { ReactNode, Ref } from 'react';
+import type { KeyboardEvent, ReactNode, Ref } from 'react';
 
 import { useRef, useState } from 'react';
 
@@ -17,6 +17,7 @@ import {
 } from '@mui/material';
 
 import { EditPencil, Home } from 'iconoir-react';
+import { flushSync } from 'react-dom';
 
 import { Monogram } from 'src/components/shared/CatalogIdentity/Monogram';
 import { NameInput } from 'src/components/shared/CatalogIdentity/NameInput';
@@ -181,6 +182,7 @@ export function CatalogIdentityContent(props: CatalogIdentityContentProps) {
     }`;
 
     const [showHomePrefixHelper, setShowHomePrefixHelper] = useState(false);
+    const nameButtonRef = useRef<HTMLButtonElement>(null);
     const homePrefixButtonRef = useRef<HTMLButtonElement>(null);
 
     const nameSx = {
@@ -238,6 +240,13 @@ export function CatalogIdentityContent(props: CatalogIdentityContentProps) {
                                 }}
                             >
                                 <FieldText
+                                    buttonRef={nameButtonRef}
+                                    onTab={(event) => {
+                                        if (!event.shiftKey) {
+                                            event.preventDefault();
+                                            homePrefixButtonRef.current?.click();
+                                        }
+                                    }}
                                     editable={Boolean(editProps)}
                                     renderEditField={(finishEditing) => (
                                         <NameInput
@@ -249,9 +258,6 @@ export function CatalogIdentityContent(props: CatalogIdentityContentProps) {
                                                 editProps?.onRegenerate
                                             }
                                             onFinishEditing={finishEditing}
-                                            onTabForward={() =>
-                                                homePrefixButtonRef.current?.focus()
-                                            }
                                             placeholder={NAME_PLACEHOLDER}
                                             inputSx={{
                                                 ...INLINE_INPUT_SX,
@@ -317,6 +323,16 @@ export function CatalogIdentityContent(props: CatalogIdentityContentProps) {
                             editable={Boolean(editProps)}
                             onEditingChange={setShowHomePrefixHelper}
                             buttonRef={homePrefixButtonRef}
+                            onTab={(event) => {
+                                if (event.shiftKey) {
+                                    event.preventDefault();
+                                    // Reveal the name row before mounting its autofocus input.
+                                    flushSync(() =>
+                                        setShowHomePrefixHelper(false)
+                                    );
+                                    nameButtonRef.current?.click();
+                                }
+                            }}
                             renderEditField={(finishEditing) => (
                                 <Box
                                     sx={[
@@ -366,6 +382,7 @@ export function CatalogIdentityContent(props: CatalogIdentityContentProps) {
 
 interface FieldTextProps {
     buttonRef?: Ref<HTMLButtonElement>;
+    onTab?: (event: KeyboardEvent<HTMLDivElement>) => void;
     value: string;
     placeholder: string;
     label: string;
@@ -378,6 +395,7 @@ interface FieldTextProps {
 // Render static text, an editable value, or the active input for a card field.
 function FieldText({
     buttonRef,
+    onTab,
     value,
     placeholder,
     label,
@@ -402,12 +420,27 @@ function FieldText({
     }
 
     if (editing) {
-        return renderEditField(() => changeEditing(false));
+        return (
+            <Box
+                sx={{ display: 'flex', flex: 1, minWidth: 0 }}
+                onKeyDown={(event) => {
+                    if (event.key !== 'Tab' || event.defaultPrevented) return;
+
+                    onTab?.(event);
+                    if (event.defaultPrevented) {
+                        changeEditing(false);
+                    }
+                }}
+            >
+                {renderEditField(() => changeEditing(false))}
+            </Box>
+        );
     }
 
     return (
         <ButtonBase
             ref={buttonRef}
+            onFocus={() => changeEditing(true)}
             onClick={() => changeEditing(true)}
             disableRipple
             aria-label={`Edit ${label}, currently ${filled ? value : 'unset'}`}
