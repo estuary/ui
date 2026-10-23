@@ -222,6 +222,14 @@ const pageNotFound = {
     path: '*',
 };
 
+const secrets = {
+    path: 'secrets',
+    dropbox: {
+        path: 'dropbox',
+        fullPath: '/secrets/dropbox',
+    },
+};
+
 const user = {
     title: 'routeTitle.user',
     path: 'user',
@@ -253,6 +261,7 @@ export const authenticatedRoutes = {
     home,
     materializations,
     marketplace: marketplace.authenticated,
+    secrets,
     user,
     pageNotFound,
     beta,

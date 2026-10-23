@@ -83,6 +83,12 @@ const MaterializationEditRoute = lazy(
     () => import('src/context/Router/MaterializationEdit')
 );
 
+const SecretDropboxRoute = lazy(() =>
+    import('src/pages/SecretDropbox').then((module) => ({
+        default: module.SecretDropbox,
+    }))
+);
+
 const router = createBrowserRouter(
     createRoutesFromElements(
         <Route>
@@ -218,6 +224,15 @@ const router = createBrowserRouter(
                     <Route
                         path={authenticatedRoutes.marketplace.verify.fullPath}
                         element={<MarketplaceVerification />}
+                    />
+
+                    <Route
+                        path={authenticatedRoutes.secrets.dropbox.fullPath}
+                        element={
+                            <Suspense fallback={null}>
+                                <SecretDropboxRoute />
+                            </Suspense>
+                        }
                     />
 
                     <Route path={authenticatedRoutes.beta.path}>
