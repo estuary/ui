@@ -228,7 +228,9 @@ function ConsentFlow({
                                 id="client-address-warning"
                                 sx={{ color: 'warning.main', mx: 1 }}
                             >
-                                {"Only continue if you recognize this application's address."}
+                                {
+                                    "Only continue if you recognize this application's address."
+                                }
                             </FormHelperText>
                         </Box>
 
