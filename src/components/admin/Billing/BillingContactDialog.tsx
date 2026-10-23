@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import useConstant from 'use-constant';
 
 import {
+    Autocomplete,
     Button,
     Dialog,
     DialogActions,
@@ -15,6 +16,7 @@ import {
 } from '@mui/material';
 
 import { AddressElement, Elements, useElements } from '@stripe/react-stripe-js';
+import { uniqBy } from 'lodash';
 import { useMutation } from 'urql';
 
 import { SET_BILLING_CONTACT } from 'src/api/gql/billing';
@@ -48,6 +50,12 @@ type BillingContactFormProps = Omit<BillingContactDialogProps, 'open'> & {
     saving: boolean;
     setSaving: (saving: boolean) => void;
 };
+
+// Splits typed or pasted text like "ap@acme.co, pay@acme.co" into addresses.
+const splitEmails = (text: string) => text.split(/[\s,;]+/).filter(Boolean);
+
+const uniqueEmails = (emails: string[]) =>
+    uniqBy(emails, (email) => email.toLowerCase());
 
 export function BillingContactDialog({
     open,
@@ -91,6 +99,10 @@ function BillingContactForm({
     const [, setBillingContact] = useMutation(SET_BILLING_CONTACT);
 
     const [email, setEmail] = useState(contact?.emails[0] ?? '');
+    const [additionalEmails, setAdditionalEmails] = useState(
+        contact?.emails.slice(1) ?? []
+    );
+    const [additionalInput, setAdditionalInput] = useState('');
     const [showEmailError, setShowEmailError] = useState(false);
     const [saveError, setSaveError] = useState<string | null>(null);
     const [loadError, setLoadError] = useState(false);
@@ -106,6 +118,16 @@ function BillingContactForm({
     }, []);
 
     const emailError = showEmailError ? validateBillingEmail(email) : null;
+
+    // Text not yet turned into a chip is saved too.
+    const pendingEmails = splitEmails(additionalInput);
+    const emails = uniqueEmails(
+        [email.trim(), ...additionalEmails, ...pendingEmails].filter(Boolean)
+    );
+    const additionalProblem = pendingEmails.some(validateBillingEmail)
+        ? 'Enter valid emails, like ap@company.com'
+        : null;
+    const additionalError = showEmailError ? additionalProblem : null;
 
     // Stripe applies option changes, and saving updates the contact while the
     // dialog closes, so keep the options it opened with.
@@ -124,14 +146,18 @@ function BillingContactForm({
         try {
             const addressElement = elements?.getElement('address');
             const address = await addressElement?.getValue();
-            if (!address?.complete || validateBillingEmail(email)) {
+            if (
+                !address?.complete ||
+                validateBillingEmail(email) ||
+                additionalProblem
+            ) {
                 return;
             }
 
             const result = await setBillingContact({
                 tenant,
                 name: address.value.name.trim(),
-                emails: [email.trim()],
+                emails,
                 address: fromStripeAddress(address.value.address),
             });
             if (result.error) {
@@ -206,6 +232,46 @@ function BillingContactForm({
                             emailError ??
                             'Invoices and billing notices go to this address.'
                         }
+                    />
+
+                    <Autocomplete
+                        multiple
+                        freeSolo
+                        options={[]}
+                        value={additionalEmails}
+                        inputValue={additionalInput}
+                        disabled={saving}
+                        onInputChange={(_event, value) =>
+                            setAdditionalInput(value)
+                        }
+                        // Valid addresses become chips. Invalid ones stay in the text box to fix.
+                        onChange={(_event, values) => {
+                            const entered = values.flatMap(splitEmails);
+                            const invalid =
+                                entered.filter(validateBillingEmail);
+                            setAdditionalEmails(
+                                uniqueEmails(
+                                    entered.filter(
+                                        (value) => !validateBillingEmail(value)
+                                    )
+                                )
+                            );
+                            setAdditionalInput(invalid.join(', '));
+                            if (invalid.length > 0) {
+                                setShowEmailError(true);
+                            }
+                        }}
+                        renderInput={(params) => (
+                            <TextField
+                                {...params}
+                                label="Additional billing emails"
+                                error={Boolean(additionalError)}
+                                helperText={
+                                    additionalError ??
+                                    'Invoices also go to these addresses. Press Enter after each one.'
+                                }
+                            />
+                        )}
                     />
                 </Stack>
             </DialogContent>

@@ -188,6 +188,37 @@ test('saves only a complete address and a valid email', async () => {
     expect(saves.map((saved) => saved.emails)).toEqual([['ap@acme.co']]);
 });
 
+test('saves additional emails after the billing email', async () => {
+    contact = { ...completeContact, emails: ['billing@acme.co', 'ap@acme.co'] };
+    const saves = handleContactSaves();
+    const dialog = await openEditDialog();
+    const save = within(dialog).getByRole('button', { name: 'Save' });
+    const additional = within(dialog).getByLabelText(
+        'Additional billing emails'
+    );
+    stripe.getValue.mockResolvedValue(austin);
+
+    fireEvent.change(additional, { target: { value: 'pay@acme.co, oops' } });
+    fireEvent.keyDown(additional, { key: 'Enter' });
+    await within(dialog).findByText('Enter valid emails, like ap@company.com');
+    expect(within(dialog).getByText('pay@acme.co')).toBeTruthy();
+    fireEvent.click(save);
+    await waitFor(() => expect(save.hasAttribute('disabled')).toBe(false));
+    expect(saves).toEqual([]);
+
+    // Text left in the box is saved, and a duplicate only once.
+    fireEvent.change(additional, {
+        target: { value: 'AP@acme.co team@acme.co' },
+    });
+    fireEvent.click(save);
+    await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
+    expect(saves.map((saved) => saved.emails)).toEqual([
+        ['billing@acme.co', 'ap@acme.co', 'pay@acme.co', 'team@acme.co'],
+    ]);
+    // The section shows only the billing email.
+    expect(screen.getByText('billing@acme.co')).toBeTruthy();
+});
+
 test('waits for Stripe to load before saving', async () => {
     stripe.loaded = false;
     const dialog = await openEditDialog();
