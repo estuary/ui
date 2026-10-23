@@ -141,6 +141,12 @@ const dataPlaneAuth = {
     path: '/data-plane-auth-req',
 };
 
+// Consent for external applications requesting access to Estuary.
+const oauthConsent = {
+    title: 'Authorize application access',
+    path: '/oauth/consent',
+};
+
 const home = {
     title: 'routeTitle.home',
     path: '/welcome',
@@ -251,6 +257,7 @@ export const authenticatedRoutes = {
     collections,
     dataPlaneAuth,
     home,
+    oauthConsent,
     materializations,
     marketplace: marketplace.authenticated,
     user,

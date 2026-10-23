@@ -29,6 +29,10 @@ export const MISSING = '**MISSING**';
 export const MASKED = '**MASKED**';
 
 const completelyIgnoredURLs = [
+    // Consent tickets and authorization callbacks must not be recorded.
+    '/oauth/consent-context',
+    '/oauth/authorize',
+
     // We do not control user extensions so we do not need to know about them
     'chrome-extension://', // Chromium-based
     'moz-extension://', // Firefox
