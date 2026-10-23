@@ -390,7 +390,6 @@ export type CapabilityBit =
   | 'CatalogRead'
   | 'CreateApiKey'
   | 'CreateGrant'
-  | 'CreateInviteLink'
   | 'CreateSandbox'
   | 'CreateServiceAccount'
   | 'DecryptSecret'
@@ -400,6 +399,8 @@ export type CapabilityBit =
   | 'EditSecret'
   | 'JournalAppend'
   | 'JournalRead'
+  | 'ManageAlerts'
+  | 'ManageInviteLinks'
   | 'ModifyDataPlanePrivateNetworking'
   | 'QueryServiceAccounts'
   | 'RevokeApiKey'
@@ -1646,10 +1647,17 @@ export type MutationRoot = {
   /**
    * Create an invite link that grants access to a catalog prefix.
    *
-   * The caller must have admin capability on the catalog prefix.
+   * The caller must have ManageInviteLinks capability on the catalog prefix.
    * Share the returned token with the intended recipient out-of-band.
    */
   createInviteLink: InviteLink;
+  /**
+   * Queue a publication of the draft `draftId`, which the caller must own.
+   * Building, validation and the commit happen afterwards: poll
+   * `publication(id)` until `status.type` is no longer `queued`. A successful
+   * publication that is not a dry run deletes the draft.
+   */
+  createPublication: Publication;
   /**
    * Create a refresh token for the authenticated user.
    *
@@ -1693,7 +1701,7 @@ export type MutationRoot = {
   /**
    * Delete an invite link, revoking it so it can no longer be redeemed.
    *
-   * The caller must have admin capability on the invite link's catalog prefix.
+   * The caller must have ManageInviteLinks capability on the invite link's catalog prefix.
    */
   deleteInviteLink: Scalars['Boolean']['output'];
   /**
@@ -1938,6 +1946,14 @@ export type MutationRootCreateInviteLinkArgs = {
   catalogPrefix: Scalars['Prefix']['input'];
   detail?: InputMaybe<Scalars['String']['input']>;
   singleUse?: Scalars['Boolean']['input'];
+};
+
+
+export type MutationRootCreatePublicationArgs = {
+  defaultDataPlane?: InputMaybe<Scalars['String']['input']>;
+  detail?: InputMaybe<Scalars['String']['input']>;
+  draftId: Scalars['Id']['input'];
+  dryRun: Scalars['Boolean']['input'];
 };
 
 
@@ -2322,6 +2338,43 @@ export type PublicDataPlaneEdge = {
   node: PublicDataPlane;
 };
 
+/** A user-initiated publication of a draft. */
+export type Publication = {
+  __typename?: 'Publication';
+  draftId: Scalars['Id']['output'];
+  /** Whether the publication builds and validates without committing. */
+  dryRun: Scalars['Boolean']['output'];
+  /**
+   * Errors that caused the publication to fail, once `status.type` is no
+   * longer `queued`.
+   */
+  errors: Array<Error>;
+  id: Scalars['Id']['output'];
+  /**
+   * Publication logs in timestamp order. Pagination is best effort, and
+   * logs may arrive after the publication completes. `first` controls
+   * page size and cannot exceed 1000 log lines.
+   */
+  logs: LogLineConnection;
+  /**
+   * The ID that `lastPubId` takes on each live specification this
+   * publication changes. Null unless `status.type` is `success`.
+   */
+  pubId?: Maybe<Scalars['Id']['output']>;
+  /**
+   * Outcome so far. `type` is `queued` until the publication has been
+   * processed. `lockFailures` is non-empty only for `buildIdLockFailure`.
+   */
+  status: JobStatus;
+};
+
+
+/** A user-initiated publication of a draft. */
+export type PublicationLogsArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+};
+
 /** Summary of a publication that was attempted by a controller. */
 export type PublicationInfo = {
   __typename?: 'PublicationInfo';
@@ -2475,6 +2528,8 @@ export type QueryRoot = {
    * Results are paginated and sorted by name.
    */
   publicDataPlanes: PublicDataPlaneConnection;
+  /** Returns the publication if the caller initiated it, and null otherwise. */
+  publication?: Maybe<Publication>;
   /** List refresh tokens owned by the authenticated user. */
   refreshTokens: RefreshTokenInfoConnection;
   sandbox?: Maybe<Sandbox>;
@@ -2486,6 +2541,7 @@ export type QueryRoot = {
    * Requires `ViewSecret` on a prefix covering each returned name.
    */
   secrets: SecretConnection;
+  serviceAccount?: Maybe<ServiceAccount>;
   serviceAccounts: ServiceAccountConnection;
   /**
    * Returns storage mappings accessible to the current user.
@@ -2612,6 +2668,11 @@ export type QueryRootPublicDataPlanesArgs = {
 };
 
 
+export type QueryRootPublicationArgs = {
+  id: Scalars['Id']['input'];
+};
+
+
 export type QueryRootRefreshTokensArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
@@ -2635,6 +2696,11 @@ export type QueryRootSecretsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   filter?: InputMaybe<SecretsFilter>;
   first?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type QueryRootServiceAccountArgs = {
+  catalogName: Scalars['Name']['input'];
 };
 
 
