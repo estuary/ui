@@ -337,7 +337,7 @@ input BillingAddressInput {
 
 type BillingContact {
   address: BillingAddress
-  email: String
+  emails: [String!]!
   name: String
 }
 
@@ -369,7 +369,6 @@ enum CapabilityBit {
   CatalogRead
   CreateApiKey
   CreateGrant
-  CreateInviteLink
   CreateSandbox
   CreateServiceAccount
   DecryptSecret
@@ -379,6 +378,8 @@ enum CapabilityBit {
   EditSecret
   JournalAppend
   JournalRead
+  ManageAlerts
+  ManageInviteLinks
   ModifyDataPlanePrivateNetworking
   QueryServiceAccounts
   RevokeApiKey
@@ -1731,10 +1732,30 @@ type MutationRoot {
   """
   Create an invite link that grants access to a catalog prefix.
   
-  The caller must have admin capability on the catalog prefix.
+  The caller must have ManageInviteLinks capability on the catalog prefix.
   Share the returned token with the intended recipient out-of-band.
   """
   createInviteLink(capability: Capability!, catalogPrefix: Prefix!, detail: String, singleUse: Boolean! = true): InviteLink!
+
+  """
+  Queue a publication of the draft `draftId`, which the caller must own.
+  Building, validation and the commit happen afterwards: poll
+  `publication(id)` until `status.type` is no longer `queued`. A successful
+  publication that is not a dry run deletes the draft.
+  """
+  createPublication(
+    """
+    Data plane for specifications this publication creates; existing specifications keep theirs. Chosen automatically when omitted. A plane that cannot be used fails the publication, not this request.
+    """
+    defaultDataPlane: String
+
+    """Optional free-text description recorded on the publication."""
+    detail: String
+    draftId: Id!
+
+    """Build and validate without committing."""
+    dryRun: Boolean!
+  ): Publication!
 
   """
   Create a refresh token for the authenticated user.
@@ -1794,7 +1815,7 @@ type MutationRoot {
   """
   Delete an invite link, revoking it so it can no longer be redeemed.
   
-  The caller must have admin capability on the invite link's catalog prefix.
+  The caller must have ManageInviteLinks capability on the invite link's catalog prefix.
   """
   deleteInviteLink(token: UUID!): Boolean!
 
@@ -1909,7 +1930,7 @@ type MutationRoot {
   commands, and their output.
   """
   sandboxReset(catalogName: Name!): Boolean!
-  setBillingContact(address: BillingAddressInput!, email: String!, name: String!, tenant: String!): SetBillingContactPayload!
+  setBillingContact(address: BillingAddressInput!, emails: [String!]!, name: String!, tenant: String!): SetBillingContactPayload!
   setBillingPaymentMethod(paymentMethodId: String!, tenant: String!): BillingPaymentMethodPayload!
 
   """
@@ -2244,6 +2265,40 @@ type PublicDataPlaneEdge {
   node: PublicDataPlane!
 }
 
+"""A user-initiated publication of a draft."""
+type Publication {
+  draftId: Id!
+
+  """Whether the publication builds and validates without committing."""
+  dryRun: Boolean!
+
+  """
+  Errors that caused the publication to fail, once `status.type` is no
+  longer `queued`.
+  """
+  errors: [Error!]!
+  id: Id!
+
+  """
+  Publication logs in timestamp order. Pagination is best effort, and
+  logs may arrive after the publication completes. `first` controls
+  page size and cannot exceed 1000 log lines.
+  """
+  logs(after: String, first: Int): LogLineConnection!
+
+  """
+  The ID that `lastPubId` takes on each live specification this
+  publication changes. Null unless `status.type` is `success`.
+  """
+  pubId: Id
+
+  """
+  Outcome so far. `type` is `queued` until the publication has been
+  processed. `lockFailures` is non-empty only for `buildIdLockFailure`.
+  """
+  status: JobStatus!
+}
+
 """Summary of a publication that was attempted by a controller."""
 type PublicationInfo {
   """Time at which the publication was completed"""
@@ -2438,6 +2493,11 @@ type QueryRoot {
   """
   publicDataPlanes(after: String, before: String, first: Int, last: Int): PublicDataPlaneConnection!
 
+  """
+  Returns the publication if the caller initiated it, and null otherwise.
+  """
+  publication(id: Id!): Publication
+
   """List refresh tokens owned by the authenticated user."""
   refreshTokens(after: String, first: Int): RefreshTokenInfoConnection!
   sandbox(catalogName: Name!): Sandbox
@@ -2459,6 +2519,7 @@ type QueryRoot {
   Requires `ViewSecret` on a prefix covering each returned name.
   """
   secrets(after: String, filter: SecretsFilter, first: Int): SecretConnection!
+  serviceAccount(catalogName: Name!): ServiceAccount
   serviceAccounts(after: String, first: Int): ServiceAccountConnection!
 
   """

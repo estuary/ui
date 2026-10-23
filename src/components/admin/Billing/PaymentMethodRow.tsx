@@ -17,6 +17,7 @@ const cardLogos: Record<string, string> = {
 };
 
 export interface PaymentMethodProps {
+    canEdit: boolean;
     busy: boolean;
     pendingAction?: 'delete' | 'primary';
     method: BillingPaymentMethodFieldsFragment;
@@ -26,6 +27,7 @@ export interface PaymentMethodProps {
 }
 
 export const PaymentMethod = ({
+    canEdit,
     busy,
     pendingAction,
     method: { type, billingDetails, card, usBankAccount },
@@ -67,27 +69,31 @@ export const PaymentMethod = ({
             </TableCell>
             <TableCell>{primary ? <Check /> : ''}</TableCell>
             <TableCell>
-                <Button
-                    size="small"
-                    variant="text"
-                    onClick={onDelete}
-                    disabled={busy}
-                    loading={pendingAction === 'delete'}
-                    loadingPosition="start"
-                >
-                    Delete
-                </Button>
-                {!primary ? (
-                    <Button
-                        size="small"
-                        variant="text"
-                        onClick={onPrimary}
-                        disabled={busy}
-                        loading={pendingAction === 'primary'}
-                        loadingPosition="start"
-                    >
-                        Make Primary
-                    </Button>
+                {canEdit ? (
+                    <>
+                        <Button
+                            size="small"
+                            variant="text"
+                            onClick={onDelete}
+                            disabled={busy}
+                            loading={pendingAction === 'delete'}
+                            loadingPosition="start"
+                        >
+                            Delete
+                        </Button>
+                        {!primary ? (
+                            <Button
+                                size="small"
+                                variant="text"
+                                onClick={onPrimary}
+                                disabled={busy}
+                                loading={pendingAction === 'primary'}
+                                loadingPosition="start"
+                            >
+                                Make Primary
+                            </Button>
+                        ) : null}
+                    </>
                 ) : null}
             </TableCell>
         </TableRow>
