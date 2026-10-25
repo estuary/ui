@@ -1,0 +1,201 @@
+import type {
+    StorageMappingConnection,
+    StorageMappingDataPlane,
+    StorageMappingFragmentStore,
+} from 'src/api/gql/storageMappings';
+
+import {
+    createContext,
+    useCallback,
+    useContext,
+    useMemo,
+    useReducer,
+} from 'react';
+
+import { useTestConnectionHealth } from 'src/hooks/storageMappings/useTestConnectionHealth';
+
+interface TestResult {
+    dataPlaneName: string;
+    storeKey: string;
+    error?: string | null;
+}
+
+interface State {
+    catalogPrefix: string;
+    dataPlanes: StorageMappingDataPlane[];
+    fragmentStores: StorageMappingFragmentStore[];
+    connections: Record<string, StorageMappingConnection>;
+}
+
+type Action =
+    | {
+          type: 'UPDATE_CONNECTIONS';
+          catalogPrefix: string;
+          dataPlanes: StorageMappingDataPlane[];
+          fragmentStores: StorageMappingFragmentStore[];
+      }
+    | { type: 'TEST_START' }
+    | { type: 'TEST_END'; results: TestResult[] };
+
+function reducer(state: State, action: Action): State {
+    switch (action.type) {
+        case 'UPDATE_CONNECTIONS': {
+            const { catalogPrefix, dataPlanes, fragmentStores } = action;
+            const connections = getConnections(dataPlanes, fragmentStores);
+            return {
+                ...state,
+                catalogPrefix,
+                dataPlanes,
+                fragmentStores,
+                connections,
+            };
+        }
+        // case 'SET_FRAGMENT_STORES': {
+        //     const { fragmentStores } = action;
+        //     const connections = getConnections(
+        //         state.dataPlanes,
+        //         fragmentStores
+        //     );
+        //     return { ...state, fragmentStores, connections };
+        // }
+        case 'TEST_START': {
+            const connections = { ...state.connections };
+            for (const key of Object.keys(connections)) {
+                connections[key].status = 'idle';
+            }
+
+            return { ...state, connections };
+        }
+        case 'TEST_END': {
+            const connections = { ...state.connections };
+            for (const r of action.results) {
+                const { dataPlaneName, storeKey, error } = r;
+                const key = getConnectionKey(dataPlaneName, storeKey);
+                connections[key].status = error ? 'error' : 'success';
+                connections[key].error = error;
+            }
+
+            return { ...state, connections };
+        }
+    }
+}
+
+interface ConnectionTestContextValue {
+    state: State;
+    dispatch: React.Dispatch<Action>;
+}
+
+const ConnectionTestContext = createContext<ConnectionTestContextValue>({
+    state: {
+        catalogPrefix: '',
+        dataPlanes: [],
+        fragmentStores: [],
+        connections: {},
+    },
+    dispatch: () => {},
+});
+
+interface ConnectionTestProviderProps {
+    catalogPrefix: string;
+    dataPlanes?: StorageMappingDataPlane[];
+    fragmentStores?: StorageMappingFragmentStore[];
+    children: React.ReactNode;
+}
+
+export function ConnectionTestProvider({
+    catalogPrefix,
+    dataPlanes = [],
+    fragmentStores = [],
+    children,
+}: ConnectionTestProviderProps) {
+    const initialState: State = useMemo(() => {
+        const connections = getConnections(dataPlanes, fragmentStores);
+        return { catalogPrefix, dataPlanes, fragmentStores, connections };
+    }, [catalogPrefix, dataPlanes, fragmentStores]);
+
+    const [state, dispatch] = useReducer(reducer, initialState);
+    const value = useMemo(() => ({ state, dispatch }), [state]);
+
+    return (
+        <ConnectionTestContext.Provider value={value}>
+            {children}
+        </ConnectionTestContext.Provider>
+    );
+}
+
+export function useConnectionContext() {
+    const { state, dispatch } = useContext(ConnectionTestContext);
+    const testConnectionHealth = useTestConnectionHealth();
+
+    const connections = useMemo(() => {
+        return Object.values(state.connections);
+    }, [state.connections]);
+
+    const updateConnections = useCallback(
+        (
+            catalogPrefix: string,
+            dataPlanes: StorageMappingDataPlane[],
+            fragmentStores: StorageMappingFragmentStore[]
+        ) => {
+            dispatch({
+                type: 'UPDATE_CONNECTIONS',
+                catalogPrefix,
+                dataPlanes,
+                fragmentStores,
+            });
+        },
+        [dispatch]
+    );
+
+    const testConnections = useCallback(async () => {
+        dispatch({ type: 'TEST_START' });
+
+        const { catalogPrefix, dataPlanes, fragmentStores } = state;
+        const dataPlaneNames = dataPlanes.map((dp) => dp.name);
+        const results = await testConnectionHealth({
+            catalogPrefix,
+            dataPlaneNames,
+            fragmentStores,
+        });
+
+        dispatch({ type: 'TEST_END', results });
+    }, [state, dispatch, testConnectionHealth]);
+
+    const testConnection = useCallback(async (c: StorageMappingConnection) => {
+        const { catalogPrefix } = state;
+        const { dataPlane, store } = c;
+        const dataPlaneNames = dataPlanes.map((dp) => dp.name);
+        const results = await testConnectionHealth({
+            catalogPrefix,
+            [dataPlaneNames],
+            fragmentStores,
+        });
+    }, []);
+
+    return { connections, updateConnections, testConnections };
+}
+
+function getConnections(
+    dataPlanes: StorageMappingDataPlane[],
+    fragmentStores: StorageMappingFragmentStore[]
+): Record<string, StorageMappingConnection> {
+    return Object.fromEntries(
+        dataPlanes.flatMap((dataPlane) => {
+            return fragmentStores.map((store) => {
+                const key = getConnectionKey(dataPlane.name, store.key);
+                const connection: StorageMappingConnection = {
+                    key,
+                    dataPlane,
+                    store,
+                    status: 'idle',
+                };
+
+                return [key, connection];
+            });
+        })
+    );
+}
+
+function getConnectionKey(dataPlaneName: string, storeKey: string): string {
+    return `${dataPlaneName}:${storeKey}`;
+}

@@ -1,5 +1,5 @@
 import type { SxProps, Theme } from '@mui/material';
-import type { DataPlaneNode } from 'src/api/gql/dataPlanes';
+import type { StorageMappingDataPlane } from 'src/api/gql/storageMappings';
 import type { StorageMappingFormData } from 'src/components/admin/Settings/StorageMappings/Dialog/types';
 import type { CloudProvider } from 'src/utils/cloudRegions';
 
@@ -8,7 +8,6 @@ import { useEffect, useMemo, useState } from 'react';
 import { Alert, Collapse, Link, Stack } from '@mui/material';
 
 import { useFormContext } from 'react-hook-form';
-import { useIntl } from 'react-intl';
 
 import { storeValidation } from 'src/components/admin/Settings/StorageMappings/Dialog/StorageFields/StorageValidation';
 import {
@@ -27,16 +26,17 @@ const PROVIDER_OPTIONS = (Object.keys(PROVIDER_LABELS) as CloudProvider[]).map(
 );
 
 interface StorageFieldsProps {
-    defaultDataPlane: DataPlaneNode | null;
+    defaultProvider?: StorageMappingDataPlane['storeProvider'];
+    defaultRegion?: StorageMappingDataPlane['region'];
     sx?: SxProps<Theme>;
 }
 
 const PENDING_STORE_INDEX = 0 as const;
 export function StorageFields({
-    defaultDataPlane = null,
+    defaultProvider,
+    defaultRegion,
     sx,
 }: StorageFieldsProps) {
-    const intl = useIntl();
     const { watch, setValue } = useFormContext<StorageMappingFormData>();
 
     const storeProvider = watch(
@@ -50,18 +50,22 @@ export function StorageFields({
 
     useEffect(() => {
         // if we're tracking the default data plane, update the form values to match when the default data plane changes
-        if (!trackDefaultDp || !defaultDataPlane) {
+        if (!trackDefaultDp) {
             return;
         }
-        setValue(
-            `fragmentStores.${PENDING_STORE_INDEX}.provider`,
-            defaultDataPlane.cloudProvider
-        );
-        setValue(
-            `fragmentStores.${PENDING_STORE_INDEX}.region`,
-            defaultDataPlane.region
-        );
-    }, [defaultDataPlane, trackDefaultDp, setValue]);
+        if (defaultProvider) {
+            setValue(
+                `fragmentStores.${PENDING_STORE_INDEX}.provider`,
+                defaultProvider
+            );
+        }
+        if (defaultRegion) {
+            setValue(
+                `fragmentStores.${PENDING_STORE_INDEX}.region`,
+                defaultRegion
+            );
+        }
+    }, [trackDefaultDp, setValue, defaultProvider, defaultRegion]);
 
     const awsRegionOptions = useMemo(
         () =>
@@ -72,39 +76,27 @@ export function StorageFields({
     );
 
     const mismatch = useMemo(() => {
-        if (!defaultDataPlane || (!storeProvider && !storeRegion)) {
-            return false;
-        }
-
-        if (defaultDataPlane.cloudProvider !== storeProvider) return true;
-
-        if (
-            storeProvider === 'AWS' &&
-            defaultDataPlane.region !== storeRegion
-        ) {
+        if (!defaultProvider && !defaultRegion) return false;
+        if (!storeProvider && !storeRegion) return false;
+        if (defaultProvider !== storeProvider) return true;
+        if (storeProvider === 'S3' && defaultRegion !== storeRegion)
             return true;
-        }
-
         return false;
-    }, [defaultDataPlane, storeProvider, storeRegion]);
-
-    const showMismatchWarning = mismatch && !!defaultDataPlane;
+    }, [defaultProvider, defaultRegion, storeProvider, storeRegion]);
 
     return (
         <Stack spacing={2} sx={sx}>
-            <Collapse in={showMismatchWarning}>
+            <Collapse in={mismatch}>
                 <Alert severity="warning">
-                    {intl.formatMessage({
-                        id: 'storageMappings.dialog.storageFields.mismatchWarning',
-                    })}{' '}
+                    The selected cloud provider / region do not match the
+                    default data plane. This may result in additional egress
+                    fees.&nbsp;
                     <Link
                         component="button"
                         variant="body2"
                         onClick={() => setTrackDefaultDp(true)}
                     >
-                        {intl.formatMessage({
-                            id: 'storageMappings.dialog.storageFields.matchDefault',
-                        })}
+                        Match default data plane
                     </Link>
                 </Alert>
             </Collapse>
@@ -112,33 +104,21 @@ export function StorageFields({
                 <RHFSelect<StorageMappingFormData>
                     key="provider"
                     name={`fragmentStores.${PENDING_STORE_INDEX}.provider`}
-                    label={intl.formatMessage({
-                        id: 'storageMappings.dialog.storageFields.cloudProvider',
-                    })}
+                    label="Cloud Provider"
                     options={PROVIDER_OPTIONS}
                     required
-                    rules={{
-                        required: intl.formatMessage({
-                            id: 'storageMappings.dialog.storageFields.validation.cloudProviderRequired',
-                        }),
-                    }}
+                    rules={{ required: 'Cloud provider is required' }}
                     onUserSelect={() => setTrackDefaultDp(false)}
                 />
-                {storeProvider === 'AWS' ? (
+                {storeProvider === 'S3' ? (
                     <RHFAutocomplete<StorageMappingFormData>
                         key="region"
                         name={`fragmentStores.${PENDING_STORE_INDEX}.region`}
-                        label={intl.formatMessage({
-                            id: 'storageMappings.dialog.storageFields.region',
-                        })}
+                        label="Region"
                         options={awsRegionOptions}
                         required
                         disabled={!storeProvider}
-                        rules={{
-                            required: intl.formatMessage({
-                                id: 'storageMappings.dialog.storageFields.validation.regionRequired',
-                            }),
-                        }}
+                        rules={{ required: 'Region is required' }}
                         onUserSelect={() => setTrackDefaultDp(false)}
                     />
                 ) : null}
@@ -148,9 +128,7 @@ export function StorageFields({
                     <Stack direction="row" spacing={2}>
                         <RHFTextField<StorageMappingFormData>
                             name={`fragmentStores.${PENDING_STORE_INDEX}.accountTenantId`}
-                            label={intl.formatMessage({
-                                id: 'storageMappings.dialog.storageFields.accountTenantId',
-                            })}
+                            label="Account Tenant ID"
                             required
                             progressiveRules={
                                 storeValidation.azureAccountTenantId
@@ -158,9 +136,7 @@ export function StorageFields({
                         />
                         <RHFTextField<StorageMappingFormData>
                             name={`fragmentStores.${PENDING_STORE_INDEX}.storageAccountName`}
-                            label={intl.formatMessage({
-                                id: 'storageMappings.dialog.storageFields.storageAccountName',
-                            })}
+                            label="Storage Account Name"
                             required
                             progressiveRules={
                                 storeValidation.azureStorageAccountName
@@ -172,13 +148,9 @@ export function StorageFields({
                     {storeProvider === 'AZURE' ? (
                         <RHFTextField<StorageMappingFormData>
                             name={`fragmentStores.${PENDING_STORE_INDEX}.containerName`}
-                            label={intl.formatMessage({
-                                id: 'storageMappings.dialog.storageFields.containerName',
-                            })}
+                            label="Container Name"
                             required
-                            helperText={intl.formatMessage({
-                                id: 'storageMappings.dialog.storageFields.bucketHelperText',
-                            })}
+                            helperText="Destination for Estuary collection data"
                             progressiveRules={
                                 storeValidation.azureContainerName
                             }
@@ -186,30 +158,22 @@ export function StorageFields({
                     ) : (
                         <RHFTextField<StorageMappingFormData>
                             name={`fragmentStores.${PENDING_STORE_INDEX}.bucket`}
-                            label={intl.formatMessage({
-                                id: 'storageMappings.dialog.storageFields.bucket',
-                            })}
+                            label="Bucket"
                             required
-                            helperText={intl.formatMessage({
-                                id: 'storageMappings.dialog.storageFields.bucketHelperText',
-                            })}
+                            helperText="Destination for Estuary collection data"
                             progressiveRules={
-                                storeProvider === 'AWS'
+                                storeProvider === 'S3'
                                     ? storeValidation.awsBucket
-                                    : storeProvider === 'GCP'
+                                    : storeProvider === 'GCS'
                                       ? storeValidation.gcpBucket
                                       : undefined
                             }
                         />
                     )}
                     <RHFTextField<StorageMappingFormData>
-                        name={`fragmentStores.${PENDING_STORE_INDEX}.storagePrefix`}
-                        label={intl.formatMessage({
-                            id: 'storageMappings.dialog.storageFields.storagePrefix',
-                        })}
-                        helperText={intl.formatMessage({
-                            id: 'storageMappings.dialog.storageFields.storagePrefixHelperText',
-                        })}
+                        name={`fragmentStores.${PENDING_STORE_INDEX}.prefix`}
+                        label="Storage Prefix"
+                        helperText="Optional prefix of keys written to the bucket"
                         onBlurTransform={(value) =>
                             !!value && !value.endsWith('/')
                                 ? appendWithForwardSlash(value)

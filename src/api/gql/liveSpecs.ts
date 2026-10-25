@@ -1,6 +1,5 @@
 import { useAllPages } from 'src/api/gql/useAllPages';
 import { graphql } from 'src/gql-types';
-import { useTenantStore } from 'src/stores/Tenant';
 
 const LiveSpecsQuery = graphql(`
     query LiveSpecsQuery($prefix: Prefix!, $after: String) {
@@ -22,16 +21,15 @@ const LiveSpecsQuery = graphql(`
     }
 `);
 
-export function useLiveSpecs() {
-    const selectedTenant = useTenantStore((state) => state.selectedTenant);
-    const prefix = selectedTenant ?? '';
+export function useLiveSpecs(tenant: string) {
+    const prefix = tenant ?? '';
 
-    const { data } = useAllPages(LiveSpecsQuery, {
+    const { data, loading, error } = useAllPages(LiveSpecsQuery, {
         variables: { prefix },
         getConnection: (data) => data.liveSpecs,
         transform: (node) => node.catalogName,
-        pause: !selectedTenant,
+        pause: !prefix,
     });
 
-    return data;
+    return { data, loading, error };
 }
