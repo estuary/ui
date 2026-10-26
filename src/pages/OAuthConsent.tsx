@@ -259,7 +259,7 @@ function ConsentFlow({
                                 target="_blank"
                                 rel="noopener noreferrer"
                             >
-                                Refresh Tokens (opens in a new tab)
+                                Refresh Tokens
                             </Link>
                             . The application may continue to have access for up
                             to an hour after revoking its token.
