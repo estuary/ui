@@ -5,6 +5,7 @@ import {
     Box,
     Button,
     FormHelperText,
+    Link,
     Stack,
     Typography,
 } from '@mui/material';
@@ -24,6 +25,23 @@ interface ConsentContext {
     request: {
         client_id: string;
     };
+}
+
+async function getConsentErrorMessage(response: Response) {
+    const body = await response.json().catch(() => null);
+    switch (body?.error) {
+        case 'invalid_grant':
+            return 'This authorization request is invalid or has expired. Start the connection again from the application.';
+        case 'access_denied':
+            return 'Access was denied. This application was not authorized.';
+        case 'server_error':
+        case 'temporarily_unavailable':
+            return 'The authorization server is temporarily unavailable. Please try again later.';
+        default:
+            return response.status === 401 || response.status === 403
+                ? 'Unable to authorize this request.'
+                : 'Could not complete authorization. Please try again later.';
+    }
 }
 
 export const OAuthConsent = () => {
@@ -85,11 +103,7 @@ function ConsentFlow({
                     signal: controller.signal,
                 });
                 if (!response.ok) {
-                    throw new Error(
-                        response.status === 401 || response.status === 403
-                            ? 'Unable to authorize this request.'
-                            : 'This authorization request is unknown or has expired. Start the connection again from the application.'
-                    );
+                    throw new Error(await getConsentErrorMessage(response));
                 }
                 const context: ConsentContext = await response.json();
                 if (
@@ -155,11 +169,7 @@ function ConsentFlow({
                 }
             );
             if (!response.ok) {
-                throw new Error(
-                    response.status === 401 || response.status === 403
-                        ? 'Unable to authorize this request.'
-                        : 'Could not complete authorization. The request may have expired; start the connection again from the application.'
-                );
+                throw new Error(await getConsentErrorMessage(response));
             }
             const result = await response.json();
             if (
@@ -241,8 +251,18 @@ function ConsentFlow({
                             creating sandboxes where permitted.
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
-                            You can revoke this connection from your Refresh
-                            Token settings.
+                            {
+                                "You can revoke this application's refresh token in "
+                            }
+                            <Link
+                                href={authenticatedRoutes.admin.api.fullPath}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                Refresh Tokens (opens in a new tab)
+                            </Link>
+                            . The application may continue to have access for up
+                            to an hour after revoking its token.
                         </Typography>
                         <Stack
                             direction="row"

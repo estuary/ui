@@ -19,7 +19,10 @@ vi.mock('react-router-dom', () => ({
 }));
 vi.mock('react-helmet-async', () => ({ Helmet: () => null }));
 vi.mock('src/app/routes', () => ({
-    authenticatedRoutes: { oauthConsent: { title: 'Authorize' } },
+    authenticatedRoutes: {
+        oauthConsent: { title: 'Authorize' },
+        admin: { api: { fullPath: '/admin/api' } },
+    },
 }));
 vi.mock('src/stores/TopBar/Store', () => ({
     useTopBarStore: (selector: (value: unknown) => unknown) =>
@@ -81,6 +84,42 @@ afterEach(() => {
 });
 
 describe('OAuth consent', () => {
+    describe.each(['load', 'submit'])('%s errors', (phase) => {
+        it.each([
+            ['invalid_grant', /invalid or has expired/],
+            ['access_denied', /Access was denied/],
+            ['server_error', /temporarily unavailable/],
+            ['temporarily_unavailable', /temporarily unavailable/],
+            ['unknown_error', /Could not complete authorization/],
+            [null, /Could not complete authorization/],
+        ])(
+            'handles %s without exposing server details',
+            async (code, message) => {
+                const response = new Response(
+                    code
+                        ? JSON.stringify({
+                              error: code,
+                              error_description: 'private details',
+                          })
+                        : '<html>Unavailable</html>',
+                    { status: 400 }
+                );
+                if (phase === 'load') fetchMock.mockResolvedValueOnce(response);
+                render(<OAuthConsent />);
+                if (phase === 'submit') {
+                    const approve = await screen.findByRole('button', {
+                        name: 'Approve',
+                    });
+                    fetchMock.mockResolvedValueOnce(response);
+                    fireEvent.click(approve);
+                }
+                const alert = await screen.findByRole('alert');
+                expect(alert.textContent).toMatch(message);
+                expect(alert.textContent).not.toContain('private details');
+            }
+        );
+    });
+
     it.each([
         ['Approve', true],
         ['Cancel', false],
@@ -100,7 +139,9 @@ describe('OAuth consent', () => {
             expect(fetchMock.mock.calls[0][1].referrerPolicy).toBe(
                 'no-referrer'
             );
-            fetchMock.mockResolvedValueOnce({ ok: false, status: 403 });
+            fetchMock.mockResolvedValueOnce(
+                new Response(null, { status: 403 })
+            );
             fireEvent.click(action);
             await screen.findByText(/Unable to authorize this request/);
             expect(fetchMock.mock.calls[1][0]).toBe(
