@@ -41,6 +41,7 @@ const completelyIgnoredURLs = [
 const maskEverythingURLs = [
     // When calling encryption stuff we never want to leak anything
     'config-encryption.estuary.dev',
+    '/secret/encrypt',
 
     // Support staff make A LOT of these and we do not need them
     'auth_roles?offset',
