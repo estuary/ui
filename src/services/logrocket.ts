@@ -13,13 +13,7 @@ interface IUserTraits {
     [propName: string]: string | number | boolean;
 }
 
-// TODO (typing) They have types for LR but not sure how to access them
-interface Settings {
-    release: any;
-    dom: any;
-    network?: any;
-    serverURL?: any;
-}
+type Settings = NonNullable<Parameters<typeof LogRocket.init>[1]>;
 
 type ParsedBody = any | undefined;
 
@@ -222,31 +216,22 @@ export const initLogRocket = () => {
             settings.serverURL = logRocketSettings.serverURL;
         }
 
-        if (
-            logRocketSettings.sanitize.response ||
-            logRocketSettings.sanitize.request
-        ) {
-            settings.network = {};
-            if (logRocketSettings.sanitize.response) {
-                settings.network.responseSanitizer = (response: any) => {
-                    if (shouldIgnore(response.url ?? '')) {
-                        return null;
-                    }
-
-                    return maskContent(response);
-                };
+        settings.network = {};
+        settings.network.responseSanitizer = (response) => {
+            if (shouldIgnore(response.url ?? '')) {
+                return null;
             }
 
-            if (logRocketSettings.sanitize.request) {
-                settings.network.requestSanitizer = (request: any) => {
-                    if (shouldIgnore(request.url ?? '')) {
-                        return null;
-                    }
+            return maskContent(response);
+        };
 
-                    return maskContent(request);
-                };
+        settings.network.requestSanitizer = (request) => {
+            if (shouldIgnore(request.url ?? '')) {
+                return null;
             }
-        }
+
+            return maskContent(request);
+        };
 
         LogRocket.init(logRocketSettings.appID, settings);
     }
