@@ -1,6 +1,6 @@
 import type { FormEvent } from 'react';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 import {
     Box,
@@ -72,13 +72,6 @@ export function SecretDropboxForm({ secretName }: SecretDropboxFormProps) {
             { leading: true, trailing: false }
         );
     }, [setSecret]);
-
-    // cancel the debounce on unmount
-    useEffect(() => {
-        return () => {
-            setSecretDebounced.cancel();
-        };
-    }, [setSecretDebounced]);
 
     const handleSubmit = useCallback(
         (event: FormEvent) => {

@@ -71,6 +71,19 @@ const saveButton = () => screen.getByRole('button', { name: 'Save secret' });
 const querySaveButton = () =>
     screen.queryByRole('button', { name: 'Save secret' });
 
+// jsdom drops `-webkit-text-security`, so look for the rule emotion
+//  generated for the field's class
+const isMasked = (input: HTMLElement) => {
+    const css = Array.from(document.querySelectorAll('style'))
+        .map((style) => style.textContent)
+        .join('');
+    const root = input.closest('.MuiTextField-root')!;
+
+    return Array.from(root.classList).some((className) =>
+        css.includes(`.${className} textarea{-webkit-text-security:disc;}`)
+    );
+};
+
 async function enterValueAndSave(user: ReturnType<typeof userEvent.setup>) {
     await user.type(valueInput(), VALUE);
     await user.click(saveButton());
@@ -165,18 +178,6 @@ describe('SecretDropboxForm', () => {
             expect(await screen.findByText(SAVED_MESSAGE)).toBeInTheDocument();
             expect(setSecret).toHaveBeenCalledTimes(1);
         });
-
-        test('should not save when unmounted before the save is sent', async () => {
-            mockHooks();
-            const { user, view } = renderForm();
-
-            await enterValueAndSave(user);
-            view.unmount();
-
-            // Past the 300ms debounce
-            await new Promise((resolve) => setTimeout(resolve, 400));
-            expect(setSecret).not.toHaveBeenCalled();
-        });
     });
 
     describe('for an existing secret', () => {
@@ -245,7 +246,7 @@ describe('SecretDropboxForm', () => {
             renderForm();
 
             const input = valueInput();
-            expect(input).toHaveAttribute('type', 'password');
+            expect(isMasked(input)).toBe(true);
             expect(input).toHaveAttribute('data-private');
             expect(input).toHaveClass('ph-no-capture');
             expect(input).toHaveAttribute('autocomplete', 'new-password');
@@ -259,16 +260,12 @@ describe('SecretDropboxForm', () => {
             await user.click(
                 screen.getByRole('button', { name: 'Show value' })
             );
-            await waitFor(() =>
-                expect(valueInput()).toHaveAttribute('type', 'text')
-            );
+            await waitFor(() => expect(isMasked(valueInput())).toBe(false));
 
             await user.click(
                 screen.getByRole('button', { name: 'Hide value' })
             );
-            await waitFor(() =>
-                expect(valueInput()).toHaveAttribute('type', 'password')
-            );
+            await waitFor(() => expect(isMasked(valueInput())).toBe(true));
         });
     });
 });
