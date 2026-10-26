@@ -1,3 +1,4 @@
+import type { SxProps, Theme } from '@mui/material';
 import type { BillingContact } from 'src/utils/billing-contact-utils';
 
 import { useEffect, useState } from 'react';
@@ -24,6 +25,7 @@ import {
     billingAddressOptions,
     getStripe,
     STRIPE_LOAD_ERROR,
+    stripeFieldBackgroundDark,
     useStripeAppearance,
 } from 'src/components/admin/Billing/stripe';
 import AlertBox from 'src/components/shared/AlertBox';
@@ -56,6 +58,59 @@ const splitEmails = (text: string) => text.split(/[\s,;]+/).filter(Boolean);
 
 const uniqueEmails = (emails: string[]) =>
     uniqBy(emails, (email) => email.toLowerCase());
+
+// Match the Address Element's labels and inputs, including the multi-email field.
+const emailFieldSx: SxProps<Theme> = (theme) => {
+    const isDark = theme.palette.mode === 'dark';
+    const color = isDark ? '#fff' : '#30313d';
+
+    return {
+        '& .MuiInputLabel-root': {
+            'position': 'static',
+            'transform': 'none',
+            'alignSelf': 'flex-start',
+            'maxWidth': '100%',
+            'mb': '4px',
+            color,
+            'fontSize': '0.93rem',
+            'lineHeight': 1.15,
+            '&.Mui-focused': { color },
+            '&.Mui-error': { color: theme.palette.error.main },
+        },
+        '& .MuiOutlinedInput-root': {
+            color,
+            'backgroundColor': isDark ? stripeFieldBackgroundDark : '#fff',
+            'borderRadius': '6px',
+            'fontSize': '16px',
+            'lineHeight': 1.15,
+            'padding': '12px',
+            'border': isDark ? 'none' : '1px solid #e6e6e6',
+            'boxShadow': isDark
+                ? 'none'
+                : '0 1px 1px rgba(0,0,0,0.03), 0 3px 6px rgba(0,0,0,0.02)',
+            '& fieldset': {
+                display: 'none',
+            },
+            '&.Mui-focused': {
+                outline: `2px solid ${theme.palette.primary.main}`,
+            },
+            '&.Mui-error': {
+                outline: `2px solid ${theme.palette.error.main}`,
+            },
+            '& .MuiOutlinedInput-input': {
+                height: 'auto',
+                padding: 0,
+            },
+            '&.MuiAutocomplete-inputRoot': {
+                'minHeight': isDark ? '42.4px' : '44.4px',
+                'padding': '8px 12px',
+                'gap': '4px',
+                '& .MuiAutocomplete-tag': { margin: 0 },
+            },
+        },
+        '& .MuiFormHelperText-root': { mx: 0 },
+    };
+};
 
 export function BillingContactDialog({
     open,
@@ -221,6 +276,11 @@ function BillingContactForm({
                     />
 
                     <TextField
+                        variant="outlined"
+                        sx={emailFieldSx}
+                        slotProps={{
+                            inputLabel: { shrink: true },
+                        }}
                         label="Billing email"
                         type="email"
                         autoComplete="email"
@@ -235,6 +295,7 @@ function BillingContactForm({
                     />
 
                     <Autocomplete
+                        size="small"
                         multiple
                         freeSolo
                         options={[]}
@@ -264,6 +325,11 @@ function BillingContactForm({
                         renderInput={(params) => (
                             <TextField
                                 {...params}
+                                variant="outlined"
+                                sx={emailFieldSx}
+                                slotProps={{
+                                    inputLabel: { shrink: true },
+                                }}
                                 label="Additional billing emails"
                                 error={Boolean(additionalError)}
                                 helperText={

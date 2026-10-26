@@ -9,8 +9,7 @@ import { useTheme } from '@mui/material';
 
 import { loadStripe } from '@stripe/stripe-js';
 
-import { stripePaymentFormFieldBackgroundDark } from 'src/context/Theme';
-
+export const stripeFieldBackgroundDark = 'rgba(247, 249, 252, 0.05)';
 const flatField = { border: 'none', boxShadow: 'none' };
 
 export const STRIPE_LOAD_ERROR =
@@ -34,7 +33,7 @@ export const billingAddressOptions = (
     display: { name: 'organization' },
     defaultValues: {
         name,
-        address: { ...address, country: address.country || 'US' },
+        address: { ...address, country: address.country ?? '' },
     },
 });
 
@@ -49,17 +48,17 @@ export function useStripeAppearance(): Appearance {
             fontFamily: theme.typography.fontFamily,
             borderRadius: `6px`,
             focusBoxShadow: 'none',
-            focusOutline: 'none',
+            focusOutline: `2px solid ${theme.palette.primary.main}`,
         },
         ...(isDark && {
             rules: {
                 '.Input': {
                     ...flatField,
-                    backgroundColor: stripePaymentFormFieldBackgroundDark,
+                    backgroundColor: stripeFieldBackgroundDark,
                 },
                 '.Tab': {
                     ...flatField,
-                    backgroundColor: stripePaymentFormFieldBackgroundDark,
+                    backgroundColor: stripeFieldBackgroundDark,
                 },
                 '.Tab--focused': {
                     borderColor: theme.palette.primary.main,
@@ -67,11 +66,11 @@ export function useStripeAppearance(): Appearance {
                 '.Block': {
                     ...flatField,
                     padding: '14px',
-                    backgroundColor: stripePaymentFormFieldBackgroundDark,
+                    backgroundColor: stripeFieldBackgroundDark,
                 },
                 '.PickerItem': {
                     ...flatField,
-                    backgroundColor: stripePaymentFormFieldBackgroundDark,
+                    backgroundColor: stripeFieldBackgroundDark,
                 },
             },
         }),

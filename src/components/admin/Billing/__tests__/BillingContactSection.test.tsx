@@ -7,6 +7,7 @@ import {
     waitFor,
     within,
 } from '@testing-library/react';
+import { ErrorBoundary } from 'react-error-boundary';
 import { IntlProvider } from 'react-intl';
 import { beforeEach, expect, test, vi } from 'vitest';
 
@@ -113,16 +114,45 @@ test.each([
     text.forEach((line) => expect(screen.getByText(line)).toBeTruthy());
 });
 
-test('stops loading when the tenant read returns nothing', async () => {
-    server.use(
-        billingGraphql.query('TenantBillingContact', () =>
-            HttpResponse.json({ data: { tenant: null } })
-        )
-    );
-    render(<BillingContactSection canEdit />, { wrapper });
+test.each([false, true])(
+    'keeps an unreadable tenant unavailable on remount (query error: %s)',
+    async (withQueryError) => {
+        vi.spyOn(console, 'error').mockImplementation(() => undefined);
+        server.use(
+            billingGraphql.query('TenantBillingContact', () => {
+                contactReads++;
+                return HttpResponse.json({
+                    data: { tenant: null },
+                    ...(withQueryError && {
+                        errors: [{ message: 'Stripe unavailable' }],
+                    }),
+                });
+            })
+        );
+        const section = (key: string) => (
+            <ErrorBoundary
+                key={key}
+                fallbackRender={({ error }) => <div>{error.message}</div>}
+            >
+                <BillingContactSection canEdit />
+            </ErrorBoundary>
+        );
+        const { rerender } = render(section('first'), { wrapper });
 
-    await screen.findByRole('button', { name: 'Add billing contact' });
-});
+        const message = withQueryError
+            ? /Stripe unavailable/
+            : 'Unable to load billing for acme/';
+        await screen.findByText(message);
+        rerender(section('return'));
+
+        await screen.findByText(message);
+        expect(
+            screen.queryByRole('button', { name: 'Add billing contact' })
+        ).toBeNull();
+        // The provider treats a null tenant as uncached and retries on return.
+        expect(contactReads).toBe(2);
+    }
+);
 
 test('saves edits and shows them from the cache', async () => {
     const saves = handleContactSaves();

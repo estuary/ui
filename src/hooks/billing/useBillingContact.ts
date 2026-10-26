@@ -10,9 +10,17 @@ export function useBillingContact(tenant: string) {
         variables: { tenant },
     });
 
+    // A null tenant means the read failed or the caller can't see the tenant,
+    // not that the contact is missing. Graphcache can return null data for it.
+    const tenantMissing = data !== undefined && !data?.tenant;
+
     return {
         contact: data?.tenant?.billing.contact,
         isLoading: fetching && !data,
-        error,
+        error:
+            error ??
+            (tenantMissing
+                ? new Error(`Unable to load billing for ${tenant}`)
+                : undefined),
     };
 }
