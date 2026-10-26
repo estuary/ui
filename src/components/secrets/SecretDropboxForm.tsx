@@ -55,18 +55,22 @@ export function SecretDropboxForm({ secretName }: SecretDropboxFormProps) {
     const exists = Boolean(secret?.secretId);
 
     const setSecretDebounced = useMemo(() => {
-        return debounce(async (catalogName: string, value: string) => {
-            try {
-                await setSecret(catalogName, value);
-                setSaved(true);
-            } catch (err) {
-                const nerr = normalizeError(err);
-                setSubmitError(nerr);
-            } finally {
-                setValue('');
-                setSubmitting(false);
-            }
-        }, SET_SECRET_DEBOUNCE_MS);
+        return debounce(
+            async (catalogName: string, value: string) => {
+                try {
+                    await setSecret(catalogName, value);
+                    setSaved(true);
+                } catch (err) {
+                    const nerr = normalizeError(err);
+                    setSubmitError(nerr);
+                } finally {
+                    setValue('');
+                    setSubmitting(false);
+                }
+            },
+            SET_SECRET_DEBOUNCE_MS,
+            { leading: true, trailing: false }
+        );
     }, [setSecret]);
 
     // cancel the debounce on unmount
@@ -139,10 +143,16 @@ export function SecretDropboxForm({ secretName }: SecretDropboxFormProps) {
                     label="Secret value"
                     value={value}
                     onChange={(event) => setValue(event.target.value)}
-                    type={showValue ? 'text' : 'password'}
+                    multiline
+                    maxRows={5}
                     size="small"
                     required
                     autoFocus
+                    sx={
+                        showValue
+                            ? undefined
+                            : { '& textarea': { WebkitTextSecurity: 'disc' } }
+                    }
                     slotProps={{
                         // Keep the value out of LogRocket and PostHog, and out
                         // of browser autofill and spellcheck services.
