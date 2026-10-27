@@ -8,7 +8,7 @@ import { DataPlaneSelector } from 'src/components/admin/Settings/StorageMappings
 import { CardTitle } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/CardTitle';
 import { PrimaryList } from 'src/components/shared/PrimaryList';
 import { useDataPlanes } from 'src/hooks/dataPlanes/useDataPlanes';
-import { toPresentableName } from 'src/utils/dataPlane-utils';
+import { getScope, toPresentableName } from 'src/utils/dataPlane-utils';
 
 interface DataPlanesCardProps {
     dataPlanes: DataPlaneNode[];
@@ -86,10 +86,15 @@ export function DataPlanesCard({
                     items={selectedDps}
                     onChange={onChange}
                     renderLabel={toPresentableName}
+                    renderKey={(dp) => dp.name}
                     renderBody={(dp) => (
-                        <Typography variant="caption" color="text.secondary">
-                            {dp.cloudProvider} &middot; {dp.region} &middot;{' '}
-                            {dp.scope}
+                        <Typography
+                            variant="caption"
+                            color={
+                                dp.isPublic ? 'text.disabled' : 'text.primary'
+                            }
+                        >
+                            {getScope(dp)}
                         </Typography>
                     )}
                 />

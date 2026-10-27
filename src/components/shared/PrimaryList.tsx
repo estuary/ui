@@ -17,8 +17,9 @@ interface PrimaryListProps<T> {
     onChange: (items: T[]) => void;
     disabled?: boolean;
     sx?: SxProps<Theme>;
-    // Labels identify rows, so they must be unique and stable across reordering.
     renderLabel: (item: T) => string;
+    // Keys must be unique and stable across reordering. Defaults to renderLabel.
+    renderKey?: (item: T) => string;
     renderBody?: (item: T, isPrimary: boolean) => ReactNode;
 }
 
@@ -29,6 +30,7 @@ export function PrimaryList<T>({
     onChange,
     disabled = false,
     renderLabel,
+    renderKey = renderLabel,
     renderBody,
     sx,
 }: PrimaryListProps<T>) {
@@ -38,13 +40,13 @@ export function PrimaryList<T>({
 
     if (previous !== items) {
         setPrevious(items);
-        const previousKeys = new Set(previous.map(renderLabel));
-        const nextKeys = new Set(items.map(renderLabel));
+        const previousKeys = new Set(previous.map(renderKey));
+        const nextKeys = new Set(items.map(renderKey));
         if (removing !== null && !nextKeys.has(removing)) setRemoving(null);
         const added = items.filter(
-            (item) => !previousKeys.has(renderLabel(item))
+            (item) => !previousKeys.has(renderKey(item))
         );
-        if (added.length > 0) setIncoming(new Set(added.map(renderLabel)));
+        if (added.length > 0) setIncoming(new Set(added.map(renderKey)));
     }
 
     useEffect(() => {
@@ -57,16 +59,17 @@ export function PrimaryList<T>({
 
     const finishRemoval = () => {
         if (removing === null) return;
-        onChange(items.filter((item) => renderLabel(item) !== removing));
+        onChange(items.filter((item) => renderKey(item) !== removing));
         setRemoving(null);
     };
 
     return (
-        <StyledFlipper flipKey={JSON.stringify(items.map(renderLabel))} sx={sx}>
+        <StyledFlipper flipKey={JSON.stringify(items.map(renderKey))} sx={sx}>
             {items.map((item) => {
-                const key = renderLabel(item);
+                const key = renderKey(item);
+                const label = renderLabel(item);
                 const index = items.findIndex(
-                    (entry) => renderLabel(entry) === key
+                    (entry) => renderKey(entry) === key
                 );
                 const exiting = removing === key;
                 const isPrimary = index === 0;
@@ -87,7 +90,7 @@ export function PrimaryList<T>({
                                 alignItems="center"
                             >
                                 <Row
-                                    label={key}
+                                    label={label}
                                     body={renderBody?.(item, isPrimary)}
                                     primary={isPrimary}
                                     disabled={actionsDisabled}
@@ -98,13 +101,13 @@ export function PrimaryList<T>({
                                             items[index],
                                             ...items.filter(
                                                 (entry) =>
-                                                    renderLabel(entry) !== key
+                                                    renderKey(entry) !== key
                                             ),
                                         ]);
                                     }}
                                 />
                                 <RemoveButton
-                                    aria-label={`Remove ${key}`}
+                                    aria-label={`Remove ${label}`}
                                     disabled={actionsDisabled}
                                     onClick={() => {
                                         if (actionsDisabled || index < 0)
