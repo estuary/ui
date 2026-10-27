@@ -1,3 +1,4 @@
+import type { AddressParam } from '@stripe/stripe-js';
 import type {
     BillingAddress,
     BillingAddressInput,
@@ -8,14 +9,7 @@ export type BillingContact = BillingContactFieldsFragment;
 type BillingContactStatus = 'missing' | 'incomplete' | 'complete';
 
 // Stripe's address form, in the shape its elements and billing_details use.
-export interface StripeAddress {
-    line1: string;
-    line2: string;
-    city: string;
-    state: string;
-    postal_code: string;
-    country: string;
-}
+export type StripeAddress = Required<AddressParam>;
 
 const hasValue = (value: string | null | undefined) => Boolean(value?.trim());
 

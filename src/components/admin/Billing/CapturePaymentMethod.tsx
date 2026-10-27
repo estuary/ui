@@ -25,9 +25,8 @@ import {
     billingAddressOptions,
     STRIPE_LOAD_ERROR,
 } from 'src/components/admin/Billing/stripe';
+import { useStripeLoadError } from 'src/components/admin/Billing/useStripeLoadError';
 import AlertBox from 'src/components/shared/AlertBox';
-import { logRocketEvent } from 'src/services/shared';
-import { CustomEvents } from 'src/services/types';
 import {
     formatAddress,
     toStripeAddress,
@@ -50,8 +49,8 @@ export const PaymentForm = ({
 
     const [useDifferentAddress, setUseDifferentAddress] = useState(false);
     const [error, setError] = useState('');
-    const [loadingError, setLoadingError] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
+    const { loadError, onLoadError } = useStripeLoadError();
 
     const contactName = contact?.name?.trim() ?? '';
     const contactEmail = contact?.emails[0]?.trim() ?? '';
@@ -60,11 +59,6 @@ export const PaymentForm = ({
     const addressOptions = billingAddressOptions(contactName, {
         country: contact?.address?.country?.trim() ?? '',
     });
-
-    const onLoadError = (formName: 'payment' | 'address') => () => {
-        setLoadingError(STRIPE_LOAD_ERROR);
-        logRocketEvent(CustomEvents.STRIPE_FORM_LOADING_FAILED, { formName });
-    };
 
     const handleSubmit = async () => {
         if (!stripe || !elements) {
@@ -137,9 +131,9 @@ export const PaymentForm = ({
         <>
             <DialogContent sx={{ overflowY: 'scroll' }}>
                 <Stack spacing={2}>
-                    {loadingError ? (
+                    {loadError ? (
                         <AlertBox short severity="error">
-                            {loadingError}
+                            {STRIPE_LOAD_ERROR}
                         </AlertBox>
                     ) : null}
 
@@ -175,8 +169,10 @@ export const PaymentForm = ({
                                     theme.transitions.create('opacity'),
                             }}
                         >
-                            <Typography>{contactName}</Typography>
-                            <Typography sx={{ color: 'text.secondary' }}>
+                            <Typography sx={{ fontWeight: 700, fontSize: 16 }}>
+                                {contactName}
+                            </Typography>
+                            <Typography sx={{ color: 'text.disabled' }}>
                                 {contactAddress}
                             </Typography>
                         </Box>
@@ -197,12 +193,12 @@ export const PaymentForm = ({
                     {useDifferentAddress ? (
                         <AddressElement
                             options={addressOptions}
-                            onLoadError={onLoadError('address')}
+                            onLoadError={() => onLoadError('address')}
                         />
                     ) : null}
 
                     <PaymentElement
-                        onLoadError={onLoadError('payment')}
+                        onLoadError={() => onLoadError('payment')}
                         options={{
                             // Billing details come from the contact or the
                             // address above, and are passed on confirm.
@@ -232,10 +228,7 @@ export const PaymentForm = ({
                         {error}
                     </Typography>
                 ) : null}
-                <Button
-                    onClick={handleSubmit}
-                    disabled={Boolean(loading || loadingError)}
-                >
+                <Button onClick={handleSubmit} disabled={loading || loadError}>
                     {loading ? <CircularProgress size={15} /> : 'Submit'}
                 </Button>
             </DialogActions>

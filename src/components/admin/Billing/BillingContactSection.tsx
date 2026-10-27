@@ -1,6 +1,13 @@
 import { useState } from 'react';
 
-import { Button, Chip, Skeleton, Stack, Typography } from '@mui/material';
+import {
+    Button,
+    Chip,
+    Divider,
+    Skeleton,
+    Stack,
+    Typography,
+} from '@mui/material';
 
 import { BillingContactDialog } from 'src/components/admin/Billing/BillingContactDialog';
 import { TaxExemptionNote } from 'src/components/admin/Billing/TaxExemptionNote';
@@ -66,6 +73,7 @@ export function BillingContactSection({ canEdit }: { canEdit: boolean }) {
                 <Stack
                     direction="row"
                     useFlexGap
+                    divider={<Divider orientation="vertical" flexItem />}
                     sx={{
                         flex: 1,
                         minWidth: 0,
@@ -84,41 +92,46 @@ export function BillingContactSection({ canEdit }: { canEdit: boolean }) {
                                 : `Someone who can edit billing for ${tenant} can add the name and address shown on invoices.`}
                         </Typography>
                     ) : (
-                        <>
-                            {contact?.name ? (
+                        // An array, so the Stack places a divider between the parts that are present.
+                        [
+                            contact?.name ? (
                                 <Typography
+                                    key="name"
                                     sx={{
-                                        fontWeight: 500,
+                                        fontWeight: 700,
+                                        fontSize: 16,
                                         overflowWrap: 'anywhere',
                                     }}
                                 >
                                     {contact.name}
                                 </Typography>
-                            ) : null}
-                            {contact?.emails[0] ? (
+                            ) : null,
+                            contact?.emails[0] ? (
                                 <Typography
-                                    sx={{
-                                        color: 'text.secondary',
-                                        overflowWrap: 'anywhere',
-                                    }}
+                                    key="email"
+                                    sx={{ overflowWrap: 'anywhere' }}
                                 >
                                     {contact.emails[0]}
                                 </Typography>
-                            ) : null}
-                            {address ? (
-                                <Typography sx={{ color: 'text.secondary' }}>
+                            ) : null,
+                            address ? (
+                                <Typography
+                                    key="address"
+                                    sx={{ color: 'text.disabled' }}
+                                >
                                     {address}
                                 </Typography>
-                            ) : null}
-                            {status === 'incomplete' ? (
+                            ) : null,
+                            status === 'incomplete' ? (
                                 <Chip
+                                    key="missing"
                                     size="small"
                                     color="warning"
                                     variant="outlined"
                                     label={`Missing ${missing}`}
                                 />
-                            ) : null}
-                        </>
+                            ) : null,
+                        ]
                     )}
                 </Stack>
 

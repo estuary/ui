@@ -1,7 +1,7 @@
 import type { SxProps, Theme } from '@mui/material';
 import type { BillingContact } from 'src/utils/billing-contact-utils';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import useConstant from 'use-constant';
 
 import {
@@ -28,9 +28,8 @@ import {
     stripeFieldBackgroundDark,
     useStripeAppearance,
 } from 'src/components/admin/Billing/stripe';
+import { useStripeLoadError } from 'src/components/admin/Billing/useStripeLoadError';
 import AlertBox from 'src/components/shared/AlertBox';
-import { logRocketEvent } from 'src/services/shared';
-import { CustomEvents } from 'src/services/types';
 import {
     fromStripeAddress,
     getContactStatus,
@@ -48,10 +47,7 @@ interface BillingContactDialogProps {
     onSaved: () => void;
 }
 
-type BillingContactFormProps = Omit<BillingContactDialogProps, 'open'> & {
-    saving: boolean;
-    setSaving: (saving: boolean) => void;
-};
+type BillingContactFormProps = Omit<BillingContactDialogProps, 'open'>;
 
 // Splits typed or pasted text like "ap@acme.co, pay@acme.co" into addresses.
 const splitEmails = (text: string) => text.split(/[\s,;]+/).filter(Boolean);
@@ -117,25 +113,15 @@ export function BillingContactDialog({
     ...formProps
 }: BillingContactDialogProps) {
     const appearance = useStripeAppearance();
-    const [saving, setSaving] = useState(false);
 
     return (
-        <Dialog
-            open={open}
-            onClose={saving ? undefined : formProps.onClose}
-            maxWidth="sm"
-            fullWidth
-            data-private
-        >
+        // No onClose: Escape or a click outside would discard the entered contact, so only Cancel closes it.
+        <Dialog open={open} maxWidth="sm" fullWidth data-private>
             <Elements
                 stripe={getStripe()}
                 options={{ appearance, loader: 'auto' }}
             >
-                <BillingContactForm
-                    {...formProps}
-                    saving={saving}
-                    setSaving={setSaving}
-                />
+                <BillingContactForm {...formProps} />
             </Elements>
         </Dialog>
     );
@@ -145,13 +131,12 @@ function BillingContactForm({
     tenant,
     contact,
     mode,
-    saving,
-    setSaving,
     onClose,
     onSaved,
 }: BillingContactFormProps) {
     const elements = useElements();
     const [, setBillingContact] = useMutation(SET_BILLING_CONTACT);
+    const [saving, setSaving] = useState(false);
 
     const [email, setEmail] = useState(contact?.emails[0] ?? '');
     const [additionalEmails, setAdditionalEmails] = useState(
@@ -160,17 +145,7 @@ function BillingContactForm({
     const [additionalInput, setAdditionalInput] = useState('');
     const [showEmailError, setShowEmailError] = useState(false);
     const [saveError, setSaveError] = useState<string | null>(null);
-    const [loadError, setLoadError] = useState(false);
-
-    // A failed Stripe.js load never mounts the address form, so its onLoadError never fires.
-    useEffect(() => {
-        void getStripe().catch(() => {
-            setLoadError(true);
-            logRocketEvent(CustomEvents.STRIPE_FORM_LOADING_FAILED, {
-                formName: 'billingContact',
-            });
-        });
-    }, []);
+    const { loadError, onLoadError } = useStripeLoadError();
 
     const emailError = showEmailError ? validateBillingEmail(email) : null;
 
@@ -217,7 +192,7 @@ function BillingContactForm({
             });
             if (result.error) {
                 setSaveError(
-                    result.error?.graphQLErrors[0]?.message ??
+                    result.error.graphQLErrors[0]?.message ??
                         'Your entries are still here. Try again in a moment.'
                 );
                 return;
@@ -266,13 +241,7 @@ function BillingContactForm({
 
                     <AddressElement
                         options={addressOptions}
-                        onLoadError={() => {
-                            setLoadError(true);
-                            logRocketEvent(
-                                CustomEvents.STRIPE_FORM_LOADING_FAILED,
-                                { formName: 'billingContact' }
-                            );
-                        }}
+                        onLoadError={() => onLoadError('billingContact')}
                     />
 
                     <TextField
