@@ -14,6 +14,7 @@ import useGlobalSearchParams, {
 import { logRocketEvent } from 'src/services/shared';
 import { BASE_ERROR } from 'src/services/supabase';
 import { useEndpointConfigStore } from 'src/stores/EndpointConfig/Store';
+import { useSecretsStore_hydrate } from 'src/stores/Secrets/hooks';
 import { getEndpointConfig } from 'src/utils/connector-utils';
 import { configCanBeEmpty } from 'src/utils/misc-utils';
 import { parseEncryptedEndpointConfig } from 'src/utils/sops-utils';
@@ -59,6 +60,7 @@ const useHydrateEndpointConfigDependentState = () => {
     const setPublishedEndpointConfig = useEndpointConfigStore(
         (state) => state.setPublishedEndpointConfig
     );
+    const hydrateSecrets = useSecretsStore_hydrate();
 
     const hydrateEndpointConfigDependentState = async (
         draftId: string,
@@ -100,6 +102,8 @@ const useHydrateEndpointConfigDependentState = () => {
         setPreviousEndpointConfig(endpointConfig);
 
         setEndpointConfig(endpointConfig);
+
+        hydrateSecrets(data[0].spec?.secrets ?? {});
 
         return { error: null };
     };
