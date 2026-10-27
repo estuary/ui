@@ -1,7 +1,7 @@
 import type { SxProps, Theme } from '@mui/material';
 import type { BillingContact } from 'src/utils/billing-contact-utils';
 
-import { useEffect, useId, useRef, useState } from 'react';
+import { useId, useState } from 'react';
 import useConstant from 'use-constant';
 
 import {
@@ -121,8 +121,6 @@ function BillingContactForm({
 }: BillingContactFormProps) {
     const elements = useElements();
     const emailInputId = useId();
-    const contentRef = useRef<HTMLDivElement>(null);
-    const fieldsRef = useRef<HTMLDivElement>(null);
     const [, setBillingContact] = useMutation(SET_BILLING_CONTACT);
     const [saving, setSaving] = useState(false);
 
@@ -135,24 +133,6 @@ function BillingContactForm({
     const [showEmailError, setShowEmailError] = useState(false);
     const [saveError, setSaveError] = useState<string | null>(null);
     const { loadError, onLoadError } = useStripeLoadError();
-    const previousEmailCount = useRef(emails.length);
-
-    useEffect(() => {
-        const addedEmails = emails.length > previousEmailCount.current;
-        previousEmailCount.current = emails.length;
-        const content = contentRef.current;
-        const fields = fieldsRef.current;
-        if (!addedEmails || !content || !fields) return;
-
-        const scrollToBottom = () => {
-            content.scrollTop = content.scrollHeight;
-        };
-        scrollToBottom();
-        // Follow the added rows as they expand
-        const observer = new ResizeObserver(scrollToBottom);
-        observer.observe(fields);
-        return () => observer.disconnect();
-    }, [emails.length]);
 
     const duplicateEmail = showEmailError
         ? splitEmails(emailInput).find((value) =>
@@ -275,8 +255,8 @@ function BillingContactForm({
                 </Stack>
             </DialogTitle>
 
-            <DialogContent ref={contentRef}>
-                <Stack ref={fieldsRef} spacing={2} sx={{ pt: 1 }}>
+            <DialogContent>
+                <Stack spacing={2} sx={{ pt: 1 }}>
                     <AddressElement
                         options={addressOptions}
                         onLoadError={() => onLoadError('billingContact')}
