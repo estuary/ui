@@ -58,14 +58,13 @@ const splitEmails = (text: string) => text.split(/[\s,;]+/).filter(Boolean);
 const uniqueEmails = (emails: string[]) =>
     uniqBy(emails, (email) => email.toLowerCase());
 
-// Match the Address Element's labels and inputs, including the multi-email field.
+// Match the Address Element's input styling for the email TextField.
 const emailFieldSx: SxProps<Theme> = (theme) => {
     const isDark = theme.palette.mode === 'dark';
-    const color = isDark ? '#fff' : '#30313d';
 
     return {
         '& .MuiOutlinedInput-root': {
-            color,
+            'color': 'text.primary',
             'backgroundColor': isDark ? stripeFieldBackgroundDark : '#fff',
             'borderRadius': 3,
             'fontSize': '16px',
@@ -269,16 +268,13 @@ function BillingContactForm({
                         <Typography
                             component="label"
                             htmlFor={emailInputId}
-                            sx={(theme) => ({
+                            sx={{
                                 mb: 1,
-                                color:
-                                    theme.palette.mode === 'dark'
-                                        ? '#fff'
-                                        : '#30313d',
+                                color: 'text.primary',
                                 fontSize: '0.93rem',
                                 fontWeight: 400,
                                 lineHeight: 1.15,
-                            })}
+                            }}
                         >
                             Billing emails
                         </Typography>

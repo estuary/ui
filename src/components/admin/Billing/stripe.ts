@@ -46,10 +46,7 @@ export function useStripeAppearance(): Appearance {
         variables: {
             colorPrimary: theme.palette.primary.main,
             fontFamily: theme.typography.fontFamily,
-            borderRadius:
-                typeof theme.shape.borderRadius === 'number'
-                    ? `${theme.shape.borderRadius * 3}px`
-                    : `calc(3 * ${theme.shape.borderRadius})`,
+            borderRadius: '6px',
             focusBoxShadow: 'none',
             focusOutline: `2px solid ${theme.palette.primary.main}`,
         },

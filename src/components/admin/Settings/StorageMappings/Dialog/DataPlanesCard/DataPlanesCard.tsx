@@ -86,7 +86,7 @@ export function DataPlanesCard({
                     items={selectedDps}
                     onChange={onChange}
                     renderLabel={toPresentableName}
-                    renderKey={(dp) => dp.name}
+                    getKey={(dp) => dp.name}
                     renderBody={(dp) => (
                         <Typography
                             variant="caption"

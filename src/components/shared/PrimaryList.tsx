@@ -2,7 +2,6 @@ import type { IconButtonProps, SxProps, Theme } from '@mui/material';
 import type { ReactNode } from 'react';
 
 import { useEffect, useState } from 'react';
-import useResizeObserver from 'use-resize-observer';
 
 import { Box, Collapse, IconButton, Stack, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
@@ -19,7 +18,7 @@ interface PrimaryListProps<T> {
     sx?: SxProps<Theme>;
     renderLabel: (item: T) => string;
     // Keys must be unique and stable across reordering. Defaults to renderLabel.
-    renderKey?: (item: T) => string;
+    getKey?: (item: T) => string;
     renderBody?: (item: T, isPrimary: boolean) => ReactNode;
 }
 
@@ -30,7 +29,7 @@ export function PrimaryList<T>({
     onChange,
     disabled = false,
     renderLabel,
-    renderKey = renderLabel,
+    getKey = renderLabel,
     renderBody,
     sx,
 }: PrimaryListProps<T>) {
@@ -40,13 +39,11 @@ export function PrimaryList<T>({
 
     if (previous !== items) {
         setPrevious(items);
-        const previousKeys = new Set(previous.map(renderKey));
-        const nextKeys = new Set(items.map(renderKey));
+        const previousKeys = new Set(previous.map(getKey));
+        const nextKeys = new Set(items.map(getKey));
         if (removing !== null && !nextKeys.has(removing)) setRemoving(null);
-        const added = items.filter(
-            (item) => !previousKeys.has(renderKey(item))
-        );
-        if (added.length > 0) setIncoming(new Set(added.map(renderKey)));
+        const added = items.filter((item) => !previousKeys.has(getKey(item)));
+        if (added.length > 0) setIncoming(new Set(added.map(getKey)));
     }
 
     useEffect(() => {
@@ -59,18 +56,15 @@ export function PrimaryList<T>({
 
     const finishRemoval = () => {
         if (removing === null) return;
-        onChange(items.filter((item) => renderKey(item) !== removing));
+        onChange(items.filter((item) => getKey(item) !== removing));
         setRemoving(null);
     };
 
     return (
-        <StyledFlipper flipKey={JSON.stringify(items.map(renderKey))} sx={sx}>
-            {items.map((item) => {
-                const key = renderKey(item);
+        <StyledFlipper flipKey={JSON.stringify(items.map(getKey))} sx={sx}>
+            {items.map((item, index) => {
+                const key = getKey(item);
                 const label = renderLabel(item);
-                const index = items.findIndex(
-                    (entry) => renderKey(entry) === key
-                );
                 const exiting = removing === key;
                 const isPrimary = index === 0;
                 const visible = !exiting && !incoming.has(key);
@@ -95,13 +89,10 @@ export function PrimaryList<T>({
                                     primary={isPrimary}
                                     disabled={actionsDisabled}
                                     onSelectPrimary={() => {
-                                        if (actionsDisabled || index < 0)
-                                            return;
                                         onChange([
                                             items[index],
                                             ...items.filter(
-                                                (entry) =>
-                                                    renderKey(entry) !== key
+                                                (_, i) => i !== index
                                             ),
                                         ]);
                                     }}
@@ -109,11 +100,7 @@ export function PrimaryList<T>({
                                 <RemoveButton
                                     aria-label={`Remove ${label}`}
                                     disabled={actionsDisabled}
-                                    onClick={() => {
-                                        if (actionsDisabled || index < 0)
-                                            return;
-                                        setRemoving(key);
-                                    }}
+                                    onClick={() => setRemoving(key)}
                                 />
                             </Stack>
                         </Collapse>
@@ -127,16 +114,9 @@ export function PrimaryList<T>({
 function RemoveButton(
     props: Pick<IconButtonProps, 'aria-label' | 'disabled' | 'onClick'>
 ) {
-    const [button, setButton] = useState<HTMLButtonElement | null>(null);
-    const { height } = useResizeObserver<HTMLElement>({
-        ref: button?.parentElement ?? undefined,
-        box: 'border-box',
-    });
-
     return (
         <IconButton
             {...props}
-            ref={setButton}
             size="small"
             sx={{
                 'bgcolor': 'background.default',
@@ -145,7 +125,7 @@ function RemoveButton(
                 'borderBottomLeftRadius': 0,
                 'alignSelf': 'stretch',
                 'flexShrink': 0,
-                'width': height,
+                'width': (theme) => theme.spacing(5),
                 '&.Mui-disabled': {
                     bgcolor: 'background.default',
                     color: 'action.active',
@@ -157,6 +137,9 @@ function RemoveButton(
     );
 }
 
+function starColor(alpha: number) {
+    return `rgba(245, 197, 24, ${alpha})`;
+}
 interface RowProps {
     label: string;
     body?: ReactNode;
@@ -199,7 +182,7 @@ function Row({ label, body, primary, onSelectPrimary, disabled }: RowProps) {
                         component="span"
                         sx={{
                             display: 'inline-flex',
-                            color: '#f5c518',
+                            color: starColor(1),
                             // Match the small IconButton's padding on other rows.
                             p: '5px',
                             flexShrink: 0,
@@ -226,7 +209,7 @@ function Row({ label, body, primary, onSelectPrimary, disabled }: RowProps) {
                                 bgcolor: 'transparent',
                             },
                             '&:hover svg': {
-                                fill: 'rgba(245, 197, 24, 0.2)',
+                                fill: starColor(0.2),
                             },
                         }}
                     >
