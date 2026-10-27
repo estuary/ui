@@ -1,12 +1,39 @@
 import type { Preview } from '@storybook/react-vite';
+import type { ReactNode } from 'react';
 
-import ThemeProvider from '../src/context/Theme';
+import { useEffect } from 'react';
+
+import ThemeProvider, { useColorMode } from '../src/context/Theme';
+
+function StoryColorMode({
+    mode,
+    children,
+}: {
+    mode: string;
+    children: ReactNode;
+}) {
+    const { colorMode, toggleColorMode } = useColorMode();
+
+    useEffect(() => {
+        if (colorMode !== mode) toggleColorMode();
+    }, [colorMode, mode, toggleColorMode]);
+
+    return <>{children}</>;
+}
 
 const preview: Preview = {
+    globalTypes: {
+        colorMode: {
+            description: 'Dashboard color mode',
+        },
+    },
+    initialGlobals: { colorMode: 'light' },
     decorators: [
-        (Story) => (
+        (Story, context) => (
             <ThemeProvider>
-                <Story />
+                <StoryColorMode mode={context.globals.colorMode}>
+                    <Story />
+                </StoryColorMode>
             </ThemeProvider>
         ),
     ],
