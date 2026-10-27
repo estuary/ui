@@ -16,7 +16,10 @@ import type {
     TargetNamingModel,
     TargetNamingStrategy,
 } from 'src/types';
-import type { MaterializationBuiltBinding } from 'src/types/schemaModels';
+import type {
+    MaterializationBuiltBinding,
+    SecretsStanza,
+} from 'src/types/schemaModels';
 
 import { isBoolean, isEmpty, isEqual, omit } from 'lodash';
 
@@ -30,6 +33,7 @@ import {
     setFieldsStanzaRecommended,
 } from 'src/utils/entity-utils';
 import { hasLength } from 'src/utils/misc-utils';
+import { setSecretsStanza } from 'src/utils/secrets-utils';
 
 // This is the soft limit we recommend to users
 export const MAX_BINDINGS = 300;
@@ -132,6 +136,7 @@ export const generateTaskSpec = (
         defaultFieldsRecommended?: boolean;
         targetNamingModel?: TargetNamingModel;
         targetNamingStrategy?: TargetNamingStrategy | null;
+        secrets?: SecretsStanza;
     }
 ) => {
     const draftSpec = isEmpty(existingTaskData)
@@ -146,6 +151,8 @@ export const generateTaskSpec = (
         : 'connector';
 
     draftSpec.endpoint = { [endpointProp]: endpointConfig };
+
+    setSecretsStanza(draftSpec, options.secrets);
 
     if (!isEmpty(resourceConfigs) && !isEmpty(bindings)) {
         const collectionNameProp = getCollectionNameProp(entityType);
@@ -358,7 +365,8 @@ export const modifyExistingCaptureDraftSpec = async (
     resourceConfig: ResourceConfigDictionary,
     existingTaskData: DraftSpecsExtQuery_ByCatalogName | null,
     resourceConfigServerUpdateRequired: boolean,
-    bindings: Bindings
+    bindings: Bindings,
+    secrets?: SecretsStanza
 ): Promise<CallSupabaseResponse<any>> => {
     const draftSpec = generateTaskSpec(
         'capture',
@@ -370,6 +378,7 @@ export const modifyExistingCaptureDraftSpec = async (
         {
             fullSource: null,
             sourceCaptureDefinition: null,
+            secrets,
         }
     );
 

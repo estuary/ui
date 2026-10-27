@@ -2,7 +2,6 @@ import type { Entity } from 'src/types';
 
 import { useCallback, useMemo } from 'react';
 
-import useDiscoverConfigEncrypt from 'src/components/capture/useCaptureConfigEncrypt';
 import useDiscoverDraftUpdate from 'src/components/capture/useCaptureDraftUpdate';
 import useDiscoverStartDiscovery from 'src/components/capture/useDiscoverStartDiscovery';
 import {
@@ -11,6 +10,7 @@ import {
     useEditorStore_resetState,
     useEditorStore_setCatalogName,
 } from 'src/components/editor/Store/hooks';
+import { usePrepareEndpointConfig } from 'src/components/shared/Entity/hooks/usePrepareEndpointConfig';
 import { useEntityWorkflow_Editing } from 'src/context/Workflow';
 import useEntityNameSuffix from 'src/hooks/useEntityNameSuffix';
 import { useBinding_resourceConfigErrorsExist } from 'src/stores/Binding/hooks';
@@ -37,7 +37,7 @@ function useDiscoverCapture(
     }
 ) {
     const draftUpdate = useDiscoverDraftUpdate(options);
-    const configEncrypt = useDiscoverConfigEncrypt();
+    const prepareEndpointConfig = usePrepareEndpointConfig();
     const startDiscovery = useDiscoverStartDiscovery(entityType);
 
     const isEdit = useEntityWorkflow_Editing();
@@ -99,16 +99,15 @@ function useDiscoverCapture(
         resetEditorState(true);
         setCatalogName(processedEntityName);
 
-        const encryptedEndpointConfig = await configEncrypt(
+        const reponse = await prepareEndpointConfig(
             serverUpdateRequired ? endpointConfigData : serverEndpointConfigData
         );
-        if (encryptedEndpointConfig === false) {
+        if (reponse === false) {
             return false;
         }
 
-        const draftUpdateSuccess = await draftUpdate(
-            encryptedEndpointConfig.data
-        );
+        const endpointConfig = reponse.data;
+        const draftUpdateSuccess = await draftUpdate(endpointConfig);
         if (!draftUpdateSuccess) {
             return false;
         }
@@ -116,7 +115,7 @@ function useDiscoverCapture(
         if (options?.initiateRediscovery || options?.initiateDiscovery) {
             const discoveryStartSuccess = await startDiscovery(
                 processedEntityName,
-                encryptedEndpointConfig.data,
+                endpointConfig,
                 options.initiateRediscovery,
                 options.updateOnly,
                 dataPlaneName?.whole
@@ -138,7 +137,7 @@ function useDiscoverCapture(
             return false;
         }
     }, [
-        configEncrypt,
+        prepareEndpointConfig,
         dataPlaneName?.whole,
         detailsFormsHasErrors,
         draftUpdate,
