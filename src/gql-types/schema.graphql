@@ -337,7 +337,7 @@ input BillingAddressInput {
 
 type BillingContact {
   address: BillingAddress
-  email: String
+  emails: [String!]!
   name: String
 }
 
@@ -1930,7 +1930,14 @@ type MutationRoot {
   commands, and their output.
   """
   sandboxReset(catalogName: Name!): Boolean!
-  setBillingContact(address: BillingAddressInput!, email: String!, name: String!, tenant: String!): SetBillingContactPayload!
+  setBillingContact(
+    address: BillingAddressInput!
+
+    """Email addresses for invoice delivery."""
+    emails: [String!]!
+    name: String!
+    tenant: String!
+  ): SetBillingContactPayload!
   setBillingPaymentMethod(paymentMethodId: String!, tenant: String!): BillingPaymentMethodPayload!
 
   """

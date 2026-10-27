@@ -1,24 +1,27 @@
-import type { Stripe } from '@stripe/stripe-js';
-
 import { useState } from 'react';
 
-import { Box, Button, Dialog, DialogTitle, useTheme } from '@mui/material';
+import { Box, Button, Dialog, DialogTitle } from '@mui/material';
 
 import { usePostHog } from '@posthog/react';
 import { Elements } from '@stripe/react-stripe-js';
 import { Plus } from 'iconoir-react';
 
+import { BillingContactDialog } from 'src/components/admin/Billing/BillingContactDialog';
 import { PaymentForm } from 'src/components/admin/Billing/CapturePaymentMethod';
-import { stripePaymentFormFieldBackgroundDark } from 'src/context/Theme';
+import {
+    getStripe,
+    useStripeAppearance,
+} from 'src/components/admin/Billing/stripe';
+import { useBillingContact } from 'src/hooks/billing/useBillingContact';
 import { fireGtmEvent } from 'src/services/gtm';
+import { getContactStatus } from 'src/utils/billing-contact-utils';
 
 interface Props {
-    // The add-payment route opens the form on arrival.
+    // The add-payment route starts adding a payment method on arrival.
     autoOpen: boolean;
     setupIntentSecret?: string;
     loading: boolean;
     onAdded: (id?: string) => Promise<void>;
-    stripePromise: Promise<Stripe | null>;
     tenant: string;
 }
 
@@ -27,15 +30,19 @@ function AddPaymentMethod({
     onAdded,
     loading,
     setupIntentSecret,
-    stripePromise,
     tenant,
 }: Props) {
     const [show, setOpen] = useState(autoOpen);
     const postHog = usePostHog();
-    const theme = useTheme();
-    const isDark = theme.palette.mode === 'dark';
+    const appearance = useStripeAppearance();
+    const { contact, isLoading: contactLoading } = useBillingContact(tenant);
 
-    const flatField = { border: 'none', boxShadow: 'none' };
+    // Adding a payment method starts with the billing contact when it is
+    // incomplete, once the contact loads.
+    const ready = show && !contactLoading;
+    const complete = getContactStatus(contact) === 'complete';
+    const contactOpen = ready && !complete;
+    const paymentOpen = ready && complete;
 
     return (
         <>
@@ -53,63 +60,36 @@ function AddPaymentMethod({
                 </Button>
             </Box>
 
+            <BillingContactDialog
+                open={contactOpen}
+                tenant={tenant}
+                contact={contact}
+                mode="continue"
+                onClose={() => setOpen(false)}
+                // Saving completes the contact, which opens the payment form.
+                onSaved={() => undefined}
+            />
+
             <Dialog
                 maxWidth="sm"
                 fullWidth
                 sx={{ padding: 2 }}
-                open={show}
+                open={paymentOpen}
                 onClose={() => setOpen(false)}
                 data-private
             >
                 <DialogTitle>Add a payment method</DialogTitle>
                 {setupIntentSecret ? (
                     <Elements
-                        stripe={stripePromise}
+                        stripe={getStripe()}
                         options={{
                             clientSecret: setupIntentSecret,
                             loader: 'auto',
-                            appearance: {
-                                theme: isDark ? 'night' : 'stripe',
-                                variables: {
-                                    colorPrimary: theme.palette.primary.main,
-                                    fontFamily: theme.typography.fontFamily,
-                                    borderRadius: `6px`,
-                                    focusBoxShadow: 'none',
-                                    focusOutline: 'none',
-                                },
-                                ...(isDark && {
-                                    rules: {
-                                        '.Input': {
-                                            ...flatField,
-                                            backgroundColor:
-                                                stripePaymentFormFieldBackgroundDark,
-                                        },
-                                        '.Tab': {
-                                            ...flatField,
-                                            backgroundColor:
-                                                stripePaymentFormFieldBackgroundDark,
-                                        },
-                                        '.Tab--focused': {
-                                            borderColor:
-                                                theme.palette.primary.main,
-                                        },
-                                        '.Block': {
-                                            ...flatField,
-                                            padding: '14px',
-                                            backgroundColor:
-                                                stripePaymentFormFieldBackgroundDark,
-                                        },
-                                        '.PickerItem': {
-                                            ...flatField,
-                                            backgroundColor:
-                                                stripePaymentFormFieldBackgroundDark,
-                                        },
-                                    },
-                                }),
-                            },
+                            appearance,
                         }}
                     >
                         <PaymentForm
+                            contact={contact}
                             onSuccess={async (id) => {
                                 await onAdded(id);
                                 if (id) {
