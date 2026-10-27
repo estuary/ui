@@ -7,9 +7,10 @@ import {
     waitFor,
     within,
 } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { ErrorBoundary } from 'react-error-boundary';
 import { IntlProvider } from 'react-intl';
-import { beforeEach, expect, test, vi } from 'vitest';
+import { afterEach, beforeEach, expect, test, vi } from 'vitest';
 
 import { BillingContactSection } from 'src/components/admin/Billing/BillingContactSection';
 import { STRIPE_LOAD_ERROR } from 'src/components/admin/Billing/stripe';
@@ -68,6 +69,24 @@ const openEditDialog = async () => {
 };
 
 beforeEach(() => {
+    vi.stubGlobal(
+        'ResizeObserver',
+        class {
+            observe = vi.fn();
+            unobserve = vi.fn();
+            disconnect = vi.fn();
+        }
+    );
+    vi.stubGlobal('matchMedia', (query: string) => ({
+        matches: false,
+        media: query,
+        onchange: null,
+        addListener: vi.fn(),
+        removeListener: vi.fn(),
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+        dispatchEvent: vi.fn(),
+    }));
     dropFetchSignals();
     contact = completeContact;
     contactReads = 0;
@@ -81,6 +100,8 @@ beforeEach(() => {
         })
     );
 });
+
+afterEach(() => vi.unstubAllGlobals());
 
 test.each([
     {
@@ -162,9 +183,22 @@ test('saves edits and shows them from the cache', async () => {
         ...austin,
         value: { ...austin.value, name: ' New Co ' },
     });
-    fireEvent.change(within(dialog).getByLabelText('Billing email'), {
+    fireEvent.click(
+        within(dialog).getByRole('button', {
+            name: `Remove ${completeContact.emails[0]}`,
+        })
+    );
+    await waitFor(() =>
+        expect(
+            within(dialog).queryByRole('button', {
+                name: `Remove ${completeContact.emails[0]}`,
+            })
+        ).toBeNull()
+    );
+    fireEvent.change(within(dialog).getByLabelText(/^Billing emails/), {
         target: { value: ' ap@newco.com ' },
     });
+    fireEvent.blur(within(dialog).getByLabelText(/^Billing emails/));
     fireEvent.click(within(dialog).getByRole('button', { name: 'Save' }));
 
     await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
@@ -201,18 +235,30 @@ test('saves only a complete address and a valid email', async () => {
     await waitFor(() => expect(stripe.getValue).toHaveBeenCalledTimes(1));
 
     stripe.getValue.mockResolvedValue(austin);
-    fireEvent.change(within(dialog).getByLabelText('Billing email'), {
+    fireEvent.click(
+        within(dialog).getByRole('button', {
+            name: `Remove ${completeContact.emails[0]}`,
+        })
+    );
+    await waitFor(() =>
+        expect(
+            within(dialog).queryByRole('button', {
+                name: `Remove ${completeContact.emails[0]}`,
+            })
+        ).toBeNull()
+    );
+    fireEvent.change(within(dialog).getByLabelText(/^Billing emails/), {
         target: { value: 'a@b' },
     });
+    fireEvent.blur(within(dialog).getByLabelText(/^Billing emails/));
     fireEvent.click(save);
-    await within(dialog).findByText(
-        'Enter one valid email, like billing@company.com'
-    );
+    await within(dialog).findByText('Enter valid emails, like ap@company.com');
     expect(saves).toEqual([]);
 
-    fireEvent.change(within(dialog).getByLabelText('Billing email'), {
+    fireEvent.change(within(dialog).getByLabelText(/^Billing emails/), {
         target: { value: 'ap@acme.co' },
     });
+    fireEvent.blur(within(dialog).getByLabelText(/^Billing emails/));
     fireEvent.click(save);
     await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
     expect(saves.map((saved) => saved.emails)).toEqual([['ap@acme.co']]);
@@ -223,23 +269,39 @@ test('saves additional emails after the billing email', async () => {
     const saves = handleContactSaves();
     const dialog = await openEditDialog();
     const save = within(dialog).getByRole('button', { name: 'Save' });
-    const additional = within(dialog).getByLabelText(
-        'Additional billing emails'
+    const additional = within(dialog).getByPlaceholderText(
+        'Add additional emails...'
     );
     stripe.getValue.mockResolvedValue(austin);
 
     fireEvent.change(additional, { target: { value: 'pay@acme.co, oops' } });
     fireEvent.keyDown(additional, { key: 'Enter' });
     await within(dialog).findByText('Enter valid emails, like ap@company.com');
-    expect(within(dialog).getByText('pay@acme.co')).toBeTruthy();
+    expect(
+        await within(dialog).findByRole('button', {
+            name: 'Remove pay@acme.co',
+        })
+    ).toBeTruthy();
     fireEvent.click(save);
     await waitFor(() => expect(save.hasAttribute('disabled')).toBe(false));
     expect(saves).toEqual([]);
 
-    // Text left in the box is saved, and a duplicate only once.
+    // New addresses are added on blur, while duplicates stay in the input to fix.
     fireEvent.change(additional, {
         target: { value: 'AP@acme.co team@acme.co' },
     });
+    fireEvent.blur(additional);
+    expect(
+        within(dialog).getByText('AP@acme.co is already in the list')
+    ).toBeTruthy();
+    expect((additional as HTMLInputElement).value).toBe('AP@acme.co');
+    fireEvent.click(save);
+    await waitFor(() => expect(save.hasAttribute('disabled')).toBe(false));
+    expect(saves).toEqual([]);
+    fireEvent.change(additional, { target: { value: '' } });
+    expect(
+        within(dialog).queryByText('AP@acme.co is already in the list')
+    ).toBeNull();
     fireEvent.click(save);
     await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
     expect(saves.map((saved) => saved.emails)).toEqual([
@@ -247,6 +309,23 @@ test('saves additional emails after the billing email', async () => {
     ]);
     // The section shows only the billing email.
     expect(screen.getByText('billing@acme.co')).toBeTruthy();
+});
+
+test('cannot save without any emails', async () => {
+    contact = { ...completeContact, emails: [] };
+    const saves = handleContactSaves();
+    render(<BillingContactSection canEdit />, { wrapper });
+    await userEvent.click(
+        await screen.findByRole('button', { name: 'Finish' })
+    );
+    const dialog = await screen.findByRole('dialog');
+    stripe.getValue.mockResolvedValue(austin);
+
+    await userEvent.click(within(dialog).getByRole('button', { name: 'Save' }));
+
+    await within(dialog).findByText('Enter a billing email');
+    expect(saves).toEqual([]);
+    expect(screen.getByRole('dialog')).toBe(dialog);
 });
 
 test('waits for Stripe to load before saving', async () => {

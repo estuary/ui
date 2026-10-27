@@ -1,23 +1,25 @@
 import type { SxProps, Theme } from '@mui/material';
 import type { BillingContact } from 'src/utils/billing-contact-utils';
 
-import { useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import useConstant from 'use-constant';
 
 import {
-    Autocomplete,
+    Box,
     Button,
+    Collapse,
     Dialog,
     DialogActions,
     DialogContent,
     DialogTitle,
+    Divider,
     Stack,
     TextField,
     Typography,
 } from '@mui/material';
 
 import { AddressElement, Elements, useElements } from '@stripe/react-stripe-js';
-import { uniqBy } from 'lodash';
+import { partition, uniqBy } from 'lodash';
 import { useMutation } from 'urql';
 
 import { SET_BILLING_CONTACT } from 'src/api/gql/billing';
@@ -30,6 +32,7 @@ import {
 } from 'src/components/admin/Billing/stripe';
 import { useStripeLoadError } from 'src/components/admin/Billing/useStripeLoadError';
 import AlertBox from 'src/components/shared/AlertBox';
+import { PrimaryList } from 'src/components/shared/PrimaryList';
 import {
     fromStripeAddress,
     getContactStatus,
@@ -61,22 +64,10 @@ const emailFieldSx: SxProps<Theme> = (theme) => {
     const color = isDark ? '#fff' : '#30313d';
 
     return {
-        '& .MuiInputLabel-root': {
-            'position': 'static',
-            'transform': 'none',
-            'alignSelf': 'flex-start',
-            'maxWidth': '100%',
-            'mb': '4px',
-            color,
-            'fontSize': '0.93rem',
-            'lineHeight': 1.15,
-            '&.Mui-focused': { color },
-            '&.Mui-error': { color: theme.palette.error.main },
-        },
         '& .MuiOutlinedInput-root': {
             color,
             'backgroundColor': isDark ? stripeFieldBackgroundDark : '#fff',
-            'borderRadius': '6px',
+            'borderRadius': 3,
             'fontSize': '16px',
             'lineHeight': 1.15,
             'padding': '12px',
@@ -96,12 +87,6 @@ const emailFieldSx: SxProps<Theme> = (theme) => {
             '& .MuiOutlinedInput-input': {
                 height: 'auto',
                 padding: 0,
-            },
-            '&.MuiAutocomplete-inputRoot': {
-                'minHeight': isDark ? '42.4px' : '44.4px',
-                'padding': '8px 12px',
-                'gap': '4px',
-                '& .MuiAutocomplete-tag': { margin: 0 },
             },
         },
         '& .MuiFormHelperText-root': { mx: 0 },
@@ -135,29 +120,56 @@ function BillingContactForm({
     onSaved,
 }: BillingContactFormProps) {
     const elements = useElements();
+    const emailInputId = useId();
+    const contentRef = useRef<HTMLDivElement>(null);
+    const fieldsRef = useRef<HTMLDivElement>(null);
     const [, setBillingContact] = useMutation(SET_BILLING_CONTACT);
     const [saving, setSaving] = useState(false);
 
-    const [email, setEmail] = useState(contact?.emails[0] ?? '');
-    const [additionalEmails, setAdditionalEmails] = useState(
-        contact?.emails.slice(1) ?? []
+    const [emails, setEmails] = useState(() =>
+        uniqueEmails(
+            (contact?.emails ?? []).map((email) => email.trim()).filter(Boolean)
+        )
     );
-    const [additionalInput, setAdditionalInput] = useState('');
+    const [emailInput, setEmailInput] = useState('');
     const [showEmailError, setShowEmailError] = useState(false);
     const [saveError, setSaveError] = useState<string | null>(null);
     const { loadError, onLoadError } = useStripeLoadError();
+    const previousEmailCount = useRef(emails.length);
 
-    const emailError = showEmailError ? validateBillingEmail(email) : null;
+    useEffect(() => {
+        const addedEmails = emails.length > previousEmailCount.current;
+        previousEmailCount.current = emails.length;
+        const content = contentRef.current;
+        const fields = fieldsRef.current;
+        if (!addedEmails || !content || !fields) return;
 
-    // Text not yet turned into a chip is saved too.
-    const pendingEmails = splitEmails(additionalInput);
-    const emails = uniqueEmails(
-        [email.trim(), ...additionalEmails, ...pendingEmails].filter(Boolean)
-    );
-    const additionalProblem = pendingEmails.some(validateBillingEmail)
-        ? 'Enter valid emails, like ap@company.com'
+        const scrollToBottom = () => {
+            content.scrollTop = content.scrollHeight;
+        };
+        scrollToBottom();
+        // Follow the added rows as they expand
+        const observer = new ResizeObserver(scrollToBottom);
+        observer.observe(fields);
+        return () => observer.disconnect();
+    }, [emails.length]);
+
+    const duplicateEmail = showEmailError
+        ? splitEmails(emailInput).find((value) =>
+              emails.some(
+                  (email) => email.toLowerCase() === value.toLowerCase()
+              )
+          )
+        : undefined;
+    const emailError = showEmailError
+        ? duplicateEmail
+            ? `${duplicateEmail} is already in the list`
+            : emailInput || emails.some(validateBillingEmail)
+              ? 'Enter valid emails, like ap@company.com'
+              : emails.length === 0
+                ? 'Enter a billing email'
+                : null
         : null;
-    const additionalError = showEmailError ? additionalProblem : null;
 
     // Stripe applies option changes, and saving updates the contact while the
     // dialog closes, so keep the options it opened with.
@@ -167,6 +179,25 @@ function BillingContactForm({
             toStripeAddress(contact?.address)
         )
     );
+
+    // Enter and blur add new valid addresses; rejected text stays available to fix.
+    const addEmails = () => {
+        const entered = splitEmails(emailInput);
+        if (entered.length === 0) {
+            setEmailInput('');
+            return;
+        }
+        setShowEmailError(true);
+        const seen = new Set(emails.map((email) => email.toLowerCase()));
+        const [invalid, valid] = partition(entered, (email) => {
+            const key = email.toLowerCase();
+            if (validateBillingEmail(email) || seen.has(key)) return true;
+            seen.add(key);
+            return false;
+        });
+        setEmails((current) => uniqueEmails([...current, ...valid]));
+        setEmailInput(invalid.join(', '));
+    };
 
     const save = async () => {
         setSaveError(null);
@@ -178,8 +209,9 @@ function BillingContactForm({
             const address = await addressElement?.getValue();
             if (
                 !address?.complete ||
-                validateBillingEmail(email) ||
-                additionalProblem
+                emails.length === 0 ||
+                emails.some(validateBillingEmail) ||
+                emailInput
             ) {
                 return;
             }
@@ -213,16 +245,18 @@ function BillingContactForm({
     return (
         <>
             <DialogTitle component="div">
-                <Typography variant="h6" component="h2">
-                    Billing contact
-                </Typography>
-                <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                    {subtitle}
-                </Typography>
-            </DialogTitle>
-
-            <DialogContent>
-                <Stack spacing={2} sx={{ pt: 1 }}>
+                <Stack spacing={1}>
+                    <Stack>
+                        <Typography variant="h6" component="h2">
+                            Billing contact
+                        </Typography>
+                        <Typography
+                            variant="body2"
+                            sx={{ color: 'text.secondary' }}
+                        >
+                            {subtitle}
+                        </Typography>
+                    </Stack>
                     {saveError ? (
                         <AlertBox
                             short
@@ -238,76 +272,90 @@ function BillingContactForm({
                             {STRIPE_LOAD_ERROR}
                         </AlertBox>
                     ) : null}
+                </Stack>
+            </DialogTitle>
 
+            <DialogContent ref={contentRef}>
+                <Stack ref={fieldsRef} spacing={2} sx={{ pt: 1 }}>
                     <AddressElement
                         options={addressOptions}
                         onLoadError={() => onLoadError('billingContact')}
                     />
+                    <Box sx={{ py: 2 }}>
+                        <Divider />
+                    </Box>
 
-                    <TextField
-                        variant="outlined"
-                        sx={emailFieldSx}
-                        slotProps={{
-                            inputLabel: { shrink: true },
-                        }}
-                        label="Billing email"
-                        type="email"
-                        autoComplete="email"
-                        value={email}
-                        disabled={saving}
-                        onChange={(event) => setEmail(event.target.value)}
-                        error={Boolean(emailError)}
-                        helperText={
-                            emailError ??
-                            'Invoices and billing notices go to this address.'
-                        }
-                    />
+                    <Stack>
+                        <Typography
+                            component="label"
+                            htmlFor={emailInputId}
+                            sx={(theme) => ({
+                                mb: 1,
+                                color:
+                                    theme.palette.mode === 'dark'
+                                        ? '#fff'
+                                        : '#30313d',
+                                fontSize: '0.93rem',
+                                fontWeight: 400,
+                                lineHeight: 1.15,
+                            })}
+                        >
+                            Billing emails
+                        </Typography>
 
-                    <Autocomplete
-                        size="small"
-                        multiple
-                        freeSolo
-                        options={[]}
-                        value={additionalEmails}
-                        inputValue={additionalInput}
-                        disabled={saving}
-                        onInputChange={(_event, value) =>
-                            setAdditionalInput(value)
-                        }
-                        // Valid addresses become chips. Invalid ones stay in the text box to fix.
-                        onChange={(_event, values) => {
-                            const entered = values.flatMap(splitEmails);
-                            const invalid =
-                                entered.filter(validateBillingEmail);
-                            setAdditionalEmails(
-                                uniqueEmails(
-                                    entered.filter(
-                                        (value) => !validateBillingEmail(value)
-                                    )
-                                )
-                            );
-                            setAdditionalInput(invalid.join(', '));
-                            if (invalid.length > 0) {
-                                setShowEmailError(true);
-                            }
-                        }}
-                        renderInput={(params) => (
-                            <TextField
-                                {...params}
-                                variant="outlined"
-                                sx={emailFieldSx}
-                                slotProps={{
-                                    inputLabel: { shrink: true },
+                        <Collapse in={emails.length > 0} unmountOnExit>
+                            <PrimaryList
+                                sx={{ pb: 1 }}
+                                items={emails}
+                                onChange={(nextEmails) => {
+                                    setEmails(nextEmails);
+                                    setShowEmailError(false);
                                 }}
-                                label="Additional billing emails"
-                                error={Boolean(additionalError)}
-                                helperText={
-                                    additionalError ??
-                                    'Invoices also go to these addresses. Press Enter after each one.'
-                                }
+                                disabled={saving}
+                                renderLabel={(email) => email}
+                                renderBody={(_, isPrimary) => (
+                                    <Typography
+                                        variant="body2"
+                                        color="text.disabled"
+                                        sx={{ overflowWrap: 'anywhere' }}
+                                    >
+                                        {isPrimary
+                                            ? 'Receives invoices & billing notices'
+                                            : ''}
+                                    </Typography>
+                                )}
                             />
-                        )}
-                    />
+                        </Collapse>
+                        <TextField
+                            size="small"
+                            variant="outlined"
+                            sx={emailFieldSx}
+                            id={emailInputId}
+                            placeholder={
+                                emails.length === 0
+                                    ? 'Press enter to add more addresses'
+                                    : 'Add additional emails...'
+                            }
+                            value={emailInput}
+                            disabled={saving}
+                            onChange={(event) => {
+                                setEmailInput(event.target.value);
+                                setShowEmailError(false);
+                            }}
+                            onBlur={addEmails}
+                            onKeyDown={(event) => {
+                                if (
+                                    event.key === 'Enter' &&
+                                    !event.nativeEvent.isComposing
+                                ) {
+                                    event.preventDefault();
+                                    addEmails();
+                                }
+                            }}
+                            error={Boolean(emailError)}
+                            helperText={emailError ?? ' '}
+                        />
+                    </Stack>
                 </Stack>
             </DialogContent>
 

@@ -62,7 +62,7 @@ function CreateMappingWizardInner({
     } = useConnectionTest();
     const { getValues, formState, watch, setValue, reset } =
         useFormContext<StorageMappingFormData>();
-    const { append, remove, move } = useFieldArray({
+    const { append, replace } = useFieldArray({
         name: 'dataPlanes',
         rules: {
             required: 'At least one data plane is required',
@@ -117,17 +117,9 @@ function CreateMappingWizardInner({
                                       <CardWrapper>
                                           <DataPlanesCard
                                               dataPlanes={dataPlanes}
-                                              defaultDataPlane={
-                                                  dataPlanes.length > 0
-                                                      ? dataPlanes[0]
-                                                      : null
-                                              }
                                               allowPublicChecked={allowPublic}
                                               onSelect={append}
-                                              onRemove={remove}
-                                              onSelectDefault={(index) =>
-                                                  move(index, 0)
-                                              }
+                                              onChange={replace}
                                               onToggleAllowPublic={(value) =>
                                                   setValue('allowPublic', value)
                                               }
@@ -191,8 +183,7 @@ function CreateMappingWizardInner({
             append,
             handleComplete,
             initializeEndpoints,
-            move,
-            remove,
+            replace,
             setValue,
             closeDialog,
         ]
