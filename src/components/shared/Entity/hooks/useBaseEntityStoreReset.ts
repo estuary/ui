@@ -7,6 +7,7 @@ import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import { useEndpointConfigStore_reset } from 'src/stores/EndpointConfig/hooks';
 import { useFormStateStore_resetState } from 'src/stores/FormState/hooks';
 import { useSchemaEvolution_resetState } from 'src/stores/SchemaEvolution/hooks';
+import { useSecretsStore_resetState } from 'src/stores/Secrets/hooks';
 import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
 import { useTargetNaming_resetState } from 'src/stores/TargetNaming/hooks';
 import { useTransformationCreate_resetState } from 'src/stores/TransformationCreate/hooks';
@@ -25,6 +26,7 @@ function useBaseEntityStoreReset() {
     const resetEndpointConfigState = useEndpointConfigStore_reset();
     const resetFormState = useFormStateStore_resetState();
     const resetSchemaEvolutionState = useSchemaEvolution_resetState();
+    const resetSecretsState = useSecretsStore_resetState();
     const resetSourceCapture = useSourceCaptureStore(
         (state) => state.resetState
     );
@@ -39,6 +41,7 @@ function useBaseEntityStoreReset() {
         resetEditorStore();
         resetBindingsEditorStore();
         resetSchemaEvolutionState();
+        resetSecretsState();
         resetSourceCapture();
         resetTargetNaming();
         resetTransformationCreateState();
@@ -50,6 +53,7 @@ function useBaseEntityStoreReset() {
         resetEndpointConfigState,
         resetFormState,
         resetSchemaEvolutionState,
+        resetSecretsState,
         resetSourceCapture,
         resetTargetNaming,
         resetTransformationCreateState,
