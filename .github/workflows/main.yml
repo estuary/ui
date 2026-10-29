@@ -98,8 +98,11 @@ jobs:
     # The deploy waits on the same scan pull requests must pass, run again at
     # deploy time, so a vulnerability published since the pull request was
     # checked still stops it. dependency-scan.yml covers pull requests itself.
+    # Named apart from that workflow's required check: this job is skipped on
+    # pull requests, and a skipped check would satisfy a requirement it shares
+    # a name with.
     dependency-scan:
-        name: Dependency Scan
+        name: Pre-deploy Dependency Scan
         if: ${{ github.ref == 'refs/heads/main' }}
         uses: ./.github/workflows/dependency-scan.yml
         permissions:
