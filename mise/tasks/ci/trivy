@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+#MISE description="Fail on HIGH or CRITICAL vulnerabilities in the npm lockfile"
+
+# package-lock.json resolves every npm dependency of the app. Severity, exit
+# code and the ignore list come from trivy.yaml. Trivy leaves devDependencies
+# out of npm scans, so this covers the dependencies that ship in the bundle.
+exec trivy fs package-lock.json
