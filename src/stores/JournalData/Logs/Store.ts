@@ -9,6 +9,10 @@ import { devtools } from 'zustand/middleware';
 import produce from 'immer';
 
 import {
+    DEFAULT_LOG_LEVEL_FILTER,
+    logMatchesFilter,
+} from 'src/components/tables/Logs/shared';
+import {
     getInitialHydrationData,
     getStoreWithHydrationSettings,
 } from 'src/stores/extensions/Hydration';
@@ -46,6 +50,7 @@ const getReadyToRenderFlags = (
 const getInitialStateData = (): Pick<
     JournalDataLogsState,
     | 'allowFetchingMore'
+    | 'bytesScannedWithoutMatch'
     | 'documents'
     | 'fetchingMore'
     | 'lastCount'
@@ -60,6 +65,7 @@ const getInitialStateData = (): Pick<
     | 'tailNewLogs'
 > => ({
     allowFetchingMore: false,
+    bytesScannedWithoutMatch: 0,
     documents: null,
     fetchingMore: false,
     lastCount: -1,
@@ -81,6 +87,8 @@ const getInitialState = (
     ...getInitialStateData(),
     ...getInitialHydrationData(),
     ...getStoreWithHydrationSettings('JournalsData:Logs', set),
+
+    levelFilter: DEFAULT_LOG_LEVEL_FILTER,
 
     hydrate: async (docs, refresh, readStatus, error) => {
         if (!get().active) {
@@ -108,7 +116,7 @@ const getInitialState = (
 
     fetchMoreLogs: (option) => {
         if (!get().allowFetchingMore || !get().refresh || get().fetchingMore) {
-            return;
+            return false;
         }
 
         if (option === 'old' && !get().olderFinished) {
@@ -124,6 +132,8 @@ const getInitialState = (
                 endOffset: -1,
             });
         }
+
+        return true;
     },
 
     addNewDocuments: (data, error) => {
@@ -168,6 +178,13 @@ const getInitialState = (
                     if (error) {
                         state.lastFetchFailed = true;
                     } else {
+                        state.bytesScannedWithoutMatch = docs.some((doc) =>
+                            logMatchesFilter(doc.level, state.levelFilter)
+                        )
+                            ? 0
+                            : state.bytesScannedWithoutMatch +
+                              (state.oldestParsed - start);
+
                         // When fetching newer keep the previous first item in view
                         //  and then add the new to the start of the list
                         state.scrollToWhenDone = [docs.length + 1, 'start'];
@@ -202,6 +219,11 @@ const getInitialState = (
                     ];
                     state.documents = docs;
                     state.lastFetchFailed = false;
+                    state.bytesScannedWithoutMatch = docs.some((doc) =>
+                        logMatchesFilter(doc.level, state.levelFilter)
+                    )
+                        ? 0
+                        : end - start;
 
                     // When init we need to set both
                     state.oldestParsed = start;
@@ -257,6 +279,28 @@ const getInitialState = (
             }),
             false,
             'JournalsData:Logs: Tail new logs set'
+        );
+    },
+
+    setLevelFilter: (newState) => {
+        set(
+            produce((state: JournalDataLogsState) => {
+                state.levelFilter = newState;
+                // A new filter gets a fresh budget for scanning older logs
+                state.bytesScannedWithoutMatch = 0;
+            }),
+            false,
+            'JournalsData:Logs: Level filter set'
+        );
+    },
+
+    resetBytesScannedWithoutMatch: () => {
+        set(
+            produce((state: JournalDataLogsState) => {
+                state.bytesScannedWithoutMatch = 0;
+            }),
+            false,
+            'JournalsData:Logs: Bytes scanned without match reset'
         );
     },
 
