@@ -13,11 +13,13 @@ import {
     useEditorStore_setId,
 } from 'src/components/editor/Store/hooks';
 import useEntityWorkflowHelpers from 'src/components/shared/Entity/hooks/useEntityWorkflowHelpers';
+import { useSyncSecretsToDraft } from 'src/hooks/secrets/useSyncSecretsToDraft';
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import { useEndpointConfigStore_endpointConfig_data } from 'src/stores/EndpointConfig/hooks';
 import { useFormStateStore_setFormState } from 'src/stores/FormState/hooks';
+import { isDekafConnector } from 'src/utils/connector-utils';
 
 function useDiscoverStartDiscovery(entityType: Entity) {
     const postHog = usePostHog();
@@ -40,7 +42,15 @@ function useDiscoverStartDiscovery(entityType: Entity) {
         (state) => state.details.data.connectorImage.imageName
     );
 
+    const imagePath = useDetailsFormStore((state) =>
+        isDekafConnector(state.details.data.connectorImage)
+            ? undefined
+            : state.details.data.connectorImage.imagePath
+    );
+
     const endpointConfigData = useEndpointConfigStore_endpointConfig_data();
+
+    const syncSecretsToDraft = useSyncSecretsToDraft();
 
     return useCallback(
         async (
@@ -80,6 +90,28 @@ function useDiscoverStartDiscovery(entityType: Entity) {
             setCatalogName(processedEntityName);
 
             const newDraftId = draftsResponse.data[0].id;
+
+            // The discover resolves secrets from the drafted capture, and only
+            //  replaces its endpoint, so the stanza has to be in the draft first
+            const secretsError = await syncSecretsToDraft(newDraftId, {
+                catalogName: processedEntityName,
+                endpoint: {
+                    connector: {
+                        image: imagePath,
+                        config: encryptedEndpointConfigResponse,
+                    },
+                },
+            });
+            if (secretsError) {
+                callFailed({
+                    error: {
+                        title: 'captureCreate.generate.failedErrorTitle',
+                        error: secretsError,
+                    },
+                });
+
+                return false;
+            }
 
             const discoverResponse = await discover(
                 processedEntityName,
@@ -133,6 +165,8 @@ function useDiscoverStartDiscovery(entityType: Entity) {
             setCatalogName,
             setDraftId,
             setFormState,
+            imagePath,
+            syncSecretsToDraft,
         ]
     );
 }

@@ -30,6 +30,7 @@ import {
     useEditorStore_setPubId,
 } from 'src/components/editor/Store/hooks';
 import { useEntityType } from 'src/context/EntityContext';
+import { useSyncSecretsToDraft } from 'src/hooks/secrets/useSyncSecretsToDraft';
 import useJobStatusPoller from 'src/hooks/useJobStatusPoller';
 import { DEFAULT_FILTER, logRocketEvent } from 'src/services/shared';
 import {
@@ -48,6 +49,7 @@ import { FormStatus } from 'src/stores/FormState/types';
 import useNotificationStore, {
     notificationStoreSelectors,
 } from 'src/stores/NotificationStore';
+import { useSecretsStore_resetState } from 'src/stores/Secrets/hooks';
 import { hasLength } from 'src/utils/misc-utils';
 import { getCollectionName } from 'src/utils/workflow-utils';
 
@@ -94,6 +96,9 @@ function useSave(
     const setFormState = useFormStateStore_setFormState();
     const updateFormStatus = useFormStateStore_updateStatus();
 
+    const secretsResetState = useSecretsStore_resetState();
+    const syncSecretsToDraft = useSyncSecretsToDraft();
+
     const showNotification = useNotificationStore(
         notificationStoreSelectors.showNotification
     );
@@ -136,6 +141,12 @@ function useSave(
                         status: formStatus,
                         exitWhenLogsClose: !dryRun,
                     });
+
+                    // The task now references its secrets, so clear the values
+                    // from the store as they aren't needed anymore
+                    if (!dryRun) {
+                        secretsResetState();
+                    }
 
                     let description, title;
 
@@ -221,6 +232,7 @@ function useSave(
             mutateDraftSpecs,
             onFailure,
             postHog,
+            secretsResetState,
             setFormState,
             setIncompatibleCollections,
             setPubId,
@@ -588,6 +600,19 @@ function useSave(
                 }
             }
 
+            // Secrets resolve when the publication runs the connector
+            const secretsError = await syncSecretsToDraft(draftId);
+            if (secretsError) {
+                onFailure({
+                    error: {
+                        title: `${messagePrefix}.save.failure.errorTitle`,
+                        error: secretsError,
+                    },
+                });
+
+                return;
+            }
+
             const response = await createPublication(
                 draftId,
                 dryRun ?? false,
@@ -628,6 +653,7 @@ function useSave(
             onFailure,
             setFormState,
             setIncompatibleCollections,
+            syncSecretsToDraft,
             waitForPublishToFinish,
         ]
     );

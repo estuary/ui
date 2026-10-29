@@ -18,6 +18,7 @@ import {
     useEditorStore_setPersistedDraftId,
 } from 'src/components/editor/Store/hooks';
 import useEntityWorkflowHelpers from 'src/components/shared/Entity/hooks/useEntityWorkflowHelpers';
+import { usePrepareEndpointConfig } from 'src/components/shared/Entity/hooks/usePrepareEndpointConfig';
 import { useEntityWorkflow_Editing } from 'src/context/Workflow';
 import useEntityNameSuffix from 'src/hooks/useEntityNameSuffix';
 import { logRocketEvent } from 'src/services/shared';
@@ -39,7 +40,6 @@ import {
     useEndpointConfig_serverUpdateRequired,
     useEndpointConfigStore_encryptedEndpointConfig_data,
     useEndpointConfigStore_endpointConfig_data,
-    useEndpointConfigStore_endpointSchema,
     useEndpointConfigStore_errorsExist,
     useEndpointConfigStore_setEncryptedEndpointConfig,
     useEndpointConfigStore_setPreviousEndpointConfig,
@@ -51,7 +51,6 @@ import {
 import { FormStatus } from 'src/stores/FormState/types';
 import { useSourceCaptureStore_sourceCaptureDefinition } from 'src/stores/SourceCapture/hooks';
 import { useTargetNamingStore } from 'src/stores/TargetNaming/Store';
-import { encryptEndpointConfig } from 'src/utils/sops-utils';
 import {
     generateTaskSpec,
     NEW_TASK_PUBLICATION_ID,
@@ -66,12 +65,6 @@ function useGenerateCatalog() {
     // Details Form Store
     const detailsFormsErrorsExist = useDetailsFormStore(
         (state) => state.errorsExist
-    );
-    const imageConnectorTagId = useDetailsFormStore(
-        (state) => state.details.data.connectorImage.id
-    );
-    const imageConnectorId = useDetailsFormStore(
-        (state) => state.details.data.connectorImage.connectorId
     );
 
     const endpointConfig: ConnectorConfig | DekafConfig =
@@ -92,7 +85,6 @@ function useGenerateCatalog() {
     const setCatalogName = useEditorStore_setCatalogName();
 
     // Endpoint Config Store
-    const endpointSchema = useEndpointConfigStore_endpointSchema();
     const endpointConfigData = useEndpointConfigStore_endpointConfig_data();
     const serverEndpointConfigData =
         useEndpointConfigStore_encryptedEndpointConfig_data();
@@ -102,6 +94,7 @@ function useGenerateCatalog() {
         useEndpointConfigStore_setPreviousEndpointConfig();
     const endpointConfigErrorsExist = useEndpointConfigStore_errorsExist();
     const serverUpdateRequired = useEndpointConfig_serverUpdateRequired();
+    const prepareEndpointConfig = usePrepareEndpointConfig();
 
     // Form State Store
     const setFormState = useFormStateStore_setFormState();
@@ -224,21 +217,21 @@ function useGenerateCatalog() {
                     evaluatedDraftId = draftsResponse.data[0].id;
                 }
 
-                const encryptedEndpointConfig = await encryptEndpointConfig(
-                    serverUpdateRequired
-                        ? endpointConfigData
-                        : serverEndpointConfigData,
-                    endpointSchema,
-                    serverUpdateRequired,
-                    imageConnectorId,
-                    imageConnectorTagId,
-                    callFailed,
-                    { overrideJsonFormDefaults: true }
-                );
+                const selectedEndpointConfig = serverUpdateRequired
+                    ? endpointConfigData
+                    : serverEndpointConfigData;
 
+                const response = await prepareEndpointConfig(
+                    selectedEndpointConfig
+                );
+                if (!response) {
+                    return Promise.reject(null);
+                }
+
+                const config = response.data;
                 const draftSpec = generateTaskSpec(
                     ENTITY_TYPE,
-                    { ...endpointConfig, config: encryptedEndpointConfig.data },
+                    { ...endpointConfig, config },
                     resourceConfigs,
                     resourceConfigServerUpdateRequired,
                     bindings,
@@ -353,11 +346,9 @@ function useGenerateCatalog() {
             endpointConfig,
             endpointConfigData,
             endpointConfigErrorsExist,
-            endpointSchema,
             fullSourceConfigs,
             fullSourceErrorsExist,
-            imageConnectorId,
-            imageConnectorTagId,
+            prepareEndpointConfig,
             isEdit,
             persistedDraftId,
             prefillBindingDependentState,

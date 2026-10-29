@@ -8,16 +8,14 @@ import {
     Checkbox,
     CircularProgress,
     FormControlLabel,
-    IconButton,
-    InputAdornment,
     Stack,
     TextField,
     Typography,
 } from '@mui/material';
 
-import { Eye, EyeClosed } from 'iconoir-react';
 import { debounce } from 'lodash';
 
+import { SecretValueInput } from 'src/components/secrets/SecretValueInput';
 import AlertBox from 'src/components/shared/AlertBox';
 import { useCanEditSecret } from 'src/hooks/secrets/useCanEditSecret';
 import { useGetSecret } from 'src/hooks/secrets/useGetSecret';
@@ -47,7 +45,6 @@ export function SecretDropboxForm({ secretName }: SecretDropboxFormProps) {
     } = useGetSecret(secretName);
 
     const [value, setValue] = useState('');
-    const [showValue, setShowValue] = useState(false);
     const [overwriteConfirmed, setOverwriteConfirmed] = useState(false);
     const [submitting, setSubmitting] = useState(false);
     const [saved, setSaved] = useState(false);
@@ -132,56 +129,11 @@ export function SecretDropboxForm({ secretName }: SecretDropboxFormProps) {
                     disabled
                 />
 
-                <TextField
+                <SecretValueInput
                     label="Secret value"
                     value={value}
-                    onChange={(event) => setValue(event.target.value)}
-                    multiline
+                    onChange={setValue}
                     maxRows={5}
-                    size="small"
-                    required
-                    autoFocus
-                    sx={
-                        showValue
-                            ? undefined
-                            : { '& textarea': { WebkitTextSecurity: 'disc' } }
-                    }
-                    slotProps={{
-                        // Keep the value out of LogRocket and PostHog, and out
-                        // of browser autofill and spellcheck services.
-                        htmlInput: {
-                            'data-private': true,
-                            'className': 'ph-no-capture',
-                            'autoComplete': 'new-password',
-                            'autoCorrect': 'off',
-                            'autoCapitalize': 'off',
-                            'spellCheck': false,
-                            'data-1p-ignore': true,
-                            'data-lpignore': true,
-                            'data-bwignore': true,
-                            'data-form-type': 'other',
-                        },
-                        input: {
-                            endAdornment: (
-                                <InputAdornment position="end">
-                                    <IconButton
-                                        aria-label={
-                                            showValue
-                                                ? 'Hide value'
-                                                : 'Show value'
-                                        }
-                                        onClick={() =>
-                                            setShowValue((shown) => !shown)
-                                        }
-                                        edge="end"
-                                        size="small"
-                                    >
-                                        {showValue ? <EyeClosed /> : <Eye />}
-                                    </IconButton>
-                                </InputAdornment>
-                            ),
-                        },
-                    }}
                 />
 
                 {exists ? (

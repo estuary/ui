@@ -1,26 +1,20 @@
 import { Divider, Typography, useMediaQuery, useTheme } from '@mui/material';
 
-import { useShallow } from 'zustand/react/shallow';
-
 import { WarningCircle } from 'iconoir-react';
-import { useIntl } from 'react-intl';
 
 import ExternalLink from 'src/components/shared/ExternalLink';
-import { useEndpointConfigStore } from 'src/stores/EndpointConfig/Store';
+import {
+    useEndpointConfig_hydrationErrorsExist,
+    useEndpointConfigStore_errorsExist,
+} from 'src/stores/EndpointConfig/hooks';
 import { useSidePanelDocsStore } from 'src/stores/SidePanelDocs/Store';
 
 function EndpointConfigHeader() {
-    const intl = useIntl();
     const theme = useTheme();
     const belowMd = useMediaQuery(theme.breakpoints.down('md'));
 
-    const [endpointConfigErrorsExist, hydrationErrorsExist] =
-        useEndpointConfigStore(
-            useShallow((state) => [
-                state.errorsExist,
-                state.hydrationErrorsExist,
-            ])
-        );
+    const endpointConfigErrorsExist = useEndpointConfigStore_errorsExist();
+    const hydrationErrorsExist = useEndpointConfig_hydrationErrorsExist();
     const docsURL = useSidePanelDocsStore((state) => state.url);
 
     return (
@@ -36,20 +30,14 @@ function EndpointConfigHeader() {
             ) : null}
 
             <Typography component="span" variant="subtitle1">
-                {intl.formatMessage({
-                    id: 'entityCreate.endpointConfig.heading',
-                })}
+                2. Endpoint Config
             </Typography>
 
             {belowMd && docsURL && docsURL.length > 0 ? (
                 <>
                     <Divider orientation="vertical" flexItem sx={{ mx: 1 }} />
 
-                    <ExternalLink link={docsURL}>
-                        {intl.formatMessage({
-                            id: 'entityCreate.cta.docs',
-                        })}
-                    </ExternalLink>
+                    <ExternalLink link={docsURL}>Connector Help</ExternalLink>
                 </>
             ) : null}
         </>

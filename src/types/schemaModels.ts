@@ -123,3 +123,7 @@ export interface ValidatedBinding {
     constraints: ConstraintDictionary;
     resourcePath: string[];
 }
+
+// A task's `secrets` stanza. Maps secret catalog name -> JSON pointer of the
+// endpoint config location the secret's value is merged into.
+export type SecretsStanza = Record<string, string>;

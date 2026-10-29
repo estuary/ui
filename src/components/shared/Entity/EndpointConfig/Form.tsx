@@ -10,6 +10,10 @@ import { FormattedMessage } from 'react-intl';
 import AlertBox from 'src/components/shared/AlertBox';
 import { useEntityType } from 'src/context/EntityContext';
 import { jsonFormsPadding } from 'src/context/Theme';
+import {
+    SecretField,
+    secretFieldTester,
+} from 'src/forms/renderers/secrets/SecretField';
 import { custom_generateDefaultUISchema } from 'src/services/jsonforms';
 import { jsonFormsDefaults } from 'src/services/jsonforms/defaults';
 import {
@@ -19,8 +23,15 @@ import {
     useEndpointConfigStore_setEndpointConfig,
 } from 'src/stores/EndpointConfig/hooks';
 import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
+import { useSecretsStore_usesSecrets } from 'src/stores/Secrets/hooks';
+import { prepareSecretsSchema } from 'src/utils/secrets-utils';
 
 const CONFIG_EDITOR_ID = 'endpointConfigEditor';
+
+const secretsRenderers = [
+    ...jsonFormsDefaults.renderers,
+    { renderer: SecretField, tester: secretFieldTester },
+];
 
 interface Props {
     readOnly: boolean;
@@ -34,17 +45,33 @@ function EndpointConfigForm({ readOnly }: Props) {
     const setEndpointConfig = useEndpointConfigStore_setEndpointConfig();
     const endpointSchema = useEndpointConfigStore_endpointSchema();
     const endpointCanBeEmpty = useEndpointConfig_endpointCanBeEmpty();
+    const usesSecrets = useSecretsStore_usesSecrets();
+
+    // render secret fields only if the schema uses secrets
+    const renderers = usesSecrets
+        ? secretsRenderers
+        : jsonFormsDefaults.renderers;
 
     // Form State Store
     const isActive = useFormStateStore_isActive();
 
+    // Secret values live in secrets, not the config, so secret fields can't be
+    // required by the form's schema. The Secrets store checks them instead.
+    const formSchema = useMemo(
+        () =>
+            usesSecrets && !isEmpty(endpointSchema)
+                ? prepareSecretsSchema(endpointSchema)
+                : endpointSchema,
+        [endpointSchema, usesSecrets]
+    );
+
     const categoryLikeSchema = useMemo(() => {
-        if (!isEmpty(endpointSchema)) {
-            return custom_generateDefaultUISchema(endpointSchema);
+        if (!isEmpty(formSchema)) {
+            return custom_generateDefaultUISchema(formSchema);
         } else {
             return null;
         }
-    }, [endpointSchema]);
+    }, [formSchema]);
 
     if (categoryLikeSchema === null) {
         return null;
@@ -54,7 +81,8 @@ function EndpointConfigForm({ readOnly }: Props) {
         <Box id={CONFIG_EDITOR_ID} sx={jsonFormsPadding}>
             <JsonForms
                 {...jsonFormsDefaults}
-                schema={endpointSchema}
+                schema={formSchema}
+                renderers={renderers}
                 uischema={categoryLikeSchema}
                 data={endpointConfig}
                 readonly={readOnly || isActive}
