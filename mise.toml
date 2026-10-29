@@ -1,0 +1,9 @@
+# Mise configuration for the Dependency Scan. See https://mise.jdx.dev
+#
+# Trivy is pinned to a release here, installed from GitHub by mise, rather than
+# run through aquasecurity/trivy-action. Keep the version in step with flow.
+[tools]
+"github:aquasecurity/trivy" = { version = "0.76.0", platforms = { linux-arm64 = { asset_pattern = "trivy_*_Linux-ARM64.tar.gz" }, linux-x64 = { asset_pattern = "trivy_*_Linux-64bit.tar.gz" }, macos-arm64 = { asset_pattern = "trivy_*_macOS-ARM64.tar.gz" } } }
+
+[settings]
+auto_install = false
