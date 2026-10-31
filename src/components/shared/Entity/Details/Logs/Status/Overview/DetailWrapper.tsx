@@ -4,8 +4,6 @@ import { Box, Typography } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
-import { diminishedTextColor } from 'src/context/Theme';
-
 function DetailWrapper({
     children,
     header,
@@ -16,7 +14,7 @@ function DetailWrapper({
             <Typography
                 noWrap
                 sx={{
-                    color: (theme) => diminishedTextColor[theme.palette.mode],
+                    color: (theme) => theme.palette.text.diminished,
                     mb: '2px',
                 }}
             >

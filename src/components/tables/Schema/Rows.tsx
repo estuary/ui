@@ -25,7 +25,6 @@ import {
 } from 'src/components/tables/Schema/shared';
 import {
     defaultOutlineColor,
-    diminishedTextColor,
     doubleElevationHoverBackground,
     getStickyTableCell,
 } from 'src/context/Theme';
@@ -144,9 +143,7 @@ function Row({ columns, row }: RowProps) {
                                               theme.palette.mode
                                           ]
                                       }`,
-                                      color: diminishedTextColor[
-                                          theme.palette.mode
-                                      ],
+                                      color: theme.palette.text.diminished,
                                       paddingBottom: 2,
                                   }
                                 : undefined

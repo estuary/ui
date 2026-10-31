@@ -41,7 +41,6 @@ import EntityNameDetailsLink from 'src/components/shared/Entity/EntityNameDetail
 import { formatDocs } from 'src/components/tables/cells/stats/shared';
 import TablePaginationActions from 'src/components/tables/PaginationActions';
 import {
-    diminishedTextColor,
     doubleElevationHoverBackground,
     getTableHeaderWithoutHeaderColor,
 } from 'src/context/Theme';
@@ -399,9 +398,8 @@ export function BindingsTable({
                                         alignItems="center"
                                         spacing={1}
                                         sx={{
-                                            color: diminishedTextColor[
-                                                theme.palette.mode
-                                            ],
+                                            color: theme.palette.text
+                                                .diminished,
                                         }}
                                     >
                                         {totalBindings === 0 ? (
@@ -513,9 +511,8 @@ export function BindingsTable({
                                                 (row.docs === 0 ||
                                                     volumesUnavailable) &&
                                                 !volumesLoading
-                                                    ? diminishedTextColor[
-                                                          theme.palette.mode
-                                                      ]
+                                                    ? theme.palette.text
+                                                          .diminished
                                                     : undefined,
                                             whiteSpace: 'nowrap',
                                         }}

@@ -91,18 +91,30 @@ declare module '@mui/material/styles' {
 
 declare module '@mui/material/styles' {
     interface TypographyVariants {
+        cardCaption: React.CSSProperties;
+        cardTitle: React.CSSProperties;
         formSectionHeader: React.CSSProperties;
     }
 
     // allow configuration using `createTheme`
     interface TypographyVariantsOptions {
+        cardCaption?: React.CSSProperties;
+        cardTitle?: React.CSSProperties;
         formSectionHeader?: React.CSSProperties;
+    }
+
+    interface TypeText {
+        // Supporting text that should recede, such as a card's caption.
+        // `secondary` is blue in light mode, so it does not do this job.
+        diminished: string;
     }
 }
 
 // Update the Typography's variant prop options
 declare module '@mui/material/Typography' {
     interface TypographyPropsVariantOverrides {
+        cardCaption: true;
+        cardTitle: true;
         formSectionHeader: true;
     }
 }
@@ -269,6 +281,7 @@ const lightMode: PaletteOptions = {
     text: {
         primary: sample_grey[900],
         secondary: sample_blue[800],
+        diminished: '#54585E',
     },
     tonalOffset,
     warning: {
@@ -330,6 +343,7 @@ const darkMode: PaletteOptions = {
     text: {
         primary: sample_grey[300],
         secondary: sample_grey[500],
+        diminished: '#B6BCC4',
     },
     tonalOffset,
     warning: {
@@ -553,11 +567,6 @@ export const jsonFormsGroupHeaders = {
     dark: 'transparent',
 };
 
-export const reflexSplitterBackground = {
-    light: 'white',
-    dark: 'rgba(247, 249, 252, 0.30)',
-};
-
 // RGB translation of #F7F9FC.
 export const alternativeReflexContainerBackground = {
     light: 'white',
@@ -659,11 +668,6 @@ export const tableRowActive__Background = {
 export const tableRowActive_Finished__Background = {
     light: 'rgba(225, 233, 244, 0.5)',
     dark: 'rgba(196, 211, 233, 0.7)',
-};
-
-export const diminishedTextColor = {
-    light: '#54585E',
-    dark: '#B6BCC4',
 };
 
 // RGB translation of #F7F9FC.
@@ -1098,6 +1102,18 @@ const themeSettings = createTheme({
         formSectionHeader: {
             fontSize: 18,
             fontWeight: 500,
+        },
+        // A card's title, and the caption that summarizes what the card shows.
+        // Pair the caption with `color: 'text.diminished'`.
+        cardTitle: {
+            fontSize: 16,
+            fontWeight: 600,
+            lineHeight: 1.5,
+        },
+        cardCaption: {
+            fontSize: 13,
+            fontWeight: 400,
+            lineHeight: 1.5,
         },
     },
 } as ThemeOptions);

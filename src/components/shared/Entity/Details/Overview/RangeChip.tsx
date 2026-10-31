@@ -2,7 +2,7 @@ import type { DataByHourRange } from 'src/components/graphs/types';
 
 import { Tooltip, Typography, useTheme } from '@mui/material';
 
-import { defaultOutline, diminishedTextColor } from 'src/context/Theme';
+import { defaultOutline } from 'src/context/Theme';
 import { getRangeLabel } from 'src/services/luxon';
 
 interface Props {
@@ -28,7 +28,7 @@ export function RangeChip({ range }: Props) {
                 sx={{
                     border: defaultOutline[theme.palette.mode],
                     borderRadius: 4,
-                    color: diminishedTextColor[theme.palette.mode],
+                    color: theme.palette.text.diminished,
                     cursor: 'help',
                     fontSize: 12,
                     px: 1,

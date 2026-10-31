@@ -8,8 +8,6 @@ import {
     useTheme,
 } from '@mui/material';
 
-import { diminishedTextColor } from 'src/context/Theme';
-
 export type KeyValue = {
     title: string | ReactNode;
     val?: string | ReactNode;
@@ -46,9 +44,7 @@ function KeyValueList({ data, disableTypography, sectionTitle }: Props) {
                                 slotProps={{
                                     primary: {
                                         color: val
-                                            ? diminishedTextColor[
-                                                  theme.palette.mode
-                                              ]
+                                            ? theme.palette.text.diminished
                                             : theme.palette.text.primary,
                                         component: 'div',
                                         marginBottom: val ? '2px' : undefined,

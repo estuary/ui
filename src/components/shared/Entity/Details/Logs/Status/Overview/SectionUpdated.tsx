@@ -2,7 +2,6 @@ import { Box, Grid, Stack, Typography } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
-import { diminishedTextColor } from 'src/context/Theme';
 import { useEntityStatusStore } from 'src/stores/EntityStatus/Store';
 
 export default function SectionUpdated() {
@@ -16,8 +15,7 @@ export default function SectionUpdated() {
                 <Stack direction="row" style={{ justifyContent: 'flex-end' }}>
                     <Typography
                         sx={{
-                            color: (theme) =>
-                                diminishedTextColor[theme.palette.mode],
+                            color: (theme) => theme.palette.text.diminished,
                         }}
                         variant="caption"
                     >

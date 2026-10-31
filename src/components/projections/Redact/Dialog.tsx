@@ -24,7 +24,6 @@ import { useIntl } from 'react-intl';
 import SaveButton from 'src/components/projections/Redact/SaveButton';
 import SelectableAutocompleteOption from 'src/components/shared/Dialog/SelectableAutocompleteOption';
 import Error from 'src/components/shared/Error';
-import { diminishedTextColor } from 'src/context/Theme';
 import { translateRedactionStrategy } from 'src/utils/schema-utils';
 
 const options: RedactionStrategy_Schema[] = ['block', 'sha256'];
@@ -113,9 +112,8 @@ const RedactFieldDialog = ({
 
                                         <Typography
                                             sx={{
-                                                color: diminishedTextColor[
-                                                    theme.palette.mode
-                                                ],
+                                                color: theme.palette.text
+                                                    .diminished,
                                             }}
                                         >
                                             {intl.formatMessage({

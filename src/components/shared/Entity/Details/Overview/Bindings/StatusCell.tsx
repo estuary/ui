@@ -17,7 +17,6 @@ import {
     BINDING_STATUS_LABELS,
     getBindingStatusVariant,
 } from 'src/components/shared/Entity/Details/Overview/Bindings/shared';
-import { diminishedTextColor } from 'src/context/Theme';
 
 const ICON_SIZE = 14;
 
@@ -54,9 +53,9 @@ const getVariantColors = (
         text: theme.palette.warning.dark,
     },
     disabled: {
-        icon: diminishedTextColor[theme.palette.mode],
+        icon: theme.palette.text.diminished,
         background: theme.palette.action.selected,
-        text: diminishedTextColor[theme.palette.mode],
+        text: theme.palette.text.diminished,
     },
 });
 

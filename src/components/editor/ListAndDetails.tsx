@@ -1,3 +1,4 @@
+import type { SxProps, Theme } from '@mui/material';
 import type { ReactNode } from 'react';
 
 import { useTheme } from '@mui/material';
@@ -6,7 +7,7 @@ import Box from '@mui/material/Box';
 import { MoreVert } from 'iconoir-react';
 import { ReflexContainer, ReflexElement, ReflexSplitter } from 'react-reflex';
 
-import { defaultOutline, reflexSplitterBackground } from 'src/context/Theme';
+import { defaultOutline } from 'src/context/Theme';
 import { getEditorTotalHeight } from 'src/utils/editor-utils';
 
 interface Props {
@@ -16,10 +17,16 @@ interface Props {
     backgroundColor?: string;
     displayBorder?: boolean;
     removeMargin?: boolean;
+    sx?: SxProps<Theme>;
 }
 
 const MIN_RESIZE_WIDTH = 25;
 const INITIAL_SELECTOR_WIDTH = 450;
+
+const splitterBackground = {
+    light: 'white',
+    dark: 'rgba(247, 249, 252, 0.30)',
+};
 
 function ListAndDetails({
     backgroundColor,
@@ -28,6 +35,7 @@ function ListAndDetails({
     height,
     displayBorder,
     removeMargin,
+    sx,
 }: Props) {
     const theme = useTheme();
 
@@ -35,15 +43,19 @@ function ListAndDetails({
 
     return (
         <Box
-            sx={{
-                border: displayBorder
-                    ? defaultOutline[theme.palette.mode]
-                    : undefined,
-                bgcolor: backgroundColor ?? 'background.paper',
-                height: `${heightVal}px`,
-                overflow: 'hidden',
-                mb: removeMargin ? undefined : 2,
-            }}
+            sx={[
+                {
+                    border: displayBorder
+                        ? defaultOutline[theme.palette.mode]
+                        : undefined,
+                    bgcolor: backgroundColor ?? 'background.paper',
+                    height: `${heightVal}px`,
+                    overflow: 'hidden',
+                    mb: removeMargin ? undefined : 2,
+                },
+                // `sx` may itself be an array, which `Box` rejects nested.
+                ...(Array.isArray(sx) ? sx : [sx]),
+            ]}
         >
             <ReflexContainer orientation="vertical">
                 <ReflexElement
@@ -70,8 +82,7 @@ function ListAndDetails({
                         alignItems: 'center',
                         justifyContent: 'center',
                         border: defaultOutline[theme.palette.mode],
-                        backgroundColor:
-                            reflexSplitterBackground[theme.palette.mode],
+                        backgroundColor: splitterBackground[theme.palette.mode],
                     }}
                 >
                     <MoreVert style={{ color: theme.palette.text.primary }} />

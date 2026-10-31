@@ -3,11 +3,7 @@ import type { LiveSpecsQuery_details } from 'src/hooks/useLiveSpecs';
 
 import { useMemo } from 'react';
 
-import { Button, Stack, Typography } from '@mui/material';
-
-import { Refresh } from 'iconoir-react';
-import { useIntl } from 'react-intl';
-
+import { DataPreviewHeader } from 'src/components/collection/DataPreview/Header';
 import HydrationError from 'src/components/collection/DataPreview/HydrationError';
 import ListView from 'src/components/collection/DataPreview/ListView';
 import ListViewSkeleton from 'src/components/collection/DataPreview/ListViewSkeleton';
@@ -38,7 +34,6 @@ interface Props {
 // }
 
 export function DataPreview({ collectionName }: Props) {
-    const intl = useIntl();
     // const [previewMode, setPreviewMode] = useState<Views>(Views.list);
     // const toggleMode = (_event: any, newValue: Views) => {
     //     setPreviewMode(newValue);
@@ -88,56 +83,22 @@ export function DataPreview({ collectionName }: Props) {
     // then back to undefined while loading, resulting in a pseudo-inversion of the original problem.
     const isLoading = journalsLoading || !journalsData || journalData.loading;
 
+    const hidden = Boolean(tenantHidesError || hide);
+    const documents = journalData.data?.documents;
+    const showList =
+        !hidden && !readError && !isLoading && hasLength(documents) && spec;
+
     return (
         <CardWrapper
             message={
-                <Stack
-                    direction="row"
-                    spacing={2}
-                    sx={{ alignItems: 'center' }}
-                >
-                    <Typography component="span">
-                        {intl.formatMessage({
-                            id: 'detailsPanel.dataPreview.header',
-                        })}
-                    </Typography>
-
-                    <Button
-                        variant="text"
-                        startIcon={<Refresh style={{ fontSize: 12 }} />}
-                        onClick={() => journalData.refresh()}
-                        disabled={Boolean(
-                            isLoading ||
-                                !hasLength(journalData.data?.documents) ||
-                                hide
-                        )}
-                        sx={{
-                            height: 'auto',
-                        }}
-                    >
-                        {intl.formatMessage({
-                            id: 'cta.refresh',
-                        })}
-                    </Button>
-
-                    {/*
-                    <ToggleButtonGroup
-                        color="primary"
-                        size="small"
-                        exclusive
-                        onChange={toggleMode}
-                        value={previewMode}
-                        disabled={!hasLength(journalData.data?.documents)}
-                    >
-                        <ToggleButton value={Views.list}>
-                            <FormattedMessage id="cta.list" />
-                        </ToggleButton>
-                        <ToggleButton value={Views.table}>
-                            <FormattedMessage id="cta.table" />
-                        </ToggleButton>
-                    </ToggleButtonGroup>
-                    */}
-                </Stack>
+                <DataPreviewHeader
+                    documents={showList ? documents : undefined}
+                    keyPointers={spec?.spec.key}
+                    onRefresh={() => journalData.refresh()}
+                    refreshDisabled={Boolean(
+                        isLoading || !hasLength(documents) || hide
+                    )}
+                />
             }
         >
             <>
@@ -155,17 +116,15 @@ export function DataPreview({ collectionName }: Props) {
                     />
                 ) : null}
 
-                {tenantHidesError || hide ? (
+                {hidden ? (
                     <AlertBox short severity="info">
-                        {intl.formatMessage({
-                            id: 'detailsPanel.dataPreview.hidden',
-                        })}
+                        Data previews are disabled for this tenant.
                     </AlertBox>
                 ) : readError ? (
                     <HydrationError readError={readError} />
                 ) : isLoading ? (
                     <ListViewSkeleton />
-                ) : (journalData.data?.documents.length ?? 0) > 0 && spec ? (
+                ) : showList ? (
                     <ListView journalData={journalData} spec={spec} />
                 ) : null}
 

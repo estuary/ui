@@ -13,8 +13,6 @@ import {
 import { ArrowRight } from 'iconoir-react';
 import { useIntl } from 'react-intl';
 
-import { diminishedTextColor } from 'src/context/Theme';
-
 function FieldEditor({
     disabled,
     input,
@@ -38,7 +36,7 @@ function FieldEditor({
             <Stack style={{ flex: '1 1 0px' }}>
                 <FormLabel
                     style={{
-                        color: diminishedTextColor[theme.palette.mode],
+                        color: theme.palette.text.diminished,
                         fontSize: 10,
                     }}
                 >
@@ -49,8 +47,8 @@ function FieldEditor({
 
                 <Typography
                     style={{
-                        borderBottom: `1px dashed ${diminishedTextColor[theme.palette.mode]}`,
-                        color: diminishedTextColor[theme.palette.mode],
+                        borderBottom: `1px dashed ${theme.palette.text.diminished}`,
+                        color: theme.palette.text.diminished,
                         paddingBottom: 4,
                         paddingTop: 3,
                     }}

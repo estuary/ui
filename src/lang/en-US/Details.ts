@@ -68,10 +68,7 @@ export const Details: Record<string, string> = {
     'detailsPanel.shardDetails.warningTitle': `Shard Replica Processing Warnings`,
     'detailsPanel.shardDetails.noStatusFound': `No shard status to report`,
     'detailsPanel.shardDetails.docPath': `https://docs.estuary.dev/concepts/advanced/shards/`,
-    'detailsPanel.dataPreview.header': `Data Preview`,
     'detailsPanel.dataPreview.failedParsingMessage': `Ran into an problem parsing data. This is a UI bug and does not mean there is an issue with your data.`,
-    'detailsPanel.dataPreview.listView.header': `Keys`,
-    'detailsPanel.dataPreview.hidden': `Data previews are disabled for this tenant.`,
 
     'detailsPanel.dataPreview.suspended.title': `No data found in collection.`,
     'detailsPanel.dataPreview.suspended.message': `If you are using the ${CommonMessages['company']} trial storage mapping, data expires after 20 days.`,
