@@ -6,7 +6,7 @@ import { Button, Stack, Typography } from '@mui/material';
 
 import { Refresh } from 'iconoir-react';
 
-import { buildRecordKey } from 'src/components/collection/DataPreview/shared';
+import { getLatestDocumentByKey } from 'src/components/collection/DataPreview/shared';
 import ExternalLink from 'src/components/shared/ExternalLink';
 
 const VIEWING_DOCUMENTS_DOCS_URL =
@@ -16,14 +16,12 @@ const VIEWING_DOCUMENTS_DOCS_URL =
 // among the last few documents written to one partition, so it can have far
 // fewer rows than documents read.
 const describeSample = (keyCount: number, documentCount: number) => {
-    const lastDocuments =
-        documentCount === 1
-            ? 'last document'
-            : `last ${documentCount} documents`;
+    const documents =
+        documentCount === 1 ? 'document' : `${documentCount} documents`;
 
     return keyCount < documentCount
-        ? `${keyCount} ${keyCount === 1 ? 'key' : 'keys'} from the ${lastDocuments}`
-        : `${lastDocuments.charAt(0).toUpperCase()}${lastDocuments.slice(1)}`;
+        ? `${keyCount} ${keyCount === 1 ? 'key' : 'keys'} from the last ${documents}`
+        : `Last ${documents}`;
 };
 
 interface Props {
@@ -41,19 +39,18 @@ export function DataPreviewHeader({
     onRefresh,
     refreshDisabled,
 }: Props) {
-    const keyCount = useMemo(
+    const sampleDescription = useMemo(
         () =>
-            documents && keyPointers
-                ? new Set(
-                      documents.map((record) =>
-                          buildRecordKey(keyPointers, record)
-                      )
-                  ).size
-                : 0,
+            documents?.length && keyPointers
+                ? describeSample(
+                      Object.keys(
+                          getLatestDocumentByKey(keyPointers, documents)
+                      ).length,
+                      documents.length
+                  )
+                : null,
         [documents, keyPointers]
     );
-
-    const showSample = Boolean(documents) && keyCount > 0;
 
     return (
         <Stack spacing={0.5}>
@@ -93,33 +90,11 @@ export function DataPreviewHeader({
                     >
                         Refresh
                     </Button>
-
-                    {/*
-                    <ToggleButtonGroup
-                        color="primary"
-                        size="small"
-                        exclusive
-                        onChange={toggleMode}
-                        value={previewMode}
-                        disabled={!hasLength(journalData.data?.documents)}
-                    >
-                        <ToggleButton value={Views.list}>
-                            <FormattedMessage id="cta.list" />
-                        </ToggleButton>
-                        <ToggleButton value={Views.table}>
-                            <FormattedMessage id="cta.table" />
-                        </ToggleButton>
-                    </ToggleButtonGroup>
-                    */}
                 </Stack>
 
-                {documents && showSample ? (
-                    <Typography
-                        component="div"
-                        variant="cardCaption"
-                        sx={{ color: 'text.diminished' }}
-                    >
-                        {describeSample(keyCount, documents.length)}
+                {sampleDescription ? (
+                    <Typography component="div" variant="cardCaption">
+                        {sampleDescription}
                     </Typography>
                 ) : null}
             </Stack>
@@ -128,12 +103,8 @@ export function DataPreviewHeader({
               A record missing from the sample may still be in the collection;
               a customer once took that as data loss.
             */}
-            {showSample ? (
-                <Typography
-                    component="div"
-                    variant="cardCaption"
-                    sx={{ color: 'text.diminished' }}
-                >
+            {sampleDescription ? (
+                <Typography component="div" variant="cardCaption">
                     Showing a sample of recent documents, not the full
                     collection.{' '}
                     <ExternalLink link={VIEWING_DOCUMENTS_DOCS_URL}>

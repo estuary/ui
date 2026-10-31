@@ -1104,7 +1104,8 @@ const themeSettings = createTheme({
             fontWeight: 500,
         },
         // A card's title, and the caption that summarizes what the card shows.
-        // Pair the caption with `color: 'text.diminished'`.
+        // The caption's `text.diminished` color is set per mode in
+        // `ThemeProvider`, since the palette isn't known here.
         cardTitle: {
             fontSize: 16,
             fontWeight: 600,
@@ -1218,6 +1219,14 @@ const ThemeProvider = ({ children }: BaseComponentProps) => {
                                 ],
                         },
                     },
+                },
+                MuiTypography: {
+                    variants: [
+                        {
+                            props: { variant: 'cardCaption' },
+                            style: { color: palette.text?.diminished },
+                        },
+                    ],
                 },
             },
         });

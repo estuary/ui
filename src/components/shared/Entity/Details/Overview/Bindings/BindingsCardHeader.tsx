@@ -133,11 +133,7 @@ export function BindingsCardHeader({
             </Stack>
 
             <Stack direction="row" spacing={1} sx={{ alignItems: 'baseline' }}>
-                <Typography
-                    component="div"
-                    variant="cardCaption"
-                    sx={{ color: 'text.diminished' }}
-                >
+                <Typography component="div" variant="cardCaption">
                     {loading ? (
                         <Skeleton
                             width={168}

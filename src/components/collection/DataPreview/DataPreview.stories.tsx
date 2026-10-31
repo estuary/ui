@@ -2,9 +2,6 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import type { useJournalData } from 'src/hooks/journals/useJournalData';
 import type { LiveSpecsQuery_details } from 'src/hooks/useLiveSpecs';
 
-// The app loads this in its route guards, which a story never mounts.
-import 'react-reflex/styles.css';
-
 import { IntlProvider } from 'react-intl';
 
 import { DataPreviewHeader } from 'src/components/collection/DataPreview/Header';

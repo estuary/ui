@@ -18,7 +18,7 @@ import { globalStateClasses } from '@mui/utils';
 import { Editor } from '@monaco-editor/react';
 import { isEmpty } from 'lodash';
 
-import { buildRecordKey } from 'src/components/collection/DataPreview/shared';
+import { getLatestDocumentByKey } from 'src/components/collection/DataPreview/shared';
 import { EditorResizeWrapper } from 'src/components/editor/EditorResizeWrapper';
 import ListAndDetails from 'src/components/editor/ListAndDetails';
 import Error from 'src/components/shared/Error';
@@ -44,19 +44,13 @@ function ListView({
 
     const theme = useTheme();
 
-    const rowsByKey = useMemo(() => {
-        if (error === null && data) {
-            return data.documents.reduce(
-                (acc, record) => {
-                    acc[buildRecordKey(spec.spec.key, record)] = record;
-                    return acc;
-                },
-                {} as Record<string, JournalRecord<Record<string, any>>>
-            );
-        } else {
-            return {};
-        }
-    }, [data, error, spec.spec.key]);
+    const rowsByKey = useMemo(
+        (): Record<string, JournalRecord> =>
+            error === null && data
+                ? getLatestDocumentByKey(spec.spec.key, data.documents)
+                : {},
+        [data, error, spec.spec.key]
+    );
 
     const rows = useMemo(
         () => Object.keys(rowsByKey).map((k) => ({ key: k, id: k })),

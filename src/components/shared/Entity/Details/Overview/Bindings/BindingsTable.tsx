@@ -23,7 +23,6 @@ import {
     TableSortLabel,
     tableSortLabelClasses,
     Typography,
-    useTheme,
 } from '@mui/material';
 
 import { ArrowDown, EmptyPage, Search } from 'iconoir-react';
@@ -267,8 +266,6 @@ export function BindingsTable({
     volumesLoading,
     volumesUnavailable,
 }: Props) {
-    const theme = useTheme();
-
     const { generatePath, navigateToPath } = useDetailsNavigator(
         ENTITY_SETTINGS.collection.routes.details
     );
@@ -398,8 +395,7 @@ export function BindingsTable({
                                         alignItems="center"
                                         spacing={1}
                                         sx={{
-                                            color: theme.palette.text
-                                                .diminished,
+                                            color: 'text.diminished',
                                         }}
                                     >
                                         {totalBindings === 0 ? (
@@ -511,8 +507,7 @@ export function BindingsTable({
                                                 (row.docs === 0 ||
                                                     volumesUnavailable) &&
                                                 !volumesLoading
-                                                    ? theme.palette.text
-                                                          .diminished
+                                                    ? 'text.diminished'
                                                     : undefined,
                                             whiteSpace: 'nowrap',
                                         }}

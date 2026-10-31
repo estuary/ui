@@ -14,7 +14,7 @@ function DetailWrapper({
             <Typography
                 noWrap
                 sx={{
-                    color: (theme) => theme.palette.text.diminished,
+                    color: 'text.diminished',
                     mb: '2px',
                 }}
             >

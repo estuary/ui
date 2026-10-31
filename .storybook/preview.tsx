@@ -1,5 +1,8 @@
 import type { Preview } from '@storybook/react-vite';
 
+// The app loads this in its route guards, which stories never mount.
+import 'react-reflex/styles.css';
+
 import ThemeProvider from '../src/context/Theme';
 import { LocalStorageKeys } from '../src/utils/localStorage-utils';
 

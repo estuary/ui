@@ -16,7 +16,6 @@ import {
     DialogTitle,
     TextField,
     Typography,
-    useTheme,
 } from '@mui/material';
 
 import { useIntl } from 'react-intl';
@@ -36,7 +35,6 @@ const RedactFieldDialog = ({
     strategy,
 }: BaseDialogProps & BaseRedactFieldProps) => {
     const intl = useIntl();
-    const theme = useTheme();
 
     const [error, setError] = useState<PostgrestError | null>(null);
     const [redactionStrategy, setRedactionStrategy] =
@@ -112,8 +110,7 @@ const RedactFieldDialog = ({
 
                                         <Typography
                                             sx={{
-                                                color: theme.palette.text
-                                                    .diminished,
+                                                color: 'text.diminished',
                                             }}
                                         >
                                             {intl.formatMessage({

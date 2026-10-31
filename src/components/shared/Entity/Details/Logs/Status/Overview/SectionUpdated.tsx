@@ -15,7 +15,7 @@ export default function SectionUpdated() {
                 <Stack direction="row" style={{ justifyContent: 'flex-end' }}>
                     <Typography
                         sx={{
-                            color: (theme) => theme.palette.text.diminished,
+                            color: 'text.diminished',
                         }}
                         variant="caption"
                     >
