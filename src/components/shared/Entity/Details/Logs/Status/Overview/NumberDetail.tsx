@@ -4,18 +4,15 @@ import { Skeleton, Typography } from '@mui/material';
 
 import readable from 'readable-numbers';
 
-import DetailWrapper from 'src/components/shared/Entity/Details/Logs/Status/Overview/DetailWrapper';
+import { DetailWrapper } from 'src/components/shared/Entity/Details/Logs/Status/Overview/DetailWrapper';
 import { useEntityStatusStore } from 'src/stores/EntityStatus/Store';
 
-export default function NumericDetail({
-    headerMessageId,
-    value,
-}: NumericDetailProps) {
+export default function NumericDetail({ header, value }: NumericDetailProps) {
     const hydrating = useEntityStatusStore((state) => !state.hydrated);
 
     return (
         <DetailWrapper
-            headerMessageId={headerMessageId}
+            header={header}
             Hydrating={
                 hydrating ? <Skeleton height={21} width={25} /> : undefined
             }

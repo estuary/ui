@@ -11,24 +11,15 @@ export default function AutoDiscoverChanges({
 }: AutoDiscoverChangesProps) {
     return (
         <Stack direction="row" spacing={1}>
-            <NumberDetail
-                headerMessageId="details.ops.status.overview.autoDiscovery.subheaderAdded"
-                value={added?.length ?? 0}
-            />
+            <NumberDetail header="Added" value={added?.length ?? 0} />
 
             <Divider flexItem orientation="vertical" />
 
-            <NumberDetail
-                headerMessageId="details.ops.status.overview.autoDiscovery.subheaderModified"
-                value={modified?.length ?? 0}
-            />
+            <NumberDetail header="Modified" value={modified?.length ?? 0} />
 
             <Divider flexItem orientation="vertical" />
 
-            <NumberDetail
-                headerMessageId="details.ops.status.overview.autoDiscovery.subheaderRemoved"
-                value={removed?.length ?? 0}
-            />
+            <NumberDetail header="Removed" value={removed?.length ?? 0} />
         </Stack>
     );
 }

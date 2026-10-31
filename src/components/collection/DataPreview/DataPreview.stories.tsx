@@ -2,10 +2,13 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import type { useJournalData } from 'src/hooks/journals/useJournalData';
 import type { LiveSpecsQuery_details } from 'src/hooks/useLiveSpecs';
 
+import { useMemo, useState } from 'react';
+
 import { IntlProvider } from 'react-intl';
 
 import { DataPreviewHeader } from 'src/components/collection/DataPreview/Header';
 import ListView from 'src/components/collection/DataPreview/ListView';
+import ListViewSkeleton from 'src/components/collection/DataPreview/ListViewSkeleton';
 import CardWrapper from 'src/components/shared/CardWrapper';
 import enUSMessages from 'src/lang/en-US';
 
@@ -44,24 +47,40 @@ interface HarnessProps {
 }
 
 /**
- * The loaded state of the Data Preview card, assembled from the same header and
- * list `DataPreview` renders, without its journal fetching.
+ * The Data Preview card, assembled from the same header and list `DataPreview`
+ * renders, without its journal fetching. Refresh shows the loading state for a
+ * second.
  */
 function DataPreviewHarness({ documentCount, keyCount }: HarnessProps) {
-    const journalData = buildJournalData(documentCount, keyCount);
+    const [loading, setLoading] = useState(false);
+
+    const journalData = useMemo(
+        () => buildJournalData(documentCount, keyCount),
+        [documentCount, keyCount]
+    );
 
     return (
         <CardWrapper
             message={
                 <DataPreviewHeader
-                    documents={journalData.data?.documents}
+                    documents={
+                        loading ? undefined : journalData.data?.documents
+                    }
                     keyPointers={KEY_POINTERS}
-                    onRefresh={() => {}}
-                    refreshDisabled={false}
+                    onRefresh={() => {
+                        setLoading(true);
+                        setTimeout(() => setLoading(false), 1000);
+                    }}
+                    refreshDisabled={loading}
+                    showNotice
                 />
             }
         >
-            <ListView journalData={journalData} spec={SPEC} />
+            {loading ? (
+                <ListViewSkeleton />
+            ) : (
+                <ListView journalData={journalData} spec={SPEC} />
+            )}
         </CardWrapper>
     );
 }

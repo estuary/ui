@@ -10,11 +10,11 @@ export interface AutoDiscoverChangesProps {
 }
 
 export interface BaseDetailProps {
-    headerMessageId: string;
+    header: string;
 }
 
 export interface DetailWrapperProps extends BaseComponentProps {
-    headerMessageId: string;
+    header: string;
     Hydrating?: ReactNode;
 }
 

@@ -13,7 +13,6 @@ import {
 } from '@mui/material';
 
 import { arrayMove } from '@dnd-kit/sortable';
-import { useIntl } from 'react-intl';
 
 import SortableTags from 'src/components/schema/KeyAutoComplete/SortableTags';
 import SelectableAutocompleteOption from 'src/components/shared/Dialog/SelectableAutocompleteOption';
@@ -26,7 +25,6 @@ const GroupByKeysForm = ({
     options,
     setLocalValues,
 }: GroupByKeysFormProps) => {
-    const intl = useIntl();
     const theme = useTheme();
     const belowMd = useMediaQuery(theme.breakpoints.down('md'));
 
@@ -53,9 +51,7 @@ const GroupByKeysForm = ({
                 return (
                     <TextField
                         {...params}
-                        label={intl.formatMessage({
-                            id: 'fieldSelection.groupBy.label.field',
-                        })}
+                        label="Group By"
                         variant="standard"
                     />
                 );

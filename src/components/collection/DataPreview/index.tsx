@@ -25,20 +25,10 @@ interface Props {
     collectionName: string;
 }
 
-// TODO (preview table) the table view has some issues so turning off before enabling it
-//      in production. Mainly that we should use projections to fetch data.
-
-// enum Views {
-//     table = 'table',
-//     list = 'list',
-// }
+// TODO (preview table) `TableView` is turned off until it has a fix for its
+//      issues, mainly that it should use projections to fetch data.
 
 export function DataPreview({ collectionName }: Props) {
-    // const [previewMode, setPreviewMode] = useState<Views>(Views.list);
-    // const toggleMode = (_event: any, newValue: Views) => {
-    //     setPreviewMode(newValue);
-    // };
-
     const isDerivation = useIsCollectionDerivation();
 
     const { error: tenantHidesError, hide } =
@@ -98,6 +88,9 @@ export function DataPreview({ collectionName }: Props) {
                     refreshDisabled={Boolean(
                         isLoading || !hasLength(documents) || hide
                     )}
+                    showNotice={Boolean(
+                        !hidden && !readError && (isLoading || showList)
+                    )}
                 />
             }
         >
@@ -127,10 +120,6 @@ export function DataPreview({ collectionName }: Props) {
                 ) : showList ? (
                     <ListView journalData={journalData} spec={spec} />
                 ) : null}
-
-                {/*             : (
-                <TableView journalData={journalData} spec={spec} />
-            )}*/}
             </>
         </CardWrapper>
     );

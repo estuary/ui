@@ -1,7 +1,5 @@
 import { Grid, Stack, Typography } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 import CardWrapper from 'src/components/shared/CardWrapper';
 import ConnectorStatus from 'src/components/shared/Entity/Details/Logs/Status/Overview/ConnectorStatus';
 import ConnectorStatusDetail from 'src/components/shared/Entity/Details/Logs/Status/Overview/ConnectorStatusDetail';
@@ -9,8 +7,6 @@ import ConnectorUpdatedDetail from 'src/components/shared/Entity/Details/Logs/St
 import { cardHeaderSx } from 'src/context/Theme';
 
 export default function ConnectorOverview() {
-    const intl = useIntl();
-
     return (
         <Grid size={{ xs: 12, md: 6, lg: 3 }}>
             <CardWrapper>
@@ -21,16 +17,14 @@ export default function ConnectorOverview() {
                     <ConnectorStatus />
 
                     <Typography component="div" sx={{ ...cardHeaderSx, mr: 3 }}>
-                        {intl.formatMessage({
-                            id: 'details.ops.status.overview.connector.header',
-                        })}
+                        Connector
                     </Typography>
                 </Stack>
 
                 <Stack spacing={2} style={{ marginLeft: 14 }}>
-                    <ConnectorStatusDetail headerMessageId="details.ops.status.overview.connector.subheaderLastStatus" />
+                    <ConnectorStatusDetail header="Status" />
 
-                    <ConnectorUpdatedDetail headerMessageId="details.ops.status.overview.generic.subheaderLastUpdated" />
+                    <ConnectorUpdatedDetail header="Last Updated" />
                 </Stack>
             </CardWrapper>
         </Grid>

@@ -25,7 +25,7 @@ export default function AutoDiscoverOutcome() {
                 />
 
                 <TimestampDetail
-                    headerMessageId="details.ops.status.overview.autoDiscovery.subheaderLastFailure"
+                    header="Last Failure"
                     time={failure.last_outcome.ts}
                 />
             </>
@@ -40,10 +40,7 @@ export default function AutoDiscoverOutcome() {
                 removed={lastSuccess?.removed}
             />
 
-            <TimestampDetail
-                headerMessageId="details.ops.status.overview.autoDiscovery.subheaderLastSuccess"
-                time={lastSuccess?.ts}
-            />
+            <TimestampDetail header="Last Success" time={lastSuccess?.ts} />
         </>
     );
 }

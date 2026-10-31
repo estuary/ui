@@ -2,16 +2,14 @@ import type { BaseDetailProps } from 'src/components/shared/Entity/Details/Logs/
 
 import { Skeleton, Typography } from '@mui/material';
 
-import DetailWrapper from 'src/components/shared/Entity/Details/Logs/Status/Overview/DetailWrapper';
+import { DetailWrapper } from 'src/components/shared/Entity/Details/Logs/Status/Overview/DetailWrapper';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'src/hooks/searchParams/useGlobalSearchParams';
 import { useEntityStatusStore_singleResponse } from 'src/stores/EntityStatus/hooks';
 import { useEntityStatusStore } from 'src/stores/EntityStatus/Store';
 
-export default function ConnectorStatusDetail({
-    headerMessageId,
-}: BaseDetailProps) {
+export default function ConnectorStatusDetail({ header }: BaseDetailProps) {
     const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);
 
     const hydrating = useEntityStatusStore((state) => !state.hydrated);
@@ -22,7 +20,7 @@ export default function ConnectorStatusDetail({
 
     return (
         <DetailWrapper
-            headerMessageId={headerMessageId}
+            header={header}
             Hydrating={
                 hydrating ? <Skeleton height={21} width={75} /> : undefined
             }

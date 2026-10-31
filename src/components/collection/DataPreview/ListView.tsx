@@ -18,6 +18,7 @@ import { globalStateClasses } from '@mui/utils';
 import { Editor } from '@monaco-editor/react';
 import { isEmpty } from 'lodash';
 
+import { KeysHeader } from 'src/components/collection/DataPreview/KeysHeader';
 import { getLatestDocumentByKey } from 'src/components/collection/DataPreview/shared';
 import { EditorResizeWrapper } from 'src/components/editor/EditorResizeWrapper';
 import ListAndDetails from 'src/components/editor/ListAndDetails';
@@ -90,18 +91,7 @@ function ListView({
                         //  reusable more (maybe just a headless hook?)
                         // Only the keys scroll; the header stays put above them.
                         <Stack sx={{ flex: 1, minHeight: 0 }}>
-                            <Typography
-                                component="div"
-                                sx={{
-                                    p: 1,
-                                    fontWeight: 500,
-                                    flexShrink: 0,
-                                    borderBottom:
-                                        defaultOutline[theme.palette.mode],
-                                }}
-                            >
-                                Keys
-                            </Typography>
+                            <KeysHeader />
                             <List
                                 disablePadding
                                 sx={{

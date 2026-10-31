@@ -1,9 +1,18 @@
-import { Box, Grid, Typography, useTheme } from '@mui/material';
+import {
+    Grid,
+    List,
+    ListItem,
+    ListItemText,
+    Skeleton,
+    useTheme,
+} from '@mui/material';
 
-import { DataGridRowSkeleton } from 'src/components/collection/CollectionSkeletons';
+import { KeysHeader } from 'src/components/collection/DataPreview/KeysHeader';
 import ListAndDetails from 'src/components/editor/ListAndDetails';
 import { JsonSchemaSkeleton } from 'src/components/editor/MonacoEditor/EditorSkeletons';
 import { defaultOutline, semiTransparentBackground } from 'src/context/Theme';
+
+const ROW_OPACITIES = [0.75, 0.5, 0.25];
 
 function ListViewSkeleton() {
     const theme = useTheme();
@@ -17,28 +26,26 @@ function ListViewSkeleton() {
                 removeMargin
                 sx={{ borderRadius: 3 }}
                 list={
-                    <Box>
-                        <Box
-                            sx={{
-                                height: 40,
-                                px: '10px',
-                                display: 'flex',
-                                alignItems: 'center',
-                                borderBottom:
-                                    defaultOutline[theme.palette.mode],
-                            }}
-                        >
-                            <Typography sx={{ fontWeight: 500 }}>
-                                Keys
-                            </Typography>
-                        </Box>
+                    <>
+                        <KeysHeader />
 
-                        <DataGridRowSkeleton opacity={0.75} showBorder />
-
-                        <DataGridRowSkeleton opacity={0.5} showBorder />
-
-                        <DataGridRowSkeleton opacity={0.25} showBorder />
-                    </Box>
+                        {/* Rows lay out like the key list's, so they are the same height. */}
+                        <List disablePadding>
+                            {ROW_OPACITIES.map((opacity) => (
+                                <ListItem
+                                    key={opacity}
+                                    sx={{
+                                        borderBottom:
+                                            defaultOutline[theme.palette.mode],
+                                    }}
+                                >
+                                    <ListItemText sx={{ opacity }}>
+                                        <Skeleton variant="text" />
+                                    </ListItemText>
+                                </ListItem>
+                            ))}
+                        </List>
+                    </>
                 }
             />
         </Grid>

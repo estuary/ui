@@ -18,14 +18,28 @@ import {
     Typography,
 } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 import SaveButton from 'src/components/projections/Redact/SaveButton';
 import SelectableAutocompleteOption from 'src/components/shared/Dialog/SelectableAutocompleteOption';
 import Error from 'src/components/shared/Error';
 import { translateRedactionStrategy } from 'src/utils/schema-utils';
 
 const options: RedactionStrategy_Schema[] = ['block', 'sha256'];
+
+const optionCopy: Record<
+    RedactionStrategy_Schema,
+    { label: string; description: string }
+> = {
+    block: {
+        label: 'Block',
+        description:
+            'Prevent this field from being captured into your collection.',
+    },
+    sha256: {
+        label: 'Hash',
+        description:
+            "Hash this field's value before storing it in your collection.",
+    },
+};
 
 const RedactFieldDialog = ({
     field,
@@ -34,8 +48,6 @@ const RedactFieldDialog = ({
     setOpen,
     strategy,
 }: BaseDialogProps & BaseRedactFieldProps) => {
-    const intl = useIntl();
-
     const [error, setError] = useState<PostgrestError | null>(null);
     const [redactionStrategy, setRedactionStrategy] =
         useState<RedactionStrategy_Schema | null>(null);
@@ -48,11 +60,7 @@ const RedactFieldDialog = ({
 
     return (
         <Dialog maxWidth="sm" open={open} style={{ minWidth: 500 }}>
-            <DialogTitle>
-                {intl.formatMessage({
-                    id: 'projection.dialog.redact.header',
-                })}
-            </DialogTitle>
+            <DialogTitle>Redact Field</DialogTitle>
             <DialogContent>
                 {error ? (
                     <Box style={{ marginBottom: 16, width: 500 }}>
@@ -75,9 +83,7 @@ const RedactFieldDialog = ({
                     }: AutocompleteRenderInputParams) => (
                         <TextField
                             {...params}
-                            label={intl.formatMessage({
-                                id: 'projection.label.redactionStrategy',
-                            })}
+                            label="Strategy"
                             size="small"
                             sx={{ width: 500 }}
                             slotProps={{
@@ -103,9 +109,7 @@ const RedactFieldDialog = ({
                                                 textTransform: 'capitalize',
                                             }}
                                         >
-                                            {intl.formatMessage({
-                                                id: `projection.option.${option}.label`,
-                                            })}
+                                            {optionCopy[option].label}
                                         </Typography>
 
                                         <Typography
@@ -113,9 +117,7 @@ const RedactFieldDialog = ({
                                                 color: 'text.diminished',
                                             }}
                                         >
-                                            {intl.formatMessage({
-                                                id: `projection.option.${option}.description`,
-                                            })}
+                                            {optionCopy[option].description}
                                         </Typography>
                                     </>
                                 }
@@ -135,7 +137,7 @@ const RedactFieldDialog = ({
                     }}
                     variant="text"
                 >
-                    {intl.formatMessage({ id: 'cta.cancel' })}
+                    Cancel
                 </Button>
 
                 <SaveButton

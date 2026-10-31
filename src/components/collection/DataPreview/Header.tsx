@@ -27,8 +27,10 @@ const describeSample = (keyCount: number, documentCount: number) => {
 interface Props {
     onRefresh: () => void;
     refreshDisabled: boolean;
-    // The documents listed below. The sample notice and counts describe them,
-    // so they are left out while documents load or when there are none.
+    // Whether the card shows, or is loading, a sample. The notice stays up
+    // while documents load so the header keeps its height on Refresh.
+    showNotice: boolean;
+    // The documents listed below, which the counts describe.
     documents?: JournalRecord[];
     keyPointers?: string[];
 }
@@ -38,6 +40,7 @@ export function DataPreviewHeader({
     keyPointers,
     onRefresh,
     refreshDisabled,
+    showNotice,
 }: Props) {
     const sampleDescription = useMemo(
         () =>
@@ -103,7 +106,7 @@ export function DataPreviewHeader({
               A record missing from the sample may still be in the collection;
               a customer once took that as data loss.
             */}
-            {sampleDescription ? (
+            {showNotice ? (
                 <Typography component="div" variant="cardCaption">
                     Showing a sample of recent documents, not the full
                     collection.{' '}

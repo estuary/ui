@@ -11,7 +11,6 @@ import {
 } from '@mui/material';
 
 import { ArrowRight } from 'iconoir-react';
-import { useIntl } from 'react-intl';
 
 function FieldEditor({
     disabled,
@@ -21,7 +20,6 @@ function FieldEditor({
     setInputInvalid,
     value,
 }: FieldEditorProps) {
-    const intl = useIntl();
     const theme = useTheme();
 
     return (
@@ -40,9 +38,7 @@ function FieldEditor({
                         fontSize: 10,
                     }}
                 >
-                    {intl.formatMessage({
-                        id: 'projection.label.fieldName.current',
-                    })}
+                    Current Name
                 </FormLabel>
 
                 <Typography
@@ -69,9 +65,7 @@ function FieldEditor({
                     autoFocus
                     disabled={disabled}
                     error={inputInvalid}
-                    label={intl.formatMessage({
-                        id: 'projection.label.fieldName.new',
-                    })}
+                    label="New Name"
                     onChange={(event) => {
                         setInput(event.target.value);
                         setInputInvalid(
@@ -90,9 +84,7 @@ function FieldEditor({
 
                 {inputInvalid ? (
                     <FormHelperText error={inputInvalid}>
-                        {intl.formatMessage({
-                            id: 'projection.error.input.invalidFieldName',
-                        })}
+                        Field names cannot begin with a forward slash (/).
                     </FormHelperText>
                 ) : null}
             </Stack>

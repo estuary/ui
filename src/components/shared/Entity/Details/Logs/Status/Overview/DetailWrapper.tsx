@@ -2,13 +2,11 @@ import type { DetailWrapperProps } from 'src/components/shared/Entity/Details/Lo
 
 import { Box, Typography } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
-function DetailWrapper({
+export function DetailWrapper({
     children,
     header,
     Hydrating,
-}: Omit<DetailWrapperProps, 'headerMessageId'> & { header: string }) {
+}: DetailWrapperProps) {
     return (
         <Box>
             <Typography
@@ -23,20 +21,5 @@ function DetailWrapper({
 
             {Hydrating ?? children}
         </Box>
-    );
-}
-
-/** @deprecated Prefer the named `DetailWrapper` export */
-export default function DeprecatedDetailWrapper({
-    headerMessageId,
-    ...props
-}: DetailWrapperProps) {
-    const intl = useIntl();
-
-    return (
-        <DetailWrapper
-            {...props}
-            header={intl.formatMessage({ id: headerMessageId })}
-        />
     );
 }
