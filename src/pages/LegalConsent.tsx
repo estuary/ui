@@ -16,7 +16,9 @@ import { useMutation, useQuery } from 'urql';
 
 import { LEGAL_TERMS_ACCEPT, LEGAL_TERMS_QUERY } from 'src/api/gql/legalTerms';
 import AlertBox from 'src/components/shared/AlertBox';
+import TenantSelector from 'src/components/shared/TenantSelector';
 import { useUpdateHelmet } from 'src/context/UpdateHelmet';
+import { useTenantStore } from 'src/stores/Tenant';
 
 function ConsentForm({
     type,
@@ -150,9 +152,8 @@ export function LegalConsent() {
     const [params] = useSearchParams();
     const { updateTitle } = useUpdateHelmet();
     const type = params.get('type');
-    const tenant = params.get('tenant')?.trim().replace(/\/$/, '');
+    const tenant = useTenantStore((state) => state.selectedTenant);
     const validType = type === 'MSA';
-    const validTenant = !!tenant && !/[\s/]/u.test(tenant);
 
     useEffect(() => {
         updateTitle('Estuary | Legal consent');
@@ -163,19 +164,23 @@ export function LegalConsent() {
             <Typography variant="h4" component="h1">
                 Legal consent
             </Typography>
-            {validType &&
-            validTenant &&
-            params.getAll('type').length === 1 &&
-            params.getAll('tenant').length === 1 ? (
-                <ConsentForm
-                    key={`${type}:${tenant}`}
-                    type={type}
-                    tenant={`${tenant}/`}
-                />
+            <TenantSelector />
+            {validType && params.getAll('type').length === 1 ? (
+                tenant ? (
+                    <ConsentForm
+                        key={`${type}:${tenant}`}
+                        type={type}
+                        tenant={tenant}
+                    />
+                ) : (
+                    <Typography>
+                        Select a tenant to review and accept the terms.
+                    </Typography>
+                )
             ) : (
                 <AlertBox short severity="error">
-                    This link must specify a valid legal terms type (MSA) and
-                    tenant. Ask for a new link.
+                    This link must specify a valid legal terms type (MSA). Ask
+                    for a new link.
                 </AlertBox>
             )}
         </Stack>
