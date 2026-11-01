@@ -401,6 +401,7 @@ export type CapabilityBit =
   | 'JournalRead'
   | 'ManageAlerts'
   | 'ManageInviteLinks'
+  | 'ManageLegal'
   | 'ModifyDataPlanePrivateNetworking'
   | 'QueryServiceAccounts'
   | 'RevokeApiKey'
@@ -1247,14 +1248,6 @@ export type InferredSchemaStatus = {
   schemaMd5?: Maybe<Scalars['String']['output']>;
 };
 
-export type IntFilter = {
-  eq?: InputMaybe<Scalars['Int']['input']>;
-  gt?: InputMaybe<Scalars['Int']['input']>;
-  gte?: InputMaybe<Scalars['Int']['input']>;
-  lt?: InputMaybe<Scalars['Int']['input']>;
-  lte?: InputMaybe<Scalars['Int']['input']>;
-};
-
 /** An invite link that grants access to a catalog prefix. */
 export type InviteLink = {
   __typename?: 'InviteLink';
@@ -1369,6 +1362,11 @@ export type JobStatus = {
   type: StatusType;
 };
 
+export type LegalConsentVersion = {
+  eq?: InputMaybe<Scalars['Int']['input']>;
+  gte?: InputMaybe<Scalars['Int']['input']>;
+};
+
 export type LegalTerms = {
   __typename?: 'LegalTerms';
   id: Scalars['Id']['output'];
@@ -1377,47 +1375,9 @@ export type LegalTerms = {
   version: Scalars['Int']['output'];
 };
 
-export type LegalTermsAccepted = {
-  __typename?: 'LegalTermsAccepted';
-  id: Scalars['Id']['output'];
-  tenant: Scalars['String']['output'];
-  text: Scalars['String']['output'];
-  type: LegalTermsType;
-  version: Scalars['Int']['output'];
-};
-
-export type LegalTermsAcceptedConnection = {
-  __typename?: 'LegalTermsAcceptedConnection';
-  /** A list of edges. */
-  edges: Array<LegalTermsAcceptedEdge>;
-  /** Information to aid in pagination. */
-  pageInfo: PageInfo;
-};
-
-/** An edge in a connection. */
-export type LegalTermsAcceptedEdge = {
-  __typename?: 'LegalTermsAcceptedEdge';
-  /** A cursor for use in pagination */
-  cursor: Scalars['String']['output'];
-  /** The item at the end of the edge */
-  node: LegalTermsAccepted;
-};
-
-export type LegalTermsFilter = {
-  /** Only terms accepted by this tenant. Requires CatalogRead on the tenant. */
-  tenant?: InputMaybe<StringFilter>;
-  type?: InputMaybe<LegalTermsTypeFilter>;
-  version?: InputMaybe<IntFilter>;
-};
-
 export type LegalTermsType =
   /** Master Services Agreement. */
-  | 'MSA'
-  | 'SANDBOX_CONSENT';
-
-export type LegalTermsTypeFilter = {
-  eq?: InputMaybe<LegalTermsType>;
-};
+  | 'MSA';
 
 export type LiveSpec = {
   __typename?: 'LiveSpec';
@@ -1768,7 +1728,7 @@ export type MutationRoot = {
    * or publication rather than here.
    */
   deleteSecret: Array<Scalars['Name']['output']>;
-  /** Accept the latest legal terms of their type. Requires ManageLegal and an unrestricted user token. */
+  /** Accept the latest legal terms of their type. Requires a direct ManageLegal grant and an unrestricted user token. */
   legalTermsAccept: LegalTerms;
   /**
    * Redeem an invite link token, granting the caller access to the associated
@@ -2558,10 +2518,10 @@ export type QueryRoot = {
    * (`startsWith`) or an exact set (`in`), not both.
    */
   inviteLinks: InviteLinkConnection;
+  /** Whether the tenant has accepted matching legal terms. Requires CatalogRead on the tenant. */
+  legalConsentCheck: Scalars['Boolean']['output'];
   /** Returns the latest legal terms of the given type. */
   legalTerms?: Maybe<LegalTerms>;
-  /** Lists legal terms accepted by tenants the caller can read, with optional filters and pagination. */
-  legalTermsAccepted: LegalTermsAcceptedConnection;
   /**
    * Returns a paginated list of live specs under the given prefix and
    * matching the given type.
@@ -2696,17 +2656,15 @@ export type QueryRootInviteLinksArgs = {
 };
 
 
-export type QueryRootLegalTermsArgs = {
+export type QueryRootLegalConsentCheckArgs = {
+  tenant: Scalars['String']['input'];
   type: LegalTermsType;
+  version: LegalConsentVersion;
 };
 
 
-export type QueryRootLegalTermsAcceptedArgs = {
-  after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
-  filter?: InputMaybe<LegalTermsFilter>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
+export type QueryRootLegalTermsArgs = {
+  type: LegalTermsType;
 };
 
 

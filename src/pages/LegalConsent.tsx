@@ -151,7 +151,7 @@ export function LegalConsent() {
     const { updateTitle } = useUpdateHelmet();
     const type = params.get('type');
     const tenant = params.get('tenant')?.trim().replace(/\/$/, '');
-    const validType = type === 'MSA' || type === 'SANDBOX_CONSENT';
+    const validType = type === 'MSA';
     const validTenant = !!tenant && !/[\s/]/u.test(tenant);
 
     useEffect(() => {
@@ -174,8 +174,8 @@ export function LegalConsent() {
                 />
             ) : (
                 <AlertBox short severity="error">
-                    This link must specify a valid legal terms type (MSA or
-                    SANDBOX_CONSENT) and tenant. Ask for a new link.
+                    This link must specify a valid legal terms type (MSA) and
+                    tenant. Ask for a new link.
                 </AlertBox>
             )}
         </Stack>
