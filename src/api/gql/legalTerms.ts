@@ -9,3 +9,12 @@ export const LEGAL_TERMS_QUERY = graphql(`
         }
     }
 `);
+
+export const LEGAL_TERMS_ACCEPT = graphql(`
+    mutation LegalTermsAccept($tenant: String!, $termsId: Id!) {
+        legalTermsAccept(tenant: $tenant, termsId: $termsId) {
+            id
+            text
+        }
+    }
+`);

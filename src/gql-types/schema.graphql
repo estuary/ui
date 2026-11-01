@@ -1339,6 +1339,14 @@ type InferredSchemaStatus {
   schemaMd5: String
 }
 
+input IntFilter {
+  eq: Int
+  gt: Int
+  gte: Int
+  lt: Int
+  lte: Int
+}
+
 """An invite link that grants access to a catalog prefix."""
 type InviteLink {
   """The capability level granted by this invite link."""
@@ -1466,11 +1474,52 @@ type JobStatus {
 type LegalTerms {
   id: Id!
   text: String!
+  type: LegalTermsType!
+  version: Int!
+}
+
+type LegalTermsAccepted {
+  id: Id!
+  tenant: String!
+  text: String!
+  type: LegalTermsType!
+  version: Int!
+}
+
+type LegalTermsAcceptedConnection {
+  """A list of edges."""
+  edges: [LegalTermsAcceptedEdge!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+}
+
+"""An edge in a connection."""
+type LegalTermsAcceptedEdge {
+  """A cursor for use in pagination"""
+  cursor: String!
+
+  """The item at the end of the edge"""
+  node: LegalTermsAccepted!
+}
+
+input LegalTermsFilter {
+  """
+  Only terms accepted by this tenant. Requires CatalogRead on the tenant.
+  """
+  tenant: StringFilter
+  type: LegalTermsTypeFilter
+  version: IntFilter
 }
 
 enum LegalTermsType {
   """Master Services Agreement."""
   MSA
+  SANDBOX_CONSENT
+}
+
+input LegalTermsTypeFilter {
+  eq: LegalTermsType
 }
 
 type LiveSpec {
@@ -1835,6 +1884,11 @@ type MutationRoot {
   or publication rather than here.
   """
   deleteSecret(catalogName: Name, prefix: Prefix): [Name!]!
+
+  """
+  Accept the latest legal terms of their type. Requires ManageLegal and an unrestricted user token.
+  """
+  legalTermsAccept(tenant: String!, termsId: Id!): LegalTerms!
 
   """
   Redeem an invite link token, granting the caller access to the associated
@@ -2473,6 +2527,11 @@ type QueryRoot {
 
   """Returns the latest legal terms of the given type."""
   legalTerms(type: LegalTermsType!): LegalTerms
+
+  """
+  Lists legal terms accepted by tenants the caller can read, with optional filters and pagination.
+  """
+  legalTermsAccepted(after: String, before: String, filter: LegalTermsFilter, first: Int, last: Int): LegalTermsAcceptedConnection!
 
   """
   Returns a paginated list of live specs under the given prefix and

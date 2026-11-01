@@ -266,6 +266,10 @@ export const authenticatedRoutes = {
     dataPlaneAuth,
     home,
     oauthConsent,
+    legalConsent: {
+        path: 'legal-consent',
+        fullPath: '/legal-consent',
+    },
     materializations,
     marketplace: marketplace.authenticated,
     secrets,

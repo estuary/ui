@@ -190,3 +190,21 @@ After authentication, a set of guards run before the main content renders (`src/
 | `AnalyticsGuard` | Initializes PostHog user identification              |
 | `GrantGuard`     | Processes access grant tokens from URL               |
 | `TenantGuard`    | Ensures user has a valid tenant; redirects if not    |
+
+## Legal consent
+
+`/legal-consent?type=SANDBOX_CONSENT&tenant=acmeCo` opens an authenticated
+consent page. Both parameters are required; `type` accepts `MSA` or
+`SANDBOX_CONSENT`, and `tenant` accepts a tenant name with an optional trailing
+slash. The normal login redirect preserves these parameters.
+
+The page fetches the latest terms with `legalTerms(type:)` and renders their
+Markdown without raw HTML. Accept submits the displayed terms ID and tenant to
+`legalTermsAccept`; the API enforces `ManageLegal` and rejects outdated terms.
+Decline makes no mutation because the API only supports recording acceptance.
+Both outcomes remain on the page so the user can return to the calling app.
+
+This route depends on estuary/flow#3687. Its legal-terms schema definitions were
+merged into the existing schema snapshot for code generation from backend commit
+`6b254a67b8e92d559dcbb49c1d403e5e5b95ec9e`; regenerate against the deployed API
+once that change is available.
