@@ -144,10 +144,6 @@ function ConsentForm({
 
     return (
         <Stack spacing={3}>
-            <Typography>
-                Review these terms before accepting on behalf of{' '}
-                <strong>{tenant}</strong>.
-            </Typography>
             <LegalTermsMarkdown text={terms.text} />
             <ErrorDisplay
                 condensed
@@ -175,7 +171,7 @@ function ConsentForm({
                     disabled={submitting}
                     onClick={() => void acceptTerms()}
                 >
-                    {`Accept for ${tenant}`}
+                    {`Accept on behalf of ${tenant}`}
                 </Button>
             </Stack>
         </Stack>
