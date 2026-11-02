@@ -82,7 +82,7 @@ export function DataPreview({ collectionName }: Props) {
         <CardWrapper
             message={
                 <DataPreviewHeader
-                    documents={showList ? documents : undefined}
+                    documents={documents}
                     keyPointers={spec?.spec.key}
                     onRefresh={() => journalData.refresh()}
                     refreshDisabled={Boolean(

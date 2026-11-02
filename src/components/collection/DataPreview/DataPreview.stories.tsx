@@ -63,9 +63,7 @@ function DataPreviewHarness({ documentCount, keyCount }: HarnessProps) {
         <CardWrapper
             message={
                 <DataPreviewHeader
-                    documents={
-                        loading ? undefined : journalData.data?.documents
-                    }
+                    documents={journalData.data?.documents}
                     keyPointers={KEY_POINTERS}
                     onRefresh={() => {
                         setLoading(true);

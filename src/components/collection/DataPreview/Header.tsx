@@ -21,7 +21,7 @@ const describeSample = (keyCount: number, documentCount: number) => {
 
     return keyCount < documentCount
         ? `${keyCount} ${keyCount === 1 ? 'key' : 'keys'} from the last ${documents}`
-        : `Last ${documents}`;
+        : `the last ${documents}`;
 };
 
 interface Props {
@@ -30,7 +30,8 @@ interface Props {
     // Whether the card shows, or is loading, a sample. The notice stays up
     // while documents load so the header keeps its height on Refresh.
     showNotice: boolean;
-    // The documents listed below, which the counts describe.
+    // The documents the notice counts. While they reload these are still the
+    // previous ones, so the notice doesn't change until the new ones arrive.
     documents?: JournalRecord[];
     keyPointers?: string[];
 }
@@ -57,49 +58,28 @@ export function DataPreviewHeader({
 
     return (
         <Stack spacing={0.5}>
-            <Stack
-                direction="row"
-                spacing={1}
-                sx={{
-                    alignItems: 'center',
-                    flexWrap: 'wrap',
-                    justifyContent: 'space-between',
-                    width: '100%',
-                }}
-            >
-                <Stack
-                    direction="row"
-                    spacing={2}
-                    sx={{ alignItems: 'center' }}
+            <Stack direction="row" spacing={2} sx={{ alignItems: 'center' }}>
+                <Typography component="span" variant="cardTitle">
+                    Data Preview
+                </Typography>
+
+                <Button
+                    variant="text"
+                    // Iconoir draws within ~5/6 of its box, so 12px puts the
+                    // glyph at the label's 10px cap height.
+                    startIcon={<Refresh height={12} width={12} />}
+                    onClick={onRefresh}
+                    disabled={refreshDisabled}
+                    // No vertical padding, so the button is no taller than the
+                    // title and the card's top padding stays even with its
+                    // sides.
+                    sx={{
+                        height: 'auto',
+                        py: 0,
+                    }}
                 >
-                    <Typography component="span" variant="cardTitle">
-                        Data Preview
-                    </Typography>
-
-                    <Button
-                        variant="text"
-                        // Iconoir draws within ~5/6 of its box, so 12px puts
-                        // the glyph at the label's 10px cap height.
-                        startIcon={<Refresh height={12} width={12} />}
-                        onClick={onRefresh}
-                        disabled={refreshDisabled}
-                        // No vertical padding, so the button is no taller
-                        // than the title and the card's top padding stays even
-                        // with its sides.
-                        sx={{
-                            height: 'auto',
-                            py: 0,
-                        }}
-                    >
-                        Refresh
-                    </Button>
-                </Stack>
-
-                {sampleDescription ? (
-                    <Typography component="div" variant="cardCaption">
-                        {sampleDescription}
-                    </Typography>
-                ) : null}
+                    Refresh
+                </Button>
             </Stack>
 
             {/*
@@ -108,8 +88,7 @@ export function DataPreviewHeader({
             */}
             {showNotice ? (
                 <Typography component="div" variant="cardCaption">
-                    Showing a sample of recent documents, not the full
-                    collection.{' '}
+                    {`Showing ${sampleDescription ?? 'a sample of recent documents'}, not the full collection.`}{' '}
                     <ExternalLink link={VIEWING_DOCUMENTS_DOCS_URL}>
                         Read all documents with flowctl
                     </ExternalLink>
