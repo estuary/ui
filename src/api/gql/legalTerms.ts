@@ -6,6 +6,16 @@ export const LEGAL_TERMS_QUERY = graphql(`
         legalTerms(type: $type) {
             text
             id
+        }
+    }
+`);
+
+// Consent checks need the version; public terms and signup use the query above.
+export const LEGAL_CONSENT_TERMS_QUERY = graphql(`
+    query LegalConsentTerms($type: LegalTermsType!) {
+        legalTerms(type: $type) {
+            text
+            id
             version
         }
     }
@@ -15,7 +25,6 @@ export const LEGAL_TERMS_ACCEPT = graphql(`
     mutation LegalTermsAccept($tenant: String!, $termsId: Id!) {
         legalTermsAccept(tenant: $tenant, termsId: $termsId) {
             id
-            text
         }
     }
 `);

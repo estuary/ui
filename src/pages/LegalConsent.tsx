@@ -9,26 +9,28 @@ import { useMutation, useQuery } from 'urql';
 
 import {
     LEGAL_CONSENT_CHECK,
+    LEGAL_CONSENT_TERMS_QUERY,
     LEGAL_TERMS_ACCEPT,
-    LEGAL_TERMS_QUERY,
 } from 'src/api/gql/legalTerms';
 import AlertBox from 'src/components/shared/AlertBox';
+import ErrorDisplay from 'src/components/shared/Error';
 import { LegalTermsMarkdown } from 'src/components/shared/LegalTermsMarkdown';
 import TenantSelector from 'src/components/shared/TenantSelector';
 import { useUpdateHelmet } from 'src/context/UpdateHelmet';
+import { BASE_ERROR } from 'src/services/supabase';
 import { useTenantStore } from 'src/stores/Tenant';
+import { useTopBarStore } from 'src/stores/TopBar/Store';
 
 function ConsentForm({
     type,
     tenant,
 }: {
-    type: string | null;
+    type: LegalTermsType;
     tenant: string;
 }) {
     const [{ data, fetching, error }, refetch] = useQuery({
-        query: LEGAL_TERMS_QUERY,
-        // Let the API validate the raw URL value, including a missing type.
-        variables: { type: type as LegalTermsType },
+        query: LEGAL_CONSENT_TERMS_QUERY,
+        variables: { type },
         requestPolicy: 'network-only',
     });
     const [, accept] = useMutation(LEGAL_TERMS_ACCEPT);
@@ -43,7 +45,7 @@ function ConsentForm({
         query: LEGAL_CONSENT_CHECK,
         variables: {
             tenant,
-            type: type as LegalTermsType,
+            type,
             version: { eq: terms?.version },
         },
         pause: fetching || !!error || !terms,
@@ -55,40 +57,11 @@ function ConsentForm({
 
     const reload = () => {
         setSubmitError(null);
-        refetch({ requestPolicy: 'network-only' });
-        if (terms) recheckConsent({ requestPolicy: 'network-only' });
-    };
-
-    const acceptTerms = async () => {
-        if (
-            !terms ||
-            loading ||
-            loadError ||
-            alreadyAccepted !== false ||
-            submittingRef.current ||
-            decision
-        )
-            return;
-        submittingRef.current = true;
-        setSubmitting(true);
-        setSubmitError(null);
-        try {
-            const result = await accept({ tenant, termsId: terms.id });
-            if (result.error) throw result.error;
-            if (!result.data?.legalTermsAccept)
-                throw new Error(
-                    'Could not record your acceptance. Please try again.'
-                );
-            setDecision('accepted');
-        } catch (cause) {
-            setSubmitError(
-                cause instanceof Error
-                    ? cause.message
-                    : 'Could not record your acceptance. Please try again.'
-            );
-        } finally {
-            submittingRef.current = false;
-            setSubmitting(false);
+        if (terms && !error && consent.error) {
+            recheckConsent({ requestPolicy: 'network-only' });
+        } else {
+            // Consent is checked automatically once the terms finish loading.
+            refetch({ requestPolicy: 'network-only' });
         }
     };
 
@@ -144,6 +117,31 @@ function ConsentForm({
         return <CircularProgress aria-label="Checking legal consent" />;
     }
 
+    const acceptTerms = async () => {
+        if (submittingRef.current) return;
+        submittingRef.current = true;
+        setSubmitting(true);
+        setSubmitError(null);
+        try {
+            const result = await accept({ tenant, termsId: terms.id });
+            if (result.error) throw result.error;
+            if (!result.data?.legalTermsAccept)
+                throw new Error(
+                    'Could not record your acceptance. Please try again.'
+                );
+            setDecision('accepted');
+        } catch (cause) {
+            setSubmitError(
+                cause instanceof Error
+                    ? cause.message
+                    : 'Could not record your acceptance. Please try again.'
+            );
+        } finally {
+            submittingRef.current = false;
+            setSubmitting(false);
+        }
+    };
+
     return (
         <Stack spacing={3}>
             <Typography>
@@ -151,16 +149,17 @@ function ConsentForm({
                 <strong>{tenant}</strong>.
             </Typography>
             <LegalTermsMarkdown text={terms.text} />
-            {submitError ? (
-                <AlertBox short severity="error">
-                    {submitError}
-                </AlertBox>
-            ) : null}
-            {submitError ? (
-                <Button disabled={submitting || fetching} onClick={reload}>
-                    Reload terms
-                </Button>
-            ) : null}
+            <ErrorDisplay
+                condensed
+                error={
+                    submitError ? { ...BASE_ERROR, message: submitError } : null
+                }
+                cta={
+                    <Button disabled={submitting} onClick={reload}>
+                        Reload terms
+                    </Button>
+                }
+            />
             <Stack direction="row" spacing={2}>
                 <Button
                     variant="outlined"
@@ -173,7 +172,7 @@ function ConsentForm({
                 </Button>
                 <Button
                     variant="contained"
-                    disabled={submitting || fetching || !!error || !terms?.text}
+                    disabled={submitting}
                     onClick={() => void acceptTerms()}
                 >
                     {submitting ? 'Accepting…' : 'Accept'}
@@ -188,10 +187,13 @@ export function LegalConsent() {
     const { updateTitle } = useUpdateHelmet();
     const type = params.get('type')?.toUpperCase() ?? null;
     const tenant = useTenantStore((state) => state.selectedTenant);
+    const setHeader = useTopBarStore((state) => state.setHeader);
 
     useEffect(() => {
+        // Clear the previous page's shared heading; this page renders its own title.
+        setHeader('');
         updateTitle('Estuary | Legal consent');
-    }, [updateTitle]);
+    }, [setHeader, updateTitle]);
 
     return (
         <Stack spacing={3} sx={{ maxWidth: 860, mx: 'auto', py: 4, px: 3 }}>
@@ -199,7 +201,12 @@ export function LegalConsent() {
                 Legal consent
             </Typography>
             <TenantSelector />
-            {tenant ? (
+            {type !== 'MSA' || params.getAll('type').length !== 1 ? (
+                <AlertBox short severity="error">
+                    This link must specify a valid legal terms type. Ask for a
+                    new link.
+                </AlertBox>
+            ) : tenant ? (
                 <ConsentForm
                     key={`${type}:${tenant}`}
                     type={type}
