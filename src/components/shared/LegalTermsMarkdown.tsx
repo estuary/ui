@@ -183,9 +183,6 @@ export function LegalTermsMarkdown({ text }: { text: string }) {
                 '& h4 + p': { mb: 1 },
                 '& table': {
                     borderCollapse: 'collapse',
-                    width: '100%',
-                    overflowWrap: 'break-word',
-                    wordBreak: 'normal',
                     mb: 2,
                 },
                 '& th, & td': {
