@@ -1,4 +1,8 @@
-import type { ConnectorConfig } from 'deps/flow/flow';
+import type {
+    CaptureDef,
+    ConnectorConfig,
+    MaterializationDef,
+} from 'deps/flow/flow';
 import type { DraftSpecsExtQuery_ByDraftId } from 'src/api/draftSpecs';
 import type { ConnectorTagData } from 'src/context/ConnectorTag';
 import type { LiveSpecsExtQuery } from 'src/hooks/useLiveSpecsExt';
@@ -68,3 +72,10 @@ export const buildConnectorImageFromTag = (
               imagePath: buildConnectorImagePath(connector.imageName, imageTag),
           };
 };
+
+export function getEndpointFromSpec(spec: CaptureDef | MaterializationDef) {
+    const { endpoint } = spec;
+    if ('connector' in endpoint) return endpoint.connector; // capture or materialization
+    if ('dekaf' in endpoint) return endpoint.dekaf; // materialization
+    return null;
+}

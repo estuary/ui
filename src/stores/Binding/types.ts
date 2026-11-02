@@ -3,7 +3,6 @@ import type { TrialCollectionQuery } from 'src/api/liveSpecsExt';
 import type { ConnectorTagData } from 'src/context/ConnectorTag';
 import type { LiveSpecsExt_MaterializeOrTransform } from 'src/hooks/useLiveSpecsExt';
 import type { ResourceConfigPointers } from 'src/services/ajv';
-import type { CallSupabaseResponse } from 'src/services/supabase';
 import type { StoreWithBackfill } from 'src/stores/Binding/slices/Backfill';
 import type { StoreWithFieldSelection } from 'src/stores/Binding/slices/FieldSelection';
 import type { StoreWithTimeTravel } from 'src/stores/Binding/slices/TimeTravel';
@@ -209,7 +208,7 @@ export interface BindingState
     // The analog of resource config store action, `evaluateDiscoveredBindings`,
     // which encapsulates the functionality of `setDiscoveredCollections`
     // and `resetConfigAndCollections`.
-    evaluateDiscoveredBindings: (response: CallSupabaseResponse<any>) => void;
+    evaluateDiscoveredBindings: (discoveredBindings: Schema[]) => void;
 
     // The analog of resource config store action, `resetResourceConfigAndCollections`.
     removeDiscoveredBindings: () => void;
