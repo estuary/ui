@@ -28,10 +28,22 @@ function ConsentForm({
         variables: { type },
         requestPolicy: 'network-only',
     });
-    const [, accept] = useMutation(LEGAL_ACCEPT);
+    const [
+        {
+            data: acceptanceData,
+            fetching: submitting,
+            error: acceptanceError,
+            operation: acceptanceOperation,
+        },
+        accept,
+    ] = useMutation(LEGAL_ACCEPT);
     const submittingRef = useRef(false);
-    const [submitting, setSubmitting] = useState(false);
-    const [submitError, setSubmitError] = useState<string | null>(null);
+    const submitError = submitting
+        ? null
+        : (acceptanceError?.message ??
+          (acceptanceOperation && !acceptanceData?.legalAccept
+              ? 'Could not record your acceptance. Please try again.'
+              : null));
     const [decision, setDecision] = useState<'accepted' | 'declined' | null>(
         null
     );
@@ -51,7 +63,6 @@ function ConsentForm({
     const loadError = error ?? consent.error;
 
     const reload = () => {
-        setSubmitError(null);
         if (terms && !error && consent.error) {
             recheckConsent({ requestPolicy: 'network-only' });
         } else {
@@ -115,25 +126,13 @@ function ConsentForm({
     const acceptTerms = async () => {
         if (submittingRef.current) return;
         submittingRef.current = true;
-        setSubmitting(true);
-        setSubmitError(null);
         try {
             const result = await accept({ tenant, termsId: terms.id });
-            if (result.error) throw result.error;
-            if (!result.data?.legalAccept)
-                throw new Error(
-                    'Could not record your acceptance. Please try again.'
-                );
-            setDecision('accepted');
-        } catch (cause) {
-            setSubmitError(
-                cause instanceof Error
-                    ? cause.message
-                    : 'Could not record your acceptance. Please try again.'
-            );
+            if (!result.error && result.data?.legalAccept) {
+                setDecision('accepted');
+            }
         } finally {
             submittingRef.current = false;
-            setSubmitting(false);
         }
     };
 
