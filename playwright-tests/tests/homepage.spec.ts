@@ -11,5 +11,10 @@ test('Welcome Page', async ({ page }) => {
 
     // Make sure the title is right
     await expect(page.getByText('Welcome to Estuary!')).toBeVisible();
-    await expect(page).toHaveScreenshot();
+
+    // The main navigation leads to each entity
+    const navigation = page.getByRole('list', { name: 'Main navigation' });
+    for (const name of ['Sources', 'Collections', 'Destinations']) {
+        await expect(navigation.getByRole('link', { name })).toBeVisible();
+    }
 });
