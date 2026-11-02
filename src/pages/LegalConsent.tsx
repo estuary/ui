@@ -15,10 +15,9 @@ import {
 import AlertBox from 'src/components/shared/AlertBox';
 import ErrorDisplay from 'src/components/shared/Error';
 import { LegalTermsMarkdown } from 'src/components/shared/LegalTermsMarkdown';
-import TenantSelector from 'src/components/shared/TenantSelector';
 import { useUpdateHelmet } from 'src/context/UpdateHelmet';
 import { BASE_ERROR } from 'src/services/supabase';
-import { useTenantStore } from 'src/stores/Tenant';
+import { useEntitiesStore } from 'src/stores/Entities/Store';
 import { useTopBarStore } from 'src/stores/TopBar/Store';
 
 function ConsentForm({
@@ -186,7 +185,12 @@ export function LegalConsent() {
     const [params] = useSearchParams();
     const { updateTitle } = useUpdateHelmet();
     const type = params.get('type')?.toUpperCase() ?? null;
-    const tenant = useTenantStore((state) => state.selectedTenant);
+    const tenantParam = params.get('tenant');
+    const tenant = tenantParam ? `${tenantParam.replace(/\/$/, '')}/` : null;
+    const adminPrefixes = useEntitiesStore((state) => state.capabilities.admin);
+    const canAdminTenant =
+        !!tenant &&
+        Array.from(adminPrefixes).some((prefix) => tenant.startsWith(prefix));
     const setHeader = useTopBarStore((state) => state.setHeader);
 
     useEffect(() => {
@@ -200,22 +204,29 @@ export function LegalConsent() {
             <Typography variant="h4" component="h1">
                 Legal consent
             </Typography>
-            <TenantSelector />
             {type !== 'MSA' || params.getAll('type').length !== 1 ? (
                 <AlertBox short severity="error">
                     This link must specify a valid legal terms type. Ask for a
                     new link.
                 </AlertBox>
-            ) : tenant ? (
+            ) : !tenant ||
+              params.getAll('tenant').length !== 1 ||
+              !/^[^/]+\/$/.test(tenant) ? (
+                <AlertBox short severity="error">
+                    This link must specify a valid tenant. Ask for a new link.
+                </AlertBox>
+            ) : !canAdminTenant ? (
+                <AlertBox short severity="warning">
+                    You must have admin access to this tenant to review and
+                    accept legal terms. Ask your administrator to accept the
+                    terms.
+                </AlertBox>
+            ) : (
                 <ConsentForm
                     key={`${type}:${tenant}`}
                     type={type}
                     tenant={tenant}
                 />
-            ) : (
-                <Typography>
-                    Select a tenant to review and accept the terms.
-                </Typography>
             )}
         </Stack>
     );
