@@ -39,6 +39,7 @@ import BasicLogin from 'src/pages/login/Basic';
 import EnterpriseLogin from 'src/pages/login/Enterprise';
 import MarketplaceCallback from 'src/pages/marketplace/Callback';
 import MarketplaceVerification from 'src/pages/marketplace/Verification';
+import { OAuthConsent } from 'src/pages/OAuthConsent';
 import { SSORequired } from 'src/pages/SSORequired';
 import { Terms } from 'src/pages/Terms';
 import { isProduction } from 'src/utils/env-utils';
@@ -81,6 +82,12 @@ const MaterializationDetailsRoute = lazy(
 );
 const MaterializationEditRoute = lazy(
     () => import('src/context/Router/MaterializationEdit')
+);
+
+const SecretDropboxRoute = lazy(() =>
+    import('src/pages/SecretDropbox').then((module) => ({
+        default: module.SecretDropbox,
+    }))
 );
 
 const router = createBrowserRouter(
@@ -216,8 +223,22 @@ const router = createBrowserRouter(
                     />
 
                     <Route
+                        path={authenticatedRoutes.oauthConsent.path}
+                        element={<OAuthConsent />}
+                    />
+
+                    <Route
                         path={authenticatedRoutes.marketplace.verify.fullPath}
                         element={<MarketplaceVerification />}
+                    />
+
+                    <Route
+                        path={authenticatedRoutes.secrets.dropbox.fullPath}
+                        element={
+                            <Suspense fallback={null}>
+                                <SecretDropboxRoute />
+                            </Suspense>
+                        }
                     />
 
                     <Route path={authenticatedRoutes.beta.path}>

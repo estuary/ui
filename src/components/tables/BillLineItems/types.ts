@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import type { InvoiceLineItem } from 'src/api/billing';
+import type { InvoiceLineItem } from 'src/api/gql/billing';
 
 export interface RowProps {
     row: InvoiceLineItem;

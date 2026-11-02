@@ -109,7 +109,7 @@ See [`STATE.md`](./STATE.md) for the full Zustand architecture. Key React-specif
 
 - **Direct selector access** — components access store state via `useShallow` selectors:
     ```typescript
-    const [active, setActive] = useBillingStore(
+    const [active, setActive] = useDetailsFormStore(
         useShallow((state) => [state.active, state.setActive])
     );
     ```

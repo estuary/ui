@@ -39,6 +39,10 @@ export function OnboardingSurvey({ disabled, value, onChange }: Props) {
                     'bgcolor': 'background.default',
                     'borderRadius': 3,
                     '& fieldset': { border: 'none' },
+                    '&.Mui-focused fieldset': {
+                        border: '2px solid',
+                        borderColor: 'primary.main',
+                    },
                 }}
             >
                 <MenuItem value="" disabled>

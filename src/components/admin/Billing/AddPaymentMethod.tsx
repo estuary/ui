@@ -1,150 +1,109 @@
-import type { Stripe } from '@stripe/stripe-js';
+import { useState } from 'react';
 
-import { Box, Button, Dialog, DialogTitle, useTheme } from '@mui/material';
+import { Box, Button, Dialog, DialogTitle } from '@mui/material';
 
 import { usePostHog } from '@posthog/react';
 import { Elements } from '@stripe/react-stripe-js';
 import { Plus } from 'iconoir-react';
-import { useIntl } from 'react-intl';
 
-import { setTenantPrimaryPaymentMethod } from 'src/api/billing';
+import { BillingContactDialog } from 'src/components/admin/Billing/BillingContactDialog';
 import { PaymentForm } from 'src/components/admin/Billing/CapturePaymentMethod';
 import {
-    INTENT_SECRET_ERROR,
-    INTENT_SECRET_LOADING,
-} from 'src/components/admin/Billing/shared';
-import { stripePaymentFormFieldBackgroundDark } from 'src/context/Theme';
+    getStripe,
+    useStripeAppearance,
+} from 'src/components/admin/Billing/stripe';
+import { useBillingContact } from 'src/hooks/billing/useBillingContact';
 import { fireGtmEvent } from 'src/services/gtm';
+import { getContactStatus } from 'src/utils/billing-contact-utils';
 
 interface Props {
-    show: boolean;
-    setupIntentSecret: string;
-    setOpen: (val: boolean) => void;
-    onSuccess: () => void;
-    stripePromise: Promise<Stripe | null>;
+    // The add-payment route starts adding a payment method on arrival.
+    autoOpen: boolean;
+    setupIntentSecret?: string;
+    loading: boolean;
+    onAdded: (id?: string) => Promise<void>;
     tenant: string;
 }
 
 function AddPaymentMethod({
-    onSuccess,
-    show,
+    autoOpen,
+    onAdded,
+    loading,
     setupIntentSecret,
-    setOpen,
-    stripePromise,
     tenant,
 }: Props) {
-    const intl = useIntl();
+    const [show, setOpen] = useState(autoOpen);
     const postHog = usePostHog();
-    const theme = useTheme();
-    const isDark = theme.palette.mode === 'dark';
+    const appearance = useStripeAppearance();
+    const { contact, isLoading: contactLoading } = useBillingContact(tenant);
 
-    const flatField = { border: 'none', boxShadow: 'none' };
-
-    const enable =
-        setupIntentSecret !== INTENT_SECRET_LOADING &&
-        setupIntentSecret !== INTENT_SECRET_ERROR;
+    // Adding a payment method starts with the billing contact when it is
+    // incomplete, once the contact loads.
+    const ready = show && !contactLoading;
+    const complete = getContactStatus(contact) === 'complete';
+    const contactOpen = ready && !complete;
+    const paymentOpen = ready && complete;
 
     return (
         <>
             <Box>
                 <Button
                     loadingPosition="start"
-                    disabled={!enable}
-                    loading={setupIntentSecret === INTENT_SECRET_LOADING}
+                    disabled={!setupIntentSecret}
+                    loading={loading}
                     onClick={() => setOpen(true)}
                     startIcon={<Plus style={{ fontSize: 15 }} />}
                     sx={{ whiteSpace: 'nowrap' }}
                     variant="contained"
                 >
-                    {intl.formatMessage({
-                        id: 'admin.billing.paymentMethods.cta.addPaymentMethod',
-                    })}
+                    Add Payment Method
                 </Button>
             </Box>
+
+            <BillingContactDialog
+                open={contactOpen}
+                tenant={tenant}
+                contact={contact}
+                mode="continue"
+                onClose={() => setOpen(false)}
+                // Saving completes the contact, which opens the payment form.
+                onSaved={() => undefined}
+            />
 
             <Dialog
                 maxWidth="sm"
                 fullWidth
                 sx={{ padding: 2 }}
-                open={show}
+                open={paymentOpen}
                 onClose={() => setOpen(false)}
                 data-private
             >
-                <DialogTitle>
-                    {intl.formatMessage({
-                        id: 'admin.billing.addPaymentMethods.title',
-                    })}
-                </DialogTitle>
-                {enable ? (
+                <DialogTitle>Add a payment method</DialogTitle>
+                {setupIntentSecret ? (
                     <Elements
-                        stripe={stripePromise}
+                        stripe={getStripe()}
                         options={{
                             clientSecret: setupIntentSecret,
                             loader: 'auto',
-                            appearance: {
-                                theme: isDark ? 'night' : 'stripe',
-                                variables: {
-                                    colorPrimary: theme.palette.primary.main,
-                                    fontFamily: theme.typography.fontFamily,
-                                    borderRadius: `6px`,
-                                    focusBoxShadow: 'none',
-                                    focusOutline: 'none',
-                                },
-                                ...(isDark && {
-                                    rules: {
-                                        '.Input': {
-                                            ...flatField,
-                                            backgroundColor:
-                                                stripePaymentFormFieldBackgroundDark,
-                                        },
-                                        '.Tab': {
-                                            ...flatField,
-                                            backgroundColor:
-                                                stripePaymentFormFieldBackgroundDark,
-                                        },
-                                        '.Tab--focused': {
-                                            borderColor:
-                                                theme.palette.primary.main,
-                                        },
-                                        '.Block': {
-                                            ...flatField,
-                                            padding: '14px',
-                                            backgroundColor:
-                                                stripePaymentFormFieldBackgroundDark,
-                                        },
-                                        '.PickerItem': {
-                                            ...flatField,
-                                            backgroundColor:
-                                                stripePaymentFormFieldBackgroundDark,
-                                        },
-                                    },
-                                }),
-                            },
+                            appearance,
                         }}
                     >
-                        {!tenant ? null : (
-                            <PaymentForm
-                                onSuccess={async (id) => {
-                                    if (id) {
-                                        await setTenantPrimaryPaymentMethod(
-                                            tenant,
-                                            id
-                                        );
-
-                                        fireGtmEvent('Payment_Entered', {
-                                            tenant,
-                                        });
-
-                                        postHog.capture('Payment_Entered', {
-                                            tenant,
-                                        });
-                                    }
-                                    setOpen(false);
-                                    onSuccess();
-                                }}
-                                onError={console.log}
-                            />
-                        )}
+                        <PaymentForm
+                            contact={contact}
+                            onSuccess={async (id) => {
+                                await onAdded(id);
+                                if (id) {
+                                    fireGtmEvent('Payment_Entered', {
+                                        tenant,
+                                    });
+                                    postHog.capture('Payment_Entered', {
+                                        tenant,
+                                    });
+                                }
+                                setOpen(false);
+                            }}
+                            onError={console.log}
+                        />
                     </Elements>
                 ) : null}
             </Dialog>

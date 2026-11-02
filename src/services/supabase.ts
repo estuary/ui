@@ -64,7 +64,6 @@ export enum TABLES {
     DRAFTS_EXT = 'drafts_ext',
     EVOLUTIONS = 'evolutions',
     // INFERRED_SCHEMAS = 'inferred_schemas',
-    INVOICES_EXT = 'invoices_ext',
     // LIVE_SPEC_FLOWS = 'live_spec_flows',
     // LIVE_SPECS = 'live_specs',
     LIVE_SPECS_EXT = 'live_specs_ext',
@@ -91,7 +90,6 @@ export enum RPCS {
 
 export enum FUNCTIONS {
     OAUTH = 'oauth',
-    BILLING = 'billing',
 }
 
 const backslashEscaped = /["\\]/g;

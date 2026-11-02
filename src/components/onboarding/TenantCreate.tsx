@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
 import {
     Button,
@@ -25,6 +25,7 @@ import { useTenantCreate } from 'src/api/gql/tenant';
 import { unauthenticatedRoutes } from 'src/app/routes';
 import Logo from 'src/components/navigation/Logo';
 import { OnboardingSurvey } from 'src/components/onboarding/Survey';
+import { validateTenantName } from 'src/components/onboarding/tenantName';
 import AlertBox from 'src/components/shared/AlertBox';
 import ExternalLink from 'src/components/shared/ExternalLink';
 import { useUserInfoSummaryStore } from 'src/context/UserInfoSummary/useUserInfoSummaryStore';
@@ -39,6 +40,7 @@ const NAME_TAKEN_MESSAGE = 'is already in use';
 const EVENT_NAME = 'Tenant:Create';
 
 export const TenantCreate = () => {
+    const rawTenantName = useRef('');
     const refreshUserInfo = useUserInfoSummaryStore((state) => state.mutate);
     const postHog = usePostHog();
     const [creation, createTenant] = useTenantCreate();
@@ -206,8 +208,15 @@ export const TenantCreate = () => {
                     <Controller
                         name="name"
                         control={control}
-                        rules={{ required: true }}
-                        render={({ field: { ref, ...field } }) => (
+                        rules={{
+                            required: true,
+                            validate: () =>
+                                validateTenantName(rawTenantName.current),
+                        }}
+                        render={({
+                            field: { ref, ...field },
+                            fieldState: { error },
+                        }) => (
                             <FormControl>
                                 <FormLabel
                                     htmlFor="organization-name"
@@ -227,29 +236,36 @@ export const TenantCreate = () => {
                                     disabled={saving}
                                     size="small"
                                     onChange={(event) => {
+                                        // Check before normalization discards non-ASCII look-alikes.
+                                        rawTenantName.current =
+                                            event.target.value;
                                         const value = event.target.value
                                             .normalize('NFD')
                                             .replace(/\s/g, '_')
                                             .replace(/[^a-zA-Z0-9._-]/g, '');
-                                        if (value !== field.value)
-                                            field.onChange(value);
+                                        field.onChange(value);
                                     }}
+                                    error={Boolean(error?.message)}
                                     variant="outlined"
                                     helperText={
-                                        field.value
+                                        error?.message ??
+                                        (field.value
                                             .toLowerCase()
                                             .includes('test')
                                             ? 'Organization names are permanent. Consider a name without the word "test".'
-                                            : undefined
+                                            : undefined)
                                     }
                                     slotProps={{
                                         formHelperText: {
-                                            'sx': { color: 'warning.main' },
+                                            'sx': {
+                                                color: error?.message
+                                                    ? 'error.main'
+                                                    : 'warning.main',
+                                            },
                                             'aria-live': 'polite',
                                         },
                                     }}
                                     sx={{
-                                        // 'maxWidth': 424,
                                         '& .MuiOutlinedInput-root': {
                                             'bgcolor': 'background.default',
                                             'borderRadius': 3,
@@ -299,6 +315,10 @@ export const TenantCreate = () => {
                                         'bgcolor': 'background.default',
                                         'borderRadius': 3,
                                         '& fieldset': { border: 'none' },
+                                        '&.Mui-focused fieldset': {
+                                            border: '2px solid',
+                                            borderColor: 'primary.main',
+                                        },
                                     }}
                                 >
                                     <MenuItem value="" disabled>

@@ -37,8 +37,8 @@ Write a slice as a shared factory only when a second store consumes it.
 Select one value per store hook call:
 
 ```typescript
-const active = useBillingStore((state) => state.active);
-const setActive = useBillingStore((state) => state.setActive);
+const active = useDetailsFormStore((state) => state.active);
+const setActive = useDetailsFormStore((state) => state.setActive);
 ```
 
 A single-value selector returns a stable reference, so it needs no equality helper. Zustand setters are stable, so selecting one never causes a re-render.
@@ -48,7 +48,7 @@ Multi-field and derived selections live in named hooks in the store's `hooks.ts`
 Many components still select tuples inline:
 
 ```typescript
-const [active, setActive] = useBillingStore(
+const [active, setActive] = useDetailsFormStore(
     useShallow((state) => [state.active, state.setActive])
 );
 ```

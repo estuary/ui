@@ -66,8 +66,6 @@ type Settings = {
     };
     sanitize: {
         inputs: boolean;
-        request: boolean;
-        response: boolean;
         text: boolean;
     };
 };
@@ -88,12 +86,6 @@ export const getLogRocketSettings = (): Settings | null => {
             sanitize: {
                 inputs:
                     import.meta.env.VITE_LOGROCKET_SANITIZE_INPUTS === ENABLED,
-                request:
-                    import.meta.env.VITE_LOGROCKET_SANITIZE_REQUESTS ===
-                    ENABLED,
-                response:
-                    import.meta.env.VITE_LOGROCKET_SANITIZE_RESPONSES ===
-                    ENABLED,
                 text: import.meta.env.VITE_LOGROCKET_SANITIZE_TEXT === ENABLED,
             },
         };

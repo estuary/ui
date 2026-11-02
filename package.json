@@ -34,7 +34,7 @@
         "test:debug": "vitest --inspect-brk --no-file-parallelism",
         "test:ui": "vitest --ui",
         "typecheck": "tsc --extendedDiagnostics",
-        "generate-flow-types": "cd deps/flow && ./fetch-flow.sh && ./flow-bin/flowctl json-schema | ./flow-bin/flowctl schemalate typescript --name Catalog --hoist-definitions > flow.d.ts",
+        "generate-flow-types": "node deps/flow/generate-flow-types.mjs",
         "hack-in-local-web-flow": "./deps/flow-web/hack-in-local-copy.sh",
         "hack-in-web-flow": "./deps/flow-web/hack-in-prod.sh",
         "hack-in-dpg": "./deps/data-plane-gateway/hack-in-dist.sh",
@@ -124,7 +124,6 @@
         "readable-numbers": "^1.0.7",
         "retry": "^0.13.1",
         "safe-stable-stringify": "^2.4.3",
-        "stripe": "^12.1.1",
         "swr": "^2.2.5",
         "urql": "^5.0.0",
         "use-constant": "^1.1.1",
@@ -185,6 +184,9 @@
     "overrides": {
         "msw": {
             "path-to-regexp": "^8.0.0"
+        },
+        "react-use": {
+            "js-cookie": "^3.0.7"
         },
         "react-is": "^18.3.1",
         "@types/node": "^22"

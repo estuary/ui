@@ -141,6 +141,12 @@ const dataPlaneAuth = {
     path: '/data-plane-auth-req',
 };
 
+// Consent for external applications requesting access to Estuary.
+const oauthConsent = {
+    title: 'Authorize application access',
+    path: '/oauth/consent',
+};
+
 const home = {
     title: 'routeTitle.home',
     path: '/welcome',
@@ -222,6 +228,14 @@ const pageNotFound = {
     path: '*',
 };
 
+const secrets = {
+    path: 'secrets',
+    dropbox: {
+        path: 'dropbox',
+        fullPath: '/secrets/dropbox',
+    },
+};
+
 const user = {
     title: 'routeTitle.user',
     path: 'user',
@@ -251,8 +265,10 @@ export const authenticatedRoutes = {
     collections,
     dataPlaneAuth,
     home,
+    oauthConsent,
     materializations,
     marketplace: marketplace.authenticated,
+    secrets,
     user,
     pageNotFound,
     beta,

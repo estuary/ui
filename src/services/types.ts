@@ -39,7 +39,6 @@ export enum CustomEvents {
     ENTITY_STATUS = 'EntityStatus',
     ENTITY_RELATIONSHIPS = 'EntityRelationships',
     ERROR_BOUNDARY_DISPLAYED = 'Error_Boundary_Displayed',
-    ERROR_BOUNDARY_PAYMENT_METHODS = 'Error_Boundary_Displayed:PaymentMethods',
     ERROR_DISPLAYED = 'Error_Displayed',
     ERROR_MISSING_MESSAGE = 'Error_Missing_Message',
     FIELD_SELECTION = 'FieldSelection',

@@ -1,10 +1,8 @@
 import type { BaseComponentProps, TenantPaymentDetails } from 'src/types';
 
-import { createContext, useContext, useMemo } from 'react';
+import { createContext, useContext } from 'react';
 
-import { FormattedMessage } from 'react-intl';
-
-import { MAX_TENANTS } from 'src/api/billing';
+import { MAX_TENANTS } from 'src/api/gql/billing';
 import FullPageError from 'src/components/fullPage/Error';
 import { useUserInfoSummaryStore } from 'src/context/UserInfoSummary/useUserInfoSummaryStore';
 import { useTenantsDetailsForPayment } from 'src/hooks/useTenants';
@@ -41,7 +39,10 @@ export const TenantBillingDetailsContextProvider = ({
             <FullPageError
                 error={error}
                 message={
-                    <FormattedMessage id="tenant.error.failedToFetch.message" />
+                    <>
+                        There was an issue while checking if you have access to
+                        a tenant.
+                    </>
                 }
             />
         );
@@ -67,36 +68,4 @@ export const TenantBillingDetailsContextProvider = ({
 //   array of tenant names.
 export const useTenantBillingDetails = () => {
     return useContext(TenantContext);
-};
-
-export const useTenantUsesExternalPayment = (
-    selectedTenant: string
-): [boolean, string | null] => {
-    const { tenantBillingDetails } = useTenantBillingDetails();
-
-    return useMemo(() => {
-        if (!tenantBillingDetails) {
-            return [false, null];
-        }
-
-        const selectedTenantDetails = tenantBillingDetails.find(
-            (tenantBillingDetail) =>
-                tenantBillingDetail.tenant === selectedTenant
-        );
-
-        let marketplaceProvider = null;
-
-        if (selectedTenantDetails?.gcm_account_id) {
-            marketplaceProvider = 'gcp';
-        }
-
-        // TODO (marketplace) add support for AWS which is currently handled manually
-        //      https://github.com/estuary/flow/issues/1921 needs completed so we know
-        //      how to handle this.
-
-        return [
-            Boolean(selectedTenantDetails?.payment_provider !== 'stripe'),
-            marketplaceProvider,
-        ];
-    }, [selectedTenant, tenantBillingDetails]);
 };
