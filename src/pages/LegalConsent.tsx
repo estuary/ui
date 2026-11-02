@@ -24,12 +24,13 @@ function ConsentForm({
     type,
     tenant,
 }: {
-    type: LegalTermsType;
+    type: string | null;
     tenant: string;
 }) {
     const [{ data, fetching, error }, refetch] = useQuery({
         query: LEGAL_TERMS_QUERY,
-        variables: { type },
+        // Let the API validate the raw URL value, including a missing type.
+        variables: { type: type as LegalTermsType },
         requestPolicy: 'network-only',
     });
     const [, accept] = useMutation(LEGAL_TERMS_ACCEPT);
@@ -153,7 +154,6 @@ export function LegalConsent() {
     const { updateTitle } = useUpdateHelmet();
     const type = params.get('type');
     const tenant = useTenantStore((state) => state.selectedTenant);
-    const validType = type === 'MSA';
 
     useEffect(() => {
         updateTitle('Estuary | Legal consent');
@@ -165,23 +165,16 @@ export function LegalConsent() {
                 Legal consent
             </Typography>
             <TenantSelector />
-            {validType && params.getAll('type').length === 1 ? (
-                tenant ? (
-                    <ConsentForm
-                        key={`${type}:${tenant}`}
-                        type={type}
-                        tenant={tenant}
-                    />
-                ) : (
-                    <Typography>
-                        Select a tenant to review and accept the terms.
-                    </Typography>
-                )
+            {tenant ? (
+                <ConsentForm
+                    key={`${type}:${tenant}`}
+                    type={type}
+                    tenant={tenant}
+                />
             ) : (
-                <AlertBox short severity="error">
-                    This link must specify a valid legal terms type (MSA). Ask
-                    for a new link.
-                </AlertBox>
+                <Typography>
+                    Select a tenant to review and accept the terms.
+                </Typography>
             )}
         </Stack>
     );
