@@ -175,7 +175,7 @@ function ConsentForm({
                     disabled={submitting}
                     onClick={() => void acceptTerms()}
                 >
-                    {submitting ? 'Accepting…' : 'Accept'}
+                    {`Accept for ${tenant}`}
                 </Button>
             </Stack>
         </Stack>
