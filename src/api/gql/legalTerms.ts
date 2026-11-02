@@ -1,5 +1,15 @@
 import { graphql } from 'src/gql-types';
 
+export const LEGAL_TERMS_TYPES = graphql(`
+    query LegalTermsTypes {
+        __type(name: "LegalTermsType") {
+            enumValues {
+                name
+            }
+        }
+    }
+`);
+
 // Public query: the API serves legal terms without authentication.
 export const LEGAL_TERMS = graphql(`
     query LegalTerms($type: LegalTermsType!) {
