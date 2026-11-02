@@ -51,7 +51,7 @@ function ConsentForm({
         pause: fetching || !!error || !terms,
         requestPolicy: 'network-only',
     });
-    const alreadyAccepted = consent.data?.legalConsentCheck;
+    const alreadyAccepted = consent.data?.legalCheck;
     const loading = fetching || consent.fetching;
     const loadError = error ?? consent.error;
 
@@ -125,7 +125,7 @@ function ConsentForm({
         try {
             const result = await accept({ tenant, termsId: terms.id });
             if (result.error) throw result.error;
-            if (!result.data?.legalTermsAccept)
+            if (!result.data?.legalAccept)
                 throw new Error(
                     'Could not record your acceptance. Please try again.'
                 );

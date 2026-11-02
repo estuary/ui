@@ -23,7 +23,7 @@ export const LEGAL_CONSENT_TERMS_QUERY = graphql(`
 
 export const LEGAL_TERMS_ACCEPT = graphql(`
     mutation LegalTermsAccept($tenant: String!, $termsId: Id!) {
-        legalTermsAccept(tenant: $tenant, termsId: $termsId) {
+        legalAccept(tenant: $tenant, termsId: $termsId) {
             id
         }
     }
@@ -35,6 +35,6 @@ export const LEGAL_CONSENT_CHECK = graphql(`
         $type: LegalTermsType!
         $version: LegalConsentVersion!
     ) {
-        legalConsentCheck(tenant: $tenant, type: $type, version: $version)
+        legalCheck(tenant: $tenant, type: $type, version: $version)
     }
 `);
