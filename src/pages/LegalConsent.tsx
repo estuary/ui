@@ -2,20 +2,18 @@ import type { LegalTermsType } from 'src/gql-types/graphql';
 
 import { useEffect, useRef, useState } from 'react';
 
-import {
-    Box,
-    Button,
-    CircularProgress,
-    Stack,
-    Typography,
-} from '@mui/material';
+import { Button, CircularProgress, Stack, Typography } from '@mui/material';
 
-import Markdown from 'markdown-to-jsx';
 import { useSearchParams } from 'react-router-dom';
 import { useMutation, useQuery } from 'urql';
 
-import { LEGAL_TERMS_ACCEPT, LEGAL_TERMS_QUERY } from 'src/api/gql/legalTerms';
+import {
+    LEGAL_CONSENT_CHECK,
+    LEGAL_TERMS_ACCEPT,
+    LEGAL_TERMS_QUERY,
+} from 'src/api/gql/legalTerms';
 import AlertBox from 'src/components/shared/AlertBox';
+import { LegalTermsMarkdown } from 'src/components/shared/LegalTermsMarkdown';
 import TenantSelector from 'src/components/shared/TenantSelector';
 import { useUpdateHelmet } from 'src/context/UpdateHelmet';
 import { useTenantStore } from 'src/stores/Tenant';
@@ -41,9 +39,35 @@ function ConsentForm({
         null
     );
     const terms = data?.legalTerms;
+    const [consent, recheckConsent] = useQuery({
+        query: LEGAL_CONSENT_CHECK,
+        variables: {
+            tenant,
+            type: type as LegalTermsType,
+            version: { eq: terms?.version },
+        },
+        pause: fetching || !!error || !terms,
+        requestPolicy: 'network-only',
+    });
+    const alreadyAccepted = consent.data?.legalConsentCheck;
+    const loading = fetching || consent.fetching;
+    const loadError = error ?? consent.error;
+
+    const reload = () => {
+        setSubmitError(null);
+        refetch({ requestPolicy: 'network-only' });
+        if (terms) recheckConsent({ requestPolicy: 'network-only' });
+    };
 
     const acceptTerms = async () => {
-        if (!terms || fetching || error || submittingRef.current || decision)
+        if (
+            !terms ||
+            loading ||
+            loadError ||
+            alreadyAccepted !== false ||
+            submittingRef.current ||
+            decision
+        )
             return;
         submittingRef.current = true;
         setSubmitting(true);
@@ -81,49 +105,59 @@ function ConsentForm({
         );
     }
 
+    if (loading) {
+        return <CircularProgress aria-label="Checking legal consent" />;
+    }
+
+    if (loadError) {
+        return (
+            <Stack spacing={2}>
+                <AlertBox short severity="error">
+                    {loadError.message}
+                </AlertBox>
+                <Button onClick={reload}>Retry</Button>
+            </Stack>
+        );
+    }
+
+    if (!terms?.text) {
+        return (
+            <Stack spacing={2}>
+                <AlertBox short severity="warning">
+                    The requested legal terms are not available.
+                </AlertBox>
+                <Button onClick={reload}>Reload terms</Button>
+            </Stack>
+        );
+    }
+
+    if (alreadyAccepted === true) {
+        return (
+            <AlertBox short severity="success">
+                {`The current legal terms have already been accepted for ${tenant}.`}
+            </AlertBox>
+        );
+    }
+
+    // A paused or not-yet-started query is not evidence of missing consent.
+    if (alreadyAccepted !== false) {
+        return <CircularProgress aria-label="Checking legal consent" />;
+    }
+
     return (
         <Stack spacing={3}>
             <Typography>
                 Review these terms before accepting on behalf of{' '}
                 <strong>{tenant}</strong>.
             </Typography>
-            {fetching ? (
-                <CircularProgress aria-label="Loading legal terms" />
-            ) : error ? (
-                <AlertBox short severity="error">
-                    {error.message}
-                </AlertBox>
-            ) : terms?.text ? (
-                <Box
-                    component="article"
-                    aria-label="Legal terms"
-                    sx={{
-                        'overflowWrap': 'anywhere',
-                        '& table': { width: '100%' },
-                    }}
-                >
-                    <Markdown options={{ disableParsingRawHTML: true }}>
-                        {terms.text}
-                    </Markdown>
-                </Box>
-            ) : (
-                <AlertBox short severity="warning">
-                    The requested legal terms are not available.
-                </AlertBox>
-            )}
+            <LegalTermsMarkdown text={terms.text} />
             {submitError ? (
                 <AlertBox short severity="error">
                     {submitError}
                 </AlertBox>
             ) : null}
-            {error || submitError || (!fetching && !terms?.text) ? (
-                <Button
-                    disabled={submitting || fetching}
-                    onClick={() => {
-                        setSubmitError(null);
-                        refetch({ requestPolicy: 'network-only' });
-                    }}
-                >
+            {submitError ? (
+                <Button disabled={submitting || fetching} onClick={reload}>
                     Reload terms
                 </Button>
             ) : null}
@@ -152,7 +186,7 @@ function ConsentForm({
 export function LegalConsent() {
     const [params] = useSearchParams();
     const { updateTitle } = useUpdateHelmet();
-    const type = params.get('type');
+    const type = params.get('type')?.toUpperCase() ?? null;
     const tenant = useTenantStore((state) => state.selectedTenant);
 
     useEffect(() => {

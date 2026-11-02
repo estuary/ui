@@ -6,6 +6,7 @@ export const LEGAL_TERMS_QUERY = graphql(`
         legalTerms(type: $type) {
             text
             id
+            version
         }
     }
 `);
@@ -16,5 +17,15 @@ export const LEGAL_TERMS_ACCEPT = graphql(`
             id
             text
         }
+    }
+`);
+
+export const LEGAL_CONSENT_CHECK = graphql(`
+    query LegalConsentCheck(
+        $tenant: String!
+        $type: LegalTermsType!
+        $version: LegalConsentVersion!
+    ) {
+        legalConsentCheck(tenant: $tenant, type: $type, version: $version)
     }
 `);
