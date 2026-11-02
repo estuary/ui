@@ -4,7 +4,7 @@ import { Box, CircularProgress, Typography } from '@mui/material';
 
 import { useQuery } from 'urql';
 
-import { LEGAL_TERMS_QUERY } from 'src/api/gql/legalTerms';
+import { LEGAL_TERMS } from 'src/api/gql/legalTerms';
 import Error from 'src/components/shared/Error';
 import { LegalTermsMarkdown } from 'src/components/shared/LegalTermsMarkdown';
 import { useUpdateHelmet } from 'src/context/UpdateHelmet';
@@ -17,7 +17,7 @@ export function Terms() {
     }, [updateTitle]);
 
     const [{ data, fetching, error }] = useQuery({
-        query: LEGAL_TERMS_QUERY,
+        query: LEGAL_TERMS,
         variables: { type: 'MSA' },
     });
 

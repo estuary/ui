@@ -1,18 +1,8 @@
 import { graphql } from 'src/gql-types';
 
 // Public query: the API serves legal terms without authentication.
-export const LEGAL_TERMS_QUERY = graphql(`
+export const LEGAL_TERMS = graphql(`
     query LegalTerms($type: LegalTermsType!) {
-        legalTerms(type: $type) {
-            text
-            id
-        }
-    }
-`);
-
-// Consent checks need the version; public terms and signup use the query above.
-export const LEGAL_CONSENT_TERMS_QUERY = graphql(`
-    query LegalConsentTerms($type: LegalTermsType!) {
         legalTerms(type: $type) {
             text
             id
@@ -21,16 +11,16 @@ export const LEGAL_CONSENT_TERMS_QUERY = graphql(`
     }
 `);
 
-export const LEGAL_TERMS_ACCEPT = graphql(`
-    mutation LegalTermsAccept($tenant: String!, $termsId: Id!) {
+export const LEGAL_ACCEPT = graphql(`
+    mutation LegalAccept($tenant: String!, $termsId: Id!) {
         legalAccept(tenant: $tenant, termsId: $termsId) {
             id
         }
     }
 `);
 
-export const LEGAL_CONSENT_CHECK = graphql(`
-    query LegalConsentCheck(
+export const LEGAL_CHECK = graphql(`
+    query LegalCheck(
         $tenant: String!
         $type: LegalTermsType!
         $version: LegalConsentVersion!

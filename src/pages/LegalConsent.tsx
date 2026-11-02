@@ -7,11 +7,7 @@ import { Button, CircularProgress, Stack, Typography } from '@mui/material';
 import { useSearchParams } from 'react-router-dom';
 import { useMutation, useQuery } from 'urql';
 
-import {
-    LEGAL_CONSENT_CHECK,
-    LEGAL_CONSENT_TERMS_QUERY,
-    LEGAL_TERMS_ACCEPT,
-} from 'src/api/gql/legalTerms';
+import { LEGAL_ACCEPT, LEGAL_CHECK, LEGAL_TERMS } from 'src/api/gql/legalTerms';
 import AlertBox from 'src/components/shared/AlertBox';
 import ErrorDisplay from 'src/components/shared/Error';
 import { LegalTermsMarkdown } from 'src/components/shared/LegalTermsMarkdown';
@@ -28,11 +24,11 @@ function ConsentForm({
     tenant: string;
 }) {
     const [{ data, fetching, error }, refetch] = useQuery({
-        query: LEGAL_CONSENT_TERMS_QUERY,
+        query: LEGAL_TERMS,
         variables: { type },
         requestPolicy: 'network-only',
     });
-    const [, accept] = useMutation(LEGAL_TERMS_ACCEPT);
+    const [, accept] = useMutation(LEGAL_ACCEPT);
     const submittingRef = useRef(false);
     const [submitting, setSubmitting] = useState(false);
     const [submitError, setSubmitError] = useState<string | null>(null);
@@ -41,7 +37,7 @@ function ConsentForm({
     );
     const terms = data?.legalTerms;
     const [consent, recheckConsent] = useQuery({
-        query: LEGAL_CONSENT_CHECK,
+        query: LEGAL_CHECK,
         variables: {
             tenant,
             type,
