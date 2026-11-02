@@ -41,7 +41,6 @@ type Documents = {
     "\n    mutation CreateInviteLink(\n        $catalogPrefix: Prefix!\n        $capability: Capability!\n        $singleUse: Boolean!\n        $detail: String\n    ) {\n        createInviteLink(\n            catalogPrefix: $catalogPrefix\n            capability: $capability\n            singleUse: $singleUse\n            detail: $detail\n        ) {\n            token\n            catalogPrefix\n            capability\n            singleUse\n            detail\n            createdAt\n        }\n    }\n": typeof types.CreateInviteLinkDocument,
     "\n    mutation DeleteInviteLink($token: UUID!) {\n        deleteInviteLink(token: $token)\n    }\n": typeof types.DeleteInviteLinkDocument,
     "\n    mutation RedeemInviteLink($token: UUID!) {\n        redeemInviteLink(token: $token) {\n            capability\n            catalogPrefix\n        }\n    }\n": typeof types.RedeemInviteLinkDocument,
-    "\n    query LegalTermsTypes {\n        __type(name: \"LegalTermsType\") {\n            enumValues {\n                name\n            }\n        }\n    }\n": typeof types.LegalTermsTypesDocument,
     "\n    query LegalTerms($type: LegalTermsType!) {\n        legalTerms(type: $type) {\n            text\n            id\n            version\n        }\n    }\n": typeof types.LegalTermsDocument,
     "\n    mutation LegalAccept($tenant: String!, $termsId: Id!) {\n        legalAccept(tenant: $tenant, termsId: $termsId) {\n            id\n        }\n    }\n": typeof types.LegalAcceptDocument,
     "\n    query LegalCheck(\n        $tenant: String!\n        $type: LegalTermsType!\n        $version: LegalConsentVersion!\n    ) {\n        legalCheck(tenant: $tenant, type: $type, version: $version)\n    }\n": typeof types.LegalCheckDocument,
@@ -94,7 +93,6 @@ const documents: Documents = {
     "\n    mutation CreateInviteLink(\n        $catalogPrefix: Prefix!\n        $capability: Capability!\n        $singleUse: Boolean!\n        $detail: String\n    ) {\n        createInviteLink(\n            catalogPrefix: $catalogPrefix\n            capability: $capability\n            singleUse: $singleUse\n            detail: $detail\n        ) {\n            token\n            catalogPrefix\n            capability\n            singleUse\n            detail\n            createdAt\n        }\n    }\n": types.CreateInviteLinkDocument,
     "\n    mutation DeleteInviteLink($token: UUID!) {\n        deleteInviteLink(token: $token)\n    }\n": types.DeleteInviteLinkDocument,
     "\n    mutation RedeemInviteLink($token: UUID!) {\n        redeemInviteLink(token: $token) {\n            capability\n            catalogPrefix\n        }\n    }\n": types.RedeemInviteLinkDocument,
-    "\n    query LegalTermsTypes {\n        __type(name: \"LegalTermsType\") {\n            enumValues {\n                name\n            }\n        }\n    }\n": types.LegalTermsTypesDocument,
     "\n    query LegalTerms($type: LegalTermsType!) {\n        legalTerms(type: $type) {\n            text\n            id\n            version\n        }\n    }\n": types.LegalTermsDocument,
     "\n    mutation LegalAccept($tenant: String!, $termsId: Id!) {\n        legalAccept(tenant: $tenant, termsId: $termsId) {\n            id\n        }\n    }\n": types.LegalAcceptDocument,
     "\n    query LegalCheck(\n        $tenant: String!\n        $type: LegalTermsType!\n        $version: LegalConsentVersion!\n    ) {\n        legalCheck(tenant: $tenant, type: $type, version: $version)\n    }\n": types.LegalCheckDocument,
@@ -242,10 +240,6 @@ export function graphql(source: "\n    mutation DeleteInviteLink($token: UUID!) 
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n    mutation RedeemInviteLink($token: UUID!) {\n        redeemInviteLink(token: $token) {\n            capability\n            catalogPrefix\n        }\n    }\n"): (typeof documents)["\n    mutation RedeemInviteLink($token: UUID!) {\n        redeemInviteLink(token: $token) {\n            capability\n            catalogPrefix\n        }\n    }\n"];
-/**
- * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function graphql(source: "\n    query LegalTermsTypes {\n        __type(name: \"LegalTermsType\") {\n            enumValues {\n                name\n            }\n        }\n    }\n"): (typeof documents)["\n    query LegalTermsTypes {\n        __type(name: \"LegalTermsType\") {\n            enumValues {\n                name\n            }\n        }\n    }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

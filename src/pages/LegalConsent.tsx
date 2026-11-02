@@ -7,18 +7,13 @@ import { Button, CircularProgress, Stack, Typography } from '@mui/material';
 import { useSearchParams } from 'react-router-dom';
 import { useMutation, useQuery } from 'urql';
 
-import {
-    LEGAL_ACCEPT,
-    LEGAL_CHECK,
-    LEGAL_TERMS,
-    LEGAL_TERMS_TYPES,
-} from 'src/api/gql/legalTerms';
+import { LEGAL_ACCEPT, LEGAL_CHECK, LEGAL_TERMS } from 'src/api/gql/legalTerms';
 import AlertBox from 'src/components/shared/AlertBox';
 import ErrorDisplay from 'src/components/shared/Error';
 import { LegalTermsMarkdown } from 'src/components/shared/LegalTermsMarkdown';
 import { useUpdateHelmet } from 'src/context/UpdateHelmet';
 import { BASE_ERROR } from 'src/services/supabase';
-import { useEntitiesStore } from 'src/stores/Entities/Store';
+import { useEntitiesStore_capabilities_adminable } from 'src/stores/Entities/hooks';
 import { useTopBarStore } from 'src/stores/TopBar/Store';
 
 function ConsentForm({
@@ -178,62 +173,15 @@ function ConsentForm({
     );
 }
 
-function ValidatedConsentForm({
-    type,
-    tenant,
-}: {
-    type: string;
-    tenant: string;
-}) {
-    const [{ data, fetching, error }, retry] = useQuery({
-        query: LEGAL_TERMS_TYPES,
-        requestPolicy: 'network-only',
-    });
-
-    if (fetching) {
-        return <CircularProgress aria-label="Loading legal terms types" />;
-    }
-
-    const enumValues = data?.__type?.enumValues;
-    if (error || !enumValues) {
-        return (
-            <Stack spacing={2}>
-                <AlertBox short severity="error">
-                    Could not load the available legal terms types. Please try
-                    again.
-                </AlertBox>
-                <Button
-                    onClick={() => retry({ requestPolicy: 'network-only' })}
-                >
-                    Retry
-                </Button>
-            </Stack>
-        );
-    }
-
-    if (!enumValues.some(({ name }) => name === type)) {
-        return (
-            <AlertBox short severity="error">
-                This link must specify a valid legal terms type. Ask for a new
-                link. ({type}) [{enumValues.map(({ name }) => name).join(', ')}]
-            </AlertBox>
-        );
-    }
-
-    // The server enum validates this value, including types added after codegen.
-    return <ConsentForm type={type as LegalTermsType} tenant={tenant} />;
-}
-
 export function LegalConsent() {
     const [params] = useSearchParams();
     const { updateTitle } = useUpdateHelmet();
     const type = params.get('type')?.toUpperCase() ?? null;
     const tenantParam = params.get('tenant');
     const tenant = tenantParam ? `${tenantParam.replace(/\/$/, '')}/` : null;
-    const adminPrefixes = useEntitiesStore((state) => state.capabilities.admin);
+    const adminPrefixes = useEntitiesStore_capabilities_adminable();
     const canAdminTenant =
-        !!tenant &&
-        Array.from(adminPrefixes).some((prefix) => tenant.startsWith(prefix));
+        !!tenant && adminPrefixes.some((prefix) => tenant.startsWith(prefix));
     const setHeader = useTopBarStore((state) => state.setHeader);
 
     useEffect(() => {
@@ -265,9 +213,10 @@ export function LegalConsent() {
                     terms.
                 </AlertBox>
             ) : (
-                <ValidatedConsentForm
+                <ConsentForm
                     key={`${type}:${tenant}`}
-                    type={type}
+                    // Let the server validate types, including ones added after codegen.
+                    type={type as LegalTermsType}
                     tenant={tenant}
                 />
             )}

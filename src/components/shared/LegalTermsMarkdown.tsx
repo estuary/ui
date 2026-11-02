@@ -181,7 +181,13 @@ export function LegalTermsMarkdown({ text }: { text: string }) {
                 // Nested items indent as a whole block, aligned with their title.
                 '& h4, & h4 + p': { ml: `calc(2 * ${SUBSECTION_INDENT})` },
                 '& h4 + p': { mb: 1 },
-                '& table': { borderCollapse: 'collapse', mb: 2 },
+                '& table': {
+                    borderCollapse: 'collapse',
+                    width: '100%',
+                    overflowWrap: 'break-word',
+                    wordBreak: 'normal',
+                    mb: 2,
+                },
                 '& th, & td': {
                     border: 1,
                     borderColor: 'divider',
