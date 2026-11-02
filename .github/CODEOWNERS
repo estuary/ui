@@ -4,7 +4,5 @@
 # cannot be removed without that approval.
 /.trivyignore.yaml                        @estuary/operations
 /trivy.yaml                               @estuary/operations
-/mise.toml                                @estuary/operations
-/mise/tasks/ci/trivy                      @estuary/operations
 /.github/workflows/dependency-scan.yml    @estuary/operations
 /.github/CODEOWNERS                       @estuary/operations

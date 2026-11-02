@@ -28,13 +28,31 @@ jobs:
         steps:
             - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
 
+            # Trivy is downloaded outside the checkout, checked against its release
+            # checksum and run by path, rather than installed through mise. mise takes
+            # its version, tasks and environment from config files in the checkout,
+            # and a pull request can add higher-precedence ones (.mise.toml,
+            # mise.local.toml and others) that no review covers. To upgrade, take the
+            # Linux-64bit line from the release's trivy_<version>_checksums.txt, and
+            # bump the local pin in mise.toml to match.
             - name: Install Trivy
-              uses: jdx/mise-action@9dc7d5dd454262207dea3ab5a06a3df6afc8ff26 # v3.4.1
-              with:
-                  install_args: github:aquasecurity/trivy
+              env:
+                  VERSION: 0.76.0
+                  SHA256: e24b1c51293c1b15e4ba8d45bbc7891ba053f90278ec2698f3562c993e145fe7
+              run: |
+                  set -euo pipefail
+                  tarball="trivy_${VERSION}_Linux-64bit.tar.gz"
+                  curl -fsSL --retry 3 -o "${RUNNER_TEMP}/${tarball}" \
+                    "https://github.com/aquasecurity/trivy/releases/download/v${VERSION}/${tarball}"
+                  echo "${SHA256}  ${RUNNER_TEMP}/${tarball}" | sha256sum --check --strict
+                  mkdir -p "${RUNNER_TEMP}/trivy"
+                  tar -xzf "${RUNNER_TEMP}/${tarball}" -C "${RUNNER_TEMP}/trivy" trivy
 
+            # Severity, exit code and the ignore list come from trivy.yaml. Trivy
+            # leaves devDependencies out of npm scans, so this covers the
+            # dependencies that ship in the bundle.
             - name: Scan
-              run: mise run ci:trivy
+              run: '"${RUNNER_TEMP}/trivy/trivy" fs package-lock.json'
 
     # A failed scan of main, whether nightly, manual or ahead of a deploy, opens
     # an issue for the team that owns this code, or comments on the one already

@@ -1,5 +1,5 @@
 # Picked up automatically by Trivy when run from the repo root, so
-# `mise run ci:trivy`, CI, and a bare `trivy fs <lockfile>` all agree.
+# CI and a local `trivy fs package-lock.json` agree.
 scan:
   scanners:
     - vuln
