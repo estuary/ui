@@ -185,6 +185,9 @@
         "msw": {
             "path-to-regexp": "^8.0.0"
         },
+        "react-use": {
+            "js-cookie": "^3.0.7"
+        },
         "react-is": "^18.3.1",
         "@types/node": "^22"
     },
