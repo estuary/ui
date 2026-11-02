@@ -7,7 +7,6 @@ import type {
     MassCreateDraftSpecsData,
     MassUpdateMatchData,
 } from 'src/api/types';
-import type { DraftSpecQuery } from 'src/hooks/useDraftSpecs';
 import type { Entity } from 'src/types';
 
 import pLimit from 'p-limit';
@@ -166,21 +165,6 @@ export const modifyDraftSpec = (
 // TODO (optimization | typing): Narrow the columns selected from the draft_specs_ext table.
 //   More columns are selected than required to appease the typing of the editor store.
 //   This function is used in the capture create and edit components.
-export const getDraftSpecsBySpecType = async (
-    draftId: string,
-    specType: Entity
-) => {
-    return supabaseRetry(
-        () =>
-            supabaseClient
-                .from(TABLES.DRAFT_SPECS_EXT)
-                .select(`catalog_name,draft_id,expect_pub_id,spec,spec_type`)
-                .eq('draft_id', draftId)
-                .eq('spec_type', specType),
-        'getDraftSpecsBySpecType'
-    ).then(handleSuccess<DraftSpecQuery[]>, handleFailure);
-};
-
 export const getDraftSpecsBySpecTypeReduced = async (
     draftId: string,
     specType: Entity
