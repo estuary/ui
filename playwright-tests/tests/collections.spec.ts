@@ -1,19 +1,12 @@
-import { beforeEach } from 'node:test';
-
-import {
-    discover_HelloWorld,
-    editEndpoint_HelloWorld,
-    testConfig,
-} from '../helpers/captures';
+import { clickNext, startHelloWorldCapture } from '../helpers/captures';
+import { deleteLiveSpecs, raiseTaskQuota } from '../helpers/db';
+import { confirmDestinationLayout } from '../helpers/materializations';
 import { AuthProps } from '../helpers/types';
 import { USERS } from '../helpers/users';
 import {
-    defaultLocalStorage,
     defaultPageSetup,
-    inituser,
     openDetailsFromTable,
-    saveAndPublish,
-    startSessionWithUser,
+    publishAndOpenDetails,
 } from '../helpers/utils';
 import { messageDescription, timeDescription } from './props';
 import { expect, Page, test } from '@playwright/test';
@@ -28,9 +21,16 @@ test.describe.serial('Collections:', () => {
         page = await browser.newPage();
         authProps = await defaultPageSetup(page, test, USERS.collections);
         collectionName = `${authProps.tenant}/${uuid}/events`;
+        await raiseTaskQuota(authProps.tenant);
 
-        await discover_HelloWorld(page, uuid);
-        await saveAndPublish(page);
+        await startHelloWorldCapture(page, uuid);
+        await clickNext(page);
+        await publishAndOpenDetails(page);
+    });
+
+    // The published capture and its collection
+    test.afterAll(async () => {
+        await deleteLiveSpecs(authProps.email, `${authProps.tenant}/${uuid}`);
     });
 
     test('can open the details page from the table', async () => {
@@ -56,11 +56,17 @@ test.describe.serial('Collections:', () => {
     test('can materialize from the details page', async () => {
         await page.getByRole('button', { name: 'Materialize' }).click();
 
-        await page.getByRole('button', { name: 'Docs PostgreSQL' }).click();
+        await page
+            .getByRole('button', { name: /PostgreSQL/ })
+            .first()
+            .click();
+        await confirmDestinationLayout(page);
 
         await expect(
             page.getByRole('button', { name: collectionName })
         ).toBeVisible();
-        await expect(page.getByLabel('Table *')).toHaveValue('events');
+        await expect(
+            page.getByRole('textbox', { name: 'Table', exact: true })
+        ).toHaveValue('events');
     });
 });
