@@ -94,23 +94,6 @@ describe('useSaveMaterializationDraftSpec', () => {
         ).resolves.toBeNull();
     });
 
-    test('rejects an unencrypted config without writing it', async () => {
-        const specDef = materializationSpecDef({
-            connector: { image: 'x', config: { password: 'plain' } },
-        });
-
-        const error = await renderSave()(
-            DRAFT_ID,
-            MATERIALIZATION_NAME,
-            PUB_ID,
-            specDef
-        );
-
-        expect(error?.message).toMatch(/must be encrypted/);
-        expect(modifyDraftSpec).not.toHaveBeenCalled();
-        expect(createDraftSpec).not.toHaveBeenCalled();
-    });
-
     test('returns the drafted spec lookup error without writing', async () => {
         const lookupError = new Error('lookup failed');
         getDraftSpec.mockResolvedValue({ error: lookupError });

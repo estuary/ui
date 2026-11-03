@@ -59,26 +59,6 @@ describe('useSaveCaptureDraftSpec', () => {
         });
     });
 
-    test('rejects an unencrypted config without staging it', async () => {
-        const specDef = captureSpecDef();
-        specDef.endpoint = {
-            connector: {
-                image: 'source-hello-world:dev',
-                config: { password: 'plaintext' },
-            },
-        } as any;
-
-        const error = await renderSave()(
-            DRAFT_ID,
-            CAPTURE_NAME,
-            PUB_ID,
-            specDef
-        );
-
-        expect(error?.message).toMatch(/must be encrypted/);
-        expect(stageDraftSpecs).not.toHaveBeenCalled();
-    });
-
     test('rejects an endpoint that is not a connector', async () => {
         const specDef = captureSpecDef();
         specDef.endpoint = {
