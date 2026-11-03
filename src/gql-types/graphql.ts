@@ -373,6 +373,9 @@ export type BillingPaymentMethodPayload = {
   primaryPaymentMethod?: Maybe<PaymentMethod>;
 };
 
+/** The billing arrangement of a tenant. */
+export type BillingPlan = ContractPlan | InternalPlan | SelfServePlan;
+
 export type BoolFilter = {
   eq?: InputMaybe<Scalars['Boolean']['input']>;
 };
@@ -571,6 +574,11 @@ export type ChargeStatus =
   | 'PENDING'
   | 'SUCCEEDED';
 
+/** How usage-based invoices are collected. */
+export type CollectionMethod =
+  | 'CHARGE_DEFAULT_PAYMENT_METHOD'
+  | 'SEND_INVOICE';
+
 /** A command run in a sandbox. */
 export type Command = {
   __typename?: 'Command';
@@ -726,6 +734,16 @@ export type ConnectorsFilter = {
   protocol?: InputMaybe<ProtocolFilter>;
   /** Filter by whether the connector is recommended. */
   recommended?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+export type ContractPlan = {
+  __typename?: 'ContractPlan';
+  collectionMethod: CollectionMethod;
+  /** Data processing prices, per GB. */
+  dataTiers: Array<PricingTier>;
+  paymentProvider: PaymentProvider;
+  /** Task usage prices, per task hour. */
+  usageTiers: Array<PricingTier>;
 };
 
 /** Status info related to the controller */
@@ -1248,6 +1266,11 @@ export type InferredSchemaStatus = {
   schemaMd5?: Maybe<Scalars['String']['output']>;
 };
 
+export type InternalPlan = {
+  __typename?: 'InternalPlan';
+  detail?: Maybe<Scalars['String']['output']>;
+};
+
 /** An invite link that grants access to a catalog prefix. */
 export type InviteLink = {
   __typename?: 'InviteLink';
@@ -1377,7 +1400,9 @@ export type LegalTerms = {
 
 export type LegalTermsType =
   /** Master Services Agreement. */
-  | 'MSA';
+  | 'MSA'
+  /** Consent to use sandboxes. */
+  | 'SANDBOX';
 
 export type LiveSpec = {
   __typename?: 'LiveSpec';
@@ -2185,6 +2210,12 @@ export type PaymentMethodBillingDetails = {
   name?: Maybe<Scalars['String']['output']>;
 };
 
+export type PaymentProvider =
+  | 'AWS_MARKETPLACE'
+  | 'GCP_MARKETPLACE'
+  | 'SNOWFLAKE_MARKETPLACE'
+  | 'STRIPE';
+
 /**
  * Information on the config updates performed by the controller.
  * This does not include any information on user-initiated config updates.
@@ -2266,6 +2297,15 @@ export type PrefixesBy = {
 export type PrefixesFilter = {
   /** Filter on the returned prefix. */
   prefix?: InputMaybe<PrefixFilter>;
+};
+
+/** A price for the next `quantity` units of usage after the previous tiers. */
+export type PricingTier = {
+  __typename?: 'PricingTier';
+  /** Units priced at this rate. Null for the final tier, which covers all further usage. */
+  quantity?: Maybe<Scalars['Int']['output']>;
+  /** Price per unit, in cents. */
+  rateCents: Scalars['Int']['output'];
 };
 
 /** A configured private link and its controller-observed provisioning status. */
@@ -2866,6 +2906,25 @@ export type SecretsFilter = {
   catalogName?: InputMaybe<PrefixFilter>;
 };
 
+export type SelfServePhase =
+  /** Before the trial starts, or when there is no trial. */
+  | 'FREE'
+  /** After the trial ends. */
+  | 'PAID'
+  /** During the trial. */
+  | 'TRIAL';
+
+export type SelfServePlan = {
+  __typename?: 'SelfServePlan';
+  collectionMethod: CollectionMethod;
+  /** Data processing prices, per GB. */
+  dataTiers: Array<PricingTier>;
+  phase: SelfServePhase;
+  trial?: Maybe<TrialPeriod>;
+  /** Task usage prices, per task hour. */
+  usageTiers: Array<PricingTier>;
+};
+
 export type ServiceAccount = {
   __typename?: 'ServiceAccount';
   apiKeys: Array<ServiceAccountApiKey>;
@@ -3237,6 +3296,7 @@ export type TenantBilling = {
   contact: BillingContact;
   invoices: InvoiceConnection;
   paymentMethods: Array<PaymentMethod>;
+  plan: BillingPlan;
   primaryPaymentMethod?: Maybe<PaymentMethod>;
 };
 
@@ -3247,6 +3307,13 @@ export type TenantBillingInvoicesArgs = {
   filter?: InputMaybe<InvoiceFilter>;
   first?: InputMaybe<Scalars['Int']['input']>;
   last?: InputMaybe<Scalars['Int']['input']>;
+};
+
+export type TrialPeriod = {
+  __typename?: 'TrialPeriod';
+  /** Exclusive end of the trial. */
+  end: Scalars['NaiveDate']['output'];
+  start: Scalars['NaiveDate']['output'];
 };
 
 /** Result of the `updateAlertConfig` mutation. */
