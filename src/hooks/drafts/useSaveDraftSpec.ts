@@ -8,7 +8,6 @@ import { useMutation } from 'urql';
 import { createDraftSpec, modifyDraftSpec } from 'src/api/draftSpecs';
 import { graphql } from 'src/gql-types';
 import { useGetDraftSpec } from 'src/hooks/drafts/useGetDraftSpec';
-import { validateEndpointConfig } from 'src/utils/workflow-utils';
 
 const STAGE_DRAFT_SPECS = graphql(`
     mutation StageDraftSpecs($draftId: Id!, $specs: [DraftSpecInput!]!) {
@@ -49,11 +48,6 @@ const useSaveCaptureDraftSpec = () => {
             expectPubId: string | null,
             specDef: CaptureDef
         ): Promise<Error | null> => {
-            const configError = validateEndpointConfig(specDef);
-            if (configError) {
-                return configError;
-            }
-
             // Staging replaces every field, so the drafted precondition is
             // passed back or it's cleared
             const result = await stageDraftSpecs({
@@ -92,11 +86,6 @@ const useSaveMaterializationDraftSpec = () => {
             expectPubId: string | null,
             specDef: MaterializationDef
         ): Promise<Error | null> => {
-            const configError = validateEndpointConfig(specDef);
-            if (configError) {
-                return configError;
-            }
-
             // need to check if the materialization draft exists as
             // renames need to happen in place and not stage a new draft
             // TODO: Remove once stageDraftSpecs can rename a materialization

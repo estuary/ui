@@ -8,6 +8,7 @@ import type {
 import { isEmpty, isEqual } from 'lodash';
 
 import { getEndpointFromSpecDef } from 'src/utils/connector-utils';
+import { isEncryptedConfig } from 'src/utils/sops-utils';
 
 // This is the soft limit we recommend to users
 export const MAX_BINDINGS = 300;
@@ -135,12 +136,23 @@ export const getBindingIndexByResourcePath = <T extends Schema>(
 const UNSUPPORTED_CONFIG = new Error(
     'Only connector or dekaf configurations are supported'
 );
+const UNENCRYPTED_CONFIG = new Error(
+    'The endpoint config must be encrypted before it is saved'
+);
 
 // A spec can only be drafted with a connector or Dekaf config
-export const validateEndpointConfig = (specDef: SpecDef): Error | null => {
+export const validateEndpointConfig = (
+    specDef: SpecDef,
+    usesSecrets: boolean
+): Error | null => {
     const endpoint = getEndpointFromSpecDef(specDef);
     if (!endpoint?.config) {
         return UNSUPPORTED_CONFIG;
+    }
+
+    // tasks that don't use secrets must have a sops-encrypted config
+    if (!usesSecrets && !isEncryptedConfig(endpoint.config)) {
+        return UNENCRYPTED_CONFIG;
     }
 
     return null;

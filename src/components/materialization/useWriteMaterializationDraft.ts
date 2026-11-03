@@ -19,10 +19,16 @@ import {
 import { useBindingStore } from 'src/stores/Binding/Store';
 import { useDetailsForm_endpointConfig } from 'src/stores/DetailsForm/hooks';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
-import { useSecretsStore_setSecretsSaved } from 'src/stores/Secrets/hooks';
+import {
+    useSecretsStore_setSecretsSaved,
+    useSecretsStore_usesSecrets,
+} from 'src/stores/Secrets/hooks';
 import { useSourceCaptureStore_sourceCaptureDefinition } from 'src/stores/SourceCapture/hooks';
 import { useTargetNamingStore } from 'src/stores/TargetNaming/Store';
-import { NEW_TASK_PUBLICATION_ID } from 'src/utils/workflow-utils';
+import {
+    NEW_TASK_PUBLICATION_ID,
+    validateEndpointConfig,
+} from 'src/utils/workflow-utils';
 
 const ERROR_TITLE = 'materializationCreate.generate.failure.errorTitle';
 
@@ -41,6 +47,7 @@ export function useWriteMaterializationDraft(): WriteDraftFn {
     const saveDraftSpec = useSaveDraftSpec('materialization');
     const addSecretsToSpecDef = useAddSecretsToSpecDef();
     const setSecretsSaved = useSecretsStore_setSecretsSaved();
+    const usesSecrets = useSecretsStore_usesSecrets();
 
     const persistedDraftId = useEditorStore_persistedDraftId();
     const endpointConfig = useDetailsForm_endpointConfig();
@@ -151,6 +158,14 @@ export function useWriteMaterializationDraft(): WriteDraftFn {
             return { error: { title: ERROR_TITLE, error: secretsError } };
         }
 
+        const configError = validateEndpointConfig(
+            generatedDraftSpec,
+            usesSecrets
+        );
+        if (configError) {
+            return { error: { title: ERROR_TITLE, error: configError } };
+        }
+
         const saveError = await saveDraftSpec(
             draftId,
             processedEntityName,
@@ -184,5 +199,6 @@ export function useWriteMaterializationDraft(): WriteDraftFn {
         specOptions,
         addSecretsToSpecDef,
         setSecretsSaved,
+        usesSecrets,
     ]);
 }

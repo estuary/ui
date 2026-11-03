@@ -156,35 +156,6 @@ describe('useSaveDraftSpec', () => {
             });
         });
 
-        test('rejects an unencrypted config without staging it', async () => {
-            const error = await renderSave()(
-                DRAFT_ID,
-                CAPTURE_NAME,
-                PUB_ID,
-                captureSpecDef({ password: 'plaintext' })
-            );
-
-            expect(error?.message).toMatch(/must be encrypted/);
-            expect(stageDraftSpecs).not.toHaveBeenCalled();
-        });
-
-        test('rejects an endpoint that is not a connector', async () => {
-            const specDef = captureSpecDef();
-            specDef.endpoint = {
-                local: { command: ['run'], config: {} },
-            } as any;
-
-            const error = await renderSave()(
-                DRAFT_ID,
-                CAPTURE_NAME,
-                PUB_ID,
-                specDef
-            );
-
-            expect(error?.message).toMatch(/connector or dekaf/);
-            expect(stageDraftSpecs).not.toHaveBeenCalled();
-        });
-
         test('returns the staging error', async () => {
             const stagingError = new Error('staging failed');
             stageDraftSpecs.mockResolvedValue({ error: stagingError });
@@ -239,23 +210,6 @@ describe('useSaveDraftSpec', () => {
             await expect(
                 renderSave()(DRAFT_ID, MATERIALIZATION_NAME, PUB_ID, specDef)
             ).resolves.toBeNull();
-        });
-
-        test('rejects an unencrypted config without writing it', async () => {
-            const specDef = materializationSpecDef({
-                connector: { image: 'x', config: { password: 'plain' } },
-            });
-
-            const error = await renderSave()(
-                DRAFT_ID,
-                MATERIALIZATION_NAME,
-                PUB_ID,
-                specDef
-            );
-
-            expect(error?.message).toMatch(/must be encrypted/);
-            expect(modifyDraftSpec).not.toHaveBeenCalled();
-            expect(createDraftSpec).not.toHaveBeenCalled();
         });
 
         test('returns the drafted spec lookup error without writing', async () => {

@@ -16,8 +16,14 @@ import {
     useBinding_resourceConfigs,
 } from 'src/stores/Binding/hooks';
 import { useDetailsForm_imagePath } from 'src/stores/DetailsForm/hooks';
-import { useSecretsStore_setSecretsSaved } from 'src/stores/Secrets/hooks';
-import { NEW_TASK_PUBLICATION_ID } from 'src/utils/workflow-utils';
+import {
+    useSecretsStore_setSecretsSaved,
+    useSecretsStore_usesSecrets,
+} from 'src/stores/Secrets/hooks';
+import {
+    NEW_TASK_PUBLICATION_ID,
+    validateEndpointConfig,
+} from 'src/utils/workflow-utils';
 
 const ERROR_TITLE = 'captureCreate.generate.failedErrorTitle';
 
@@ -39,6 +45,7 @@ export function useWriteCaptureDraft(
     const saveDraftSpec = useSaveDraftSpec('capture');
     const addSecretsToSpecDef = useAddSecretsToSpecDef();
     const setSecretsSaved = useSecretsStore_setSecretsSaved();
+    const usesSecrets = useSecretsStore_usesSecrets();
 
     const persistedDraftId = useEditorStore_persistedDraftId();
     const imagePath = useDetailsForm_imagePath();
@@ -109,6 +116,11 @@ export function useWriteCaptureDraft(
             return { error: { title: ERROR_TITLE, error: secretsError } };
         }
 
+        const configError = validateEndpointConfig(draftSpecDef, usesSecrets);
+        if (configError) {
+            return { error: { title: ERROR_TITLE, error: configError } };
+        }
+
         const saveError = await saveDraftSpec(
             draftId,
             catalogName,
@@ -143,5 +155,6 @@ export function useWriteCaptureDraft(
         saveDraftSpec,
         addSecretsToSpecDef,
         setSecretsSaved,
+        usesSecrets,
     ]);
 }

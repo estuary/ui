@@ -18,6 +18,5 @@ export const CTAs: Record<string, string> = {
 
     'cta.support': `contact support`,
 
-    // These are dynamically created in the Save button
     'cta.contactUs': `Contact Us`,
 };
