@@ -1,4 +1,6 @@
-import type { JsonFormsData, Schema, SupabaseInvokeResponse } from 'src/types';
+import type { PostgrestError } from '@supabase/postgrest-js';
+import type { JsonFormsData, Schema } from 'src/types';
+import type { Result } from 'src/types/utils';
 
 import { isPlainObject } from 'lodash';
 
@@ -6,6 +8,10 @@ import { encryptConfig } from 'src/api/oauth';
 import { createJSONFormDefaults } from 'src/services/ajv';
 
 const sopsKey = 'sops';
+
+// Encrypting always adds a `sops` stanza, even when no fields are secret
+export const isEncryptedConfig = (config: unknown) =>
+    isPlainObject(config) && Object.hasOwn(config as object, sopsKey);
 
 // This is mainly public so we can test easier. If you think
 //  you need to call this directly think about it A LOT and
@@ -127,55 +133,35 @@ export const parseEncryptedEndpointConfig = (
     }
 };
 
+// Resolves to the config sops-encrypted, or as-is if it already is
 export async function encryptEndpointConfig(
     endpointConfig: { [key: string]: any },
     endpointSchema: Schema,
     serverUpdateRequired: boolean,
     imageConnectorId: string,
-    imageConnectorTagId: string,
-    callFailed: Function,
-    { overrideJsonFormDefaults }: { overrideJsonFormDefaults: boolean }
-): Promise<SupabaseInvokeResponse<any>> {
+    imageConnectorTagId: string
+): Promise<Result<Schema, Error | PostgrestError>> {
     const selectedEndpointConfig =
-        serverUpdateRequired && Object.hasOwn(endpointConfig, sopsKey)
-            ? parseEncryptedEndpointConfig(
-                  endpointConfig,
-                  endpointSchema,
-                  overrideJsonFormDefaults
-              ).data
+        serverUpdateRequired && isEncryptedConfig(endpointConfig)
+            ? parseEncryptedEndpointConfig(endpointConfig, endpointSchema, true)
+                  .data
             : endpointConfig;
 
-    let encryptedEndpointConfig: SupabaseInvokeResponse<any> = {
-        data: null,
-        error: {
-            name: 'Object Not Reassigned',
-            message:
-                'An object initializing the response of a Supabase function was not reassigned.',
-        },
-    };
-
-    if (Object.hasOwn(selectedEndpointConfig, sopsKey)) {
-        encryptedEndpointConfig = { data: endpointConfig, error: null };
-    } else {
-        encryptedEndpointConfig = await encryptConfig(
-            imageConnectorId,
-            imageConnectorTagId,
-            selectedEndpointConfig
-        );
-        if (
-            encryptedEndpointConfig.error ||
-            encryptedEndpointConfig.data.error
-        ) {
-            return callFailed({
-                error: {
-                    title: 'entityCreate.sops.failedTitle',
-                    error:
-                        encryptedEndpointConfig.error ??
-                        encryptedEndpointConfig.data.error,
-                },
-            });
-        }
+    if (isEncryptedConfig(selectedEndpointConfig)) {
+        return { value: endpointConfig };
     }
 
-    return encryptedEndpointConfig;
+    const response = await encryptConfig(
+        imageConnectorId,
+        imageConnectorTagId,
+        selectedEndpointConfig
+    );
+
+    // The encryption call can also fail with an error in its data
+    const error = response.error ?? response.data?.error;
+    if (error) {
+        return { error };
+    }
+
+    return { value: response.data };
 }
