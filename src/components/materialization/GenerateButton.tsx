@@ -1,29 +1,24 @@
 import { Button } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 import { useEditorStore_isSaving } from 'src/components/editor/Store/hooks';
-import useGenerateCatalog from 'src/components/materialization/useGenerateCatalog';
-import { useMutateDraftSpec } from 'src/components/shared/Entity/MutateDraftSpecContext';
+import { useSubmitMaterializationForm } from 'src/components/materialization/useSubmitMaterializationForm';
 import { entityHeaderButtonSx } from 'src/context/Theme';
 import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
 
 function MaterializeGenerateButton() {
-    const intl = useIntl();
-    const generateCatalog = useGenerateCatalog();
+    const submitForm = useSubmitMaterializationForm();
     const isSaving = useEditorStore_isSaving();
     const formActive = useFormStateStore_isActive();
-    const mutateDraftSpecs = useMutateDraftSpec();
 
     return (
         <Button
             onClick={() => {
-                void generateCatalog(mutateDraftSpecs);
+                void submitForm();
             }}
             disabled={isSaving || formActive}
             sx={entityHeaderButtonSx}
         >
-            {intl.formatMessage({ id: 'cta.generateCatalog.materialization' })}
+            Next
         </Button>
     );
 }

@@ -1,10 +1,9 @@
 import type { FormState } from 'src/stores/FormState/types';
+import type { EntityWithCreateWorkflow } from 'src/types';
 
 import { useCallback } from 'react';
 
 import { Button } from '@mui/material';
-
-import { useIntl } from 'react-intl';
 
 import { createEvolution, toEvolutionRequest } from 'src/api/evolutions';
 import {
@@ -12,15 +11,16 @@ import {
     useBindingsEditorStore_setIncompatibleCollections,
 } from 'src/components/editor/Bindings/Store/hooks';
 import {
+    useEditorStore_catalogName,
     useEditorStore_id,
     useEditorStore_isSaving,
     useEditorStore_queryResponse_mutate,
 } from 'src/components/editor/Store/hooks';
+import { useReloadDraftedTask } from 'src/components/shared/Entity/hooks/useReloadDraftedTask';
 import { useEntityType } from 'src/context/EntityContext';
 import { entityHeaderButtonSx } from 'src/context/Theme';
 import { useEntityWorkflow_Editing } from 'src/context/Workflow';
 import useJobStatusPoller from 'src/hooks/useJobStatusPoller';
-import useStoreDiscoveredCaptures from 'src/hooks/useStoreDiscoveredCaptures';
 import { logRocketEvent } from 'src/services/shared';
 import {
     DEFAULT_POLLER_ERROR,
@@ -42,17 +42,17 @@ interface Props {
 }
 
 function SchemaEvolution({ onFailure }: Props) {
-    const intl = useIntl();
-
-    const storeDiscoveredCollections = useStoreDiscoveredCaptures();
+    const reloadDraftedTask = useReloadDraftedTask();
 
     const { jobStatusPoller } = useJobStatusPoller();
 
-    const entityType = useEntityType();
+    // Only rendered in the capture and materialization edit workflows
+    const entityType = useEntityType() as EntityWithCreateWorkflow;
     const editingEntity = useEntityWorkflow_Editing();
 
     // Draft Editor Store
     const draftId = useEditorStore_id();
+    const catalogName = useEditorStore_catalogName();
     const isSaving = useEditorStore_isSaving();
 
     // Form State Store
@@ -105,11 +105,20 @@ function SchemaEvolution({ onFailure }: Props) {
                 // Treat these like discovered collections. This will mean the UI
                 //  will go fetch all the new collections, specs, configs and store
                 //  them locally and present them
-                await storeDiscoveredCollections(
+                const { error: reloadError } = await reloadDraftedTask(
                     payload.draft_id,
                     entityType,
-                    onFailure
+                    catalogName
                 );
+                if (reloadError) {
+                    onFailure({
+                        error: {
+                            title: 'captureCreate.generate.failedErrorTitle',
+                            error: reloadError,
+                        },
+                    });
+                    return;
+                }
 
                 // Now that the collections are updated we can clear out the list so
                 //  the error section is no longer displayed.
@@ -191,9 +200,7 @@ function SchemaEvolution({ onFailure }: Props) {
             disabled={isSaving || formActive}
             sx={entityHeaderButtonSx}
         >
-            {intl.formatMessage({
-                id: 'cta.evolve',
-            })}
+            Apply
         </Button>
     );
 }
