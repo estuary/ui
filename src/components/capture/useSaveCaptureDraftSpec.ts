@@ -5,6 +5,7 @@ import { useCallback } from 'react';
 import { useMutation } from 'urql';
 
 import { graphql } from 'src/gql-types';
+import { useSecretsStore_usesSecrets } from 'src/stores/Secrets/hooks';
 import { validateEndpointConfig } from 'src/utils/workflow-utils';
 
 const STAGE_DRAFT_SPECS = graphql(`
@@ -19,6 +20,7 @@ const STAGE_DRAFT_SPECS = graphql(`
  */
 export function useSaveCaptureDraftSpec() {
     const [, stageDraftSpecs] = useMutation(STAGE_DRAFT_SPECS);
+    const usesSecrets = useSecretsStore_usesSecrets();
 
     return useCallback(
         async (
@@ -27,7 +29,7 @@ export function useSaveCaptureDraftSpec() {
             expectPubId: string | null,
             specDef: CaptureDef
         ): Promise<Error | null> => {
-            const configError = validateEndpointConfig(specDef);
+            const configError = validateEndpointConfig(specDef, usesSecrets);
             if (configError) {
                 return configError;
             }
@@ -55,6 +57,6 @@ export function useSaveCaptureDraftSpec() {
 
             return null;
         },
-        [stageDraftSpecs]
+        [stageDraftSpecs, usesSecrets]
     );
 }

@@ -6,6 +6,7 @@ import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { createDraftSpec, modifyDraftSpec } from 'src/api/draftSpecs';
 import { useSaveMaterializationDraftSpec } from 'src/components/materialization/useSaveMaterializationDraftSpec';
 import { useGetDraftSpec } from 'src/hooks/drafts/useGetDraftSpec';
+import { useSecretsStore_usesSecrets } from 'src/stores/Secrets/hooks';
 
 vi.mock(import('src/api/draftSpecs'), async (importOriginal) => ({
     ...(await importOriginal()),
@@ -18,11 +19,17 @@ vi.mock(import('src/hooks/drafts/useGetDraftSpec'), async (importOriginal) => ({
     useGetDraftSpec: vi.fn(),
 }));
 
+vi.mock(import('src/stores/Secrets/hooks'), async (importOriginal) => ({
+    ...(await importOriginal()),
+    useSecretsStore_usesSecrets: vi.fn(),
+}));
+
 const DRAFT_ID = '1111111111111111';
 const PUB_ID = '2222222222222222';
 const MATERIALIZATION_NAME = 'acmeCo/materialize-postgres';
 
 const CONFIG = { password_sops: 'ENC[...]', sops: {} };
+const PLAINTEXT_CONFIG = { password: 'hunter2' };
 
 const materializationSpecDef = (
     endpoint: object = {
@@ -37,6 +44,8 @@ describe('useSaveMaterializationDraftSpec', () => {
         getDraftSpec.mockReset();
         getDraftSpec.mockResolvedValue({ value: null });
         vi.mocked(useGetDraftSpec).mockReturnValue(getDraftSpec as never);
+
+        vi.mocked(useSecretsStore_usesSecrets).mockReturnValue(false);
 
         vi.mocked(createDraftSpec).mockReset();
         vi.mocked(createDraftSpec).mockResolvedValue({
@@ -92,6 +101,41 @@ describe('useSaveMaterializationDraftSpec', () => {
         await expect(
             renderSave()(DRAFT_ID, MATERIALIZATION_NAME, PUB_ID, specDef)
         ).resolves.toBeNull();
+    });
+
+    test('rejects an unencrypted config when the task does not use secrets', async () => {
+        const specDef = materializationSpecDef({
+            connector: {
+                image: 'materialize-postgres:dev',
+                config: PLAINTEXT_CONFIG,
+            },
+        });
+
+        const error = await renderSave()(
+            DRAFT_ID,
+            MATERIALIZATION_NAME,
+            PUB_ID,
+            specDef
+        );
+
+        expect(error?.message).toMatch(/must be encrypted/);
+        expect(modifyDraftSpec).not.toHaveBeenCalled();
+        expect(createDraftSpec).not.toHaveBeenCalled();
+    });
+
+    test('writes an unencrypted config when the task uses secrets', async () => {
+        vi.mocked(useSecretsStore_usesSecrets).mockReturnValue(true);
+        const specDef = materializationSpecDef({
+            connector: {
+                image: 'materialize-postgres:dev',
+                config: PLAINTEXT_CONFIG,
+            },
+        });
+
+        await expect(
+            renderSave()(DRAFT_ID, MATERIALIZATION_NAME, PUB_ID, specDef)
+        ).resolves.toBeNull();
+        expect(createDraftSpec).toHaveBeenCalledTimes(1);
     });
 
     test('returns the drafted spec lookup error without writing', async () => {

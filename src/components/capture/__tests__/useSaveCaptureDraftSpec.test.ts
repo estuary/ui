@@ -5,10 +5,16 @@ import { useMutation } from 'urql';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
 import { useSaveCaptureDraftSpec } from 'src/components/capture/useSaveCaptureDraftSpec';
+import { useSecretsStore_usesSecrets } from 'src/stores/Secrets/hooks';
 
 vi.mock(import('urql'), async (importOriginal) => ({
     ...(await importOriginal()),
     useMutation: vi.fn(),
+}));
+
+vi.mock(import('src/stores/Secrets/hooks'), async (importOriginal) => ({
+    ...(await importOriginal()),
+    useSecretsStore_usesSecrets: vi.fn(),
 }));
 
 const DRAFT_ID = '1111111111111111';
@@ -16,6 +22,7 @@ const PUB_ID = '2222222222222222';
 const CAPTURE_NAME = 'acmeCo/source-hello-world';
 
 const CONFIG = { password_sops: 'ENC[...]', sops: {} };
+const PLAINTEXT_CONFIG = { password: 'hunter2' };
 
 const captureSpecDef = (): CaptureDef =>
     ({
@@ -34,6 +41,8 @@ describe('useSaveCaptureDraftSpec', () => {
             data: { stageDraftSpecs: [CAPTURE_NAME] },
         });
         vi.mocked(useMutation).mockReturnValue([{} as never, stageDraftSpecs]);
+
+        vi.mocked(useSecretsStore_usesSecrets).mockReturnValue(false);
     });
 
     const renderSave = () =>
@@ -57,6 +66,43 @@ describe('useSaveCaptureDraftSpec', () => {
                 },
             ],
         });
+    });
+
+    test('rejects an unencrypted config when the task does not use secrets', async () => {
+        const specDef = captureSpecDef();
+        specDef.endpoint = {
+            connector: {
+                image: 'source-hello-world:dev',
+                config: PLAINTEXT_CONFIG,
+            },
+        } as any;
+
+        const error = await renderSave()(
+            DRAFT_ID,
+            CAPTURE_NAME,
+            PUB_ID,
+            specDef
+        );
+
+        expect(error?.message).toMatch(/must be encrypted/);
+        expect(stageDraftSpecs).not.toHaveBeenCalled();
+    });
+
+    // Its secret values live in secrets, not the config
+    test('stages an unencrypted config when the task uses secrets', async () => {
+        vi.mocked(useSecretsStore_usesSecrets).mockReturnValue(true);
+        const specDef = captureSpecDef();
+        specDef.endpoint = {
+            connector: {
+                image: 'source-hello-world:dev',
+                config: PLAINTEXT_CONFIG,
+            },
+        } as any;
+
+        await expect(
+            renderSave()(DRAFT_ID, CAPTURE_NAME, PUB_ID, specDef)
+        ).resolves.toBeNull();
+        expect(stageDraftSpecs).toHaveBeenCalledTimes(1);
     });
 
     test('rejects an endpoint that is not a connector', async () => {
