@@ -11,12 +11,14 @@ import {
     useEndpointConfigStore_endpointConfig_data,
     useEndpointConfigStore_endpointSchema,
 } from 'src/stores/EndpointConfig/hooks';
+import { useSecretsStore_usesSecrets } from 'src/stores/Secrets/hooks';
 import { encryptEndpointConfig } from 'src/utils/sops-utils';
 
 /**
  * Callback hook that resolves to the workflow's endpoint config, encrypted.
  * The form's config is encrypted when it changed, otherwise the server's
- * already encrypted config is used.
+ * already encrypted config is used. Tasks using secrets get the config as is,
+ * since their secret values live in secrets rather than the config.
  */
 export function useEncryptEndpointConfig() {
     const imageConnectorId = useDetailsFormStore(
@@ -31,12 +33,19 @@ export function useEncryptEndpointConfig() {
     const serverEndpointConfigData =
         useEndpointConfigStore_encryptedEndpointConfig_data();
     const serverUpdateRequired = useEndpointConfig_serverUpdateRequired();
+    const usesSecrets = useSecretsStore_usesSecrets();
 
     return useCallback(async (): Promise<Result<Schema, FormError>> => {
+        const selectedEndpointConfig = serverUpdateRequired
+            ? endpointConfigData
+            : serverEndpointConfigData;
+
+        if (usesSecrets) {
+            return { value: selectedEndpointConfig };
+        }
+
         const { value, error } = await encryptEndpointConfig(
-            serverUpdateRequired
-                ? endpointConfigData
-                : serverEndpointConfigData,
+            selectedEndpointConfig,
             endpointSchema,
             serverUpdateRequired,
             imageConnectorId,
@@ -55,5 +64,6 @@ export function useEncryptEndpointConfig() {
         imageConnectorTagId,
         serverEndpointConfigData,
         serverUpdateRequired,
+        usesSecrets,
     ]);
 }

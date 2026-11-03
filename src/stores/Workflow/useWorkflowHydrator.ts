@@ -14,6 +14,7 @@ import { logRocketConsole } from 'src/services/shared';
 import { useDetailsFormHydrator } from 'src/stores/DetailsForm/useDetailsFormHydrator';
 import { useEndpointConfigHydrator } from 'src/stores/EndpointConfig/useEndpointConfigHydrator';
 import { useEntitiesStore } from 'src/stores/Entities/Store';
+import { useSecretsStore_hydrate } from 'src/stores/Secrets/hooks';
 import { useWorkflowStore } from 'src/stores/Workflow/Store';
 import { normalizeError } from 'src/utils/errors';
 
@@ -24,6 +25,7 @@ export const useWorkflowHydrator = () => {
 
     const { hydrateDetailsForm } = useDetailsFormHydrator();
     const { hydrateEndpointConfig } = useEndpointConfigHydrator();
+    const hydrateSecrets = useSecretsStore_hydrate();
 
     const baseCatalogPrefix = useEntitiesStore((state) => {
         const storageMappingPrefixes = Object.keys(state.storageMappings);
@@ -67,6 +69,7 @@ export const useWorkflowHydrator = () => {
 
             await hydrateDetailsForm(baseCatalogPrefix, liveSpec);
             await hydrateEndpointConfig(spec);
+            hydrateSecrets(spec);
             setHydrated(true);
         } catch (error: unknown) {
             setHydrated(true);
@@ -85,6 +88,7 @@ export const useWorkflowHydrator = () => {
         fetchWorkflowData,
         hydrateDetailsForm,
         hydrateEndpointConfig,
+        hydrateSecrets,
         isEditWorkflow,
         liveSpecId,
         setConnectorMetadata,

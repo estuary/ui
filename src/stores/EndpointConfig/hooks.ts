@@ -1,15 +1,33 @@
+import { useMemo } from 'react';
+
 import { useShallow } from 'zustand/react/shallow';
 
 import { isEqual } from 'lodash';
 
 import { useEndpointConfigStore } from 'src/stores/EndpointConfig/Store';
+import {
+    useSecretsStore_errors,
+    useSecretsStore_errorsExist,
+} from 'src/stores/Secrets/hooks';
 
+// Missing required secrets count as endpoint config errors
 export const useEndpointConfigStore_errorsExist = () => {
-    return useEndpointConfigStore((state) => state.errorsExist);
+    const errorsExist = useEndpointConfigStore((state) => state.errorsExist);
+    const secretsErrorsExist = useSecretsStore_errorsExist();
+
+    return errorsExist || secretsErrorsExist;
 };
 
 export const useEndpointConfigStore_endpointConfigErrors = () => {
-    return useEndpointConfigStore((state) => state.endpointConfigErrors);
+    const errors = useEndpointConfigStore(
+        (state) => state.endpointConfigErrors
+    );
+    const secretsErrors = useSecretsStore_errors();
+
+    return useMemo(
+        () => [...errors, ...secretsErrors],
+        [errors, secretsErrors]
+    );
 };
 
 export const useEndpointConfigStore_reset = () => {
