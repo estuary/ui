@@ -1,3 +1,4 @@
+import { setSecretValue } from '../helpers/captures';
 import { deleteLiveSpecs, raiseTaskQuota } from '../helpers/db';
 import {
     addCollection,
@@ -238,9 +239,7 @@ test.describe.serial('Materialization PostgreSQL:', () => {
         await page
             .getByRole('textbox', { name: 'User', exact: true })
             .fill(process.env.postgres_user!);
-        await page
-            .getByRole('textbox', { name: 'Password', exact: true })
-            .fill(process.env.postgres_pass!);
+        await setSecretValue(page, 'Password', process.env.postgres_pass!);
         await page
             .getByRole('textbox', { name: 'Database', exact: true })
             .fill(process.env.postgres_db!);

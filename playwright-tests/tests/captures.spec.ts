@@ -3,6 +3,7 @@ import { resolve } from 'path';
 
 import {
     clickNext,
+    convertToLegacySopsCapture,
     editLiveCapture,
     fillMessageRate,
     getDraftedCapture,
@@ -63,13 +64,19 @@ test.describe.serial('Capture create:', () => {
 
     test('Next discovers into a new draft with starter defaults', async () => {
         await startHelloWorldCapture(page, `${uuid}a`);
+
+        const encryptions = recordRequests(page, isEncryptRequest);
         await clickNext(page);
+
+        // New captures use secrets, so their config isn't sops-encrypted
+        expect(encryptions).toHaveLength(0);
 
         const drafted = await getDraftedCapture(firstName);
         expect(drafted?.discoverStatuses).toEqual(['success']);
         expect(drafted?.expectPubId).toBe(NEW_TASK_PUB_ID);
         expect(drafted?.spec.autoDiscover).toEqual(STARTER_AUTO_DISCOVER);
         expect(drafted?.spec.bindings).toHaveLength(1);
+        expect(drafted?.spec.endpoint.connector.config.sops).toBeUndefined();
 
         firstDraftId = drafted!.draftId;
     });
@@ -105,13 +112,15 @@ test.describe.serial('Capture create:', () => {
 
         const live = await getLiveCapture(renamed);
         expect(live?.spec.autoDiscover).toEqual(STARTER_AUTO_DISCOVER);
+        expect(live?.spec.endpoint.connector.config.sops).toBeUndefined();
     });
 });
 
 // Covers the drafts written around discovers in the capture edit workflow,
-// starting from a capture published during setup.
+// starting from a capture published during setup. Captures created now use
+// secrets, so their config isn't sops-encrypted.
 
-test.describe.serial('Capture edit:', () => {
+test.describe.serial('Capture edit (secrets):', () => {
     test.setTimeout(240000);
 
     const uuid = crypto.randomUUID().split('-')[0];
@@ -154,12 +163,13 @@ test.describe.serial('Capture edit:', () => {
         const encryptions = recordRequests(page, isEncryptRequest);
         await clickNext(page);
 
-        // The changed config is encrypted before it's drafted
-        expect(encryptions).toHaveLength(1);
+        // The changed config is drafted without sops
+        expect(encryptions).toHaveLength(0);
 
         const drafted = await getDraftedCapture(name);
         expect(drafted?.draftId).not.toBe(createDraftId);
         expect(drafted?.spec.endpoint.connector.config.rate).toBe(7);
+        expect(drafted?.spec.endpoint.connector.config.sops).toBeUndefined();
         expect(drafted?.discoverStatuses).toEqual([]);
         // Edits keep the precondition against the live spec
         expect(drafted?.expectPubId).toBe(live!.lastPubId);
@@ -230,7 +240,6 @@ test.describe.serial('Capture edit:', () => {
 // keeps the config's key order. sops computes the MAC over values in document
 // order, so the discover fails if the UI drafts the keys in another order
 // (estuary/ui#2178).
-
 test.describe.serial('Capture edit with a sops CLI config:', () => {
     test.setTimeout(240000);
 
@@ -339,6 +348,81 @@ test.describe.serial('Capture edit with a sops CLI config:', () => {
             )
             .toBe(true);
         expect(await discoverStatuses()).toEqual(['success']);
+    });
+});
+
+// Covers editing a capture published before secrets, whose config is still
+// sops-encrypted. It stays on sops rather than moving to secrets.
+test.describe.serial('Capture edit (legacy sops):', () => {
+    test.setTimeout(240000);
+
+    const uuid = crypto.randomUUID().split('-')[0];
+    const name = `/${uuid}/`;
+
+    let page: Page;
+    let email: string;
+    let tenant: string;
+
+    test.beforeAll(async ({ browser }) => {
+        test.setTimeout(240000);
+
+        page = await browser.newPage();
+        ({ email, tenant } = await defaultPageSetup(
+            page,
+            test,
+            USERS.captures
+        ));
+        await raiseTaskQuota(tenant);
+
+        await startHelloWorldCapture(page, uuid);
+        await clickNext(page);
+        await publish(page, name);
+
+        await convertToLegacySopsCapture(
+            page,
+            email,
+            (await getLiveCapture(name))!
+        );
+    });
+
+    // The published capture and its collections
+    test.afterAll(async () => {
+        await deleteLiveSpecs(email, `${tenant}/${uuid}`);
+    });
+
+    test('endpoint change and Next encrypts the config with sops', async () => {
+        const live = await getLiveCapture(name);
+        expect(live?.spec.endpoint.connector.config.sops).toBeDefined();
+
+        await editLiveCapture(page, live!);
+        await page.getByRole('button', { name: /Endpoint Config/ }).click();
+        await fillMessageRate(page, '7');
+
+        const encryptions = recordRequests(page, isEncryptRequest);
+        await clickNext(page);
+
+        // The changed config is encrypted before it's drafted
+        expect(encryptions).toHaveLength(1);
+
+        const drafted = await getDraftedCapture(name);
+        expect(drafted?.spec.endpoint.connector.config.rate).toBe(7);
+        expect(drafted?.spec.endpoint.connector.config.sops).toBeDefined();
+        expect(drafted?.expectPubId).toBe(live!.lastPubId);
+    });
+
+    test('publishes with the config still on sops', async () => {
+        const live = await getLiveCapture(name);
+
+        await page.getByRole('button', { name: 'Save and publish' }).click();
+        await expect
+            .poll(async () => (await getLiveCapture(name))?.lastPubId, {
+                timeout: 120000,
+            })
+            .not.toBe(live!.lastPubId);
+
+        const published = await getLiveCapture(name);
+        expect(published?.spec.endpoint.connector.config.rate).toBe(7);
+        expect(published?.spec.endpoint.connector.config.sops).toBeDefined();
     });
 });
 
