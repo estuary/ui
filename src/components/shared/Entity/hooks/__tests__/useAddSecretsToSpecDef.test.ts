@@ -43,9 +43,12 @@ const endpointSchema: Schema = {
     },
 };
 
-const specDef = (secrets?: Record<string, string>): any => ({
+const specDef = (
+    secrets?: Record<string, string>,
+    config: object = {}
+): any => ({
     bindings: [],
-    endpoint: { connector: { image: 'source-postgres:dev', config: {} } },
+    endpoint: { connector: { image: 'source-postgres:dev', config } },
     ...(secrets ? { secrets } : {}),
 });
 
@@ -178,5 +181,32 @@ describe('useAddSecretsToSpecDef', () => {
         expect(error).toBe(saveError);
         expect(setSecretName).not.toHaveBeenCalled();
         expect(spec.secrets).toEqual({ [PASSWORD_SECRET]: '/password' });
+    });
+
+    test('skips an empty held value', async () => {
+        await renderAddSecrets({ secretValues: { '/password': '' } })(
+            TASK_NAME,
+            specDef()
+        );
+
+        expect(setSecret).not.toHaveBeenCalled();
+    });
+
+    // e.g. a form default or a reset oneOf option
+    test('drafts no value at secret fields, without changing the config passed in', async () => {
+        const config = Object.freeze({
+            host: 'db',
+            password: '',
+            credentials: Object.freeze({ api_key: 'leftover' }),
+        });
+        const spec = specDef(undefined, config);
+
+        await renderAddSecrets()(TASK_NAME, spec);
+
+        expect(spec.endpoint.connector.config).toEqual({
+            host: 'db',
+            credentials: {},
+        });
+        expect(config.password).toBe('');
     });
 });

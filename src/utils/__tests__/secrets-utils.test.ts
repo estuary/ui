@@ -10,6 +10,7 @@ import {
     getSecretName,
     isLegacySecretsConfig,
     prepareSecretsSchema,
+    removeSecretValues,
     setSecretsStanza,
 } from 'src/utils/secrets-utils';
 
@@ -158,6 +159,36 @@ describe('canUseSecrets', () => {
         expect(
             canUseSecrets(
                 withProperty({ type: ['string', 'null'], secret: true })
+            )
+        ).toBe(true);
+    });
+
+    // e.g. QuickBooks' rotating OAuth tokens
+    test('rejects a secret with a non-empty default', () => {
+        expect(
+            canUseSecrets(
+                withProperty({
+                    type: 'string',
+                    secret: true,
+                    default: 'PLACEHOLDER',
+                })
+            )
+        ).toBe(false);
+    });
+
+    test('allows a secret with an empty or null default', () => {
+        expect(
+            canUseSecrets(
+                withProperty({ type: 'string', secret: true, default: '' })
+            )
+        ).toBe(true);
+        expect(
+            canUseSecrets(
+                withProperty({
+                    type: ['string', 'null'],
+                    secret: true,
+                    default: null,
+                })
             )
         ).toBe(true);
     });
@@ -365,9 +396,16 @@ describe('getMissingSecretFields', () => {
         ).toEqual(['/credentials/api_key']);
     });
 
-    test('leaves out fields with a held value, even an empty one', () => {
+    test('leaves out fields with a held value', () => {
+        expect(
+            missingPointers({}, { '/credentials/api_key': 'key-1' })
+        ).toEqual(['/password']);
+    });
+
+    test('an empty held value does not count', () => {
         expect(missingPointers({}, { '/credentials/api_key': '' })).toEqual([
             '/password',
+            '/credentials/api_key',
         ]);
     });
 
@@ -380,6 +418,32 @@ describe('getMissingSecretFields', () => {
                 ({ pointer }) => pointer
             )
         ).toEqual(['/credentials/api_key']);
+    });
+});
+
+describe('removeSecretValues', () => {
+    test('removes strings at the selected secret fields, even empty ones', () => {
+        expect(
+            removeSecretValues(credentialsSchema, {
+                host: 'db',
+                password: '',
+                credentials: { auth_type: 'key', api_key: 'PLACEHOLDER' },
+            })
+        ).toEqual({ host: 'db', credentials: { auth_type: 'key' } });
+    });
+
+    test('keeps null, which holds no value', () => {
+        expect(
+            removeSecretValues(credentialsSchema, { password: null })
+        ).toEqual({ password: null });
+    });
+
+    test('leaves the original config as it was', () => {
+        const config = { password: 'hunter2' };
+
+        removeSecretValues(credentialsSchema, config);
+
+        expect(config).toEqual({ password: 'hunter2' });
     });
 });
 

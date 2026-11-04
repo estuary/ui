@@ -11,6 +11,7 @@ import {
     isPlainObject,
     isString,
     some,
+    unset,
     values,
 } from 'lodash';
 
@@ -56,8 +57,15 @@ export function canUseSecrets(schema: Schema): boolean {
             return false;
         }
 
+        // A secret with a non-empty default is a placeholder the connector
+        // replaces itself (e.g. QuickBooks' rotating OAuth tokens), which
+        // only the sops flow writes back
         if (hasSecretAnnotation(current)) {
-            return viaProperty && isStringSchema(current);
+            return (
+                viaProperty &&
+                isStringSchema(current) &&
+                !isSetValue(current.default)
+            );
         }
 
         return (
@@ -159,8 +167,22 @@ export function getMissingSecretFields(
         ({ pointer, required }) =>
             required &&
             !isSetValue(secretNames[pointer]) &&
-            !Object.hasOwn(secretValues, pointer)
+            !isSetValue(secretValues[pointer])
     );
+}
+
+// A copy of `config` without the values at the secret fields `config`
+// selects, as those live in secrets. Null is kept, since it holds no value.
+export function removeSecretValues(schema: Schema, config: any) {
+    const stripped = cloneDeep(config);
+
+    getSecretFields(schema, config).forEach(({ path }) => {
+        if (isString(get(stripped, path))) {
+            unset(stripped, path);
+        }
+    });
+
+    return stripped;
 }
 
 /**
@@ -335,6 +357,6 @@ function pickOption(schema: Schema, data: any, keyword: string) {
           );
 }
 
-function isSetValue(value: unknown): value is string {
+export function isSetValue(value: unknown): value is string {
     return isString(value) && !isEmpty(value);
 }

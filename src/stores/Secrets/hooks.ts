@@ -11,6 +11,7 @@ import {
     getMissingSecretFields,
     getSecretFields,
     isLegacySecretsConfig,
+    isSetValue,
 } from 'src/utils/secrets-utils';
 
 export const useSecretsStore_secretNames = () => {
@@ -30,9 +31,7 @@ export const useSecretsStore_secretValues = () => {
 };
 
 export const useSecretsStore_hasSecretValue = (pointer: string) => {
-    return useSecretsStore((state) =>
-        Object.hasOwn(state.secretValues, pointer)
-    );
+    return useSecretsStore((state) => isSetValue(state.secretValues[pointer]));
 };
 
 export const useSecretsStore_setSecretValue = () => {
