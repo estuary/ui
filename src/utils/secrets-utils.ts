@@ -20,7 +20,7 @@ import { Annotations } from 'src/types/jsonforms';
 
 // A task's `secrets` stanza. Maps secret catalog name -> JSON pointer of the
 // endpoint config location the secret's value is merged into.
-type SecretsStanza = SpecDef['secrets'];
+type SecretsStanza = NonNullable<SpecDef['secrets']>;
 
 export function isSecretSchema(schema: unknown): schema is Schema {
     return (
@@ -187,18 +187,11 @@ export function removeSecretValues(schema: Schema, config: any) {
 
 /**
  * Applies a task's `secrets` stanza to its spec:
- *  - undefined: leaves the spec's stanza as is. Either the task uses sops, or
- *    neither its config nor its secrets changed, so its existing stanza still
- *    applies.
  *  - Empty: no selected field has a secret, e.g. after switching to a `oneOf` option without
  *    one. Results in the stanza being removed.
  *  - Otherwise the incoming stanza replaces the spec's stanza.
  */
-export function setSecretsStanza(spec: any, secrets?: SecretsStanza) {
-    if (!secrets) {
-        return;
-    }
-
+export function setSecretsStanza(spec: any, secrets: SecretsStanza) {
     if (isEmpty(secrets)) {
         delete spec.secrets;
     } else {

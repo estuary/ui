@@ -11,11 +11,9 @@ interface SecretValueInputProps {
     labelledBy?: string;
     helperText?: string;
     disabled?: boolean;
-    minRows?: number;
-    maxRows?: number;
+    multiline?: boolean;
 }
 
-// A textarea masked like a password, so values can span lines
 export function SecretValueInput({
     value,
     onChange,
@@ -23,8 +21,7 @@ export function SecretValueInput({
     labelledBy,
     helperText,
     disabled,
-    minRows,
-    maxRows,
+    multiline,
 }: SecretValueInputProps) {
     const [showValue, setShowValue] = useState(false);
 
@@ -33,9 +30,9 @@ export function SecretValueInput({
             label={label}
             value={value}
             onChange={(event) => onChange(event.target.value)}
-            multiline
-            minRows={minRows}
-            maxRows={maxRows}
+            multiline={multiline}
+            minRows={multiline ? 1 : undefined}
+            maxRows={multiline ? 5 : undefined}
             size="small"
             required
             autoFocus
@@ -44,7 +41,11 @@ export function SecretValueInput({
             sx={
                 showValue
                     ? undefined
-                    : { '& textarea': { WebkitTextSecurity: 'disc' } }
+                    : {
+                          '& textarea, & input': {
+                              WebkitTextSecurity: 'disc',
+                          },
+                      }
             }
             slotProps={{
                 // Keep the value out of LogRocket and PostHog, and out of

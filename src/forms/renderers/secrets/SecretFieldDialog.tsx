@@ -85,8 +85,7 @@ export function SecretFieldDialog({
                             labelledBy={titleId}
                             helperText={description}
                             disabled={saving}
-                            minRows={multiline ? 1 : undefined}
-                            maxRows={multiline ? undefined : 5}
+                            multiline={multiline}
                         />
 
                         {multiline ? (
