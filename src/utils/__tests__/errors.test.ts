@@ -72,6 +72,25 @@ describe('normalizeError', () => {
         expect(normalized?.message).toBe('something broke');
     });
 
+    // e.g. a PostgREST error
+    test('should keep the message of a plain object error', () => {
+        const normalized = normalizeError({
+            message: 'relation "draft_specs" does not exist',
+            code: '42P01',
+            details: null,
+            hint: null,
+        });
+
+        expect(normalized).toBeInstanceOf(Error);
+        expect(normalized?.message).toBe(
+            'relation "draft_specs" does not exist'
+        );
+    });
+
+    test('should fall back to a generic Error for an object without a string message', () => {
+        expect(normalizeError({ message: 42 })?.message).toBe('Unknown error');
+    });
+
     test.each([
         ['null', null],
         ['undefined', undefined],
