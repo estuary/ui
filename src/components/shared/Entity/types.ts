@@ -4,7 +4,23 @@ import type {
     EntityTestButtonProps,
 } from 'src/components/shared/Entity/Actions/types';
 import type { DataPlaneOption } from 'src/stores/DetailsForm/types';
+import type { FormError } from 'src/stores/FormState/types';
 import type { Entity } from 'src/types';
+import type { SpecDef } from 'src/types/schemaModels';
+import type { Result } from 'src/types/utils';
+
+export interface WrittenDraft {
+    draftId: string;
+    catalogName: string;
+    // The spec as it was written to the draft
+    specDef: SpecDef;
+    // A new draft was started, so the capture needs a discover
+    discoverRequired?: boolean;
+}
+
+// Writes the workflow's task into its draft (useWriteCaptureDraft or
+// useWriteMaterializationDraft)
+export type WriteDraftFn = () => Promise<Result<WrittenDraft, FormError>>;
 
 export interface AddCollectionDialogCTAProps {
     entity?: Entity;

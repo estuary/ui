@@ -9,7 +9,7 @@ import {
     useEditorStore_id,
     useEditorStore_isSaving,
 } from 'src/components/editor/Store/hooks';
-import useSave from 'src/components/shared/Entity/Actions/useSave';
+import { usePublishDraft } from 'src/components/shared/Entity/hooks/usePublishDraft';
 import { useConfirmationModalContext } from 'src/context/Confirmation';
 import { entityHeaderButtonSx } from 'src/context/Theme';
 import { useEntityWorkflow } from 'src/context/Workflow';
@@ -31,7 +31,7 @@ function EntityCreateSave({
 
     const entityWorkFlow = useEntityWorkflow();
 
-    const save = useSave(logEvent, onFailure, dryRun);
+    const save = usePublishDraft(logEvent, onFailure, dryRun);
 
     const confirmationModalContext = useConfirmationModalContext();
     const collectionsBeingBackfilled = useBinding_collectionsBeingBackfilled();
