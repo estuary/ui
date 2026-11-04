@@ -9,7 +9,6 @@ export const CTAs: Record<string, string> = {
     'cta.saveEntity': `Save and publish`,
     'cta.enable': `Enable`,
     'cta.disable': `Disable`,
-    'cta.testConfig': `Test`,
     'cta.generateCatalog.capture': `Next`,
     'cta.generateCatalog.materialization': `Next`,
 
@@ -20,7 +19,5 @@ export const CTAs: Record<string, string> = {
     'cta.support': `contact support`,
 
     // These are dynamically created in the Save button
-    'cta.saveEntity.active': `Saving and Publishing...`,
-    'cta.testConfig.active': `Testing...`,
     'cta.contactUs': `Contact Us`,
 };
