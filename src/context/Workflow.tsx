@@ -8,7 +8,7 @@ interface Props extends BaseComponentProps {
 
 const WorkflowContext = createContext<Workflow | null>(null);
 
-const WorkflowContextProvider = ({ children, value }: Props) => {
+export const WorkflowContextProvider = ({ children, value }: Props) => {
     return (
         <WorkflowContext.Provider value={value}>
             {children}
@@ -16,21 +16,25 @@ const WorkflowContextProvider = ({ children, value }: Props) => {
     );
 };
 
-const useEntityWorkflow = () => {
+export const useEntityWorkflow = () => {
     return useContext(WorkflowContext);
 };
 
-const useEntityWorkflow_Editing = () => {
+export const useEntityWorkflow_Creating = () => {
+    const workflow = useContext(WorkflowContext);
+    return useMemo(
+        () =>
+            workflow === 'capture_create' ||
+            workflow === 'materialization_create',
+        [workflow]
+    );
+};
+
+export const useEntityWorkflow_Editing = () => {
     const workflow = useContext(WorkflowContext);
     return useMemo(
         () =>
             workflow === 'capture_edit' || workflow === 'materialization_edit',
         [workflow]
     );
-};
-
-export {
-    WorkflowContextProvider,
-    useEntityWorkflow,
-    useEntityWorkflow_Editing,
 };

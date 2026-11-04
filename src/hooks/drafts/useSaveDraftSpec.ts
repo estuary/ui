@@ -11,7 +11,7 @@ import { useMutation } from 'urql';
 
 import { createDraftSpec, modifyDraftSpec } from 'src/api/draftSpecs';
 import { graphql } from 'src/gql-types';
-import { getEndpointFromSpec } from 'src/utils/connector-utils';
+import { getEndpointFromSpecDef } from 'src/utils/connector-utils';
 import { isEncryptedConfig } from 'src/utils/sops-utils';
 
 const UNSUPPORTED_CONFIG = new Error(
@@ -55,7 +55,7 @@ const useSaveCaptureDraftSpec = () => {
             catalogName: string,
             draftSpec: CaptureDraftSpec
         ): Promise<Result<CaptureDraftSpec>> => {
-            const endpoint = getEndpointFromSpec(draftSpec.spec);
+            const endpoint = getEndpointFromSpecDef(draftSpec.spec);
             if (!endpoint?.config) {
                 return { error: UNSUPPORTED_CONFIG };
             }
@@ -97,7 +97,7 @@ const useSaveMaterializationDraftSpec = () => {
             draftSpec: MaterializationsDraftSpec,
             update: boolean
         ): Promise<Result<MaterializationsDraftSpec>> => {
-            const endpoint = getEndpointFromSpec(draftSpec.spec);
+            const endpoint = getEndpointFromSpecDef(draftSpec.spec);
             if (!endpoint?.config) {
                 return { error: UNSUPPORTED_CONFIG };
             }

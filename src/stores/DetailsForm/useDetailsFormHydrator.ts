@@ -1,10 +1,14 @@
 import type { Details } from 'src/stores/DetailsForm/types';
+import type { LiveSpec } from 'src/types/schemaModels';
 
 import { useCallback } from 'react';
 
-import { getLiveSpecs_detailsForm } from 'src/api/liveSpecsExt';
 import { useConnectorTag } from 'src/context/ConnectorTag';
-import { useEntityWorkflow } from 'src/context/Workflow';
+import {
+    useEntityWorkflow,
+    useEntityWorkflow_Creating,
+    useEntityWorkflow_Editing,
+} from 'src/context/Workflow';
 import { useEvaluateDataPlaneOptions } from 'src/hooks/dataPlanes/useEvaluateDataPlaneOptions';
 import useGetDataPlane from 'src/hooks/dataPlanes/useGetDataPlane';
 import useGlobalSearchParams, {
@@ -18,9 +22,10 @@ export const useDetailsFormHydrator = () => {
     const connectorTag = useConnectorTag();
 
     const dataPlaneId = useGlobalSearchParams(GlobalSearchParams.DATA_PLANE_ID);
-    const liveSpecId = useGlobalSearchParams(GlobalSearchParams.LIVE_SPEC_ID);
 
     const workflow = useEntityWorkflow();
+    const isCreateWorkflow = useEntityWorkflow_Creating();
+    const isEditWorkflow = useEntityWorkflow_Editing();
 
     const setActive = useDetailsFormStore((state) => state.setActive);
     const setDetails = useDetailsFormStore((state) => state.setDetails);
@@ -39,14 +44,17 @@ export const useDetailsFormHydrator = () => {
     const getDataPlane = useGetDataPlane();
 
     const hydrateDetailsForm = useCallback(
-        async (baseEntityName?: string) => {
+        async (baseEntityName?: string, liveSpec?: LiveSpec | null) => {
             setActive(true);
 
-            const createWorkflow =
-                workflow === 'capture_create' ||
-                workflow === 'materialization_create';
+            // a live spec is required if editing
+            if (isEditWorkflow && !liveSpec) {
+                setHydrated(true);
+                setHydrationErrorsExist(true);
+                return Promise.reject(new Error('Live spec not found'));
+            }
 
-            if (createWorkflow) {
+            if (isCreateWorkflow) {
                 const connectorImage = buildConnectorImageFromTag(connectorTag);
                 const dataPlaneOptions =
                     await evaluateDataPlaneOptions(baseEntityName);
@@ -73,38 +81,23 @@ export const useDetailsFormHydrator = () => {
                 return Promise.resolve();
             }
 
-            if (liveSpecId) {
-                const { data, error } =
-                    await getLiveSpecs_detailsForm(liveSpecId);
-
-                if (error || !data || data.length === 0) {
-                    setHydrationErrorsExist(true);
-
-                    return Promise.reject();
-                }
-
-                const {
-                    catalog_name,
-                    data_plane_id,
-                    data_plane_name,
-                    reactor_address,
-                } = data[0];
+            if (liveSpec) {
+                const { catalogName, dataPlane: liveDataPlane } = liveSpec;
 
                 const connectorImage = buildConnectorImageFromTag(connectorTag);
 
                 const dataPlaneOptions = await evaluateDataPlaneOptions(
-                    catalog_name,
-                    {
-                        name: data_plane_name,
-                        id: data_plane_id,
-                        reactorAddress: reactor_address,
-                    }
+                    catalogName,
+                    liveDataPlane
                 );
-                const dataPlane = getDataPlane(dataPlaneOptions, data_plane_id);
+                const dataPlane = getDataPlane(
+                    dataPlaneOptions,
+                    liveDataPlane.id
+                );
 
                 const hydratedDetails: Details = {
                     data: {
-                        entityName: catalog_name,
+                        entityName: catalogName,
                         connectorImage,
                         dataPlane: dataPlane ?? undefined,
                     },
@@ -120,7 +113,6 @@ export const useDetailsFormHydrator = () => {
 
             if (workflow === 'test_json_forms') {
                 setHydrated(true);
-
                 return Promise.resolve();
             }
 
@@ -131,7 +123,8 @@ export const useDetailsFormHydrator = () => {
             dataPlaneId,
             evaluateDataPlaneOptions,
             getDataPlane,
-            liveSpecId,
+            isCreateWorkflow,
+            isEditWorkflow,
             setActive,
             setDetails,
             setDetails_connector,
