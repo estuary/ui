@@ -137,3 +137,13 @@ export interface LiveSpec {
         reactorAddress: string | null;
     };
 }
+
+interface DraftSpec<S extends SpecDef> {
+    catalog_name: string;
+    spec_type: string;
+    spec: S;
+    expect_pub_id: string | null;
+}
+
+export type CaptureDraftSpec = DraftSpec<CaptureDef>;
+export type MaterializationsDraftSpec = DraftSpec<MaterializationDef>;

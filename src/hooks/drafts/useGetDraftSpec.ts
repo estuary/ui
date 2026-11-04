@@ -1,5 +1,8 @@
-import type { CaptureDef, MaterializationDef } from 'deps/flow/flow';
 import type { EntityWithCreateWorkflow } from 'src/types';
+import type {
+    CaptureDraftSpec,
+    MaterializationsDraftSpec,
+} from 'src/types/schemaModels';
 
 import { useCallback } from 'react';
 
@@ -7,14 +10,6 @@ import {
     getDraftSpecsByCatalogName,
     getDraftSpecsByDraftId,
 } from 'src/api/draftSpecs';
-
-interface DraftSpec<S> {
-    spec: S;
-    expect_pub_id: string | null;
-}
-
-export type CaptureDraftSpec = DraftSpec<CaptureDef>;
-export type MaterializationsDraftSpec = DraftSpec<MaterializationDef>;
 
 // Overloads to help narrow the callback type during specific entity flows,
 // otherwise fallsback the general callback for common/shared flows.

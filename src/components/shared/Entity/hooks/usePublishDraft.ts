@@ -61,7 +61,7 @@ const trackEvent = (logEvent: any, payload: any) => {
     });
 };
 
-function useSave(
+export function usePublishDraft(
     logEvent: CustomEvents,
     onFailure: Function,
     dryRun?: boolean
@@ -629,5 +629,3 @@ function useSave(
         ]
     );
 }
-
-export default useSave;
