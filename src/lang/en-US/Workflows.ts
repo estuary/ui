@@ -327,11 +327,9 @@ export const Workflows: Record<string, string> = {
 
     // Entities Create
     'entityCreate.docs.header': `Connector Help`,
-    'entityCreate.cta.docs': `Connector Help`,
     'entityCreate.errors.collapseTitle': `View logs`,
     'entityCreate.errors.collapseTitleOpen': `Hide logs`,
     'entityCreate.sops.failedTitle': `Configuration Encryption Failed`,
-    'entityCreate.endpointConfig.heading': `2. ${endpointConfigHeader}`,
     'entityCreate.endpointConfig.errorSummary': `There are issues with the form.`,
     'entityCreate.instructions': `To start select a Connector below. Once you make a selection the rest of the form will display and you can configure your endpoint. You can search by name and if you do not find what you are looking for please let us know by requesting the connector.`,
 
@@ -350,8 +348,6 @@ export const Workflows: Record<string, string> = {
     'entityCreate.endpointConfig.collectionsMissing': `${CommonMessages['terms.collections']} missing`,
     'entityCreate.endpointConfig.resourceConfigInvalid': `Resource Config invalid`,
     'entityCreate.endpointConfig.fullSourceInvalid': `Time Travel invalid`,
-
-    'entityCreate.endpointConfig.configCanBeBlank.message': `This {entityType} requires no configuration.`,
 
     'entityCreate.bindingsConfig.noRows': `Start by clicking the 'add' button above and selecting what you want to`,
     'entityCreate.bindingsConfig.noRowsTitle': `No selection made`,

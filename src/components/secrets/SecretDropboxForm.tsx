@@ -133,7 +133,7 @@ export function SecretDropboxForm({ secretName }: SecretDropboxFormProps) {
                     label="Secret value"
                     value={value}
                     onChange={setValue}
-                    maxRows={5}
+                    multiline
                 />
 
                 {exists ? (

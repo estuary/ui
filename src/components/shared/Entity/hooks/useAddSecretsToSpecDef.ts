@@ -5,7 +5,10 @@ import { useCallback } from 'react';
 import { decodePointer } from 'json-ptr';
 
 import { useSetSecret } from 'src/hooks/secrets/useSetSecret';
-import { useEndpointConfigStore } from 'src/stores/EndpointConfig/Store';
+import {
+    useEndpointConfigStore_endpointConfig_data,
+    useEndpointConfigStore_endpointSchema,
+} from 'src/stores/EndpointConfig/hooks';
 import {
     useSecretsStore_secretNames,
     useSecretsStore_secretValues,
@@ -34,12 +37,8 @@ import {
 export function useAddSecretsToSpecDef() {
     const setSecret = useSetSecret();
 
-    const endpointSchema = useEndpointConfigStore(
-        (state) => state.endpointSchema
-    );
-    const endpointConfig = useEndpointConfigStore(
-        (state) => state.endpointConfig.data
-    );
+    const endpointSchema = useEndpointConfigStore_endpointSchema();
+    const endpointConfig = useEndpointConfigStore_endpointConfig_data();
 
     const usesSecrets = useSecretsStore_usesSecrets();
     const secretNames = useSecretsStore_secretNames();

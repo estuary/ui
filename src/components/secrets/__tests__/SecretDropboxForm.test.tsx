@@ -80,7 +80,9 @@ const isMasked = (input: HTMLElement) => {
     const root = input.closest('.MuiTextField-root')!;
 
     return Array.from(root.classList).some((className) =>
-        css.includes(`.${className} textarea{-webkit-text-security:disc;}`)
+        css.includes(
+            `.${className} textarea,.${className} input{-webkit-text-security:disc;}`
+        )
     );
 };
 

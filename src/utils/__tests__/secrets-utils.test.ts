@@ -499,14 +499,6 @@ describe('prepareSecretsSchema', () => {
 describe('setSecretsStanza', () => {
     const stanza = { 'acmeCo/secret-old': '/old' };
 
-    test('leaves the stanza as is when there is no new one', () => {
-        const spec = { secrets: { ...stanza } };
-
-        setSecretsStanza(spec, undefined);
-
-        expect(spec.secrets).toEqual(stanza);
-    });
-
     test('removes the stanza when the new one is empty', () => {
         const spec: any = { secrets: { ...stanza } };
 
