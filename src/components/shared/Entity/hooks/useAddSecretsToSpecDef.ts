@@ -13,10 +13,13 @@ import {
     useSecretsStore_setSecretName,
     useSecretsStore_usesSecrets,
 } from 'src/stores/Secrets/hooks';
+import { getEndpointFromSpecDef } from 'src/utils/connector-utils';
 import { normalizeError } from 'src/utils/errors';
 import {
     buildSecretsStanza,
     getSecretName,
+    isSetValue,
+    removeSecretValues,
     setSecretsStanza,
 } from 'src/utils/secrets-utils';
 
@@ -54,6 +57,10 @@ export function useAddSecretsToSpecDef() {
 
             try {
                 for (const [pointer, value] of Object.entries(secretValues)) {
+                    if (!isSetValue(value)) {
+                        continue;
+                    }
+
                     const name = getSecretName(
                         catalogName,
                         decodePointer(pointer).join('.')
@@ -76,6 +83,16 @@ export function useAddSecretsToSpecDef() {
                 specDef,
                 buildSecretsStanza(endpointSchema, endpointConfig, names)
             );
+
+            // Secret values live in secrets. Publication rejects any value
+            // drafted at a secret field, even an empty one.
+            const endpoint = getEndpointFromSpecDef(specDef);
+            if (endpoint?.config) {
+                endpoint.config = removeSecretValues(
+                    endpointSchema,
+                    endpoint.config
+                );
+            }
 
             return null;
         },
