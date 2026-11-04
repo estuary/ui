@@ -4,7 +4,7 @@ import type {
     EntityTestButtonProps,
 } from 'src/components/shared/Entity/Actions/types';
 import type { DataPlaneOption } from 'src/stores/DetailsForm/types';
-import type { BaseComponentProps, Entity } from 'src/types';
+import type { Entity } from 'src/types';
 
 export interface AddCollectionDialogCTAProps {
     entity?: Entity;
@@ -60,5 +60,3 @@ export interface TableHydratorProps {
     entity?: Entity;
     selectedCollections: string[];
 }
-
-export interface WorkflowInitializerProps extends BaseComponentProps {}

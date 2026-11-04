@@ -1,3 +1,4 @@
+import type { CaptureDef, MaterializationDef } from 'deps/flow/flow';
 import type { FullSource } from 'src/stores/Binding/slices/TimeTravel';
 import type { Schema } from 'src/types';
 
@@ -122,4 +123,17 @@ interface SchemaInference extends Schema {
 export interface ValidatedBinding {
     constraints: ConstraintDictionary;
     resourcePath: string[];
+}
+
+export type SpecDef = CaptureDef | MaterializationDef;
+
+export interface LiveSpec {
+    id: string;
+    catalogName: string;
+    spec: SpecDef;
+    dataPlane: {
+        id: string;
+        name: string | null;
+        reactorAddress: string | null;
+    };
 }
