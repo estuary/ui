@@ -2,8 +2,6 @@ import type { EntityCreateSaveButtonProps } from 'src/components/shared/Entity/A
 
 import { Button } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 import { PreSaveConfirmation } from 'src/components/editor/Bindings/Backfill/PreSaveConfirmation';
 import {
     useEditorStore_id,
@@ -20,15 +18,12 @@ import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
 import { LocalStorageKeys } from 'src/utils/localStorage-utils';
 
 function EntityCreateSave({
-    buttonLabelId,
     disabled,
     dryRun,
     loading,
     logEvent,
     onFailure,
 }: EntityCreateSaveButtonProps) {
-    const intl = useIntl();
-
     const entityWorkFlow = useEntityWorkflow();
 
     const save = usePublishDraft(logEvent, onFailure, dryRun);
@@ -84,13 +79,13 @@ function EntityCreateSave({
                 }
             }}
         >
-            {intl.formatMessage({
-                id: buttonLabelId
-                    ? buttonLabelId
-                    : isDryRun
-                      ? `cta.testConfig${loading ? '.active' : ''}`
-                      : `cta.saveEntity${loading ? '.active' : ''}`,
-            })}
+            {isDryRun
+                ? loading
+                    ? 'Testing...'
+                    : 'Test'
+                : loading
+                  ? 'Saving and Publishing...'
+                  : 'Save and publish'}
         </Button>
     );
 }
