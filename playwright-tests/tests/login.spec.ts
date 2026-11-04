@@ -13,7 +13,7 @@ test('has basic functionality', async ({ page }) => {
 
     // Register updates UI
     await expect(page).toHaveTitle(
-        'Register for Estuary | Build Data Pipelines'
+        'Register for Estuary | The Right-time Data Platform'
     );
     await expect(
         page.getByRole('heading', {
@@ -21,7 +21,7 @@ test('has basic functionality', async ({ page }) => {
         })
     ).toBeVisible();
     await expect(page.locator('#root')).toContainText(
-        'To register with Single Sign-On Contact Us.'
+        'Or to register with Single Sign-On'
     );
 
     // Go back to login
