@@ -341,6 +341,12 @@ const restoreSession = async (
 
     if (!(await welcome.isVisible())) {
         console.log('restoreSession:expired', { name });
+
+        // A session can outlive its user (e.g. a reset local stack) and land on
+        // tenant onboarding, so drop it before signing in again
+        await page.context().clearCookies();
+        await page.evaluate(() => window.localStorage.clear());
+
         return null;
     }
 
