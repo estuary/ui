@@ -79,7 +79,6 @@ export function useApplyDraftToWorkflow() {
                     true,
                     requestFieldValidation
                 );
-
                 // Mutate the draft first so that we are not running
                 // update after the form is showing as "done"
                 await mutateDraftSpec();
