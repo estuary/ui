@@ -7,7 +7,7 @@
 //
 // Only list tokens explicitly. Other sites on the parent domain may run their
 // own PostHog with their own cookie, which a wildcard would delete.
-export const RETIRED_POSTHOG_TOKENS: readonly string[] = [
+const RETIRED_POSTHOG_TOKENS: readonly string[] = [
     // Retired in favour of a new project when analytics moved to an allowlist
     'phc_f0PRTM1hKZA6qHa6O3n01chjvC3PMy4wG72gnfXyL7t',
 ];

@@ -274,7 +274,7 @@ const AUTOCAPTURE_CONTENT_PROPS = [
 // With mask_all_text and mask_all_element_attributes, each element in the
 // chain is only its tag and position.
 const CHAIN_ELEMENT = '[a-z][a-z0-9-]*:nth-child="\\d+"nth-of-type="\\d+"';
-export const MINIMAL_CHAIN = new RegExp(
+const MINIMAL_CHAIN = new RegExp(
     `^${CHAIN_ELEMENT}(?:;${CHAIN_ELEMENT})*$`
 );
 
@@ -333,7 +333,7 @@ export const sanitizeCaptureResult = (
 // allowlist.
 export const INITIAL_PERSON_INFO = '$initial_person_info'; // cookie
 export const CLIENT_SESSION_PROPS = '$client_session_props'; // localStorage
-export const LEGACY_INITIAL_REFERRER_INFO = '$initial_referrer_info';
+const LEGACY_INITIAL_REFERRER_INFO = '$initial_referrer_info';
 
 // Stored objects already checked, with the values they held then. posthog-js
 // hands back the same object until it writes a new one, so most events skip
