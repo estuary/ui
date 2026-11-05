@@ -2855,11 +2855,19 @@ export type RepublishRequested = {
 export type Sandbox = {
   __typename?: 'Sandbox';
   catalogName: Scalars['Name']['output'];
+  /** A command started in this sandbox, or null if it does not exist. */
+  command?: Maybe<Command>;
   /** Commands started in this sandbox */
   commands?: Maybe<Array<Command>>;
   createdAt: Scalars['DateTime']['output'];
   /** False until a new sandbox reaches its baseline state (flowctl installed). */
   ready: Scalars['Boolean']['output'];
+};
+
+
+/** A persistent Linux VM that runs the user's shell commands. */
+export type SandboxCommandArgs = {
+  id: Scalars['Id']['input'];
 };
 
 /**
