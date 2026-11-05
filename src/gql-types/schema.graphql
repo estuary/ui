@@ -2673,6 +2673,9 @@ type RepublishRequested {
 type Sandbox {
   catalogName: Name!
 
+  """A command started in this sandbox, or null if it does not exist."""
+  command(id: Id!): Command
+
   """Commands started in this sandbox"""
   commands: [Command!]
   createdAt: DateTime!
