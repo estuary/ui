@@ -13,7 +13,7 @@ export default function ActiveEntityCount({ entityType }: Props) {
 
     return (
         <Statistic
-            error={error}
+            error={Boolean(error)}
             indeterminate={indeterminate}
             label="Active"
             loading={isLoading}
