@@ -1,4 +1,3 @@
-import type { PostgrestError } from '@supabase/postgrest-js';
 import type { Entity } from 'src/types';
 
 import { Stack, Typography } from '@mui/material';
@@ -14,8 +13,7 @@ import { ENTITY_SETTINGS } from 'src/settings/entity';
 interface Props {
     entityType: Entity;
     monthlyUsage?: number;
-    monthlyUsageError?: PostgrestError;
-    monthlyUsageIndeterminate?: boolean;
+    monthlyUsageError?: boolean;
     monthlyUsageLoading?: boolean;
 }
 
@@ -23,7 +21,6 @@ export default function StatOverview({
     entityType,
     monthlyUsage,
     monthlyUsageError,
-    monthlyUsageIndeterminate,
     monthlyUsageLoading,
 }: Props) {
     const intl = useIntl();
@@ -83,7 +80,6 @@ export default function StatOverview({
                         <Statistic
                             byteUnit
                             error={monthlyUsageError}
-                            indeterminate={monthlyUsageIndeterminate}
                             label={intl.formatMessage({
                                 id: 'filter.time.thisMonth',
                             })}

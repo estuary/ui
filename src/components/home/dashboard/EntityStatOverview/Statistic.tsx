@@ -1,9 +1,6 @@
-import type { PostgrestError } from '@supabase/postgrest-js';
 import type { ReactNode } from 'react';
 
 import { Box, Tooltip, Typography } from '@mui/material';
-
-import { useIntl } from 'react-intl';
 
 import { formatBytes } from 'src/components/tables/cells/stats/shared';
 
@@ -13,7 +10,7 @@ interface Props {
     tooltip: string;
     value: number;
     byteUnit?: boolean;
-    error?: PostgrestError;
+    error?: boolean;
     indeterminate?: boolean;
 }
 
@@ -26,8 +23,6 @@ export default function Statistic({
     tooltip,
     value,
 }: Props) {
-    const intl = useIntl();
-
     return (
         <Box
             style={{
@@ -40,11 +35,7 @@ export default function Statistic({
 
             <Tooltip
                 placement="bottom"
-                title={
-                    error
-                        ? intl.formatMessage({ id: 'entityTable.stats.error' })
-                        : tooltip
-                }
+                title={error ? 'Failed to fetch stats.' : tooltip}
             >
                 <Typography
                     variant="h6"
