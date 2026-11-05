@@ -274,9 +274,7 @@ const AUTOCAPTURE_CONTENT_PROPS = [
 // With mask_all_text and mask_all_element_attributes, each element in the
 // chain is only its tag and position.
 const CHAIN_ELEMENT = '[a-z][a-z0-9-]*:nth-child="\\d+"nth-of-type="\\d+"';
-const MINIMAL_CHAIN = new RegExp(
-    `^${CHAIN_ELEMENT}(?:;${CHAIN_ELEMENT})*$`
-);
+const MINIMAL_CHAIN = new RegExp(`^${CHAIN_ELEMENT}(?:;${CHAIN_ELEMENT})*$`);
 
 const sanitizeHeatmapData = (data: Record<string, unknown>) => {
     const merged: Record<string, unknown[]> = {};
