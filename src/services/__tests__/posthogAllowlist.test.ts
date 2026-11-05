@@ -1,17 +1,21 @@
 import type { CaptureResult } from 'posthog-js';
 
 import { authenticatedRoutes, unauthenticatedRoutes } from 'src/app/routes';
+import { Dialogs } from 'src/hooks/useDialog';
 import {
     CLIENT_SESSION_PROPS,
     INITIAL_PERSON_INFO,
     INVALID_URL,
     KNOWN_PATHS,
+    resetScrubCache,
     sanitizeCaptureResult,
     sanitizePath,
     sanitizeUrl,
     scrubPersistence,
+    TOO_DEEP,
     UNMATCHED_PATH,
 } from 'src/services/posthogAllowlist';
+import { TableFilterKeys } from 'src/stores/Tables/hooks';
 
 const origin = window.location.origin;
 const at = (pathAndQuery: string) => `${origin}${pathAndQuery}`;
@@ -60,6 +64,28 @@ describe('sanitizeUrl', () => {
         expect(sanitizeUrl(at('/collections?xyz-s=foo'))).toBe(
             at('/collections')
         );
+    });
+
+    test('keeps every table filter key', () => {
+        Object.values(TableFilterKeys).forEach((filterKey) => {
+            expect(sanitizeUrl(at(`/captures?cap-${filterKey}=1`))).toBe(
+                at(`/captures?cap-${filterKey}=1`)
+            );
+        });
+    });
+
+    test('keeps every dialog id', () => {
+        Object.values(Dialogs).forEach(({ id }) => {
+            expect(sanitizeUrl(at(`/admin/settings?dialog=${id}`))).toBe(
+                at(`/admin/settings?dialog=${id}`)
+            );
+        });
+    });
+
+    test('keeps catalog names with Unicode letters and numbers', () => {
+        const kept =
+            '/captures?catalogName=acm%C3%A9Co/source&prefix=%E6%97%A5%E6%9C%AC/';
+        expect(sanitizeUrl(at(kept))).toBe(at(kept));
     });
 
     test('drops a catalogName that smuggles another param', () => {
@@ -166,6 +192,7 @@ describe('sanitizePath', () => {
     test('finds the app routes', () => {
         expect(fullPaths.length).toBeGreaterThan(20);
         expect(KNOWN_PATHS.has('/captures/details/overview')).toBe(true);
+        expect(KNOWN_PATHS.has('/test/jsonforms')).toBe(true);
     });
 
     test.each(fullPaths)('keeps the route %s', (path) => {
@@ -252,6 +279,39 @@ describe('sanitizeCaptureResult', () => {
         expect(result?.properties.plain).toBe('not a url');
     });
 
+    test('rebuilds absolute URLs nested in objects and arrays', () => {
+        const nested = {
+            list: [at('/login?grantToken=X'), 'plain'],
+            frames: [{ url: at('/login?grantToken=X'), line: 3 }],
+        };
+        const original = structuredClone(nested);
+
+        const result = sanitizeCaptureResult(
+            captureResult('Custom_Event', { nested })
+        );
+
+        expect(result?.properties.nested).toEqual({
+            list: [at('/login'), 'plain'],
+            frames: [{ url: at('/login'), line: 3 }],
+        });
+        // Values shared with the caller are not changed in place
+        expect(nested).toEqual(original);
+    });
+
+    test('drops values nested past the depth limit', () => {
+        let deep: Record<string, unknown> = { url: at('/login?grantToken=X') };
+        for (let i = 0; i < 10; i += 1) {
+            deep = { deep };
+        }
+
+        const result = sanitizeCaptureResult(
+            captureResult('Custom_Event', { deep })
+        );
+
+        expect(JSON.stringify(result?.properties)).not.toContain('grantToken');
+        expect(JSON.stringify(result?.properties)).toContain(TOO_DEEP);
+    });
+
     test('never removes the token', () => {
         const result = sanitizeCaptureResult(
             captureResult('$pageview', { $current_url: at('/') })
@@ -318,6 +378,10 @@ describe('sanitizeCaptureResult', () => {
 });
 
 describe('scrubPersistence', () => {
+    beforeEach(() => {
+        resetScrubCache();
+    });
+
     const fakePostHog = (props: Record<string, unknown>) => ({
         get_property: vi.fn((key: string) => props[key]),
         register: vi.fn(),
@@ -396,6 +460,24 @@ describe('scrubPersistence', () => {
         scrubPersistence(ph);
 
         expect(ph.register).not.toHaveBeenCalled();
+    });
+
+    test('rescrubs a stored object that was changed in place', () => {
+        const info: Record<string, unknown> = {
+            u: at('/captures'),
+            r: '$direct',
+        };
+        const ph = fakePostHog({ [INITIAL_PERSON_INFO]: info });
+
+        scrubPersistence(ph);
+        expect(ph.register).not.toHaveBeenCalled();
+
+        info.r = at('/login?grantToken=X');
+        scrubPersistence(ph);
+
+        expect(ph.register).toHaveBeenCalledWith({
+            [INITIAL_PERSON_INFO]: { u: at('/captures'), r: at('/login') },
+        });
     });
 
     test('handles a missing instance', () => {

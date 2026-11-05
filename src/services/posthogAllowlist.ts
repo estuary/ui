@@ -2,7 +2,8 @@ import type { CaptureResult, PostHog, Properties } from 'posthog-js';
 
 import { authenticatedRoutes, unauthenticatedRoutes } from 'src/app/routes';
 import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
-import { TablePrefixes } from 'src/stores/Tables/hooks';
+import { Dialogs } from 'src/hooks/useDialog';
+import { TableFilterKeys, TablePrefixes } from 'src/stores/Tables/hooks';
 
 // Analytics only ever sees allowlisted paths and query params. Everything
 // else is removed before an event leaves the browser. Add a param here only
@@ -12,11 +13,14 @@ const MAX_VALUE_LENGTH = 256;
 export const UNMATCHED_PATH = '/__unmatched__';
 export const INVALID_URL = '$invalid_url';
 
-const CATALOG_NAME = /^[A-Za-z0-9_./-]{1,256}$/;
+// Flow catalog names allow Unicode letters and numbers
+const CATALOG_NAME = /^[\p{L}\p{N}_./-]{1,256}$/u;
 const FLOW_ID = /^[0-9a-fA-F:]{1,64}$/;
 const IMAGE_PATH = /^[A-Za-z0-9_./:@-]{1,256}$/;
 const BOOLEAN = /^(?:0|1|true|false)$/;
-const DIALOG_IDS = ['create-storage-mapping', 'edit-storage-mapping'];
+const DIALOG_IDS: readonly string[] = Object.values(Dialogs).map(
+    ({ id }) => id
+);
 
 const anyValue = () => true;
 const isCatalogName = (v: string) => CATALOG_NAME.test(v);
@@ -44,10 +48,11 @@ const VALUE_RULES: Record<string, (value: string) => boolean> = {
     utm_term: anyValue,
 };
 
-// Table state params: <prefix>-p (page), -r (rows), -s (search), -c (sort
-// column), -d (sort direction).
+// Table state params: <prefix>-<filter key>, e.g. cap-p (captures page)
 const TABLE_PARAM = new RegExp(
-    `^(?:${Object.values(TablePrefixes).join('|')})-[prscd]$`
+    `^(?:${Object.values(TablePrefixes).join('|')})-(?:${Object.values(
+        TableFilterKeys
+    ).join('|')})$`
 );
 
 const isAllowedParam = (key: string, value: string): boolean => {
@@ -180,6 +185,46 @@ const ABSOLUTE_URL = /^https?:\/\//i;
 const isRecord = (value: unknown): value is Record<string, unknown> =>
     !!value && typeof value === 'object' && !Array.isArray(value);
 
+// Values below the top level only get the absolute-URL rewrite. Nested values
+// can be shared with app state, so they are copied rather than changed in
+// place. Objects past the depth cap are replaced rather than sent unchecked.
+const MAX_NESTED_DEPTH = 8;
+export const TOO_DEEP = '$too_deep';
+
+const sanitizeNested = (value: unknown, depth: number): unknown => {
+    if (typeof value === 'string') {
+        return ABSOLUTE_URL.test(value) ? sanitizeUrl(value) : value;
+    }
+
+    if (!value || typeof value !== 'object') {
+        return value;
+    }
+
+    if (depth >= MAX_NESTED_DEPTH) {
+        return TOO_DEEP;
+    }
+
+    if (Array.isArray(value)) {
+        const next = value.map((item) => sanitizeNested(item, depth + 1));
+        return next.some((item, i) => item !== value[i]) ? next : value;
+    }
+
+    if (!isRecord(value)) {
+        return value;
+    }
+
+    let next: Record<string, unknown> | null = null;
+    Object.keys(value).forEach((key) => {
+        const cleaned = sanitizeNested(value[key], depth + 1);
+        if (cleaned !== value[key]) {
+            next ??= { ...value };
+            next[key] = cleaned;
+        }
+    });
+
+    return next ?? value;
+};
+
 const sanitizeProperties = (props: unknown) => {
     if (!isRecord(props)) {
         return;
@@ -203,9 +248,11 @@ const sanitizeProperties = (props: unknown) => {
             typeof value === 'string' &&
             (URL_KEYS.has(key) || ABSOLUTE_URL.test(value))
         ) {
-            // Any absolute URL in any top-level property is rebuilt, so URL
-            // fields added by future SDK versions are covered as well.
+            // Any absolute URL in any property is rebuilt, so URL fields
+            // added by future SDK versions are covered as well.
             props[key] = sanitizeUrl(value);
+        } else if (value && typeof value === 'object') {
+            props[key] = sanitizeNested(value, 1);
         }
     });
 };
@@ -288,7 +335,26 @@ export const INITIAL_PERSON_INFO = '$initial_person_info'; // cookie
 export const CLIENT_SESSION_PROPS = '$client_session_props'; // localStorage
 export const LEGACY_INITIAL_REFERRER_INFO = '$initial_referrer_info';
 
+// Stored objects already checked, with the values they held then. posthog-js
+// hands back the same object until it writes a new one, so most events skip
+// the URL parsing. The values are compared too, in case an object is changed
+// in place.
+const STORED_URL_KEYS = ['u', 'r', 'initialPathName'] as const;
+let knownClean = new WeakMap<object, unknown[]>();
+
+const storedValues = (info: Record<string, unknown>) =>
+    STORED_URL_KEYS.map((key) => info[key]);
+
+const isKnownClean = (info: Record<string, unknown>) => {
+    const seen = knownClean.get(info);
+    return !!seen && storedValues(info).every((value, i) => value === seen[i]);
+};
+
 const cleanStoredUrls = (info: Record<string, unknown>) => {
+    if (isKnownClean(info)) {
+        return null;
+    }
+
     const next = { ...info };
 
     if ('u' in info) {
@@ -303,7 +369,15 @@ const cleanStoredUrls = (info: Record<string, unknown>) => {
 
     const changed = Object.keys(next).some((key) => next[key] !== info[key]);
 
+    const clean = changed ? next : info;
+    knownClean.set(clean, storedValues(clean));
+
     return changed ? next : null;
+};
+
+// For tests
+export const resetScrubCache = () => {
+    knownClean = new WeakMap<object, unknown[]>();
 };
 
 export const scrubPersistence = (

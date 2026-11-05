@@ -7,10 +7,14 @@ import {
     sanitizeCaptureResult,
     scrubPersistence,
 } from 'src/services/posthogAllowlist';
+import { purgeRetiredPostHogStorage } from 'src/services/posthogRetiredStorage';
 import { getPostHogSettings } from 'src/utils/env-utils';
 
-// Query params that must never be stored, even before before_send runs. The
-// allowlist in before_send is what decides what analytics receives.
+// Query params masked by the SDK itself. posthog-js applies this to the
+// current URL only, not the stored referrer, so it is a first layer. Stored
+// state is made safe by scrubPersistence, which runs in `loaded` and
+// before_send, both ahead of the debounced write to storage. The allowlist in
+// before_send is what decides what analytics receives.
 const NEVER_STORED_PARAMS = [
     'grantToken',
     'redirect_to',
@@ -33,7 +37,14 @@ const NEVER_STORED_PARAMS = [
 (() => {
     const postHogSettings = getPostHogSettings();
 
-    if (typeof window === 'undefined' || !postHogSettings) {
+    if (typeof window === 'undefined') {
+        return;
+    }
+
+    // Runs even with analytics disabled, so retired cookies are still cleared
+    purgeRetiredPostHogStorage();
+
+    if (!postHogSettings) {
         return;
     }
 
@@ -64,6 +75,13 @@ const NEVER_STORED_PARAMS = [
 
         // Feature flags are not used
         advanced_disable_feature_flags: true,
+
+        // These can be turned on from PostHog project settings, and their data
+        // does not pass through before_send. A local false wins over the
+        // remote setting for exceptions; console logs have no local off
+        // switch, so every log record is dropped instead.
+        capture_exceptions: false,
+        logs: { beforeSend: () => null },
 
         capture_performance: false, // we can monitor performance with LR
         disable_conversations: true, // do not use

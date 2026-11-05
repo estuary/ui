@@ -759,9 +759,9 @@ const router = createBrowserRouter(
                         />
                     </Route>
 
-                    <Route path="test">
+                    <Route path={authenticatedRoutes.testPages.path}>
                         <Route
-                            path="jsonforms"
+                            path={authenticatedRoutes.testPages.jsonforms.path}
                             element={
                                 <ErrorBoundary
                                     FallbackComponent={ErrorImporting}
@@ -777,7 +777,7 @@ const router = createBrowserRouter(
 
                         {!isProduction ? (
                             <Route
-                                path="gql"
+                                path={authenticatedRoutes.testPages.gql.path}
                                 element={
                                     <ErrorBoundary
                                         FallbackComponent={ErrorImporting}
