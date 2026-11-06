@@ -22,7 +22,6 @@ export const CTAs: Record<string, string> = {
     'cta.restart': `Restart`,
     'cta.enable': `Enable`,
     'cta.disable': `Disable`,
-    'cta.testConfig': `Test`,
     'cta.generateCatalog.capture': `Next`,
     'cta.generateCatalog.materialization': `Next`,
     'cta.expandToEdit': `Expand to edit`,
@@ -49,9 +48,6 @@ export const CTAs: Record<string, string> = {
     'cta.goToDetails': `See Details`,
     'cta.goToAll': `See all`,
     'cta.reset': `Reset`,
-    // These are dynamically created in the Save button
-    'cta.saveEntity.active': `Saving and Publishing...`,
-    'cta.testConfig.active': `Testing...`,
     'cta.contactUs': `Contact Us`,
     'cta.manualSelect': `Manually Select`,
     'cta.modify': `modify`,
