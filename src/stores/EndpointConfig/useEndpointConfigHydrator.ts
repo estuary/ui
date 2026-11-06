@@ -1,20 +1,17 @@
-import type { PostgrestError } from '@supabase/postgrest-js';
 import type { Schema } from 'src/types';
+import type { SpecDef } from 'src/types/schemaModels';
 
 import { useCallback } from 'react';
 
-import { getDraftSpecsByDraftId } from 'src/api/draftSpecs';
-import { getLiveSpecsByLiveSpecId } from 'src/api/hydration';
 import { useConnectorTag } from 'src/context/ConnectorTag';
-import { useEntityType } from 'src/context/EntityContext';
-import { useEntityWorkflow } from 'src/context/Workflow';
-import useGlobalSearchParams, {
-    GlobalSearchParams,
-} from 'src/hooks/searchParams/useGlobalSearchParams';
+import {
+    useEntityWorkflow_Creating,
+    useEntityWorkflow_Editing,
+} from 'src/context/Workflow';
 import { logRocketEvent } from 'src/services/shared';
 import { BASE_ERROR } from 'src/services/supabase';
 import { useEndpointConfigStore } from 'src/stores/EndpointConfig/Store';
-import { getEndpointConfig } from 'src/utils/connector-utils';
+import { getEndpointFromSpecDef } from 'src/utils/connector-utils';
 import { configCanBeEmpty } from 'src/utils/misc-utils';
 import { parseEncryptedEndpointConfig } from 'src/utils/sops-utils';
 
@@ -45,8 +42,6 @@ const useStoreEndpointSchema = () => {
 };
 
 const useHydrateEndpointConfigDependentState = () => {
-    const entityType = useEntityType();
-
     const setEncryptedEndpointConfig = useEndpointConfigStore(
         (state) => state.setEncryptedEndpointConfig
     );
@@ -60,29 +55,12 @@ const useHydrateEndpointConfigDependentState = () => {
         (state) => state.setPublishedEndpointConfig
     );
 
-    const hydrateEndpointConfigDependentState = async (
-        draftId: string,
-        liveSpecId: string,
+    const hydrateEndpointConfigDependentState = (
+        spec: SpecDef,
         endpointSchema: Schema
     ) => {
-        const { data, error } = draftId
-            ? await getDraftSpecsByDraftId(draftId, entityType)
-            : await getLiveSpecsByLiveSpecId(liveSpecId, entityType);
-
-        if (error || !data || data.length === 0) {
-            const tableTarget = draftId ? 'draft_specs' : 'live_specs';
-
-            return {
-                error: error
-                    ? (error as PostgrestError)
-                    : {
-                          ...BASE_ERROR,
-                          message: `${tableTarget} data not found`,
-                      },
-            };
-        }
-
-        const encryptedEndpointConfig = getEndpointConfig(data);
+        const encryptedEndpointConfig = getEndpointFromSpecDef(spec)
+            ?.config as Schema;
 
         setEncryptedEndpointConfig({
             data: encryptedEndpointConfig,
@@ -100,8 +78,6 @@ const useHydrateEndpointConfigDependentState = () => {
         setPreviousEndpointConfig(endpointConfig);
 
         setEndpointConfig(endpointConfig);
-
-        return { error: null };
     };
 
     return { hydrateEndpointConfigDependentState };
@@ -110,10 +86,8 @@ const useHydrateEndpointConfigDependentState = () => {
 export const useEndpointConfigHydrator = () => {
     const connectorTag = useConnectorTag();
 
-    const draftId = useGlobalSearchParams(GlobalSearchParams.DRAFT_ID);
-    const liveSpecId = useGlobalSearchParams(GlobalSearchParams.LIVE_SPEC_ID);
-
-    const workflow = useEntityWorkflow();
+    const isCreateWorkflow = useEntityWorkflow_Creating();
+    const isEditWorkflow = useEntityWorkflow_Editing();
 
     const setActive = useEndpointConfigStore((state) => state.setActive);
     const setHydrated = useEndpointConfigStore((state) => state.setHydrated);
@@ -128,60 +102,58 @@ export const useEndpointConfigHydrator = () => {
     const { hydrateEndpointConfigDependentState } =
         useHydrateEndpointConfigDependentState();
 
-    const hydrateEndpointConfig = useCallback(async () => {
-        setActive(true);
+    const hydrateEndpointConfig = useCallback(
+        async (spec: SpecDef | null) => {
+            setActive(true);
 
-        if (
-            workflow === 'capture_create' ||
-            workflow === 'materialization_create'
-        ) {
-            logRocketEvent('EndpointConfig', {
-                hydrationDefault: true,
-            });
-            setServerUpdateRequired(true);
-        }
+            // a spec is required if editing
+            if (isEditWorkflow && spec === null) {
+                setHydrated(true);
+                setHydrationErrorsExist(true);
+                return Promise.reject(new Error('Spec not found'));
+            }
 
-        const { endpointSchema, error: endpointSchemaError } =
-            await storeEndpointSchema(connectorTag.endpointSpecSchema);
+            if (isCreateWorkflow) {
+                logRocketEvent('EndpointConfig', {
+                    hydrationDefault: true,
+                });
+                setServerUpdateRequired(true);
+            }
 
-        if (endpointSchemaError || !endpointSchema) {
-            setHydrated(true);
-            setHydrationErrorsExist(true);
-
-            return Promise.reject();
-        }
-
-        if (liveSpecId) {
-            const { error: endpointConfigError } =
-                await hydrateEndpointConfigDependentState(
-                    draftId,
-                    liveSpecId,
-                    endpointSchema
-                );
-
-            if (endpointConfigError) {
+            const { endpointSchema, error: endpointSchemaError } =
+                await storeEndpointSchema(connectorTag.endpointSpecSchema);
+            if (endpointSchemaError || !endpointSchema) {
                 setHydrated(true);
                 setHydrationErrorsExist(true);
 
-                return Promise.reject();
+                return Promise.reject(
+                    new Error(
+                        endpointSchemaError?.message ??
+                            'endpoint schema not found'
+                    )
+                );
             }
-        }
 
-        setHydrated(true);
+            if (spec) {
+                hydrateEndpointConfigDependentState(spec, endpointSchema);
+            }
 
-        return Promise.resolve();
-    }, [
-        connectorTag,
-        draftId,
-        hydrateEndpointConfigDependentState,
-        liveSpecId,
-        setActive,
-        setHydrated,
-        setHydrationErrorsExist,
-        setServerUpdateRequired,
-        storeEndpointSchema,
-        workflow,
-    ]);
+            setHydrated(true);
+
+            return Promise.resolve();
+        },
+        [
+            connectorTag.endpointSpecSchema,
+            hydrateEndpointConfigDependentState,
+            isCreateWorkflow,
+            isEditWorkflow,
+            setActive,
+            setHydrated,
+            setHydrationErrorsExist,
+            setServerUpdateRequired,
+            storeEndpointSchema,
+        ]
+    );
 
     return { hydrateEndpointConfig };
 };

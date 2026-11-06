@@ -2,14 +2,12 @@ import type { EntityCreateSaveButtonProps } from 'src/components/shared/Entity/A
 
 import { Button } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 import { PreSaveConfirmation } from 'src/components/editor/Bindings/Backfill/PreSaveConfirmation';
 import {
     useEditorStore_id,
     useEditorStore_isSaving,
 } from 'src/components/editor/Store/hooks';
-import useSave from 'src/components/shared/Entity/Actions/useSave';
+import { usePublishDraft } from 'src/components/shared/Entity/hooks/usePublishDraft';
 import { useConfirmationModalContext } from 'src/context/Confirmation';
 import { entityHeaderButtonSx } from 'src/context/Theme';
 import { useEntityWorkflow } from 'src/context/Workflow';
@@ -20,18 +18,15 @@ import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
 import { LocalStorageKeys } from 'src/utils/localStorage-utils';
 
 function EntityCreateSave({
-    buttonLabelId,
     disabled,
     dryRun,
     loading,
     logEvent,
     onFailure,
 }: EntityCreateSaveButtonProps) {
-    const intl = useIntl();
-
     const entityWorkFlow = useEntityWorkflow();
 
-    const save = useSave(logEvent, onFailure, dryRun);
+    const save = usePublishDraft(logEvent, onFailure, dryRun);
 
     const confirmationModalContext = useConfirmationModalContext();
     const collectionsBeingBackfilled = useBinding_collectionsBeingBackfilled();
@@ -84,13 +79,13 @@ function EntityCreateSave({
                 }
             }}
         >
-            {intl.formatMessage({
-                id: buttonLabelId
-                    ? buttonLabelId
-                    : isDryRun
-                      ? `cta.testConfig${loading ? '.active' : ''}`
-                      : `cta.saveEntity${loading ? '.active' : ''}`,
-            })}
+            {isDryRun
+                ? loading
+                    ? 'Testing...'
+                    : 'Test'
+                : loading
+                  ? 'Saving and Publishing...'
+                  : 'Save and publish'}
         </Button>
     );
 }
