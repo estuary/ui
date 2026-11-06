@@ -2,11 +2,9 @@ import type { MutableRefObject } from 'react';
 import type { ListChildComponentProps } from 'react-window';
 import type { OpsLogFlowDocument } from 'src/types';
 
-import { useCallback, useLayoutEffect, useMemo, useRef } from 'react';
+import { useCallback, useLayoutEffect, useRef } from 'react';
 
 import { TableBody } from '@mui/material';
-
-import { useShallow } from 'zustand/react/shallow';
 
 import { isEmpty } from 'lodash';
 import AutoSizer from 'react-virtualized-auto-sizer';
@@ -17,70 +15,36 @@ import { LogsTableRow } from 'src/components/tables/Logs/Row';
 import {
     DEFAULT_ROW_HEIGHT,
     DEFAULT_ROW_HEIGHT_WITHOUT_FIELDS,
-    UUID_NEWEST_LOG,
-    UUID_OLDEST_LOG,
     VIRTUAL_TABLE_BODY_PADDING,
     WAITING_ROW_HEIGHT,
 } from 'src/components/tables/Logs/shared';
 import useLogColumns from 'src/components/tables/Logs/useLogColumns';
-import { logRocketEvent } from 'src/services/shared';
-import { CustomEvents } from 'src/services/types';
 import { useJournalDataLogsStore } from 'src/stores/JournalData/Logs/Store';
 import { TableStatuses } from 'src/types';
 
 interface Props {
+    itemData: OpsLogFlowDocument[] | null;
     outerRef: MutableRefObject<HTMLDivElement | undefined>;
     tableScroller: (node?: any) => VariableSizeList | undefined;
     virtualRows: MutableRefObject<HTMLDivElement | undefined>;
 }
 
-function LogsTableBody({ outerRef, tableScroller, virtualRows }: Props) {
+function LogsTableBody({
+    itemData,
+    outerRef,
+    tableScroller,
+    virtualRows,
+}: Props) {
     const columns = useLogColumns();
 
     const openRows = useRef<Map<string, boolean>>(new Map());
     const expandedHeights = useRef<Map<string, number>>(new Map());
 
-    const [hydrated, documents, networkFailed, noData] =
-        useJournalDataLogsStore(
-            useShallow((state) => [
-                state.hydrate,
-                state.documents,
-                state.networkFailed,
-                state.noData,
-            ])
-        );
-
-    // Keeping this outside the store so we don't have to filter them out everytime
-    //  we need to add new docs to the list
-    const itemData = useMemo<OpsLogFlowDocument[] | null>(() => {
-        if (documents && documents.length > 0) {
-            logRocketEvent(CustomEvents.LOGS_DOCUMENT_COUNT, {
-                count: documents.length,
-            });
-
-            return [
-                {
-                    _meta: {
-                        uuid: UUID_OLDEST_LOG,
-                    },
-                    level: 'ui_waiting',
-                    message: '',
-                    ts: '',
-                },
-                ...documents,
-                {
-                    _meta: {
-                        uuid: UUID_NEWEST_LOG,
-                    },
-                    level: 'ui_waiting',
-                    message: '',
-                    ts: '',
-                },
-            ];
-        }
-
-        return null;
-    }, [documents]);
+    const hydrated = useJournalDataLogsStore((state) => state.hydrated);
+    const networkFailed = useJournalDataLogsStore(
+        (state) => state.networkFailed
+    );
+    const noData = useJournalDataLogsStore((state) => state.noData);
 
     const renderRow = useCallback(
         ({ data, index, style }: ListChildComponentProps) => {

@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import type {
     FetchMoreLogsOptions,
     WaitingForRowProps,
@@ -7,11 +8,8 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { Box, TableCell, TableRow, Typography, useTheme } from '@mui/material';
 
-import { useShallow } from 'zustand/react/shallow';
-
 import { WarningCircle } from 'iconoir-react';
 import { debounce } from 'lodash';
-import { FormattedMessage } from 'react-intl';
 import { useIntersection, useUnmount } from 'react-use';
 
 import SpinnerIcon from 'src/components/logs/SpinnerIcon';
@@ -27,11 +25,30 @@ import { useJournalDataLogsStore } from 'src/stores/JournalData/Logs/Store';
 interface Props extends WaitingForRowProps {
     fetchOption: FetchMoreLogsOptions;
     disabled?: boolean;
+    // Replaces the default copy shown while disabled
+    disabledContent?: ReactNode;
     interval?: number;
 }
 
+const MESSAGES: Record<
+    FetchMoreLogsOptions,
+    { active: string; complete: string; failed: string }
+> = {
+    old: {
+        active: 'Fetching older logs',
+        complete: 'All older logs read',
+        failed: 'A network error occurred. Please reload.',
+    },
+    new: {
+        active: 'Waiting for new logs',
+        complete: 'Waiting for new logs',
+        failed: 'A network error occurred. Please reload.',
+    },
+};
+
 function WaitingForRowBase({
     disabled,
+    disabledContent,
     interval = 500,
     fetchOption,
     sizeRef,
@@ -40,6 +57,9 @@ function WaitingForRowBase({
     const theme = useTheme();
 
     const [allowFetch, setAllowFetch] = useState(false);
+    // Bumped when the store declines a fetch. Nothing else this row watches changes
+    //  in that case, so without it the row would sit on its spinner forever.
+    const [declinedFetches, setDeclinedFetches] = useState(0);
 
     const intersectionRef = useRef<HTMLElement>(null);
     const intersection = useIntersection(intersectionRef, {
@@ -48,22 +68,23 @@ function WaitingForRowBase({
         threshold: 0.7,
     });
 
-    const messageKey = `ops.logsTable.waitingForLogs.${fetchOption}`;
+    const messages = MESSAGES[fetchOption];
 
-    const [lastFetchFailed, fetchMoreLogs, fetchingMore] =
-        useJournalDataLogsStore(
-            useShallow((state) => [
-                state.lastFetchFailed,
-                state.fetchMoreLogs,
-                state.fetchingMore,
-            ])
-        );
+    const lastFetchFailed = useJournalDataLogsStore(
+        (state) => state.lastFetchFailed
+    );
+    const fetchMoreLogs = useJournalDataLogsStore(
+        (state) => state.fetchMoreLogs
+    );
+    const fetchingMore = useJournalDataLogsStore((state) => state.fetchingMore);
 
     // Kinda hacky - but checking this flag here keeps the effect trigger
     //  as it is flipped back and forth
     const fetchMore = useCallback(() => {
         setAllowFetch(false);
-        fetchMoreLogs(fetchOption);
+        if (!fetchMoreLogs(fetchOption)) {
+            setDeclinedFetches((count) => count + 1);
+        }
     }, [fetchMoreLogs, fetchOption]);
 
     // Cannot figure out the deps
@@ -95,6 +116,7 @@ function WaitingForRowBase({
         );
     }, [
         debouncedFetch,
+        declinedFetches,
         disabled,
         fetchingMore,
         intersection?.isIntersecting,
@@ -145,17 +167,17 @@ function WaitingForRowBase({
                     )}
                 </TableCell>
                 <TableCell sx={{ width: '100%' }} component="div">
-                    <Typography sx={BaseTypographySx}>
-                        <FormattedMessage
-                            id={
-                                lastFetchFailed
-                                    ? `${messageKey}.failed`
-                                    : disabled
-                                      ? `${messageKey}.complete`
-                                      : messageKey
-                            }
-                        />
-                    </Typography>
+                    {!lastFetchFailed && disabled && disabledContent ? (
+                        disabledContent
+                    ) : (
+                        <Typography sx={BaseTypographySx}>
+                            {lastFetchFailed
+                                ? messages.failed
+                                : disabled
+                                  ? messages.complete
+                                  : messages.active}
+                        </Typography>
+                    )}
                 </TableCell>
             </Box>
         </TableRow>
