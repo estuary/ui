@@ -1,8 +1,7 @@
-import { Box, Skeleton, TableCell, Typography, useTheme } from '@mui/material';
+import { Box, Skeleton, TableCell, Typography } from '@mui/material';
 
 import { splitFormattedBytes } from 'src/components/shared/Entity/Details/Overview/Bindings/shared';
 import { formatBytes } from 'src/components/tables/cells/stats/shared';
-import { diminishedTextColor } from 'src/context/Theme';
 
 interface Props {
     bytes: number;
@@ -15,8 +14,6 @@ interface Props {
 }
 
 export function VolumeCell({ bytes, loading, unavailable }: Props) {
-    const theme = useTheme();
-
     if (loading) {
         return (
             <TableCell align="right" sx={{ minWidth: 124 }}>
@@ -30,7 +27,7 @@ export function VolumeCell({ bytes, loading, unavailable }: Props) {
             <TableCell
                 align="right"
                 sx={{
-                    color: diminishedTextColor[theme.palette.mode],
+                    color: 'text.diminished',
                     minWidth: 124,
                 }}
             >
@@ -46,10 +43,7 @@ export function VolumeCell({ bytes, loading, unavailable }: Props) {
             <Typography
                 component="div"
                 sx={{
-                    color:
-                        bytes === 0
-                            ? diminishedTextColor[theme.palette.mode]
-                            : undefined,
+                    color: bytes === 0 ? 'text.diminished' : undefined,
                     display: 'flex',
                     justifyContent: 'flex-end',
                     whiteSpace: 'nowrap',

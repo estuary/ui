@@ -2,7 +2,7 @@ import type { JournalRecord } from 'src/hooks/journals/types';
 import type { useJournalData } from 'src/hooks/journals/useJournalData';
 import type { LiveSpecsQuery_details } from 'src/hooks/useLiveSpecs';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import {
     Grid,
@@ -16,10 +16,10 @@ import {
 import { globalStateClasses } from '@mui/utils';
 
 import { Editor } from '@monaco-editor/react';
-import { JsonPointer } from 'json-ptr';
 import { isEmpty } from 'lodash';
-import { useIntl } from 'react-intl';
 
+import { KeysHeader } from 'src/components/collection/DataPreview/KeysHeader';
+import { getLatestDocumentByKey } from 'src/components/collection/DataPreview/shared';
 import { EditorResizeWrapper } from 'src/components/editor/EditorResizeWrapper';
 import ListAndDetails from 'src/components/editor/ListAndDetails';
 import Error from 'src/components/shared/Error';
@@ -44,30 +44,14 @@ function ListView({
     const [selectedKey, setSelectedKey] = useState<string>('');
 
     const theme = useTheme();
-    const intl = useIntl();
 
-    const buildRecordKey = useCallback(
-        (record: Record<string, any>) => {
-            return spec.spec.key
-                .map((k: string) => JsonPointer.get(record, k))
-                .join('_');
-        },
-        [spec.spec.key]
+    const rowsByKey = useMemo(
+        (): Record<string, JournalRecord> =>
+            error === null && data
+                ? getLatestDocumentByKey(spec.spec.key, data.documents)
+                : {},
+        [data, error, spec.spec.key]
     );
-
-    const rowsByKey = useMemo(() => {
-        if (error === null && data) {
-            return data.documents.reduce(
-                (acc, record) => {
-                    acc[buildRecordKey(record)] = record;
-                    return acc;
-                },
-                {} as Record<string, JournalRecord<Record<string, any>>>
-            );
-        } else {
-            return {};
-        }
-    }, [buildRecordKey, data, error]);
 
     const rows = useMemo(
         () => Object.keys(rowsByKey).map((k) => ({ key: k, id: k })),
@@ -97,27 +81,23 @@ function ListView({
                     }
                     displayBorder
                     height={LIST_VIEW_HEIGHT}
+                    removeMargin
+                    sx={{ borderRadius: 3 }}
                     list={
                         // BASED ON: src/components/shared/Entity/Details/History/PublicationList.tsx
                         // I thought about making this a `styled()` component however it ended up not
                         //  sharing much and it felt weird. If we end up having more selectable lists
                         //  manually generated then we probably want to look into how we can make these
                         //  reusable more (maybe just a headless hook?)
-                        <Stack>
-                            <Typography
-                                component="div"
-                                sx={{
-                                    p: 1,
-                                    fontWeight: 500,
-                                    textTransform: 'uppercase',
-                                }}
-                            >
-                                {intl.formatMessage({
-                                    id: 'detailsPanel.dataPreview.listView.header',
-                                })}
-                            </Typography>
+                        // Only the keys scroll; the header stays put above them.
+                        <Stack sx={{ flex: 1, minHeight: 0 }}>
+                            <KeysHeader />
                             <List
+                                disablePadding
                                 sx={{
+                                    flex: 1,
+                                    minHeight: 0,
+                                    overflowY: 'auto',
                                     [`& li.${globalStateClasses.selected}`]: {
                                         cursor: 'unset',
                                     },

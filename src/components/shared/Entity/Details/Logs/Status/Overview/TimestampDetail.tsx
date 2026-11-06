@@ -2,40 +2,40 @@ import type { TimestampDetailProps } from 'src/components/shared/Entity/Details/
 
 import { Skeleton, Typography } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
-import DetailWrapper from 'src/components/shared/Entity/Details/Logs/Status/Overview/DetailWrapper';
+import { DetailWrapper } from 'src/components/shared/Entity/Details/Logs/Status/Overview/DetailWrapper';
 import { useEntityStatusStore } from 'src/stores/EntityStatus/Store';
 
+// Formats in the browser's language, the locale the app's IntlProvider used.
+const formatTimestamp = (time: string) => {
+    const date = new Date(time);
+    const locale = navigator.language || 'en-US';
+
+    return `${date.toLocaleString(locale, {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        timeZoneName: 'short',
+    })}, ${date.toLocaleString(locale, {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+    })}`;
+};
+
 export default function TimestampDetail({
-    headerMessageId,
+    header,
     time,
 }: TimestampDetailProps) {
-    const intl = useIntl();
-
     const hydrating = useEntityStatusStore((state) => !state.hydrated);
-
-    const content = time
-        ? `${intl.formatDate(time, {
-              hour: '2-digit',
-              minute: '2-digit',
-              second: '2-digit',
-              timeZoneName: 'short',
-          })}, ${intl.formatDate(time, {
-              day: '2-digit',
-              month: '2-digit',
-              year: 'numeric',
-          })}`
-        : '--';
 
     return (
         <DetailWrapper
-            headerMessageId={headerMessageId}
+            header={header}
             Hydrating={
                 hydrating ? <Skeleton height={21} width={75} /> : undefined
             }
         >
-            <Typography>{content}</Typography>
+            <Typography>{time ? formatTimestamp(time) : '--'}</Typography>
         </DetailWrapper>
     );
 }

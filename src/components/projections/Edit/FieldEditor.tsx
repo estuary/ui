@@ -11,9 +11,6 @@ import {
 } from '@mui/material';
 
 import { ArrowRight } from 'iconoir-react';
-import { useIntl } from 'react-intl';
-
-import { diminishedTextColor } from 'src/context/Theme';
 
 function FieldEditor({
     disabled,
@@ -23,7 +20,6 @@ function FieldEditor({
     setInputInvalid,
     value,
 }: FieldEditorProps) {
-    const intl = useIntl();
     const theme = useTheme();
 
     return (
@@ -38,19 +34,17 @@ function FieldEditor({
             <Stack style={{ flex: '1 1 0px' }}>
                 <FormLabel
                     style={{
-                        color: diminishedTextColor[theme.palette.mode],
+                        color: theme.palette.text.diminished,
                         fontSize: 10,
                     }}
                 >
-                    {intl.formatMessage({
-                        id: 'projection.label.fieldName.current',
-                    })}
+                    Current Name
                 </FormLabel>
 
                 <Typography
                     style={{
-                        borderBottom: `1px dashed ${diminishedTextColor[theme.palette.mode]}`,
-                        color: diminishedTextColor[theme.palette.mode],
+                        borderBottom: `1px dashed ${theme.palette.text.diminished}`,
+                        color: theme.palette.text.diminished,
                         paddingBottom: 4,
                         paddingTop: 3,
                     }}
@@ -71,9 +65,7 @@ function FieldEditor({
                     autoFocus
                     disabled={disabled}
                     error={inputInvalid}
-                    label={intl.formatMessage({
-                        id: 'projection.label.fieldName.new',
-                    })}
+                    label="New Name"
                     onChange={(event) => {
                         setInput(event.target.value);
                         setInputInvalid(
@@ -92,9 +84,7 @@ function FieldEditor({
 
                 {inputInvalid ? (
                     <FormHelperText error={inputInvalid}>
-                        {intl.formatMessage({
-                            id: 'projection.error.input.invalidFieldName',
-                        })}
+                        Field names cannot begin with a forward slash (/).
                     </FormHelperText>
                 ) : null}
             </Stack>

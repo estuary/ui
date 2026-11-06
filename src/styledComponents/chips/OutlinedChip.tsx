@@ -6,7 +6,6 @@ import { Chip, chipClasses, styled } from '@mui/material';
 import {
     defaultOutlineColor,
     defaultOutlineColor_hovered,
-    diminishedTextColor,
 } from 'src/context/Theme';
 
 export interface CustomChipProps {
@@ -65,9 +64,7 @@ export const OutlinedChip = styled(Chip, {
             marginRight: '1px',
         },
         [`& .${chipClasses.label}`]: {
-            color: diminishedText
-                ? diminishedTextColor[theme.palette.mode]
-                : undefined,
+            color: diminishedText ? theme.palette.text.diminished : undefined,
             display: 'block',
             whiteSpace: 'normal',
         },

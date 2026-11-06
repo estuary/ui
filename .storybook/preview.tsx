@@ -1,6 +1,9 @@
 import type { Preview } from '@storybook/react-vite';
 import type { ReactNode } from 'react';
 
+// The app loads this in its route guards, which stories never mount.
+import 'react-reflex/styles.css';
+
 import { useEffect } from 'react';
 
 import ThemeProvider, { useColorMode } from '../src/context/Theme';

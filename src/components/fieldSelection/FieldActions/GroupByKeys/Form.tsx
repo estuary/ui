@@ -13,11 +13,10 @@ import {
 } from '@mui/material';
 
 import { arrayMove } from '@dnd-kit/sortable';
-import { useIntl } from 'react-intl';
 
 import SortableTags from 'src/components/schema/KeyAutoComplete/SortableTags';
 import SelectableAutocompleteOption from 'src/components/shared/Dialog/SelectableAutocompleteOption';
-import { diminishedTextColor, truncateTextSx } from 'src/context/Theme';
+import { truncateTextSx } from 'src/context/Theme';
 import { isValidCollectionKey } from 'src/utils/schema-utils';
 
 // This component was modeled after the KeyAutoComplete component.
@@ -26,7 +25,6 @@ const GroupByKeysForm = ({
     options,
     setLocalValues,
 }: GroupByKeysFormProps) => {
-    const intl = useIntl();
     const theme = useTheme();
     const belowMd = useMediaQuery(theme.breakpoints.down('md'));
 
@@ -53,9 +51,7 @@ const GroupByKeysForm = ({
                 return (
                     <TextField
                         {...params}
-                        label={intl.formatMessage({
-                            id: 'fieldSelection.groupBy.label.field',
-                        })}
+                        label="Group By"
                         variant="standard"
                     />
                 );
@@ -112,9 +108,8 @@ const GroupByKeysForm = ({
                                     <Typography
                                         sx={{
                                             ...truncateTextSx,
-                                            color: diminishedTextColor[
-                                                theme.palette.mode
-                                            ],
+                                            color: theme.palette.text
+                                                .diminished,
                                             width: fieldWidth - 75,
                                         }}
                                     >

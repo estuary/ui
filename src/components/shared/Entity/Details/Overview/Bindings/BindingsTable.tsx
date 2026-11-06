@@ -23,7 +23,6 @@ import {
     TableSortLabel,
     tableSortLabelClasses,
     Typography,
-    useTheme,
 } from '@mui/material';
 
 import { ArrowDown, EmptyPage, Search } from 'iconoir-react';
@@ -41,7 +40,6 @@ import EntityNameDetailsLink from 'src/components/shared/Entity/EntityNameDetail
 import { formatDocs } from 'src/components/tables/cells/stats/shared';
 import TablePaginationActions from 'src/components/tables/PaginationActions';
 import {
-    diminishedTextColor,
     doubleElevationHoverBackground,
     getTableHeaderWithoutHeaderColor,
 } from 'src/context/Theme';
@@ -268,8 +266,6 @@ export function BindingsTable({
     volumesLoading,
     volumesUnavailable,
 }: Props) {
-    const theme = useTheme();
-
     const { generatePath, navigateToPath } = useDetailsNavigator(
         ENTITY_SETTINGS.collection.routes.details
     );
@@ -399,9 +395,7 @@ export function BindingsTable({
                                         alignItems="center"
                                         spacing={1}
                                         sx={{
-                                            color: diminishedTextColor[
-                                                theme.palette.mode
-                                            ],
+                                            color: 'text.diminished',
                                         }}
                                     >
                                         {totalBindings === 0 ? (
@@ -513,9 +507,7 @@ export function BindingsTable({
                                                 (row.docs === 0 ||
                                                     volumesUnavailable) &&
                                                 !volumesLoading
-                                                    ? diminishedTextColor[
-                                                          theme.palette.mode
-                                                      ]
+                                                    ? 'text.diminished'
                                                     : undefined,
                                             whiteSpace: 'nowrap',
                                         }}

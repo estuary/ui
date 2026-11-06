@@ -1,14 +1,6 @@
 import type { ReactNode } from 'react';
 
-import {
-    List,
-    ListItem,
-    ListItemText,
-    Typography,
-    useTheme,
-} from '@mui/material';
-
-import { diminishedTextColor } from 'src/context/Theme';
+import { List, ListItem, ListItemText, Typography } from '@mui/material';
 
 export type KeyValue = {
     title: string | ReactNode;
@@ -22,7 +14,6 @@ interface Props {
 }
 
 function KeyValueList({ data, disableTypography, sectionTitle }: Props) {
-    const theme = useTheme();
     if (data.length > 0) {
         return (
             <>
@@ -46,16 +37,14 @@ function KeyValueList({ data, disableTypography, sectionTitle }: Props) {
                                 slotProps={{
                                     primary: {
                                         color: val
-                                            ? diminishedTextColor[
-                                                  theme.palette.mode
-                                              ]
-                                            : theme.palette.text.primary,
+                                            ? 'text.diminished'
+                                            : 'text.primary',
                                         component: 'div',
                                         marginBottom: val ? '2px' : undefined,
                                     },
 
                                     secondary: {
-                                        color: theme.palette.text.primary,
+                                        color: 'text.primary',
                                         component: 'div',
                                     },
                                 }}

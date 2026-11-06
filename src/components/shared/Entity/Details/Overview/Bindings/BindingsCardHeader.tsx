@@ -1,4 +1,3 @@
-import type { SxProps, Theme } from '@mui/material';
 import type { Columns } from 'react-csv-downloader/dist/esm/lib/csv';
 import type { DataByHourRange } from 'src/components/graphs/types';
 import type { BindingRow } from 'src/components/shared/Entity/Details/Overview/Bindings/types';
@@ -12,7 +11,6 @@ import {
     Stack,
     Tooltip,
     Typography,
-    useTheme,
 } from '@mui/material';
 
 import { Download } from 'iconoir-react';
@@ -29,13 +27,7 @@ import {
     generateFileName,
     tableExportSeparator,
 } from 'src/components/tables/shared';
-import { diminishedTextColor } from 'src/context/Theme';
 import { BINDING_TERMS } from 'src/settings/entity';
-
-const headingSx: SxProps<Theme> = {
-    fontSize: 16,
-    fontWeight: 600,
-};
 
 interface Props {
     count: number;
@@ -62,8 +54,6 @@ export function BindingsCardHeader({
     totalBytes,
     volumesUnavailable,
 }: Props) {
-    const theme = useTheme();
-
     const isCapture = entityType !== 'materialization';
 
     // Mirrors the table's own columns, so the export matches what the card is
@@ -135,7 +125,7 @@ export function BindingsCardHeader({
             }}
         >
             <Stack direction="row" spacing={1} sx={{ alignItems: 'baseline' }}>
-                <Typography component="span" sx={headingSx}>
+                <Typography component="span" variant="cardTitle">
                     {heading}
                 </Typography>
 
@@ -143,14 +133,7 @@ export function BindingsCardHeader({
             </Stack>
 
             <Stack direction="row" spacing={1} sx={{ alignItems: 'baseline' }}>
-                <Typography
-                    component="div"
-                    sx={{
-                        color: diminishedTextColor[theme.palette.mode],
-                        fontSize: 13,
-                        fontWeight: 400,
-                    }}
-                >
+                <Typography component="div" variant="cardCaption">
                     {loading ? (
                         <Skeleton
                             width={168}

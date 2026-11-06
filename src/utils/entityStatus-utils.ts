@@ -1,7 +1,6 @@
 import type { PaletteMode } from '@mui/material';
 import type { SemanticColor } from 'src/context/Theme';
 import type {
-    ActivationStatus,
     AutoDiscoverStatus,
     CaptureControllerStatus,
     ControllerStatus,
@@ -170,14 +169,3 @@ export const isEntityControllerStatus = (
 export const isCaptureControllerStatus = (
     value: ControllerStatus
 ): value is CaptureControllerStatus => 'auto_discover' in value;
-
-export const getDataPlaneActivationStatus = (
-    lastActivated: ActivationStatus['last_activated'],
-    lastBuildId?: EntityStatusResponse['last_build_id']
-): string => {
-    if (!lastActivated || !lastBuildId) {
-        return 'common.unknown';
-    }
-
-    return lastActivated === lastBuildId ? 'common.upToDate' : 'common.pending';
-};

@@ -22,7 +22,6 @@ import { Search, Xmark } from 'iconoir-react';
 import { debounce } from 'lodash';
 import { useUnmount } from 'react-use';
 
-import { diminishedTextColor } from 'src/context/Theme';
 import { QUICK_DEBOUNCE_WAIT } from 'src/utils/workflow-utils';
 
 type FilterValue = BindingStatus | 'all';
@@ -136,9 +135,7 @@ export function BindingsToolbar({
                                     height={16}
                                     width={16}
                                     style={{
-                                        color: diminishedTextColor[
-                                            theme.palette.mode
-                                        ],
+                                        color: theme.palette.text.diminished,
                                     }}
                                 />
                             </InputAdornment>

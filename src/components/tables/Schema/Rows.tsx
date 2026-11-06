@@ -14,7 +14,6 @@ import {
 
 import { Lock } from 'iconoir-react';
 import { orderBy } from 'lodash';
-import { useIntl } from 'react-intl';
 
 import ChipListCell from 'src/components/tables/cells/ChipList';
 import { FieldList } from 'src/components/tables/cells/projections/FieldList';
@@ -25,7 +24,6 @@ import {
 } from 'src/components/tables/Schema/shared';
 import {
     defaultOutlineColor,
-    diminishedTextColor,
     doubleElevationHoverBackground,
     getStickyTableCell,
 } from 'src/context/Theme';
@@ -35,7 +33,6 @@ import { translateRedactionStrategy } from 'src/utils/schema-utils';
 import { isColumnVisible } from 'src/utils/table-utils';
 
 function Row({ columns, row }: RowProps) {
-    const intl = useIntl();
     const theme = useTheme();
 
     const workflow = useEntityWorkflow();
@@ -62,6 +59,9 @@ function Row({ columns, row }: RowProps) {
 
     const fieldCannotExist = Boolean(row.inference.exists === 'CANNOT');
     const redacted = Boolean(row.inference?.redact && row?.ptr);
+    const redactedTooltip = redacted
+        ? `This location is redacted using strategy: ${translateRedactionStrategy(row.inference.redact)}.`
+        : '';
 
     return (
         <TableRow
@@ -81,21 +81,7 @@ function Row({ columns, row }: RowProps) {
                     <Stack style={{ alignItems: 'center' }}>
                         <Tooltip
                             placement="bottom-start"
-                            title={
-                                redacted
-                                    ? intl.formatMessage(
-                                          {
-                                              id: 'projection.tooltip.locationRedacted',
-                                          },
-                                          {
-                                              strategy:
-                                                  translateRedactionStrategy(
-                                                      row.inference.redact
-                                                  ),
-                                          }
-                                      )
-                                    : ''
-                            }
+                            title={redactedTooltip}
                         >
                             <Lock />
                         </Tooltip>
@@ -118,23 +104,7 @@ function Row({ columns, row }: RowProps) {
             )}
 
             <TableCell>
-                <Tooltip
-                    placement="bottom-start"
-                    title={
-                        redacted
-                            ? intl.formatMessage(
-                                  {
-                                      id: 'projection.tooltip.locationRedacted',
-                                  },
-                                  {
-                                      strategy: translateRedactionStrategy(
-                                          row.inference.redact
-                                      ),
-                                  }
-                              )
-                            : ''
-                    }
-                >
+                <Tooltip placement="bottom-start" title={redactedTooltip}>
                     <code
                         style={
                             row.inference.redact === 'REDACT_BLOCK'
@@ -144,9 +114,7 @@ function Row({ columns, row }: RowProps) {
                                               theme.palette.mode
                                           ]
                                       }`,
-                                      color: diminishedTextColor[
-                                          theme.palette.mode
-                                      ],
+                                      color: theme.palette.text.diminished,
                                       paddingBottom: 2,
                                   }
                                 : undefined

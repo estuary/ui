@@ -1,4 +1,3 @@
-import { CommonMessages } from 'src/lang/en-US/CommonMessages';
 import { CTAs } from 'src/lang/en-US/CTAs';
 
 const RETRY_AND_CONTACT =
@@ -19,18 +18,6 @@ export const Details: Record<string, string> = {
     'details.ops.status.cta.formatted': `Dashboard`,
     'details.ops.status.cta.raw': `Code`,
     'details.ops.status.header': `Status`,
-    'details.ops.status.message.lastUpdated': `Updated at {timestamp}`,
-    'details.ops.status.overview.autoDiscovery.header': `Latest Auto Discovery`,
-    'details.ops.status.overview.autoDiscovery.subheaderLastFailure': `Last Failure`,
-    'details.ops.status.overview.autoDiscovery.subheaderLastSuccess': `Last Success`,
-    'details.ops.status.overview.autoDiscovery.subheaderAdded': `Added`,
-    'details.ops.status.overview.autoDiscovery.subheaderModified': `Modified`,
-    'details.ops.status.overview.autoDiscovery.subheaderRemoved': `Removed`,
-    'details.ops.status.overview.connector.header': `Connector`,
-    'details.ops.status.overview.connector.subheaderLastStatus': `Status`,
-    'details.ops.status.overview.controller.header': `Controller`,
-    'details.ops.status.overview.controller.subheaderActivation': `Data Plane Activation`,
-    'details.ops.status.overview.generic.subheaderLastUpdated': `Last Updated`,
     'details.ops.status.overview.menuLabel.details': `View details`,
     'details.ops.status.overview.menuLabel.troubleshoot': `Contact support`,
     'details.ops.status.table.label': `Controller Status History Table`,
@@ -68,13 +55,7 @@ export const Details: Record<string, string> = {
     'detailsPanel.shardDetails.warningTitle': `Shard Replica Processing Warnings`,
     'detailsPanel.shardDetails.noStatusFound': `No shard status to report`,
     'detailsPanel.shardDetails.docPath': `https://docs.estuary.dev/concepts/advanced/shards/`,
-    'detailsPanel.dataPreview.header': `Data Preview`,
     'detailsPanel.dataPreview.failedParsingMessage': `Ran into an problem parsing data. This is a UI bug and does not mean there is an issue with your data.`,
-    'detailsPanel.dataPreview.listView.header': `Keys`,
-    'detailsPanel.dataPreview.hidden': `Data previews are disabled for this tenant.`,
-
-    'detailsPanel.dataPreview.suspended.title': `No data found in collection.`,
-    'detailsPanel.dataPreview.suspended.message': `If you are using the ${CommonMessages['company']} trial storage mapping, data expires after 20 days.`,
 
     'detailsPanel.specification.header': `Specification`,
     'detailsPanel.status.header': `Status`,

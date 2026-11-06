@@ -5,11 +5,7 @@ import { Box, Stack } from '@mui/material';
 import { CheckCircleSolid, NavArrowRight } from 'iconoir-react';
 
 import MessageWithEmphasis from 'src/components/content/MessageWithEmphasis';
-import {
-    diminishedTextColor,
-    registerPerkCheck,
-    registerPerkHighlight,
-} from 'src/context/Theme';
+import { registerPerkCheck, registerPerkHighlight } from 'src/context/Theme';
 
 function RegisterPerk({
     disableEmphasisColor,
@@ -39,7 +35,7 @@ function RegisterPerk({
                     '& b': {
                         color: (theme) =>
                             disableEmphasisColor
-                                ? diminishedTextColor[theme.palette.mode]
+                                ? theme.palette.text.diminished
                                 : registerPerkHighlight[theme.palette.mode],
                     },
                 }}
