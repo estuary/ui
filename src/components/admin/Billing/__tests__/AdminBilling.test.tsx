@@ -20,11 +20,11 @@ import {
     billingGraphql,
     completeContact,
     contactData,
-    dropFetchSignals,
     paymentMethodsData,
     setupIntent,
 } from 'src/test/billing';
 import { HttpResponse, server } from 'src/test/server/test-server';
+import { dropFetchSignals } from 'src/test/shared';
 
 vi.mock('src/components/admin/Tabs', () => ({ default: () => null }));
 vi.mock('src/components/graphs/UsageByMonthGraph', () => ({

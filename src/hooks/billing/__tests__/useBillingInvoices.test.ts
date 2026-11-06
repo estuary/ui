@@ -4,8 +4,9 @@ import { afterEach, beforeEach, expect, test, vi } from 'vitest';
 import { UrqlConfigProvider } from 'src/context/URQL';
 import { useBillingInvoices } from 'src/hooks/billing/useBillingInvoices';
 import { useTenantStore } from 'src/stores/Tenant';
-import { billingGraphql, dropFetchSignals } from 'src/test/billing';
+import { billingGraphql } from 'src/test/billing';
 import { HttpResponse, server } from 'src/test/server/test-server';
+import { dropFetchSignals } from 'src/test/shared';
 
 beforeEach(() => {
     dropFetchSignals();
