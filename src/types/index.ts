@@ -112,11 +112,6 @@ interface BaseCatalogStats {
     ts: string;
 }
 
-export interface CatalogStats_Dashboard extends BaseCatalogStats {
-    bytes_written_by_me?: number;
-    bytes_read_by_me?: number;
-}
-
 // The slice of `catalog_stats.flow_document` that describes a materialization's
 // bindings. The keys of `materialize` are source collection names.
 //

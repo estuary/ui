@@ -2,7 +2,6 @@ import type { PostgrestResponse } from '@supabase/postgrest-js';
 import type {
     CatalogStats,
     CatalogStats_Backlog,
-    CatalogStats_Dashboard,
     CatalogStats_LastPublished,
 } from 'src/types';
 
@@ -51,8 +50,6 @@ const DEFAULT_COLS = [
     'docs_read_from_me',
 ];
 const DEFAULT_QUERY = `${BASE_QUERY},${DEFAULT_COLS.join(',')}`;
-
-const DASHBOARD_QUERY = `${BASE_QUERY},bytes_written_by_me,bytes_read_by_me`;
 
 // Per-binding readings live in the stats document rather than in dedicated
 // columns, so anything below binding granularity has to come out of the JSON.
@@ -223,20 +220,8 @@ const getCollectionsLastPublished = (collectionNames: string[]) => {
         .returns<CatalogStats_LastPublished[]>();
 };
 
-const getStatsForDashboard = (tenant: string) => {
-    return supabaseClient
-        .from(TABLES.CATALOG_STATS)
-        .select(`${DASHBOARD_QUERY}`)
-        .eq('catalog_name', `${tenant}`)
-        .eq('grain', 'monthly')
-        .eq('ts', DateTime.utc().startOf('month'))
-        .order('ts', { ascending: true })
-        .returns<CatalogStats_Dashboard[]>();
-};
-
 export {
     getCollectionsLastPublished,
     getMaterializationBacklog,
     getStatsByName,
-    getStatsForDashboard,
 };
