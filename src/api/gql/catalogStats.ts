@@ -37,32 +37,36 @@ export const CATALOG_STATS_QUERY = graphql(`
 // capture and `right` for a materialization: the fields the task's own totals
 // are accumulated from, so the table adds up to the chart.
 //   https://github.com/estuary/flow/blob/master/ops-catalog/catalog-stats.ts
-export const CATALOG_TASK_STATS_QUERY = graphql(`
-    query CatalogTaskStats($by: CatalogStatsBy!) {
-        catalogStats(by: $by) {
-            edges {
-                node {
-                    catalogName
-                    grain
-                    timestamp
-                    taskStats {
-                        capture {
-                            collection
-                            lastPublishedAt
-                            out {
-                                docsTotal
-                                bytesTotal
-                            }
-                        }
-                        materialize {
-                            collection
-                            lastSourcePublishedAt
-                            right {
-                                docsTotal
-                                bytesTotal
-                            }
-                        }
-                    }
+//
+// `bytesBehind` and `lastPublishedAt` feed a materialization's backlog and time
+// lag.
+//
+// A fragment rather than a query: `useCatalogTaskStats` aliases `catalogStats`
+// once per batch of names, so its query is built at runtime around this.
+export const CATALOG_TASK_STATS_FRAGMENT = graphql(`
+    fragment CatalogTaskStatsFields on CatalogStats {
+        catalogName
+        grain
+        timestamp
+        statsSummary {
+            lastPublishedAt
+        }
+        taskStats {
+            capture {
+                collection
+                lastPublishedAt
+                out {
+                    docsTotal
+                    bytesTotal
+                }
+            }
+            materialize {
+                collection
+                bytesBehind
+                lastSourcePublishedAt
+                right {
+                    docsTotal
+                    bytesTotal
                 }
             }
         }

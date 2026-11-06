@@ -1,8 +1,6 @@
-import type {
-    CatalogStats_Backlog,
-    CatalogStats_LastPublished,
-} from 'src/types';
+import type { CatalogTaskStats } from 'src/api/catalogStats';
 
+import { DataGrains } from 'src/components/graphs/types';
 import { formatBytes } from 'src/components/tables/cells/stats/shared';
 import {
     computeMaterializationTimeLag,
@@ -10,22 +8,32 @@ import {
     parseMaterializationBacklog,
 } from 'src/hooks/details/shared';
 
-// Builds one hourly stats row for a task. `catalog_stats.flow_document` holds a
-// materialization's per-binding stats under `taskStats.materialize`, keyed by
-// source collection name. See ops-catalog/stats.schema.yaml of estuary/flow.
+const toSeconds = (iso: string) => Date.parse(iso) / 1000;
+
+// Builds one hourly stats interval for a task, with a materialization's
+// per-binding stats under `taskStats.materialize`.
 const statsRow = (
-    ts: string,
+    timestamp: string,
     materialize?: Record<
         string,
-        { bytesBehind?: number | string; lastSourcePublishedAt?: string }
+        { bytesBehind?: number; lastSourcePublishedAt?: string }
     >
-): CatalogStats_Backlog => ({
-    catalog_name: 'acmeCo/warehouse',
-    grain: 'hourly',
-    ts,
-    flow_document: materialize
-        ? { taskStats: { materialize } }
-        : { taskStats: {} },
+): CatalogTaskStats => ({
+    catalogName: 'acmeCo/warehouse',
+    grain: DataGrains.hourly,
+    timestamp: toSeconds(timestamp),
+    lastPublishedAt: null,
+    taskStats: {
+        capture: [],
+        materialize: Object.entries(materialize ?? {}).map(
+            ([collection, { bytesBehind, lastSourcePublishedAt }]) => ({
+                collection,
+                bytesBehind: BigInt(bytesBehind ?? 0),
+                lastSourcePublishedAt: lastSourcePublishedAt ?? null,
+                right: null,
+            })
+        ),
+    },
 });
 
 describe('parseMaterializationBacklog', () => {
@@ -51,12 +59,10 @@ describe('parseMaterializationBacklog', () => {
         ]);
 
         expect(backlog?.bytesBehind).toBe(1000);
-        expect(backlog?.ts).toBe('2026-08-07T19:00:00Z');
+        expect(backlog?.timestamp).toBe(toSeconds('2026-08-07T19:00:00Z'));
     });
 
-    // A binding omits the field once it has nothing left to read, so an absent
-    // reading is zero rather than unknown.
-    test('treats a binding with no reading as caught up', () => {
+    test('treats a binding with a zero reading as caught up', () => {
         const backlog = parseMaterializationBacklog([
             statsRow('2026-08-07T19:00:00Z', {
                 'acmeCo/orders': { bytesBehind: 1000 },
@@ -79,31 +85,7 @@ describe('parseMaterializationBacklog', () => {
         ]);
 
         expect(backlog?.bytesBehind).toBe(1000);
-        expect(backlog?.ts).toBe('2026-08-07T19:00:00Z');
-    });
-
-    // `bytesBehind` is a u64, and the default JSON encoding for those is a string
-    // so large values survive. estuary/flow patches its Rust encoder to emit a
-    // number, but the encoding is not uniform across producers.
-    test('accepts a reading encoded as a string', () => {
-        const backlog = parseMaterializationBacklog([
-            statsRow('2026-08-07T19:00:00Z', {
-                'acmeCo/orders': { bytesBehind: '1000' },
-                'acmeCo/shipments': { bytesBehind: 2500 },
-            }),
-        ]);
-
-        expect(backlog?.bytesBehind).toBe(3500);
-    });
-
-    test('ignores a reading that is neither a number nor numeric', () => {
-        const backlog = parseMaterializationBacklog([
-            statsRow('2026-08-07T19:00:00Z', {
-                'acmeCo/orders': { bytesBehind: 'lots' },
-            }),
-        ]);
-
-        expect(backlog?.bytesBehind).toBe(0);
+        expect(backlog?.timestamp).toBe(toSeconds('2026-08-07T19:00:00Z'));
     });
 
     // The whole task is current when every binding has caught up, which is what
@@ -145,45 +127,28 @@ describe('parseMaterializationBacklog', () => {
 
     // A real hourly row from hyphametrics/snowflake/materialize-snowflake, with
     // the per-binding `out` and `right` tallies dropped since nothing reads them.
-    // Twelve bindings, of which three are behind. Note the `interval` heartbeat
-    // sharing the row with the binding stats.
+    // Twelve bindings, of which three are behind.
     describe('a production stats row', () => {
-        const row: CatalogStats_Backlog = {
-            catalog_name: 'hyphametrics/snowflake/materialize-snowflake',
-            grain: 'hourly',
-            ts: '2026-08-07T20:00:00.000Z',
-            flow_document: {
-                taskStats: {
-                    materialize: {
-                        'hyphametrics/mongodb/raw-personicore/adscatalog': {},
-                        'hyphametrics/mongodb/raw-personicore/brandcatalogs':
-                            {},
-                        'hyphametrics/mongodb/raw-personicore/contentcatalogs':
-                            {},
-                        'hyphametrics/mongodb/raw-personicore/coremeters': {
-                            bytesBehind: 3655,
-                        },
-                        'hyphametrics/mongodb/raw-personicore/hd_logpresences':
-                            {
-                                bytesBehind: 587,
-                            },
-                        'hyphametrics/mongodb/raw-personicore/households': {},
-                        'hyphametrics/mongodb/raw-personicore/logcoremeterstats':
-                            {},
-                        'hyphametrics/mongodb/raw-personicore/mediasources': {},
-                        'hyphametrics/mongodb/raw-personicore/panelists': {},
-                        'hyphametrics/mongodb/raw-personicore/personaldevices':
-                            {},
-                        'hyphametrics/mongodb/raw-personicore/routers': {},
-                        'hyphametrics/mongodb/raw-personicore/viewershipcontents':
-                            {
-                                bytesBehind: 1130136,
-                            },
-                    },
-                    interval: { uptimeSeconds: 1800, usageRate: 1 },
-                },
+        const row = statsRow('2026-08-07T20:00:00.000Z', {
+            'hyphametrics/mongodb/raw-personicore/adscatalog': {},
+            'hyphametrics/mongodb/raw-personicore/brandcatalogs': {},
+            'hyphametrics/mongodb/raw-personicore/contentcatalogs': {},
+            'hyphametrics/mongodb/raw-personicore/coremeters': {
+                bytesBehind: 3655,
             },
-        };
+            'hyphametrics/mongodb/raw-personicore/hd_logpresences': {
+                bytesBehind: 587,
+            },
+            'hyphametrics/mongodb/raw-personicore/households': {},
+            'hyphametrics/mongodb/raw-personicore/logcoremeterstats': {},
+            'hyphametrics/mongodb/raw-personicore/mediasources': {},
+            'hyphametrics/mongodb/raw-personicore/panelists': {},
+            'hyphametrics/mongodb/raw-personicore/personaldevices': {},
+            'hyphametrics/mongodb/raw-personicore/routers': {},
+            'hyphametrics/mongodb/raw-personicore/viewershipcontents': {
+                bytesBehind: 1130136,
+            },
+        });
 
         test('totals the three bindings that are behind', () => {
             expect(parseMaterializationBacklog([row])?.bytesBehind).toBe(
@@ -219,8 +184,8 @@ describe('parseMaterializationBacklog', () => {
         });
 
         test('reports the stats document timestamp', () => {
-            expect(parseMaterializationBacklog([row])?.ts).toBe(
-                '2026-08-07T20:00:00.000Z'
+            expect(parseMaterializationBacklog([row])?.timestamp).toBe(
+                toSeconds('2026-08-07T20:00:00.000Z')
             );
         });
     });
@@ -230,13 +195,12 @@ describe('latestPublishedByCollection', () => {
     const row = (
         catalogName: string,
         lastPublishedAt?: string
-    ): CatalogStats_LastPublished => ({
-        catalog_name: catalogName,
-        grain: 'monthly',
-        ts: '2026-08-01T00:00:00Z',
-        flow_document: lastPublishedAt
-            ? { statsSummary: { lastPublishedAt } }
-            : { statsSummary: {} },
+    ): CatalogTaskStats => ({
+        catalogName,
+        grain: DataGrains.monthly,
+        timestamp: toSeconds('2026-08-01T00:00:00Z'),
+        lastPublishedAt: lastPublishedAt ?? null,
+        taskStats: null,
     });
 
     test('keeps the latest timestamp per collection across rows', () => {

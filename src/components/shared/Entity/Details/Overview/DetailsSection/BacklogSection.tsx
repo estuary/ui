@@ -15,8 +15,8 @@ export function BacklogSection({ entityName }: BacklogSectionProps) {
         return <Typography component="div">&mdash;</Typography>;
     }
 
-    // A binding omits `bytesBehind` once it has nothing left to read, so a task
-    // whose bindings report nothing has caught up. The card holds its skeleton
+    // A binding returns 0 for `bytesBehind` once it has nothing left to read, so
+    // a task whose bindings all report 0 has caught up. The card holds its skeleton
     // until this has loaded, so an empty result here is an answer, not a wait.
     if (!backlog || backlog.bytesBehind === 0) {
         return <Typography component="div">current</Typography>;
