@@ -2,13 +2,22 @@ import type {
     CaptureDraftSpec,
     MaterializationsDraftSpec,
 } from 'src/hooks/drafts/useGetDraftSpec';
+import type * as Urql from 'urql';
 
 import { renderHook } from '@testing-library/react';
 import { useMutation } from 'urql';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
 import { createDraftSpec, modifyDraftSpec } from 'src/api/draftSpecs';
+import { UrqlConfigProvider } from 'src/context/URQL';
 import { useSaveDraftSpec } from 'src/hooks/drafts/useSaveDraftSpec';
+import unsortedSopsConfig from 'src/test/fixtures/unsortedSopsConfig.json';
+import { graphql, HttpResponse, server } from 'src/test/server/test-server';
+import { dropFetchSignals } from 'src/test/shared';
+import { getGqlUrl } from 'src/utils/env-utils';
+
+const { useMutation: actualUseMutation } =
+    await vi.importActual<typeof Urql>('urql');
 
 vi.mock(import('urql'), async (importOriginal) => ({
     ...(await importOriginal()),
@@ -108,6 +117,58 @@ describe('useSaveDraftSpec', () => {
             expect(stageDraftSpecs.mock.calls[0][0].specs.expectPubId).toBe(
                 null
             );
+        });
+
+        // sops computes the MAC over values in document order, so a config sent
+        // with its keys sorted fails to decrypt (estuary/ui#2178)
+        describe('through the app client', () => {
+            // Saves with the app's URQL client and returns the request body
+            const stage = async (config: object) => {
+                let body = '';
+                server.use(
+                    graphql
+                        .link(getGqlUrl())
+                        .mutation('StageDraftSpecs', async ({ request }) => {
+                            body = await request.text();
+                            return HttpResponse.json({
+                                data: { stageDraftSpecs: [CAPTURE_NAME] },
+                            });
+                        })
+                );
+                vi.mocked(useMutation).mockImplementation(actualUseMutation);
+                dropFetchSignals();
+
+                const save = renderHook(() => useSaveDraftSpec('capture'), {
+                    wrapper: UrqlConfigProvider,
+                }).result.current;
+                const draftSpec = captureDraftSpec(config);
+
+                await expect(
+                    save(DRAFT_ID, CAPTURE_NAME, draftSpec)
+                ).resolves.toEqual({ value: draftSpec });
+
+                return body;
+            };
+
+            test('sends the config with its keys in their original order', async () => {
+                const config = {
+                    user: 'flow_capture',
+                    address: 'db:5432',
+                    password_sops: 'ENC[AES256_GCM,data:foo,tag:bar,type:str]',
+                    sops: { mac: 'ENC[AES256_GCM,data:baz,tag:qux,type:str]' },
+                };
+
+                expect(await stage(config)).toContain(JSON.stringify(config));
+            });
+
+            // The fixture was encrypted with the sops CLI using the local stack's
+            // test age key. It decrypts as is and fails with a MAC mismatch once
+            // its keys are sorted.
+            test('sends a sops CLI encrypted config unchanged', async () => {
+                expect(await stage(unsortedSopsConfig)).toContain(
+                    JSON.stringify(unsortedSopsConfig)
+                );
+            });
         });
 
         test('rejects an unencrypted config without staging it', async () => {

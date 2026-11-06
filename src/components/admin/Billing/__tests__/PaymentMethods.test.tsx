@@ -21,7 +21,6 @@ import {
     billingGraphql,
     completeContact,
     contactData,
-    dropFetchSignals,
     handleContactSaves,
     incompleteContact,
     paymentMethod,
@@ -29,6 +28,7 @@ import {
     setupIntent,
 } from 'src/test/billing';
 import { HttpResponse, server } from 'src/test/server/test-server';
+import { dropFetchSignals } from 'src/test/shared';
 
 const tenant = vi.hoisted(() => ({ selectedTenant: 'acme/' }));
 const stripe = vi.hoisted(() => ({

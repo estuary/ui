@@ -19,12 +19,12 @@ import {
     billingGraphql,
     completeContact,
     contactData,
-    dropFetchSignals,
     emptyContact,
     handleContactSaves,
     incompleteContact,
 } from 'src/test/billing';
 import { HttpResponse, server } from 'src/test/server/test-server';
+import { dropFetchSignals } from 'src/test/shared';
 
 const stripe = vi.hoisted(() => ({
     getValue: vi.fn(),

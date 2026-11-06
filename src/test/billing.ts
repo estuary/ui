@@ -6,20 +6,10 @@ import type {
     TenantBillingPaymentMethodsQuery,
 } from 'src/gql-types/graphql';
 
-import { vi } from 'vitest';
-
 import { graphql, HttpResponse, server } from 'src/test/server/test-server';
 import { getGqlUrl } from 'src/utils/env-utils';
 
 export const billingGraphql = graphql.link(getGqlUrl());
-
-// jsdom AbortSignals are incompatible with Node's fetch implementation.
-export const dropFetchSignals = () => {
-    const fetchTransport = globalThis.fetch;
-    vi.spyOn(globalThis, 'fetch').mockImplementation((input, init) =>
-        fetchTransport(input, { ...init, signal: undefined })
-    );
-};
 
 export const paymentMethod = {
     __typename: 'PaymentMethod' as const,

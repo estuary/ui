@@ -1,3 +1,6 @@
+import { readFileSync } from 'fs';
+import { resolve } from 'path';
+
 import {
     clickNext,
     editLiveCapture,
@@ -220,6 +223,122 @@ test.describe.serial('Capture edit:', () => {
 
         // The other publication is still live
         expect((await getLiveCapture(name))?.spec.interval).toBe('7m');
+    });
+});
+
+// Covers editing a capture whose config was encrypted with the sops CLI, which
+// keeps the config's key order. sops computes the MAC over values in document
+// order, so the discover fails if the UI drafts the keys in another order
+// (estuary/ui#2178).
+
+test.describe.serial('Capture edit with a sops CLI config:', () => {
+    test.setTimeout(240000);
+
+    const uuid = crypto.randomUUID().split('-')[0];
+    const name = `/${uuid}/`;
+
+    // Encrypted with the local stack's test age key. Parsed from the file, so
+    // its key order is kept.
+    const config = JSON.parse(
+        readFileSync(
+            resolve(
+                __dirname,
+                '../../src/test/fixtures/unsortedSopsConfig.json'
+            ),
+            'utf8'
+        )
+    );
+
+    let page: Page;
+    let email: string;
+    let tenant: string;
+
+    test.beforeAll(async ({ browser }) => {
+        test.setTimeout(240000);
+
+        page = await browser.newPage();
+        ({ email, tenant } = await defaultPageSetup(
+            page,
+            test,
+            USERS.captures
+        ));
+        await raiseTaskQuota(tenant);
+
+        // The connector requires a binding for each of the config's paths
+        const collection = `${tenant}/${uuid}/webhook-data`;
+        await publishDraftSpecs(
+            email,
+            [
+                {
+                    catalogName: collection,
+                    spec: {
+                        key: ['/_meta/webhookId'],
+                        schema: {
+                            // Lets the discover update the schema
+                            $defs: { 'flow://connector-schema': {} },
+                            type: 'object',
+                            properties: {
+                                _meta: {
+                                    type: 'object',
+                                    properties: {
+                                        webhookId: { type: 'string' },
+                                    },
+                                    required: ['webhookId'],
+                                },
+                            },
+                            required: ['_meta'],
+                        },
+                    },
+                    specType: 'collection',
+                    expectPubId: NEW_TASK_PUB_ID,
+                },
+                {
+                    catalogName: `${tenant}/${uuid}/source-http-ingest`,
+                    spec: {
+                        endpoint: {
+                            connector: {
+                                image: 'ghcr.io/estuary/source-http-ingest:dev',
+                                config,
+                            },
+                        },
+                        bindings: [
+                            {
+                                resource: { path: '/webhook-data' },
+                                target: collection,
+                            },
+                        ],
+                    },
+                    specType: 'capture',
+                    expectPubId: NEW_TASK_PUB_ID,
+                },
+            ],
+            'playwright sops CLI config'
+        );
+    });
+
+    // The published capture and its collections
+    test.afterAll(async () => {
+        await deleteLiveSpecs(email, `${tenant}/${uuid}`);
+    });
+
+    test('refresh discovers with the config as encrypted', async () => {
+        await editLiveCapture(page, (await getLiveCapture(name))!);
+        await page.getByRole('button', { name: 'Refresh' }).click();
+
+        const discoverStatuses = async () =>
+            (await getDraftedCapture(name))?.discoverStatuses ?? [];
+
+        // A reordered config fails with a MAC mismatch instead
+        await expect
+            .poll(
+                async () => {
+                    const statuses = await discoverStatuses();
+                    return statuses.length > 0 && !statuses.includes('queued');
+                },
+                { timeout: 90000 }
+            )
+            .toBe(true);
+        expect(await discoverStatuses()).toEqual(['success']);
     });
 });
 
