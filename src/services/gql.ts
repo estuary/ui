@@ -1,3 +1,5 @@
+import { makeOperation, mapExchange } from 'urql';
+
 import { graphql } from 'src/gql-types';
 import { supabaseClient } from 'src/services/supabaseClient';
 
@@ -57,3 +59,29 @@ export const authedFetch: typeof fetch = async (request, init = {}) => {
         headers: resHeaders,
     });
 };
+
+// URQL sorts object keys when it serializes variables, which breaks the MAC of
+// a sops-encrypted config. This rewrites the request body with the original
+// `variables`, keeping their key order. Must come right before fetchExchange.
+export const preserveKeyOrderExchange = mapExchange({
+    onOperation: (operation) => {
+        const baseFetch = operation.context.fetch ?? fetch;
+
+        return makeOperation(operation.kind, operation, {
+            ...operation.context,
+            fetch: (input, init) =>
+                baseFetch(
+                    input,
+                    typeof init?.body === 'string'
+                        ? {
+                              ...init,
+                              body: JSON.stringify({
+                                  ...JSON.parse(init.body),
+                                  variables: operation.variables,
+                              }),
+                          }
+                        : init
+                ),
+        });
+    },
+});

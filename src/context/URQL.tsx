@@ -11,13 +11,13 @@ import { useMemo } from 'react';
 
 import { cacheExchange } from '@urql/exchange-graphcache';
 import { requestPolicyExchange } from '@urql/exchange-request-policy';
-import { Client, fetchExchange, Provider } from 'urql';
+import { Client, composeExchanges, fetchExchange, Provider } from 'urql';
 
 import {
     TENANT_BILLING_CONTACT_QUERY,
     TENANT_BILLING_PAYMENT_METHODS_QUERY,
 } from 'src/api/gql/billing';
-import { authedFetch } from 'src/services/gql';
+import { authedFetch, preserveKeyOrderExchange } from 'src/services/gql';
 import { getGqlUrl } from 'src/utils/env-utils';
 
 function invalidateQuery(
@@ -78,6 +78,13 @@ function updateBillingContact(
                 : data
     );
 }
+
+// fetchExchange that sends variables with their original key order
+// to avoid breaking the MAC of a sops-encrypted config.
+const customFetchExchange = composeExchanges([
+    preserveKeyOrderExchange, // must come first
+    fetchExchange,
+]);
 
 export function UrqlConfigProvider({ children }: BaseComponentProps) {
     const gqlClient = useMemo(() => {
@@ -219,7 +226,7 @@ export function UrqlConfigProvider({ children }: BaseComponentProps) {
                         },
                     },
                 }),
-                fetchExchange,
+                customFetchExchange,
             ],
         });
         // No deps so client is created only once (recreating would drop the cache).
