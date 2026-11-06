@@ -152,7 +152,7 @@
         "@types/react-window": "^1.8.5",
         "@types/retry": "^0.12.5",
         "@vitejs/plugin-react": "^4.3.4",
-        "@vitest/ui": "^3.1.2",
+        "@vitest/ui": "^3.2.6",
         "browserslist-to-esbuild": "^2.1.1",
         "eslint": "^8.57.1",
         "eslint-config-kentcdodds": "^21.0.0",
@@ -162,14 +162,14 @@
         "eslint-plugin-unused-imports": "^4.3.0",
         "jsdom": "^24.0.0",
         "knip": "^6.23.0",
-        "licensee": "^11.1.1",
+        "licensee": "^12.0.0",
         "msw": "^2.0.11",
         "prettier": "^3.5.3",
         "rollup-plugin-license": "^3.7.0",
-        "sharp": "^0.34.1",
-        "storybook": "^10.3.4",
+        "sharp": "^0.35.5",
+        "storybook": "^10.6.2",
         "typescript": "^5.9.3",
-        "vite": "^6.4.1",
+        "vite": "^6.4.4",
         "vite-plugin-checker": "^0.9.1",
         "vite-plugin-circular-dependency": "^0.5.0",
         "vite-plugin-compression2": "^1.3.3",
@@ -178,7 +178,7 @@
         "vite-plugin-sri3": "^1.0.6",
         "vite-plugin-wasm": "^3.4.1",
         "vite-tsconfig-paths": "^5.1.4",
-        "vitest": "^3.1.2",
+        "vitest": "^3.2.6",
         "vitest-mock-extended": "^3.0.1"
     },
     "overrides": {
@@ -189,7 +189,14 @@
             "js-cookie": "^3.0.7"
         },
         "react-is": "^18.3.1",
-        "@types/node": "^22"
+        "@types/node": "^22",
+        "@graphql-tools/utils": "^12.0.2",
+        "@typescript-eslint/typescript-estree": {
+            "minimatch": "^9.0.7"
+        },
+        "vitest": {
+            "tinypool": "^2.1.2"
+        }
     },
     "browserslist": {
         "production": [
