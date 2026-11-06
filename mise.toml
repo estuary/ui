@@ -1,0 +1,11 @@
+# Tool versions for local development. See https://mise.jdx.dev
+#
+# CI does not read this file: the Dependency Scan workflow pins Trivy's version
+# and checksum itself, and that pin is the one that gates pull requests and
+# deploys. Keep this version in step with it, so a local
+# `trivy fs package-lock.json` runs the same release.
+[tools]
+"github:aquasecurity/trivy" = { version = "0.76.0", platforms = { linux-arm64 = { asset_pattern = "trivy_*_Linux-ARM64.tar.gz" }, linux-x64 = { asset_pattern = "trivy_*_Linux-64bit.tar.gz" }, macos-arm64 = { asset_pattern = "trivy_*_macOS-ARM64.tar.gz" } } }
+
+[settings]
+auto_install = false

@@ -95,12 +95,26 @@ jobs:
             - name: Build
               run: npm run build
 
+    # The deploy waits on the same scan pull requests must pass, run again at
+    # deploy time, so a vulnerability published since the pull request was
+    # checked still stops it. dependency-scan.yml covers pull requests itself.
+    # Named apart from that workflow's required check: this job is skipped on
+    # pull requests, and a skipped check would satisfy a requirement it shares
+    # a name with.
+    dependency-scan:
+        name: Pre-deploy Dependency Scan
+        if: ${{ github.ref == 'refs/heads/main' }}
+        uses: ./.github/workflows/dependency-scan.yml
+        permissions:
+            contents: read
+            issues: write # its report job opens the tracking issue
+
     # Deployment steps undertaken on a merge to `main`.
     deploy:
         name: Deploy
         env:
             NODE_OPTIONS: '--max_old_space_size=4096'
-        needs: [quality, schema-check]
+        needs: [quality, schema-check, dependency-scan]
         runs-on: ubuntu-latest
         if: ${{ github.ref == 'refs/heads/main' }}
 
