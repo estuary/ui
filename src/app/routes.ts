@@ -246,6 +246,18 @@ const user = {
     },
 };
 
+const testPages = {
+    path: 'test',
+    jsonforms: {
+        path: 'jsonforms',
+        fullPath: '/test/jsonforms',
+    },
+    gql: {
+        path: 'gql',
+        fullPath: '/test/gql',
+    },
+};
+
 const beta = {
     title: 'routeTitle.collectionCreate',
     path: 'beta/collections/create',
@@ -276,6 +288,7 @@ export const authenticatedRoutes = {
     user,
     pageNotFound,
     beta,
+    testPages,
 };
 
 export const unauthenticatedRoutes = {

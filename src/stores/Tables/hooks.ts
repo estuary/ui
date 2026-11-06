@@ -11,7 +11,7 @@ import {
 
 import { getPagination } from 'src/utils/table-utils';
 
-enum TableFilterKeys {
+export enum TableFilterKeys {
     pagination = 'p',
     rowsPerPage = 'r',
     searchQuery = 's',

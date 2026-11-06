@@ -4,7 +4,7 @@ import { useSearchParams } from 'react-router-dom';
 
 import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
 
-const Dialogs = {
+export const Dialogs = {
     CREATE_STORAGE_MAPPING: {
         id: 'create-storage-mapping',
         contextParams: [],
