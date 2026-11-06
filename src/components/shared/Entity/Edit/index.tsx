@@ -49,6 +49,7 @@ import {
     useFormStateStore_logToken,
     useFormStateStore_messagePrefix,
 } from 'src/stores/FormState/hooks';
+import { useSecretsStore_serverUpdateRequired } from 'src/stores/Secrets/hooks';
 import { hasLength } from 'src/utils/misc-utils';
 
 interface Props {
@@ -109,6 +110,9 @@ function EntityEdit({
     const endpointConfigServerUpdateRequired =
         useEndpointConfig_serverUpdateRequired();
 
+    // Secrets Store
+    const secretsServerUpdateRequired = useSecretsStore_serverUpdateRequired();
+
     // Form State Store
     const messagePrefix = useFormStateStore_messagePrefix();
 
@@ -133,7 +137,8 @@ function EntityEdit({
         const resetDraftIdFlag =
             endpointConfigServerUpdateRequired ||
             resourceConfigServerUpdateRequired ||
-            rediscoveryRequired;
+            rediscoveryRequired ||
+            secretsServerUpdateRequired;
 
         const newValue = resetDraftIdFlag ? null : persistedDraftId;
 
@@ -141,6 +146,7 @@ function EntityEdit({
             rediscoveryRequired,
             endpointConfigServerUpdateRequired,
             resourceConfigServerUpdateRequired,
+            secretsServerUpdateRequired,
             newValue: newValue ?? 'null',
             component: 'EntityEdit',
         });
@@ -152,6 +158,7 @@ function EntityEdit({
         persistedDraftId,
         resourceConfigServerUpdateRequired,
         rediscoveryRequired,
+        secretsServerUpdateRequired,
     ]);
 
     // TODO (defect): Trigger the prompt data loss modal if the resource config section changes.

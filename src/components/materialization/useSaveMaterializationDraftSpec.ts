@@ -4,6 +4,7 @@ import { useCallback } from 'react';
 
 import { createDraftSpec, modifyDraftSpec } from 'src/api/draftSpecs';
 import { useGetDraftSpec } from 'src/hooks/drafts/useGetDraftSpec';
+import { useSecretsStore_usesSecrets } from 'src/stores/Secrets/hooks';
 import { validateEndpointConfig } from 'src/utils/workflow-utils';
 
 /**
@@ -13,6 +14,7 @@ import { validateEndpointConfig } from 'src/utils/workflow-utils';
  */
 export function useSaveMaterializationDraftSpec() {
     const getDraftSpec = useGetDraftSpec('materialization');
+    const usesSecrets = useSecretsStore_usesSecrets();
 
     return useCallback(
         async (
@@ -21,7 +23,7 @@ export function useSaveMaterializationDraftSpec() {
             expectPubId: string | null,
             specDef: MaterializationDef
         ): Promise<Error | null> => {
-            const configError = validateEndpointConfig(specDef);
+            const configError = validateEndpointConfig(specDef, usesSecrets);
             if (configError) {
                 return configError;
             }
@@ -66,6 +68,6 @@ export function useSaveMaterializationDraftSpec() {
 
             return null;
         },
-        [getDraftSpec]
+        [getDraftSpec, usesSecrets]
     );
 }

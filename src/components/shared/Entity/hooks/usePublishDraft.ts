@@ -48,6 +48,7 @@ import { FormStatus } from 'src/stores/FormState/types';
 import useNotificationStore, {
     notificationStoreSelectors,
 } from 'src/stores/NotificationStore';
+import { useSecretsStore_resetState } from 'src/stores/Secrets/hooks';
 import { hasLength } from 'src/utils/misc-utils';
 import { getCollectionName } from 'src/utils/workflow-utils';
 
@@ -94,6 +95,8 @@ export function usePublishDraft(
     const setFormState = useFormStateStore_setFormState();
     const updateFormStatus = useFormStateStore_updateStatus();
 
+    const secretsResetState = useSecretsStore_resetState();
+
     const showNotification = useNotificationStore(
         notificationStoreSelectors.showNotification
     );
@@ -136,6 +139,12 @@ export function usePublishDraft(
                         status: formStatus,
                         exitWhenLogsClose: !dryRun,
                     });
+
+                    // The task now references its secrets, so clear the values
+                    // from the store as they aren't needed anymore
+                    if (!dryRun) {
+                        secretsResetState();
+                    }
 
                     let description, title;
 
@@ -221,6 +230,7 @@ export function usePublishDraft(
             mutateDraftSpecs,
             onFailure,
             postHog,
+            secretsResetState,
             setFormState,
             setIncompatibleCollections,
             setPubId,
