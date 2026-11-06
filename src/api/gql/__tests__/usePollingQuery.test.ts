@@ -457,14 +457,31 @@ describe('usePollingQuery', () => {
             expect(reexecuteQuery).not.toHaveBeenCalled();
         });
 
-        test('does not refetch on visibility when polling is disabled', () => {
+        test('refetches on visibility even when polling is disabled', () => {
             mockQuery();
             renderPollingQuery();
 
             setPageHidden(true);
             setPageHidden(false);
 
+            expect(reexecuteQuery).toHaveBeenCalledTimes(1);
+        });
+
+        // Without an interval to measure against, data under 5s old counts as fresh
+        test('waits 5s before refetching on visibility when polling is disabled', () => {
+            mockQuery();
+            const { rerender } = renderPollingQuery();
+            completeFetch(rerender);
+
+            setPageHidden(true);
+            advance(4999);
+            setPageHidden(false);
             expect(reexecuteQuery).not.toHaveBeenCalled();
+
+            setPageHidden(true);
+            advance(1);
+            setPageHidden(false);
+            expect(reexecuteQuery).toHaveBeenCalledTimes(1);
         });
 
         test('does not refetch on visibility while paused', () => {

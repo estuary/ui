@@ -1,9 +1,5 @@
 import type { PostgrestResponse } from '@supabase/postgrest-js';
-import type {
-    CatalogStats,
-    CatalogStats_Backlog,
-    CatalogStats_LastPublished,
-} from 'src/types';
+import type { CatalogStats } from 'src/types';
 
 import { UTCDate } from '@date-fns/utc';
 import {
@@ -16,10 +12,8 @@ import {
     subMonths,
     subWeeks,
 } from 'date-fns';
-import { DateTime } from 'luxon';
 import pLimit from 'p-limit';
 
-import { defaultQueryDateFormat } from 'src/services/luxon';
 import { TABLES } from 'src/services/supabase';
 import { supabaseClient } from 'src/services/supabaseClient';
 import { CHUNK_SIZE } from 'src/utils/misc-utils';
@@ -50,10 +44,6 @@ const DEFAULT_COLS = [
     'docs_read_from_me',
 ];
 const DEFAULT_QUERY = `${BASE_QUERY},${DEFAULT_COLS.join(',')}`;
-
-// Per-binding readings live in the stats document rather than in dedicated
-// columns, so anything below binding granularity has to come out of the JSON.
-const STATS_DOCUMENT_QUERY = `${BASE_QUERY},flow_document`;
 
 const hourlyGrain = 'hourly';
 const dailyGrain = 'daily';
@@ -183,45 +173,4 @@ const getStatsByName = async (names: string[], filter?: StatsFilter) => {
     return errors[0] ?? { data: response.flatMap((r) => r.data) };
 };
 
-// `bytesBehind` is a gauge describing where a materialization stands right now,
-// so the newest reading is the only one worth showing, and hourly is the finest
-// grain available.
-//
-// A few rows are fetched rather than just the newest, because a row carries no
-// binding stats at all when a usage heartbeat opened the hour — see
-// `newestBindingStats`, which picks the newest row that does.
-const BACKLOG_HOURS = 6;
-
-const getMaterializationBacklog = (catalogName: string) => {
-    return supabaseClient
-        .from(TABLES.CATALOG_STATS)
-        .select(STATS_DOCUMENT_QUERY)
-        .eq('catalog_name', catalogName)
-        .eq('grain', hourlyGrain)
-        .order('ts', { ascending: false })
-        .limit(BACKLOG_HOURS)
-        .returns<CatalogStats_Backlog[]>();
-};
-
-// Where each of a materialization's source collections has been written up to,
-// which pairs with the task's own `lastSourcePublishedAt` to say how far behind
-// it is in time. `lastPublishedAt` reduces by maximizing, so a month's row
-// already holds the latest publication within that month; two months of rows
-// place the frontier of any collection still being written to.
-const getCollectionsLastPublished = (collectionNames: string[]) => {
-    const previousMonth = DateTime.utc().startOf('month').minus({ months: 1 });
-
-    return supabaseClient
-        .from(TABLES.CATALOG_STATS)
-        .select(STATS_DOCUMENT_QUERY)
-        .in('catalog_name', collectionNames)
-        .eq('grain', monthlyGrain)
-        .gte('ts', previousMonth.toFormat(defaultQueryDateFormat))
-        .returns<CatalogStats_LastPublished[]>();
-};
-
-export {
-    getCollectionsLastPublished,
-    getMaterializationBacklog,
-    getStatsByName,
-};
+export { getStatsByName };
