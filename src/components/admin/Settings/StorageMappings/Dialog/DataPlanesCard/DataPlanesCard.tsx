@@ -5,7 +5,6 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Collapse, Stack } from '@mui/material';
 
 import { Flipped, Flipper } from 'react-flip-toolkit';
-import { useIntl } from 'react-intl';
 
 import { DataPlaneRow } from 'src/components/admin/Settings/StorageMappings/Dialog/DataPlanesCard/DataPlaneRow';
 import { DataPlaneSelector } from 'src/components/admin/Settings/StorageMappings/Dialog/DataPlanesCard/DataPlaneSelector';
@@ -35,7 +34,6 @@ export function DataPlanesCard({
     onSelectDefault,
     onToggleAllowPublic,
 }: DataPlanesCardProps) {
-    const intl = useIntl();
     const { dataPlanes } = useDataPlanes();
 
     // users shouldn't add storage mappings to closed data planes
@@ -140,12 +138,8 @@ export function DataPlanesCard({
     return (
         <>
             <CardTitle
-                title={intl.formatMessage({
-                    id: 'storageMappings.dialog.dataPlanes.title',
-                })}
-                action={intl.formatMessage({
-                    id: 'storageMappings.dialog.dataPlanes.addAction',
-                })}
+                title="Data Planes"
+                action="Add data plane"
                 onAction={() => setSelectorIsOpen(true)}
                 actionDisabled={effectiveSelectorIsOpen || !hasMoreOptions}
             />

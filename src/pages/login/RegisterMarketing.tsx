@@ -1,14 +1,10 @@
 import { Stack, Typography } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 import CustomerLogos from 'src/pages/login/CustomerLogos';
 import CustomerQuote from 'src/pages/login/CustomerQuote';
 import RegisterPerk from 'src/pages/login/Perk';
 
 function RegisterMarketing() {
-    const intl = useIntl();
-
     return (
         <Stack spacing={4} style={{ alignItems: 'center' }}>
             <Typography
@@ -17,7 +13,8 @@ function RegisterMarketing() {
                 style={{ fontSize: 20, fontWeight: 300, width: 350 }}
                 variant="h5"
             >
-                {intl.formatMessage({ id: 'login.register.marketing.title' })}
+                Estuary is the Universal Data Layer for real-time streaming and
+                batch data integration
             </Typography>
 
             <Stack

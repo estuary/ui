@@ -5,8 +5,6 @@ import { useState } from 'react';
 
 import { Button } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 import { useBindingsEditorStore } from 'src/components/editor/Bindings/Store/create';
 import { useEditorStore_queryResponse_mutate } from 'src/components/editor/Store/hooks';
 import { useRedactionAnnotation } from 'src/hooks/projections/useRedactionAnnotation';
@@ -25,8 +23,6 @@ const SaveButton = ({
     setError,
     strategy,
 }: RedactSaveButtonProps) => {
-    const intl = useIntl();
-
     const { updateRedactionAnnotation } = useRedactionAnnotation();
 
     const mutateDraftSpecs = useEditorStore_queryResponse_mutate({
@@ -103,9 +99,7 @@ const SaveButton = ({
                                           message:
                                               typeof error === 'string'
                                                   ? error
-                                                  : intl.formatMessage({
-                                                        id: 'projection.error.alert.redactDefaultError',
-                                                    }),
+                                                  : 'An issue was encountered updating the redaction strategy for this location. Please try again.',
                                       };
 
                             setError(formattedError);
@@ -117,9 +111,7 @@ const SaveButton = ({
             }}
             variant="outlined"
         >
-            {intl.formatMessage({
-                id: 'cta.evolve',
-            })}
+            Apply
         </Button>
     );
 };

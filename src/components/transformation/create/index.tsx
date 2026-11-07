@@ -16,8 +16,6 @@ import {
     useMediaQuery,
 } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 import SingleLineCode from 'src/components/content/SingleLineCode';
 import BindingSelector from 'src/components/editor/Bindings/Selector';
 import PrefixedName from 'src/components/inputs/PrefixedName';
@@ -47,7 +45,6 @@ const StyledStepConnector = styled(StepConnector)(() => ({
 function TransformationCreate({
     draftCreationCallback,
 }: TransformationCreateProps) {
-    const intl = useIntl();
     const belowSm = useMediaQuery<Theme>((theme) =>
         theme.breakpoints.down('sm')
     );
@@ -88,20 +85,14 @@ function TransformationCreate({
                         <Step active>
                             <StepLabel>
                                 <Typography>
-                                    {intl.formatMessage({
-                                        id: 'newTransform.stepper.step1.label',
-                                    })}
+                                    Select source collections
                                 </Typography>
                             </StepLabel>
                         </Step>
 
                         <Step active>
                             <StepLabel>
-                                <Typography>
-                                    {intl.formatMessage({
-                                        id: 'newTransform.stepper.step2.label',
-                                    })}
-                                </Typography>
+                                <Typography>Transformation Language</Typography>
                             </StepLabel>
                         </Step>
                     </Stepper>
@@ -134,18 +125,12 @@ function TransformationCreate({
                                 alternativeLabel: true,
                             }}
                         >
-                            <Typography>
-                                {intl.formatMessage({
-                                    id: 'newTransform.stepper.step3.label',
-                                })}
-                            </Typography>
+                            <Typography>Write transformations</Typography>
                         </LegacySingleStep>
 
                         <PrefixedName
                             size="medium"
-                            label={intl.formatMessage({
-                                id: 'newTransform.collection.label',
-                            })}
+                            label="Derived Collection Name"
                             onChange={(newName, errors) => {
                                 setCatalogName(newName);
                                 setEntityNameError(errors);
@@ -165,22 +150,16 @@ function TransformationCreate({
                         <Stack spacing={1}>
                             <Typography variant="caption">
                                 <Box>
-                                    {intl.formatMessage({
-                                        id: 'newTransform.instructions1',
-                                    })}
+                                    You will be set up with an environment to
+                                    create a transformation.
                                 </Box>
                                 <Box>
-                                    {intl.formatMessage({
-                                        id: 'newTransform.instructions2',
-                                    })}
+                                    Create your query and use the CLI to
+                                    continue, e.g
                                 </Box>
                             </Typography>
 
-                            <SingleLineCode
-                                value={intl.formatMessage({
-                                    id: 'newTransform.instructions2.code',
-                                })}
-                            />
+                            <SingleLineCode value="flowctl --help" />
                         </Stack>
                     </Box>
                 </Box>

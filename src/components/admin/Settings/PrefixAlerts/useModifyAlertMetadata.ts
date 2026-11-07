@@ -5,7 +5,6 @@ import type { CombinedError } from 'urql';
 import { useState } from 'react';
 
 import { isEmpty, isEqual } from 'lodash';
-import { useIntl } from 'react-intl';
 
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
 import { useDeleteAlertSubscription } from 'src/components/admin/Settings/PrefixAlerts/useDeleteAlertSubscription';
@@ -19,8 +18,6 @@ export function useModifyAlertMetadata(
     closeDialog: () => void,
     deletionTrigger?: boolean
 ) {
-    const intl = useIntl();
-
     const { upsertSubscription } = useUpsertAlertSubscription();
     const { deleteSubscription } = useDeleteAlertSubscription();
 
@@ -110,9 +107,8 @@ export function useModifyAlertMetadata(
                             response.value?.invalid && !response.value?.error
                                 ? {
                                       ...BASE_ERROR,
-                                      message: intl.formatMessage({
-                                          id: 'alerts.config.dialog.error.generic',
-                                      }),
+                                      message:
+                                          'An issue was encountered during an alert-related server operation.',
                                   }
                                 : response.value?.error;
 
@@ -179,9 +175,8 @@ export function useModifyAlertMetadata(
                     configResponse?.invalid && !configResponse?.error
                         ? {
                               ...BASE_ERROR,
-                              message: intl.formatMessage({
-                                  id: 'alerts.config.dialog.error.generic',
-                              }),
+                              message:
+                                  'An issue was encountered during an alert-related server operation.',
                           }
                         : configResponse?.error;
 

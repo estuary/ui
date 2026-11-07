@@ -5,8 +5,6 @@ import { useState } from 'react';
 
 import { Grid, Stack, Table, TableContainer } from '@mui/material';
 
-import { FormattedMessage, useIntl } from 'react-intl';
-
 import CardWrapper from 'src/components/shared/CardWrapper';
 import ShardAlerts from 'src/components/shared/Entity/Shard/Alerts';
 import HydrationError from 'src/components/shared/Entity/Shard/HydrationError';
@@ -35,8 +33,6 @@ const columns: TableColumns[] = [
 ];
 
 function ShardInformation({ taskName, taskTypes }: Props) {
-    const intl = useIntl();
-
     const [page, setPage] = useState(0);
 
     const error = useShardDetail_error();
@@ -45,15 +41,9 @@ function ShardInformation({ taskName, taskTypes }: Props) {
         <CardWrapper
             message={
                 <Stack direction="row" spacing={1}>
-                    <FormattedMessage id="detailsPanel.shardDetails.title" />
-                    <ExternalLink
-                        link={intl.formatMessage({
-                            id: 'detailsPanel.shardDetails.docPath',
-                        })}
-                    >
-                        {intl.formatMessage({
-                            id: 'terms.documentation',
-                        })}
+                    Shard Information
+                    <ExternalLink link="https://docs.estuary.dev/concepts/advanced/shards/">
+                        Docs
                     </ExternalLink>
                 </Stack>
             }

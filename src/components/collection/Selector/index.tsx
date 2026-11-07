@@ -2,8 +2,6 @@ import type { CollectionSelectorProps } from 'src/components/collection/Selector
 
 import { Stack, Typography, useTheme } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 import BindingsEditorAdd from 'src/components/collection/Selector/Add';
 import { defaultOutline } from 'src/context/Theme';
 
@@ -14,11 +12,9 @@ function CollectionSelector({
     AddSelectedButton,
     selectedCollections,
 }: CollectionSelectorProps) {
-    const intl = useIntl();
     const theme = useTheme();
 
-    const collectionsLabel =
-        itemType ?? intl.formatMessage({ id: 'terms.collections' });
+    const collectionsLabel = itemType ?? 'Collections';
 
     return (
         <Stack

@@ -2,7 +2,6 @@ import { CommonMessages } from 'src/lang/en-US/CommonMessages';
 
 export const RouteTitles: Record<string, string> = {
     'routeTitle.home': `Welcome`,
-    'routeTitle.dashboard': `Dashboard`,
     'routeTitle.admin': `Admin`,
     'routeTitle.admin.accessGrants': `Access Grants`,
     'routeTitle.admin.api': `CLI - API`,
@@ -16,7 +15,6 @@ export const RouteTitles: Record<string, string> = {
     'routeTitle.collectionCreate': `Create Transformation`,
     'routeTitle.collectionDetails': `Collection Details`,
     'routeTitle.dataPlaneAuthReq': `Data Plane Authorization Checkpoint`,
-    'routeTitle.directives': `Directives`,
     'routeTitle.details': `Details`,
     'routeTitle.error.entityNotFound': `Entity Not Found`,
     'routeTitle.error.pageNotFound': `Page Not Found`,

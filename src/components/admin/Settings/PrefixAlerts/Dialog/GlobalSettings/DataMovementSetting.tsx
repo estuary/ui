@@ -12,7 +12,6 @@ import {
 } from '@mui/material';
 
 import { cloneDeep, set } from 'lodash';
-import { useIntl } from 'react-intl';
 
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
 import useSettingIntervalOptions from 'src/components/shared/Entity/Details/Overview/NotificationSettings/useSettingIntervalOptions';
@@ -28,8 +27,6 @@ const DataMovementSetting = ({
     prefix,
     targetSetting,
 }: GlobalSettingProps) => {
-    const intl = useIntl();
-
     const { options } = useSettingIntervalOptions();
 
     const setGlobalPrefixSettings = useAlertSubscriptionsStore(
@@ -45,15 +42,11 @@ const DataMovementSetting = ({
         <Stack spacing={2}>
             <Stack spacing="2px" style={{ flexGrow: 1 }}>
                 <Typography style={{ fontWeight: 500 }}>
-                    {intl.formatMessage({
-                        id: 'alerts.alertType.humanReadable.data_movement_stalled',
-                    })}
+                    Data Movement Stalled
                 </Typography>
 
                 <Typography>
-                    {intl.formatMessage({
-                        id: 'details.settings.notifications.dataProcessing.noDataProcessedInInterval.message',
-                    })}
+                    Data has not been processed in a given window of time.
                 </Typography>
             </Stack>
 
@@ -91,9 +84,7 @@ const DataMovementSetting = ({
                     }: AutocompleteRenderInputParams) => (
                         <TextField
                             {...params}
-                            label={intl.formatMessage({
-                                id: 'details.settings.notifications.dataProcessing.noDataProcessedInInterval.label',
-                            })}
+                            label="Interval"
                             size="small"
                             variant="outlined"
                             slotProps={{

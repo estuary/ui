@@ -9,7 +9,6 @@ import { withJsonFormsControlProps } from '@jsonforms/react';
 
 import { startCase } from 'lodash';
 import GoogleButton from 'react-google-button';
-import { FormattedMessage, useIntl } from 'react-intl';
 import { useMount } from 'react-use';
 
 import FullPageSpinner from 'src/components/fullPage/Spinner';
@@ -45,8 +44,6 @@ const OAuthproviderRenderer = ({
     rootSchema,
 }: ControlProps) => {
     const { options } = uischema;
-
-    const intl = useIntl();
 
     // Fetch what we need from stores
     const setCustomErrors = useEndpointConfigStore_setCustomErrors();
@@ -186,12 +183,7 @@ const OAuthproviderRenderer = ({
         // Used to set an error for the OAuth Renderer
         if (!hasAllRequiredProps) {
             customErrors.push(
-                generateCustomError(
-                    path,
-                    intl.formatMessage({
-                        id: 'oauth.error.credentialsMissing',
-                    })
-                )
+                generateCustomError(path, 'need to complete OAuth')
             );
         }
 
@@ -201,7 +193,7 @@ const OAuthproviderRenderer = ({
             // Make sure we clean up the custom errors if we leave this component
             setCustomErrors([]);
         };
-    }, [hasAllRequiredProps, intl, path, setCustomErrors]);
+    }, [hasAllRequiredProps, path, setCustomErrors]);
 
     return (
         <Box
@@ -213,10 +205,7 @@ const OAuthproviderRenderer = ({
 
             <Stack direction="column" spacing={2}>
                 <Typography>
-                    <FormattedMessage
-                        id="oauth.instructions"
-                        values={{ provider }}
-                    />
+                    {`Authenticate your ${provider} account by clicking below. A pop up will open where you can authorize access. No data will be accessed during authorization.`}
                 </Typography>
 
                 {isEdit ? (
@@ -226,7 +215,8 @@ const OAuthproviderRenderer = ({
                             maxWidth: '50%',
                         }}
                     >
-                        <FormattedMessage id="oauth.edit.message" />
+                        If you edit your endpoint config and want to continue
+                        using OAuth you must reauthenticate.
                     </Alert>
                 ) : null}
 
@@ -258,29 +248,19 @@ const OAuthproviderRenderer = ({
                             disabled={!enabled || loading}
                             onClick={openPopUp}
                         >
-                            <FormattedMessage
-                                id="oauth.authenticate"
-                                values={{ provider }}
-                            />
+                            {`Authenticate your ${provider} account`}
                         </Button>
                     )}
 
                     {showAuthenticated ? (
                         <Chip
                             disabled={!enabled || loading}
-                            label={intl.formatMessage({
-                                id: 'oauth.authenticated',
-                            })}
+                            label="Authenticated"
                             color="success"
                             onDelete={setConfigToDefault}
                         />
                     ) : (
-                        <Chip
-                            label={intl.formatMessage({
-                                id: 'oauth.unauthenticated',
-                            })}
-                            color="warning"
-                        />
+                        <Chip label="Not Authenticated" color="warning" />
                     )}
                 </Stack>
             </Stack>

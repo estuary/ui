@@ -51,9 +51,7 @@ function DetailsFormForm({ entityType, readOnly }: Props) {
                         short
                         severity="info"
                     >
-                        {intl.formatMessage({
-                            id: 'entityEdit.alert.detailsFormDisabled',
-                        })}
+                        The details form cannot be edited at this time.
                     </AlertBox>
                 </Box>
             ) : null}

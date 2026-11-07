@@ -1,6 +1,5 @@
 import { Typography } from '@mui/material';
 
-import { FormattedMessage } from 'react-intl';
 import { useMount } from 'react-use';
 
 import usePageTitle from 'src/hooks/usePageTitle';
@@ -25,7 +24,7 @@ const EntityNotFound = ({ catalogName }: Props) => {
     return (
         <>
             <Typography variant="h5" align="center" sx={{ mb: 2 }}>
-                <FormattedMessage id="entityNotFound.heading" />
+                Sorry, that entity cannot be found.
             </Typography>
 
             <Typography align="center" sx={{ wordBreak: 'break-all' }}>
@@ -34,13 +33,14 @@ const EntityNotFound = ({ catalogName }: Props) => {
                         {catalogName}
                     </Typography>
                 ) : (
-                    <FormattedMessage id="entityNotFound.message.default" />
+                    <>The entity you are looking for</>
                 )}{' '}
-                <FormattedMessage id="entityNotFound.detail" />
+                was unable to be found.
             </Typography>
 
             <Typography align="center">
-                <FormattedMessage id="entityNotFound.explanation" />
+                This is likely because it has been deleted or you do not have
+                access.
             </Typography>
         </>
     );

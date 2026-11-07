@@ -4,8 +4,6 @@ import { useCallback, useState } from 'react';
 
 import { Button, Stack } from '@mui/material';
 
-import { FormattedMessage } from 'react-intl';
-
 import MagicLinkInputs from 'src/components/login/MagicLinkInputs';
 import useRedirectPath from 'src/components/login/useRedirectPath';
 import { supabaseClient } from 'src/services/supabaseClient';
@@ -58,13 +56,9 @@ const MagicLink = ({ grantToken, hideCodeInput }: MagicLinkProps) => {
                         width: 'auto',
                     }}
                 >
-                    <FormattedMessage
-                        id={
-                            showTokenValidation
-                                ? 'login.magicLink.requestOTP'
-                                : 'login.magicLink.verifyOTP'
-                        }
-                    />
+                    {showTokenValidation
+                        ? 'Request a magic link'
+                        : 'Already have an OTP code?'}
                 </Button>
             )}
         </Stack>

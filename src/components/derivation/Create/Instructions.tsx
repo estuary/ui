@@ -5,25 +5,15 @@ import type {
 
 import { Stack, Step, Stepper, Typography } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 import InstructionStep from 'src/components/derivation/Create/InstructionStep';
 import TechnicalEmphasis from 'src/components/derivation/Create/TechnicalEmphasis';
 
 function Instructions({ draftId }: InstructionsProps) {
-    const intl = useIntl();
-
     const steps: InstructionStepProps[] = [
         {
             labelKey: 'newTransform.steps.1',
             labelValues: {
-                emphasis: (
-                    <TechnicalEmphasis>
-                        {intl.formatMessage({
-                            id: 'newTransform.steps.1.emphasis',
-                        })}
-                    </TechnicalEmphasis>
-                ),
+                emphasis: <TechnicalEmphasis>flowctl</TechnicalEmphasis>,
             },
             contentSections: ['linked'],
         },
@@ -46,9 +36,7 @@ function Instructions({ draftId }: InstructionsProps) {
             detailsValues: {
                 emphasis: (
                     <TechnicalEmphasis enableBackground>
-                        {intl.formatMessage({
-                            id: 'newTransform.steps.5.details.emphasis',
-                        })}
+                        flow.yaml
                     </TechnicalEmphasis>
                 ),
             },
@@ -66,9 +54,9 @@ function Instructions({ draftId }: InstructionsProps) {
     return (
         <Stack spacing={2}>
             <Typography>
-                {intl.formatMessage({
-                    id: 'newTransform.steps.message',
-                })}
+                {
+                    "Now that you've created a derivation draft, you will need to continue development locally or in a cloud environment. Follow these steps to edit and publish your derivation using the command line."
+                }
             </Typography>
 
             <Stepper

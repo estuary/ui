@@ -1,7 +1,5 @@
 import { Typography, useTheme } from '@mui/material';
 
-import { FormattedMessage } from 'react-intl';
-
 import ListAndDetails from 'src/components/editor/ListAndDetails';
 import WrapperWithHeader from 'src/components/shared/Entity/WrapperWithHeader';
 import ErrorBoundryWrapper from 'src/components/shared/ErrorBoundryWrapper';
@@ -18,7 +16,7 @@ function DerivationConfig() {
         <WrapperWithHeader header={<DerivationCatalogHeader />}>
             <ErrorBoundryWrapper>
                 <Typography sx={{ mb: 3 }}>
-                    <FormattedMessage id="newTransform.config.description" />
+                    This is a placeholder for a section description
                 </Typography>
 
                 <ListAndDetails

@@ -4,7 +4,6 @@ import { useMemo } from 'react';
 
 import { Button } from '@mui/material';
 
-import { FormattedMessage, useIntl } from 'react-intl';
 import { NavLink } from 'react-router-dom';
 
 import { authenticatedRoutes } from 'src/app/routes';
@@ -26,7 +25,6 @@ interface Props {
 function EditLink({ liveSpecId, name, variant }: Props) {
     const entityType = useEntityType();
 
-    const intl = useIntl();
     const to = useMemo(() => {
         const path: AllowedPaths | null =
             entityType === 'capture'
@@ -53,10 +51,7 @@ function EditLink({ liveSpecId, name, variant }: Props) {
         <NavLink
             style={{ textDecoration: 'none' }}
             to={to}
-            aria-label={intl.formatMessage(
-                { id: 'entityTable.edit.aria' },
-                { name }
-            )}
+            aria-label={`Edit specification of ${name}`}
         >
             <Button
                 variant={variant ?? 'text'}
@@ -64,7 +59,7 @@ function EditLink({ liveSpecId, name, variant }: Props) {
                 disableElevation
                 sx={{ mr: 1 }}
             >
-                <FormattedMessage id="cta.edit" />
+                Edit
             </Button>
         </NavLink>
     );

@@ -1,7 +1,5 @@
 import { Typography } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 import {
     ConnectionList,
     useConnectionTest,
@@ -9,18 +7,13 @@ import {
 import { CardTitle } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/CardTitle';
 
 export function ConnectionTestsCard() {
-    const intl = useIntl();
     const { testConnections, connections, isTesting } = useConnectionTest();
 
     return (
         <>
             <CardTitle
-                title={intl.formatMessage({
-                    id: 'storageMappings.dialog.connectionTests.title',
-                })}
-                action={intl.formatMessage({
-                    id: 'storageMappings.dialog.connectionTests.runTests',
-                })}
+                title="Connection Tests"
+                action="Run tests"
                 onAction={() => {
                     for (const connection of connections.filter(
                         (c) => !c.orphaned
@@ -32,11 +25,7 @@ export function ConnectionTestsCard() {
                 }}
                 actionDisabled={isTesting}
             />
-            <Typography>
-                {intl.formatMessage({
-                    id: 'storageMappings.dialog.connectionTests.allMustPass',
-                })}
-            </Typography>
+            <Typography>All tests must pass before saving changes.</Typography>
 
             <ConnectionList autoTest />
         </>

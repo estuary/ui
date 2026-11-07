@@ -5,7 +5,6 @@ import { Box } from '@mui/material';
 import { useShallow } from 'zustand/react/shallow';
 
 import { useSnackbar } from 'notistack';
-import { useIntl } from 'react-intl';
 import { useMount } from 'react-use';
 
 import { useEditorStore_persistedDraftId } from 'src/components/editor/Store/hooks';
@@ -18,7 +17,6 @@ import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
 import { snackbarSettings } from 'src/utils/notification-utils';
 
 const FieldsRecommendedUpdateWrapper = () => {
-    const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
     const workflow = useEntityWorkflow();
 
@@ -75,12 +73,10 @@ const FieldsRecommendedUpdateWrapper = () => {
                     setFormState({ status: FormStatus.UPDATED });
                 })
                 .catch(() => {
-                    enqueueSnackbar(
-                        intl.formatMessage({
-                            id: 'specPropEditor.update.error',
-                        }),
-                        { ...snackbarSettings, variant: 'error' }
-                    );
+                    enqueueSnackbar('Changes to draft not saved.', {
+                        ...snackbarSettings,
+                        variant: 'error',
+                    });
 
                     setFieldsRecommended(currentSetting);
                     setFormState({ status: FormStatus.FAILED });
@@ -90,7 +86,6 @@ const FieldsRecommendedUpdateWrapper = () => {
         [
             currentSetting,
             enqueueSnackbar,
-            intl,
             setFieldsRecommended,
             setFormState,
             setSaving,

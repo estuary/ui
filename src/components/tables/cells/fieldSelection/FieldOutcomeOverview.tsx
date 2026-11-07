@@ -2,14 +2,10 @@ import type { BaseFieldOutcomeProps } from 'src/components/tables/cells/types';
 
 import { Box, Stack, Typography } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 import FieldOutput from 'src/components/tables/cells/fieldSelection/FieldOutput';
 import { hasFieldConflict } from 'src/utils/fieldSelection-utils';
 
 const FieldOutcomeOverview = ({ outcome }: BaseFieldOutcomeProps) => {
-    const intl = useIntl();
-
     const conflictExists = hasFieldConflict(outcome);
 
     return (
@@ -17,11 +13,9 @@ const FieldOutcomeOverview = ({ outcome }: BaseFieldOutcomeProps) => {
             {outcome?.select ? (
                 <Box>
                     <Typography style={{ marginBottom: 4 }}>
-                        {intl.formatMessage({
-                            id: conflictExists
-                                ? 'fieldSelection.outcomeButton.select.header.conflict'
-                                : 'fieldSelection.outcomeButton.select.header',
-                        })}
+                        {conflictExists
+                            ? 'A reason to include this field is:'
+                            : 'This field will be included because:'}
                     </Typography>
 
                     <Box style={{ paddingLeft: 16 }}>
@@ -33,11 +27,9 @@ const FieldOutcomeOverview = ({ outcome }: BaseFieldOutcomeProps) => {
             {outcome?.reject ? (
                 <Box>
                     <Typography style={{ marginBottom: 4 }}>
-                        {intl.formatMessage({
-                            id: conflictExists
-                                ? 'fieldSelection.outcomeButton.reject.header.conflict'
-                                : 'fieldSelection.outcomeButton.reject.header',
-                        })}
+                        {conflictExists
+                            ? 'A reason to exclude this field is:'
+                            : 'This field will be excluded because:'}
                     </Typography>
 
                     <Box style={{ paddingLeft: 16 }}>

@@ -82,13 +82,7 @@ function CollectionSelectorList({
         useReactWindowScrollbarGap<FixedSizeList>(tableScroller, true);
 
     const intl = useIntl();
-    const collectionsLabel = useConstant(
-        () =>
-            header ??
-            intl.formatMessage({
-                id: 'workflows.collectionSelector.label.listHeader',
-            })
-    );
+    const collectionsLabel = useConstant(() => header ?? 'Collections');
 
     // Binding Store
     const currentBindingUUID = useBinding_currentBindingUUID();
@@ -326,15 +320,7 @@ function CollectionSelectorList({
 
                                 showPopper(
                                     event.currentTarget,
-                                    intl.formatMessage(
-                                        {
-                                            id: 'workflows.collectionSelector.notifications.remove',
-                                        },
-                                        {
-                                            count: filteredRows.length,
-                                            itemType: collectionsLabel,
-                                        }
-                                    )
+                                    `${filteredRows.length} ${collectionsLabel} removed`
                                 );
                             }
                         }}

@@ -3,7 +3,6 @@ import type { SxProps, Theme } from '@mui/material';
 import { Box, Button, Toolbar } from '@mui/material';
 
 import { Plus } from 'iconoir-react';
-import { FormattedMessage } from 'react-intl';
 import { NavLink } from 'react-router-dom';
 
 import { authenticatedRoutes } from 'src/app/routes';
@@ -46,7 +45,7 @@ const Collections = () => {
                         size="large"
                         startIcon={<Plus style={{ fontSize: 14 }} />}
                     >
-                        <FormattedMessage id="collectionsTable.cta.new" />
+                        New Transformation
                     </Button>
                 </NavLink>
             </Toolbar>

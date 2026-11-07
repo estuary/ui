@@ -37,9 +37,7 @@ const StatsCell = ({
                 <Tooltip
                     title={
                         failed
-                            ? intl.formatMessage({
-                                  id: 'entityTable.stats.error',
-                              })
+                            ? 'Failed to fetch stats.'
                             : `${defaultedVal} ${intl.formatMessage({
                                   id: read
                                       ? `entityTable.stats.${statType}_read`

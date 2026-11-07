@@ -5,7 +5,6 @@ import { useCallback, useMemo } from 'react';
 import { Button } from '@mui/material';
 
 import { usePostHog } from '@posthog/react';
-import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router';
 
 import { createEntityDraft } from 'src/api/drafts';
@@ -200,7 +199,7 @@ function InitializeDraftButton({
             disabled={formInvalid}
             onClick={initializeTransformation}
         >
-            <FormattedMessage id="cta.next" />
+            Next
         </Button>
     );
 }

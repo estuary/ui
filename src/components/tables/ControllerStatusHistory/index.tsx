@@ -5,8 +5,6 @@ import { useEffect, useState } from 'react';
 
 import { Box, Table, TableContainer } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 import Rows from 'src/components/tables/ControllerStatusHistory/Rows';
 import EntityTableBody from 'src/components/tables/EntityTable/TableBody';
 import EntityTableHeader from 'src/components/tables/EntityTable/TableHeader';
@@ -38,8 +36,6 @@ const columns: TableColumns[] = [
 
 export default function ControllerStatusHistoryTable() {
     const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);
-
-    const intl = useIntl();
 
     const history: PublicationInfo[] | null | undefined =
         useEntityStatusStore_recentHistory(catalogName);
@@ -92,9 +88,7 @@ export default function ControllerStatusHistoryTable() {
             <Table
                 size="small"
                 sx={{ minWidth: 350, borderCollapse: 'separate' }}
-                aria-label={intl.formatMessage({
-                    id: 'details.ops.status.table.label',
-                })}
+                aria-label="Controller Status History Table"
             >
                 <EntityTableHeader
                     columns={columns}

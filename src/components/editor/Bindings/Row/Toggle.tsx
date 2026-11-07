@@ -4,8 +4,6 @@ import { useEffect, useState } from 'react';
 
 import { Button, Switch, Tooltip } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 import { TOGGLE_RESET_TOOLTIP_ID } from 'src/components/editor/Bindings/Row/shared';
 import SpecPropInvalidSetting from 'src/components/shared/specPropEditor/SpecPropInvalidSetting';
 import { dataGridEntireCellButtonStyling } from 'src/context/Theme';
@@ -13,8 +11,6 @@ import useDisableUpdater from 'src/hooks/bindings/useDisableUpdater';
 import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
 
 function BindingsSelectorToggle({ bindingUUID }: BindingsSelectorToggleProps) {
-    const intl = useIntl();
-
     const formActive = useFormStateStore_isActive();
 
     const [invalidSetting, setInvalidSetting] = useState(false);
@@ -69,9 +65,7 @@ function BindingsSelectorToggle({ bindingUUID }: BindingsSelectorToggleProps) {
                     sx={dataGridEntireCellButtonStyling}
                     variant="text"
                 >
-                    {intl.formatMessage({
-                        id: 'common.invalid',
-                    })}
+                    Invalid
                 </Button>
             </Tooltip>
         );
@@ -79,9 +73,7 @@ function BindingsSelectorToggle({ bindingUUID }: BindingsSelectorToggleProps) {
 
     return (
         <Button
-            aria-label={intl.formatMessage({
-                id: currentSetting ? 'common.disabled' : 'common.enabled',
-            })}
+            aria-label={currentSetting ? 'Disabled' : 'Enabled'}
             disabled={formActive}
             sx={dataGridEntireCellButtonStyling}
             variant="text"

@@ -5,8 +5,6 @@ import { useMemo } from 'react';
 
 import { Box, styled, Tooltip } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 import LinkWrapper from 'src/components/shared/LinkWrapper';
 import { underlineTextSx } from 'src/context/Theme';
 import { OutlinedChip } from 'src/styledComponents/chips/OutlinedChip';
@@ -24,10 +22,8 @@ function ChipWrapper({
     title,
     val,
 }: ChipWrapperProps) {
-    const intl = useIntl();
-
     const displayValue = stripPath
-        ? `${intl.formatMessage({ id: 'common.pathShort.prefix' })}${stripPathing(val.display)}`
+        ? `.../${stripPathing(val.display)}`
         : val.display;
 
     // Set what we should display in the tooltip

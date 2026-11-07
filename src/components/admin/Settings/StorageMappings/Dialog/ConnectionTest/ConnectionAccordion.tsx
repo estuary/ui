@@ -19,7 +19,6 @@ import {
     Refresh,
     WarningTriangle,
 } from 'iconoir-react';
-import { useIntl } from 'react-intl';
 
 import { ConnectionInstructions } from 'src/components/admin/Settings/StorageMappings/Dialog/ConnectionTest/ConnectionInstructions';
 import {
@@ -84,7 +83,6 @@ export function ConnectionAccordion({
     disabled = false,
 }: ConnectionAccordionProps) {
     const { connections, testConnections, isTesting } = useConnectionTest();
-    const intl = useIntl();
 
     const prevStatusRef = useRef(connection.status);
     const onToggleRef = useRef(onToggle);
@@ -216,9 +214,7 @@ export function ConnectionAccordion({
                             }}
                             startIcon={<Refresh width={16} height={16} />}
                         >
-                            {intl.formatMessage({
-                                id: 'storageMappings.dialog.connectionTests.retry',
-                            })}
+                            Retry
                         </Button>
                     </Stack>
                     <ConnectionInstructions connection={connection} />

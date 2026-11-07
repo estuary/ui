@@ -8,7 +8,6 @@ import { Box, Stack, Tooltip, Typography, useTheme } from '@mui/material';
 import { useShallow } from 'zustand/react/shallow';
 
 import { InfoCircle } from 'iconoir-react';
-import { useIntl } from 'react-intl';
 import { useMount } from 'react-use';
 
 import SelectorOption from 'src/components/materialization/source/targetSchema/SelectorOption';
@@ -24,7 +23,6 @@ export default function TargetSchemaForm({
     scope,
     updateDraftedSetting,
 }: BaseFormProps) {
-    const intl = useIntl();
     const theme = useTheme();
 
     const workflow = useEntityWorkflow();
@@ -64,14 +62,12 @@ export default function TargetSchemaForm({
                 style={{ alignItems: 'center', marginBottom: 12 }}
             >
                 <Typography style={{ fontWeight: 500 }}>
-                    {intl.formatMessage({ id: 'schemaMode.input.label' })}
+                    Default Naming Convention
                 </Typography>
 
                 <Tooltip
                     placement="right"
-                    title={intl.formatMessage({
-                        id: 'schemaMode.message',
-                    })}
+                    title="Default naming convention for how collections map to destination tables and schemas. If blank, prefixes the table name with the non-default second-to-last part of the collection name."
                 >
                     <InfoCircle
                         style={{

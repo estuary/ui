@@ -2,8 +2,6 @@ import { useCallback } from 'react';
 
 import { inputBaseClasses, TextField } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 import ClearInput from 'src/components/shared/Input/Clear';
 
 interface Props {
@@ -19,8 +17,6 @@ function CollectionSelectorHeaderName({
     itemType,
     onChange,
 }: Props) {
-    const intl = useIntl();
-
     // Store off the update function to make sure both the onChange and onClear
     //  update both the local and parent value
     const updateParent = useCallback(
@@ -33,14 +29,7 @@ function CollectionSelectorHeaderName({
     return (
         <TextField
             disabled={disabled}
-            label={intl.formatMessage(
-                {
-                    id: 'entityCreate.bindingsConfig.list.search',
-                },
-                {
-                    itemType,
-                }
-            )}
+            label={`Filter ${itemType}`}
             size="small"
             variant="outlined"
             value={inputValue}

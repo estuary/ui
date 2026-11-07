@@ -14,7 +14,6 @@ import {
 } from '@mui/material';
 
 import { NavArrowDown } from 'iconoir-react';
-import { FormattedMessage } from 'react-intl';
 
 import ServerErrorDetail from 'src/components/shared/Alerts/ServerErrorDetails';
 import { useShardDetail_readDictionary } from 'src/stores/ShardDetail/hooks';
@@ -50,13 +49,9 @@ function ShardAlerts({ showWarnings, taskName, taskTypes }: Props) {
             >
                 <AlertTitle>
                     <Typography>
-                        <FormattedMessage
-                            id={
-                                showWarnings
-                                    ? 'detailsPanel.shardDetails.warningTitle'
-                                    : 'detailsPanel.shardDetails.errorTitle'
-                            }
-                        />
+                        {showWarnings
+                            ? 'Shard Replica Processing Warnings'
+                            : 'Shard Replica Processing Errors'}
                     </Typography>
                 </AlertTitle>
 

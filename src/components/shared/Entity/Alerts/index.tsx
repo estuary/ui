@@ -1,7 +1,5 @@
 import { Box, Grid } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 import CardWrapper from 'src/components/shared/CardWrapper';
 import NotificationSettings from 'src/components/shared/Entity/Details/Overview/NotificationSettings';
 import AlertHistoryTable from 'src/components/tables/AlertHistory';
@@ -13,7 +11,6 @@ import useGlobalSearchParams, {
 import { TablePrefixes } from 'src/stores/Tables/hooks';
 
 function EntityAlerts() {
-    const intl = useIntl();
     const entityType = useEntityType();
 
     const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);
@@ -42,11 +39,7 @@ function EntityAlerts() {
                         lg: !isCollection ? 8 : 12,
                     }}
                 >
-                    <CardWrapper
-                        message={intl.formatMessage({
-                            id: 'alerts.history.title.active',
-                        })}
-                    >
+                    <CardWrapper message="Active Alerts">
                         <AlertHistoryTable
                             active
                             disableFooter
@@ -56,11 +49,7 @@ function EntityAlerts() {
                 </Grid>
 
                 <Grid size={12}>
-                    <CardWrapper
-                        message={intl.formatMessage({
-                            id: 'alerts.history.title.resolved',
-                        })}
-                    >
+                    <CardWrapper message="Resolved Alerts">
                         <AlertHistoryTable
                             active={false}
                             tablePrefix={TablePrefixes.alertHistoryForEntity}

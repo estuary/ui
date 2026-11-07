@@ -2,19 +2,12 @@ import { CommonMessages } from 'src/lang/en-US/CommonMessages';
 import { CTAs } from 'src/lang/en-US/CTAs';
 
 export const AdminPage: Record<string, string> = {
-    'admin.header': `Administration`,
     'admin.roles.message': `These are all the ${CommonMessages['terms.permissions']} that are currently provisioned. An administrator can update them in the {docLink}.`,
     'admin.roles.message.docLink': `authorization settings`,
     'admin.roles.message.docPath': `https://go.estuary.dev/provision`,
 
-    'admin.cli_api.header': `Programmatic Access to ${CommonMessages.productName}`,
-    'admin.cli_api.message': `Use Refresh and Access tokens to connect to ${CommonMessages.productName} programmatically.`,
     'admin.cli_api.refreshToken.dialog.alert.tokenEncodingFailed': `An issue was encountered displaying your token. Please generate a new token.`,
 
-    'admin.billing.label.lineItems.tooltip': `A connector (AKA "task") is billed based on the pro-rated portion of a month during which it was enabled, as measured in "task-hours". Approximately 720 task-hours accrue for a connector that is running nonstop for an entire month.`,
-    'admin.billing.label.lineItems.tooltip.title': `Each active connector counts as a task`,
-
-    'admin.billing.graph.dataByTask.tooltip': `This graph displays the three, largest data processing tasks over the set interval.`,
     'admin.billing.table.history.label.dataVolume': `Data Volume`,
     'admin.billing.table.history.label.date_start': `Start Date`,
     'admin.billing.table.history.label.date_end': `End Date`,
@@ -22,7 +15,6 @@ export const AdminPage: Record<string, string> = {
     'admin.billing.table.history.label.totalCost': `Total Cost`,
     'admin.billing.table.history.tooltip.date_start': `This billing period began on {timestamp}`,
     'admin.billing.table.history.tooltip.date_end': `This billing period ended on {timestamp}`,
-    'admin.billing.table.history.tooltip.dataVolume': `GB of data processed by tasks`,
     'admin.billing.table.history.emptyTableDefault.header': `No information found.`,
     'admin.billing.table.history.emptyTableDefault.message': `We couldn't find any billing information on file.`,
 
@@ -30,26 +22,10 @@ export const AdminPage: Record<string, string> = {
     'admin.billing.table.line_items.label.count': `Quantity`,
     'admin.billing.table.line_items.label.rate': `Unit Price`,
     'admin.billing.table.line_items.label.subtotal': `Subtotal`,
-    'admin.billing.table.line_items.label.total': `Total Due`,
     'admin.billing.table.line_items.emptyTableDefault.header': `No information found.`,
     'admin.billing.table.line_items.emptyTableDefault.message': `We couldn't find any billing information on file.`,
 
     'admin.grants.confirmation.alert': `Access to all items will be removed and this action cannot be undone. Please review the list to continue.`,
-
-    'admin.users.cta.prefixInvitation': `Add Users`,
-    'admin.users.prefixInvitation.header': `Add Users`,
-    'admin.users.prefixInvitation.label.capability': `Capability`,
-
-    'admin.prefix.cta.issueGrant': `Grant Access`,
-    'admin.prefix.issueGrant.header': `Share Data`,
-    'admin.prefix.issueGrant.label.capability': `Capability`,
-    'admin.prefix.issueGrant.label.sharedPrefix': `Shared Prefix`,
-    'admin.prefix.issueGrant.label.sharedWith': `Shared With`,
-    'admin.prefix.issueGrant.cta.generateGrant': `Grant Access`,
-    'admin.prefix.issueGrant.notification.success.title': `Grant Created Successfully`,
-    'admin.prefix.issueGrant.notification.success.message': `{objectRole} has been shared with {subjectRole}`,
-    'admin.prefix.issueGrant.error.invalidPrefix': `The value entered in the Shared Prefix text field is not an extension of an existing prefix.`,
-    'admin.prefix.issueGrant.error.duplicatePrefix': `The requested access has already been provisioned.`,
 
     'admin.dataPlanes.column.header.name': `Name`,
     'admin.dataPlanes.column.header.region': `Region`,
@@ -61,76 +37,16 @@ export const AdminPage: Record<string, string> = {
     'admin.dataPlanes.public.table.noContent.message': `There was an issue reaching our servers. Please try again. If the issue persists, ${CTAs['cta.support']}.`,
 
     'admin.tabs.users': `Account Access`,
-    'admin.tabs.notifications': `Notifications`,
     'admin.tabs.api': `CLI-API`,
     'admin.tabs.billing': `Billing`,
     'admin.tabs.settings': `Settings`,
 
     // Storage Mappings
     'storageMappings.header': `Collection Storage`,
-    'storageMappingsTable.title': `Storage Locations`,
-    'storageMappings.status.active': `Primary`,
-    'storageMappings.prefix.description': `The prefix you want to configure`,
-    'storageMappings.provider.label': `Provider`,
-    'storageMappings.provider.description': `The provider (ex: S3, GCP) you are using`,
-    'storageMappings.bucket.label': `Bucket`,
-    'storageMappings.bucket.description': `The name of the bucket you have setup to store data in.`,
-    'storageMappings.lastUpdated.label': `Last Updated`,
     'storageMappings.message': `Create a Storage Mapping to govern where your data is stored. The primary storage mapping is where new data is written to, both primary and other storage mappings are used to read existing data from.`,
-
-    'storageMappings.wizard.step.configure': `Configuration`,
-    'storageMappings.wizard.step.test': `Continue to connection test`,
-    'storageMappings.dialog.generate.description': `Configure a new collection storage for your data.`,
-    'storageMappings.dialog.generate.alert.keyPrefix': `Your tenant, {tenant}, will be used to prefix the keys written to the specified storage location.`,
-    'storageMappings.dialog.generate.providerOption.AZURE': `Azure Object Storage Service`,
-    'storageMappings.dialog.generate.providerOption.CUSTOM': `An S3-compatible Endpoint`,
-    'storageMappings.dialog.generate.providerOption.GCS': `Google Cloud Storage`,
-    'storageMappings.dialog.generate.providerOption.S3': `Amazon S3`,
-    'storageMappings.dialog.generate.logsHeader': `Please wait while we save and apply your storage mapping.`,
-    'storageMappings.dialog.generate.error.republicationFailed': `There was an error republishing the entities in your system. Please try again.`,
-    'storageMappings.dialog.generate.error.unableToFetchLogs': `There was an issue fetching the logs when applying the new storage mapping. Please contact support to confirm that your system has been updated accordingly.`,
 
     // Create dialog
     'storageMappings.dialog.create.description': `Add a new storage location for your collection data. For information and access requirements, see the {docLink}.`,
     'storageMappings.dialog.create.description.docPath': `https://docs.estuary.dev/getting-started/installation/#configuring-your-cloud-storage-bucket-for-use-with-flow`,
     'storageMappings.dialog.create.description.docLink': `documentation`,
-
-    // Connection tests
-    'storageMappings.dialog.connectionTests.title': `Connection Tests`,
-    'storageMappings.dialog.connectionTests.runTests': `Run tests`,
-    'storageMappings.dialog.connectionTests.allMustPass': `All tests must pass before saving changes.`,
-    'storageMappings.dialog.connectionTests.retry': `Retry`,
-    'storageMappings.dialog.connectionTests.testFailed': `Connection test failed`,
-
-    // Data planes card
-    'storageMappings.dialog.dataPlanes.title': `Data Planes`,
-    'storageMappings.dialog.dataPlanes.addAction': `Add data plane`,
-    'storageMappings.dialog.dataPlanes.default': `Default`,
-    'storageMappings.dialog.dataPlanes.setAsDefault': `Set as default`,
-    'storageMappings.dialog.dataPlanes.selector.label': `Data Plane`,
-    'storageMappings.dialog.dataPlanes.allowPublic': `Allow public`,
-
-    // Storage locations card
-    'storageMappings.dialog.storageLocations.title': `Storage Locations`,
-    'storageMappings.dialog.storageLocations.changePrimary': `Change primary store`,
-    'storageMappings.dialog.storageLocations.inactive': `Inactive`,
-    'storageMappings.dialog.storageLocations.primary': `Primary`,
-    'storageMappings.dialog.storageLocations.accept': `Accept`,
-    'storageMappings.dialog.storageLocations.cancel': `Cancel`,
-    'storageMappings.dialog.storageLocations.historicalNote': `Previous stores are kept for historical data. New data will be directed to the primary store.`,
-
-    // Storage fields
-    'storageMappings.dialog.storageFields.cloudProvider': `Cloud Provider`,
-    'storageMappings.dialog.storageFields.region': `Region`,
-    'storageMappings.dialog.storageFields.accountTenantId': `Account Tenant ID`,
-    'storageMappings.dialog.storageFields.storageAccountName': `Storage Account Name`,
-    'storageMappings.dialog.storageFields.containerName': `Container Name`,
-    'storageMappings.dialog.storageFields.bucket': `Bucket`,
-    'storageMappings.dialog.storageFields.storagePrefix': `Storage Prefix`,
-    'storageMappings.dialog.storageFields.bucketHelperText': `Destination for Estuary collection data`,
-    'storageMappings.dialog.storageFields.storagePrefixHelperText': `Optional prefix of keys written to the bucket`,
-    'storageMappings.dialog.storageFields.mismatchWarning': `The selected cloud provider / region do not match the default data plane. This may result in additional egress fees.`,
-    'storageMappings.dialog.storageFields.matchDefault': `Match default data plane`,
-    'storageMappings.dialog.storageFields.validation.cloudProviderRequired': `Cloud provider is required`,
-    'storageMappings.dialog.storageFields.validation.regionRequired': `Region is required`,
 };

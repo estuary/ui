@@ -4,8 +4,6 @@ import { useEffect } from 'react';
 
 import { Collapse, Typography } from '@mui/material';
 
-import { FormattedMessage } from 'react-intl';
-
 import ConnectorGrid from 'src/components/connectors/Grid';
 import useEntityCreateNavigate from 'src/components/shared/Entity/hooks/useEntityCreateNavigate';
 import useGlobalSearchParams, {
@@ -34,7 +32,10 @@ function EntityCreateConfig({
     return (
         <Collapse in={!connectorImagePath} unmountOnExit>
             <Typography sx={{ mb: 2 }}>
-                <FormattedMessage id="entityCreate.instructions" />
+                To start select a Connector below. Once you make a selection the
+                rest of the form will display and you can configure your
+                endpoint. You can search by name and if you do not find what you
+                are looking for please let us know by requesting the connector.
             </Typography>
 
             <ConnectorGrid condensed={condensed} protocolPreset={entityType} />
