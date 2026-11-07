@@ -373,6 +373,9 @@ export type BillingPaymentMethodPayload = {
   primaryPaymentMethod?: Maybe<PaymentMethod>;
 };
 
+/** The billing arrangement of a tenant. */
+export type BillingPlan = ContractPlan | InternalPlan | SelfServePlan;
+
 export type BoolFilter = {
   eq?: InputMaybe<Scalars['Boolean']['input']>;
 };
@@ -401,6 +404,7 @@ export type CapabilityBit =
   | 'JournalRead'
   | 'ManageAlerts'
   | 'ManageInviteLinks'
+  | 'ManageLegal'
   | 'ModifyDataPlanePrivateNetworking'
   | 'QueryServiceAccounts'
   | 'RevokeApiKey'
@@ -570,6 +574,11 @@ export type ChargeStatus =
   | 'PENDING'
   | 'SUCCEEDED';
 
+/** How usage-based invoices are collected. */
+export type CollectionMethod =
+  | 'CHARGE_DEFAULT_PAYMENT_METHOD'
+  | 'SEND_INVOICE';
+
 /** A command run in a sandbox. */
 export type Command = {
   __typename?: 'Command';
@@ -725,6 +734,16 @@ export type ConnectorsFilter = {
   protocol?: InputMaybe<ProtocolFilter>;
   /** Filter by whether the connector is recommended. */
   recommended?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+export type ContractPlan = {
+  __typename?: 'ContractPlan';
+  collectionMethod: CollectionMethod;
+  /** Data processing prices, per GB. */
+  dataTiers: Array<PricingTier>;
+  paymentProvider: PaymentProvider;
+  /** Task usage prices, per task hour. */
+  usageTiers: Array<PricingTier>;
 };
 
 /** Status info related to the controller */
@@ -1247,6 +1266,11 @@ export type InferredSchemaStatus = {
   schemaMd5?: Maybe<Scalars['String']['output']>;
 };
 
+export type InternalPlan = {
+  __typename?: 'InternalPlan';
+  detail?: Maybe<Scalars['String']['output']>;
+};
+
 /** An invite link that grants access to a catalog prefix. */
 export type InviteLink = {
   __typename?: 'InviteLink';
@@ -1361,15 +1385,24 @@ export type JobStatus = {
   type: StatusType;
 };
 
+export type LegalConsentVersion = {
+  eq?: InputMaybe<Scalars['Int']['input']>;
+  gte?: InputMaybe<Scalars['Int']['input']>;
+};
+
 export type LegalTerms = {
   __typename?: 'LegalTerms';
   id: Scalars['Id']['output'];
   text: Scalars['String']['output'];
+  type: LegalTermsType;
+  version: Scalars['Int']['output'];
 };
 
 export type LegalTermsType =
   /** Master Services Agreement. */
-  | 'MSA';
+  | 'MSA'
+  /** Consent to use sandboxes. */
+  | 'SANDBOX';
 
 export type LiveSpec = {
   __typename?: 'LiveSpec';
@@ -1720,6 +1753,8 @@ export type MutationRoot = {
    * or publication rather than here.
    */
   deleteSecret: Array<Scalars['Name']['output']>;
+  /** Accept the latest legal terms of their type. Requires a direct ManageLegal grant and an unrestricted user token. */
+  legalAccept: LegalTerms;
   /**
    * Redeem an invite link token, granting the caller access to the associated
    * catalog prefix with the specified capability.
@@ -2005,6 +2040,12 @@ export type MutationRootDeleteSecretArgs = {
 };
 
 
+export type MutationRootLegalAcceptArgs = {
+  tenant: Scalars['String']['input'];
+  termsId: Scalars['Id']['input'];
+};
+
+
 export type MutationRootRedeemInviteLinkArgs = {
   token: Scalars['UUID']['input'];
 };
@@ -2169,6 +2210,12 @@ export type PaymentMethodBillingDetails = {
   name?: Maybe<Scalars['String']['output']>;
 };
 
+export type PaymentProvider =
+  | 'AWS_MARKETPLACE'
+  | 'GCP_MARKETPLACE'
+  | 'SNOWFLAKE_MARKETPLACE'
+  | 'STRIPE';
+
 /**
  * Information on the config updates performed by the controller.
  * This does not include any information on user-initiated config updates.
@@ -2250,6 +2297,15 @@ export type PrefixesBy = {
 export type PrefixesFilter = {
   /** Filter on the returned prefix. */
   prefix?: InputMaybe<PrefixFilter>;
+};
+
+/** A price for the next `quantity` units of usage after the previous tiers. */
+export type PricingTier = {
+  __typename?: 'PricingTier';
+  /** Units priced at this rate. Null for the final tier, which covers all further usage. */
+  quantity?: Maybe<Scalars['Int']['output']>;
+  /** Price per unit, in cents. */
+  rateCents: Scalars['Int']['output'];
 };
 
 /** A configured private link and its controller-observed provisioning status. */
@@ -2502,6 +2558,8 @@ export type QueryRoot = {
    * (`startsWith`) or an exact set (`in`), not both.
    */
   inviteLinks: InviteLinkConnection;
+  /** Whether the tenant has accepted matching legal terms. Requires CatalogRead anywhere within the tenant. */
+  legalCheck: Scalars['Boolean']['output'];
   /** Returns the latest legal terms of the given type. */
   legalTerms?: Maybe<LegalTerms>;
   /**
@@ -2635,6 +2693,13 @@ export type QueryRootInviteLinksArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   filter?: InputMaybe<InviteLinksFilter>;
   first?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type QueryRootLegalCheckArgs = {
+  tenant: Scalars['String']['input'];
+  type: LegalTermsType;
+  version: LegalConsentVersion;
 };
 
 
@@ -2790,11 +2855,19 @@ export type RepublishRequested = {
 export type Sandbox = {
   __typename?: 'Sandbox';
   catalogName: Scalars['Name']['output'];
+  /** A command started in this sandbox, or null if it does not exist. */
+  command?: Maybe<Command>;
   /** Commands started in this sandbox */
   commands?: Maybe<Array<Command>>;
   createdAt: Scalars['DateTime']['output'];
   /** False until a new sandbox reaches its baseline state (flowctl installed). */
   ready: Scalars['Boolean']['output'];
+};
+
+
+/** A persistent Linux VM that runs the user's shell commands. */
+export type SandboxCommandArgs = {
+  id: Scalars['Id']['input'];
 };
 
 /**
@@ -2839,6 +2912,25 @@ export type SecretEdge = {
 export type SecretsFilter = {
   /** Filter on the secret's catalog name. */
   catalogName?: InputMaybe<PrefixFilter>;
+};
+
+export type SelfServePhase =
+  /** Before the trial starts, or when there is no trial. */
+  | 'FREE'
+  /** After the trial ends. */
+  | 'PAID'
+  /** During the trial. */
+  | 'TRIAL';
+
+export type SelfServePlan = {
+  __typename?: 'SelfServePlan';
+  collectionMethod: CollectionMethod;
+  /** Data processing prices, per GB. */
+  dataTiers: Array<PricingTier>;
+  phase: SelfServePhase;
+  trial?: Maybe<TrialPeriod>;
+  /** Task usage prices, per task hour. */
+  usageTiers: Array<PricingTier>;
 };
 
 export type ServiceAccount = {
@@ -3212,6 +3304,7 @@ export type TenantBilling = {
   contact: BillingContact;
   invoices: InvoiceConnection;
   paymentMethods: Array<PaymentMethod>;
+  plan: BillingPlan;
   primaryPaymentMethod?: Maybe<PaymentMethod>;
 };
 
@@ -3222,6 +3315,13 @@ export type TenantBillingInvoicesArgs = {
   filter?: InputMaybe<InvoiceFilter>;
   first?: InputMaybe<Scalars['Int']['input']>;
   last?: InputMaybe<Scalars['Int']['input']>;
+};
+
+export type TrialPeriod = {
+  __typename?: 'TrialPeriod';
+  /** Exclusive end of the trial. */
+  end: Scalars['NaiveDate']['output'];
+  start: Scalars['NaiveDate']['output'];
 };
 
 /** Result of the `updateAlertConfig` mutation. */
@@ -3483,7 +3583,24 @@ export type LegalTermsQueryVariables = Exact<{
 }>;
 
 
-export type LegalTermsQuery = { __typename?: 'QueryRoot', legalTerms?: { __typename?: 'LegalTerms', text: string, id: string } | null };
+export type LegalTermsQuery = { __typename?: 'QueryRoot', legalTerms?: { __typename?: 'LegalTerms', text: string, id: string, version: number } | null };
+
+export type LegalAcceptMutationVariables = Exact<{
+  tenant: Scalars['String']['input'];
+  termsId: Scalars['Id']['input'];
+}>;
+
+
+export type LegalAcceptMutation = { __typename?: 'MutationRoot', legalAccept: { __typename?: 'LegalTerms', id: string } };
+
+export type LegalCheckQueryVariables = Exact<{
+  tenant: Scalars['String']['input'];
+  type: LegalTermsType;
+  version: LegalConsentVersion;
+}>;
+
+
+export type LegalCheckQuery = { __typename?: 'QueryRoot', legalCheck: boolean };
 
 export type LiveSpecsQueryQueryVariables = Exact<{
   prefix: Scalars['Prefix']['input'];
@@ -3609,6 +3726,30 @@ export type AlertHistoryQueryQueryVariables = Exact<{
 
 export type AlertHistoryQueryQuery = { __typename?: 'QueryRoot', liveSpecs: { __typename?: 'LiveSpecRefConnection', edges: Array<{ __typename?: 'LiveSpecRefEdge', node: { __typename?: 'LiveSpecRef', alertHistory?: { __typename?: 'AlertConnection', edges: Array<{ __typename?: 'AlertEdge', cursor: string, node: { __typename?: 'Alert', alertType: AlertType, catalogName: string, firedAt: string, resolvedAt?: string | null, alertDetails: any } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: string | null, endCursor?: string | null } } | null } }> } };
 
+export type CreateDiscoverMutationVariables = Exact<{
+  draftId: Scalars['Id']['input'];
+  captureName: Scalars['Name']['input'];
+  dataPlane?: InputMaybe<Scalars['String']['input']>;
+}>;
+
+
+export type CreateDiscoverMutation = { __typename?: 'MutationRoot', createDiscover: { __typename?: 'Discover', id: string } };
+
+export type CreateDraftMutationVariables = Exact<{
+  detail?: InputMaybe<Scalars['String']['input']>;
+}>;
+
+
+export type CreateDraftMutation = { __typename?: 'MutationRoot', createDraft: { __typename?: 'Draft', id: string } };
+
+export type StageDraftSpecsMutationVariables = Exact<{
+  draftId: Scalars['Id']['input'];
+  specs: Array<DraftSpecInput> | DraftSpecInput;
+}>;
+
+
+export type StageDraftSpecsMutation = { __typename?: 'MutationRoot', stageDraftSpecs: Array<string> };
+
 export type SecretCapabilitiesQueryVariables = Exact<{
   prefixes: Array<Scalars['String']['input']> | Scalars['String']['input'];
 }>;
@@ -3668,7 +3809,9 @@ export const InviteLinksDocument = {"kind":"Document","definitions":[{"kind":"Op
 export const CreateInviteLinkDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateInviteLink"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"catalogPrefix"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Prefix"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"capability"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Capability"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"singleUse"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Boolean"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"detail"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createInviteLink"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"catalogPrefix"},"value":{"kind":"Variable","name":{"kind":"Name","value":"catalogPrefix"}}},{"kind":"Argument","name":{"kind":"Name","value":"capability"},"value":{"kind":"Variable","name":{"kind":"Name","value":"capability"}}},{"kind":"Argument","name":{"kind":"Name","value":"singleUse"},"value":{"kind":"Variable","name":{"kind":"Name","value":"singleUse"}}},{"kind":"Argument","name":{"kind":"Name","value":"detail"},"value":{"kind":"Variable","name":{"kind":"Name","value":"detail"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token"}},{"kind":"Field","name":{"kind":"Name","value":"catalogPrefix"}},{"kind":"Field","name":{"kind":"Name","value":"capability"}},{"kind":"Field","name":{"kind":"Name","value":"singleUse"}},{"kind":"Field","name":{"kind":"Name","value":"detail"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}}]}}]} as unknown as DocumentNode<CreateInviteLinkMutation, CreateInviteLinkMutationVariables>;
 export const DeleteInviteLinkDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeleteInviteLink"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"token"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteInviteLink"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"token"},"value":{"kind":"Variable","name":{"kind":"Name","value":"token"}}}]}]}}]} as unknown as DocumentNode<DeleteInviteLinkMutation, DeleteInviteLinkMutationVariables>;
 export const RedeemInviteLinkDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"RedeemInviteLink"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"token"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"redeemInviteLink"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"token"},"value":{"kind":"Variable","name":{"kind":"Name","value":"token"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"capability"}},{"kind":"Field","name":{"kind":"Name","value":"catalogPrefix"}}]}}]}}]} as unknown as DocumentNode<RedeemInviteLinkMutation, RedeemInviteLinkMutationVariables>;
-export const LegalTermsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"LegalTerms"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"type"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"LegalTermsType"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"legalTerms"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"type"},"value":{"kind":"Variable","name":{"kind":"Name","value":"type"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"text"}},{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<LegalTermsQuery, LegalTermsQueryVariables>;
+export const LegalTermsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"LegalTerms"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"type"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"LegalTermsType"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"legalTerms"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"type"},"value":{"kind":"Variable","name":{"kind":"Name","value":"type"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"text"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"version"}}]}}]}}]} as unknown as DocumentNode<LegalTermsQuery, LegalTermsQueryVariables>;
+export const LegalAcceptDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"LegalAccept"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"tenant"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"termsId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Id"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"legalAccept"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"tenant"},"value":{"kind":"Variable","name":{"kind":"Name","value":"tenant"}}},{"kind":"Argument","name":{"kind":"Name","value":"termsId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"termsId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<LegalAcceptMutation, LegalAcceptMutationVariables>;
+export const LegalCheckDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"LegalCheck"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"tenant"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"type"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"LegalTermsType"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"version"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"LegalConsentVersion"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"legalCheck"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"tenant"},"value":{"kind":"Variable","name":{"kind":"Name","value":"tenant"}}},{"kind":"Argument","name":{"kind":"Name","value":"type"},"value":{"kind":"Variable","name":{"kind":"Name","value":"type"}}},{"kind":"Argument","name":{"kind":"Name","value":"version"},"value":{"kind":"Variable","name":{"kind":"Name","value":"version"}}}]}]}}]} as unknown as DocumentNode<LegalCheckQuery, LegalCheckQueryVariables>;
 export const LiveSpecsQueryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"LiveSpecsQuery"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"prefix"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Prefix"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"after"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"liveSpecs"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"prefix"},"value":{"kind":"Variable","name":{"kind":"Name","value":"prefix"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"IntValue","value":"100"}},{"kind":"Argument","name":{"kind":"Name","value":"after"},"value":{"kind":"Variable","name":{"kind":"Name","value":"after"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cursor"}},{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"catalogName"}},{"kind":"Field","name":{"kind":"Name","value":"liveSpec"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"catalogType"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"pageInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"hasNextPage"}},{"kind":"Field","name":{"kind":"Name","value":"endCursor"}}]}}]}}]}}]} as unknown as DocumentNode<LiveSpecsQueryQuery, LiveSpecsQueryQueryVariables>;
 export const PublicDataPlanesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"PublicDataPlanes"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"first"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"after"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"publicDataPlanes"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"Variable","name":{"kind":"Name","value":"first"}}},{"kind":"Argument","name":{"kind":"Name","value":"after"},"value":{"kind":"Variable","name":{"kind":"Name","value":"after"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"cloudProvider"}},{"kind":"Field","name":{"kind":"Name","value":"region"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"pageInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PageInfoFields"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PageInfoFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PageInfo"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"hasNextPage"}},{"kind":"Field","name":{"kind":"Name","value":"hasPreviousPage"}},{"kind":"Field","name":{"kind":"Name","value":"startCursor"}},{"kind":"Field","name":{"kind":"Name","value":"endCursor"}}]}}]} as unknown as DocumentNode<PublicDataPlanesQuery, PublicDataPlanesQueryVariables>;
 export const RefreshTokensDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"RefreshTokens"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"first"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"after"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"refreshTokens"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"Variable","name":{"kind":"Name","value":"first"}}},{"kind":"Argument","name":{"kind":"Name","value":"after"},"value":{"kind":"Variable","name":{"kind":"Name","value":"after"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"detail"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"uses"}},{"kind":"Field","name":{"kind":"Name","value":"expired"}}]}},{"kind":"Field","name":{"kind":"Name","value":"cursor"}}]}},{"kind":"Field","name":{"kind":"Name","value":"pageInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PageInfoFields"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PageInfoFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PageInfo"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"hasNextPage"}},{"kind":"Field","name":{"kind":"Name","value":"hasPreviousPage"}},{"kind":"Field","name":{"kind":"Name","value":"startCursor"}},{"kind":"Field","name":{"kind":"Name","value":"endCursor"}}]}}]} as unknown as DocumentNode<RefreshTokensQuery, RefreshTokensQueryVariables>;
@@ -3684,6 +3827,9 @@ export const AlertingOverviewQueryDocument = {"kind":"Document","definitions":[{
 export const ActiveAlertCountDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"ActiveAlertCount"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"catalogName"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Name"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"liveSpecs"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"names"},"value":{"kind":"ListValue","values":[{"kind":"Variable","name":{"kind":"Name","value":"catalogName"}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cursor"}},{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"activeAlerts"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"alertType"}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<ActiveAlertCountQuery, ActiveAlertCountQueryVariables>;
 export const ActiveAlertsQueryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"ActiveAlertsQuery"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"catalogName"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Name"}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"liveSpecs"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"names"},"value":{"kind":"Variable","name":{"kind":"Name","value":"catalogName"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"activeAlerts"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"alertType"}},{"kind":"Field","name":{"kind":"Name","value":"catalogName"}},{"kind":"Field","alias":{"kind":"Name","value":"alertDetails"},"name":{"kind":"Name","value":"arguments"}},{"kind":"Field","name":{"kind":"Name","value":"firedAt"}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<ActiveAlertsQueryQuery, ActiveAlertsQueryQueryVariables>;
 export const AlertHistoryQueryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"AlertHistoryQuery"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"catalogName"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Name"}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"before"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"last"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"liveSpecs"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"names"},"value":{"kind":"Variable","name":{"kind":"Name","value":"catalogName"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"alertHistory"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"before"},"value":{"kind":"Variable","name":{"kind":"Name","value":"before"}}},{"kind":"Argument","name":{"kind":"Name","value":"last"},"value":{"kind":"Variable","name":{"kind":"Name","value":"last"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cursor"}},{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"alertType"}},{"kind":"Field","alias":{"kind":"Name","value":"alertDetails"},"name":{"kind":"Name","value":"arguments"}},{"kind":"Field","name":{"kind":"Name","value":"catalogName"}},{"kind":"Field","name":{"kind":"Name","value":"firedAt"}},{"kind":"Field","name":{"kind":"Name","value":"resolvedAt"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"pageInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PageInfoFields"}}]}}]}}]}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PageInfoFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PageInfo"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"hasNextPage"}},{"kind":"Field","name":{"kind":"Name","value":"hasPreviousPage"}},{"kind":"Field","name":{"kind":"Name","value":"startCursor"}},{"kind":"Field","name":{"kind":"Name","value":"endCursor"}}]}}]} as unknown as DocumentNode<AlertHistoryQueryQuery, AlertHistoryQueryQueryVariables>;
+export const CreateDiscoverDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateDiscover"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"draftId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Id"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"captureName"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Name"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"dataPlane"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createDiscover"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"draftId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"draftId"}}},{"kind":"Argument","name":{"kind":"Name","value":"captureName"},"value":{"kind":"Variable","name":{"kind":"Name","value":"captureName"}}},{"kind":"Argument","name":{"kind":"Name","value":"dataPlane"},"value":{"kind":"Variable","name":{"kind":"Name","value":"dataPlane"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<CreateDiscoverMutation, CreateDiscoverMutationVariables>;
+export const CreateDraftDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateDraft"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"detail"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createDraft"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"detail"},"value":{"kind":"Variable","name":{"kind":"Name","value":"detail"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<CreateDraftMutation, CreateDraftMutationVariables>;
+export const StageDraftSpecsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"StageDraftSpecs"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"draftId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Id"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"specs"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"DraftSpecInput"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"stageDraftSpecs"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"draftId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"draftId"}}},{"kind":"Argument","name":{"kind":"Name","value":"specs"},"value":{"kind":"Variable","name":{"kind":"Name","value":"specs"}}}]}]}}]} as unknown as DocumentNode<StageDraftSpecsMutation, StageDraftSpecsMutationVariables>;
 export const SecretCapabilitiesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"SecretCapabilities"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"prefixes"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"prefixes"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"minCapability"},"value":{"kind":"EnumValue","value":"none"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"filter"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"prefix"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"in"},"value":{"kind":"Variable","name":{"kind":"Name","value":"prefixes"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"prefix"}},{"kind":"Field","name":{"kind":"Name","value":"capabilities"}}]}}]}}]}}]}}]} as unknown as DocumentNode<SecretCapabilitiesQuery, SecretCapabilitiesQueryVariables>;
 export const GetSecretDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetSecret"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"secretName"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"secrets"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"filter"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"catalogName"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"in"},"value":{"kind":"ListValue","values":[{"kind":"Variable","name":{"kind":"Name","value":"secretName"}}]}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"IntValue","value":"1"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"catalogName"}},{"kind":"Field","name":{"kind":"Name","value":"secretId"}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetSecretQuery, GetSecretQueryVariables>;
 export const SetSecretDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"SetSecret"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"catalogName"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Name"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"document"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"JSON"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"setSecret"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"catalogName"},"value":{"kind":"Variable","name":{"kind":"Name","value":"catalogName"}}},{"kind":"Argument","name":{"kind":"Name","value":"document"},"value":{"kind":"Variable","name":{"kind":"Name","value":"document"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"changed"}},{"kind":"Field","name":{"kind":"Name","value":"secret"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"catalogName"}},{"kind":"Field","name":{"kind":"Name","value":"secretId"}}]}}]}}]}}]} as unknown as DocumentNode<SetSecretMutation, SetSecretMutationVariables>;

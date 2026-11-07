@@ -2,16 +2,18 @@ import type { AlertColor } from '@mui/material';
 import type { PostgrestError } from '@supabase/postgrest-js';
 import type { MessagePrefixes, Schema } from 'src/types';
 
+export type FormError = {
+    title: string;
+    error?: PostgrestError | Error;
+};
+
 export interface FormState {
     displayValidation: boolean;
     status: FormStatus;
     showLogs: boolean;
     exitWhenLogsClose: boolean;
     logToken: string | null;
-    error: {
-        title: string;
-        error?: PostgrestError;
-    } | null;
+    error: FormError | null;
     message: {
         key: string | null;
         severity: AlertColor | null;

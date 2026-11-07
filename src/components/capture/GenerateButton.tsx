@@ -1,45 +1,28 @@
 import type { Dispatch, SetStateAction } from 'react';
-import type { Entity } from 'src/types';
 
 import { useEffect } from 'react';
 
 import { Button } from '@mui/material';
 
-import { FormattedMessage } from 'react-intl';
-
-import useDiscoverCapture from 'src/components/capture/useDiscoverCapture';
+import { useSubmitCaptureForm } from 'src/components/capture/useSubmitCaptureForm';
+import { useEditorStore_isSaving } from 'src/components/editor/Store/hooks';
 import { entityHeaderButtonSx } from 'src/context/Theme';
-import { useEntityWorkflow_Editing } from 'src/context/Workflow';
 import { useBinding_rediscoveryRequired } from 'src/stores/Binding/hooks';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
-import { useFormStateStore_status } from 'src/stores/FormState/hooks';
+import {
+    useFormStateStore_isActive,
+    useFormStateStore_status,
+} from 'src/stores/FormState/hooks';
 import { FormStatus } from 'src/stores/FormState/types';
 
 interface Props {
-    entityType: Entity;
     createWorkflowMetadata?: {
         initiateDiscovery: boolean;
         setInitiateDiscovery: Dispatch<SetStateAction<boolean>>;
     };
 }
 
-function CaptureGenerateButton({ entityType, createWorkflowMetadata }: Props) {
-    const isEdit = useEntityWorkflow_Editing();
-    const rediscoveryRequired = useBinding_rediscoveryRequired();
-
-    const { generateCatalog, isSaving, formActive } = useDiscoverCapture(
-        entityType,
-        {
-            // We only want to set updateOnly if the user is editing and not updating the config
-            //  This should cover when a user has enable previously disabled collection(s)
-            updateOnly: createWorkflowMetadata?.initiateDiscovery
-                ? false
-                : Boolean(isEdit && rediscoveryRequired),
-            initiateDiscovery: createWorkflowMetadata?.initiateDiscovery,
-            initiateRediscovery: rediscoveryRequired,
-        }
-    );
-
+function CaptureGenerateButton({ createWorkflowMetadata }: Props) {
     // Details Form Store
     const selectedConnectorId = useDetailsFormStore(
         (state) => state.details.data.connectorImage.connectorId
@@ -50,9 +33,17 @@ function CaptureGenerateButton({ entityType, createWorkflowMetadata }: Props) {
     const entityNameChanged = useDetailsFormStore(
         (state) => state.entityNameChanged
     );
-
     // Form State Store
     const formStatus = useFormStateStore_status();
+
+    const isSaving = useEditorStore_isSaving();
+    const formActive = useFormStateStore_isActive();
+    const rediscoveryRequired = useBinding_rediscoveryRequired();
+
+    const submitForm = useSubmitCaptureForm({
+        initiateDiscovery: createWorkflowMetadata?.initiateDiscovery,
+        initiateRediscovery: rediscoveryRequired,
+    });
 
     useEffect(() => {
         if (createWorkflowMetadata?.initiateDiscovery) {
@@ -77,12 +68,12 @@ function CaptureGenerateButton({ entityType, createWorkflowMetadata }: Props) {
             onClick={(event) => {
                 event.preventDefault();
 
-                void generateCatalog();
+                void submitForm();
             }}
             disabled={isSaving || formActive}
             sx={entityHeaderButtonSx}
         >
-            <FormattedMessage id="cta.generateCatalog.capture" />
+            Next
         </Button>
     );
 }

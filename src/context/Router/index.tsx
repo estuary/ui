@@ -84,6 +84,12 @@ const MaterializationEditRoute = lazy(
     () => import('src/context/Router/MaterializationEdit')
 );
 
+const LegalConsentRoute = lazy(() =>
+    import('src/pages/LegalConsent').then((module) => ({
+        default: module.LegalConsent,
+    }))
+);
+
 const SecretDropboxRoute = lazy(() =>
     import('src/pages/SecretDropbox').then((module) => ({
         default: module.SecretDropbox,
@@ -220,6 +226,15 @@ const router = createBrowserRouter(
                     <Route
                         path={authenticatedRoutes.dataPlaneAuth.path}
                         element={<DataPlaneAuthReq />}
+                    />
+
+                    <Route
+                        path={authenticatedRoutes.legalConsent.fullPath}
+                        element={
+                            <Suspense fallback={null}>
+                                <LegalConsentRoute />
+                            </Suspense>
+                        }
                     />
 
                     <Route

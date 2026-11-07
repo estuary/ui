@@ -19,7 +19,7 @@ import { usePostHog } from '@posthog/react';
 import { Controller, useForm } from 'react-hook-form';
 import { useQuery } from 'urql';
 
-import { LEGAL_TERMS_QUERY } from 'src/api/gql/legalTerms';
+import { LEGAL_TERMS } from 'src/api/gql/legalTerms';
 import { usePublicDataPlanes } from 'src/api/gql/publicDataPlanes';
 import { useTenantCreate } from 'src/api/gql/tenant';
 import { unauthenticatedRoutes } from 'src/app/routes';
@@ -53,7 +53,7 @@ export const TenantCreate = () => {
         { data: termsData, fetching: termsFetching, error: termsError },
         refetchTerms,
     ] = useQuery({
-        query: LEGAL_TERMS_QUERY,
+        query: LEGAL_TERMS,
         variables: { type: 'MSA' },
         requestPolicy: 'network-only',
     });
