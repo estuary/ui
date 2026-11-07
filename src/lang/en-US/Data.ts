@@ -16,13 +16,12 @@ export const Data: Record<string, string> = {
     'data.details': `Details`,
     'data.event': `Event`,
     'data.actions': `Actions`,
-    'data.active': `Active`,
+
     'data.dataPlane': `Data Plane`,
     'data.errors': `Errors`,
     'data.completed': `Completed`,
     'data.ipv4': `IPv4`,
-    'data.ipv6': `IPv6`,
-    'data.connectorStatus': `Connector Status`,
+
     'data.location': `Location`,
     'data.outcome': `Outcome`,
 };

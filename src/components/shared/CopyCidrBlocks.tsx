@@ -2,7 +2,6 @@ import { useMemo } from 'react';
 
 import { MenuItem, Select, Stack } from '@mui/material';
 
-import { useIntl } from 'react-intl';
 import { useLocalStorage } from 'react-use';
 
 import SingleLineCode from 'src/components/content/SingleLineCode';
@@ -18,7 +17,6 @@ interface Props {
 const selectOptions = ['4', '6'];
 
 function CopyCidrBlocks({ cidrBlocks }: Props) {
-    const intl = useIntl();
     const parseCidrBlocks = useParseCidrBlocks();
 
     const splitCidrBlocks = useMemo(
@@ -50,12 +48,8 @@ function CopyCidrBlocks({ cidrBlocks }: Props) {
                 variant="outlined"
                 sx={{ borderRadius: 3 }}
             >
-                <MenuItem value={selectOptions[0]}>
-                    {intl.formatMessage({ id: 'data.ipv4' })}
-                </MenuItem>
-                <MenuItem value={selectOptions[1]}>
-                    {intl.formatMessage({ id: 'data.ipv6' })}
-                </MenuItem>
+                <MenuItem value={selectOptions[0]}>IPv4</MenuItem>
+                <MenuItem value={selectOptions[1]}>IPv6</MenuItem>
             </Select>
 
             <SingleLineCode

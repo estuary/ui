@@ -80,9 +80,7 @@ function DetailsSection({ entityName, latestLiveSpec }: DetailsSectionProps) {
 
         if (entityType !== 'collection') {
             response.push({
-                title: intl.formatMessage({
-                    id: 'data.connectorStatus',
-                }),
+                title: 'Connector Status',
                 val: <StatusSection entityName={entityName} />,
             });
         }
@@ -114,7 +112,7 @@ function DetailsSection({ entityName, latestLiveSpec }: DetailsSectionProps) {
             );
 
             response.push({
-                title: intl.formatMessage({ id: 'data.dataPlane' }),
+                title: 'Data Plane',
                 val: (
                     <DataPlane
                         dataPlaneName={dataPlaneName}
@@ -137,9 +135,7 @@ function DetailsSection({ entityName, latestLiveSpec }: DetailsSectionProps) {
 
         // At when it was created
         response.push({
-            title: intl.formatMessage({
-                id: 'data.created_at',
-            }),
+            title: 'Created',
             val: intl.formatDate(latestLiveSpec.created_at, TIME_SETTINGS),
         });
 
