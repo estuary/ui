@@ -51,11 +51,7 @@ const RedactFieldDialog = ({
 
     return (
         <Dialog maxWidth="sm" open={open} style={{ minWidth: 500 }}>
-            <DialogTitle>
-                {intl.formatMessage({
-                    id: 'projection.dialog.redact.header',
-                })}
-            </DialogTitle>
+            <DialogTitle>Redact Field</DialogTitle>
             <DialogContent>
                 {error ? (
                     <Box style={{ marginBottom: 16, width: 500 }}>
@@ -78,9 +74,7 @@ const RedactFieldDialog = ({
                     }: AutocompleteRenderInputParams) => (
                         <TextField
                             {...params}
-                            label={intl.formatMessage({
-                                id: 'projection.label.redactionStrategy',
-                            })}
+                            label="Strategy"
                             size="small"
                             sx={{ width: 500 }}
                             slotProps={{

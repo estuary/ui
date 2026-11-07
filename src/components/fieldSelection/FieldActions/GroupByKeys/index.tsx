@@ -14,8 +14,6 @@ import {
     Typography,
 } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 import ExplicitKey from 'src/components/fieldSelection/FieldActions/GroupByKeys/ExplicitKey';
 import GroupByKeysForm from 'src/components/fieldSelection/FieldActions/GroupByKeys/Form';
 import ImplicitKey from 'src/components/fieldSelection/FieldActions/GroupByKeys/ImplicitKey';
@@ -26,8 +24,6 @@ import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
 const TITLE_ID = 'configure-groupBy-keys-title';
 
 const GroupByKeys = ({ bindingUUID, loading, selections }: BaseButtonProps) => {
-    const intl = useIntl();
-
     const groupBy = useBinding_groupBy(bindingUUID);
 
     const formActive = useFormStateStore_isActive();
@@ -62,22 +58,18 @@ const GroupByKeys = ({ bindingUUID, loading, selections }: BaseButtonProps) => {
                 style={{ minWidth: 'fit-content' }}
                 variant="outlined"
             >
-                {intl.formatMessage({ id: 'fieldSelection.cta.groupBy' })}
+                Group By
             </Button>
 
             <Dialog open={open} maxWidth="md" aria-labelledby={TITLE_ID}>
-                <DialogTitle>
-                    {intl.formatMessage({
-                        id: 'fieldSelection.groupBy.header',
-                    })}
-                </DialogTitle>
+                <DialogTitle>Configure Materialization Group-By</DialogTitle>
 
                 <DialogContent>
                     <Stack spacing={1} style={{ marginBottom: 24 }}>
                         <Typography style={{ width: 700 }}>
-                            {intl.formatMessage({
-                                id: 'fieldSelection.groupBy.description',
-                            })}
+                            Select an ordered subset of scalar fields which will
+                            be grouped over. If not specified, the key of the
+                            source collection will be used.
                         </Typography>
 
                         <ImplicitKey bindingUUID={bindingUUID} />

@@ -1,5 +1,4 @@
 export const CTAs: Record<string, string> = {
-    'cta.evolve': `Apply`,
     'cta.cancel': `Cancel`,
 
     'cta.continue': `Continue`,

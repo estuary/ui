@@ -4,7 +4,7 @@ import { Box, LinearProgress } from '@mui/material';
 
 import { useShallow } from 'zustand/react/shallow';
 
-import { FormattedMessage, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 import MessageWithLink from 'src/components/content/MessageWithLink';
 import AlertBox from 'src/components/shared/AlertBox';
@@ -95,7 +95,7 @@ function SidePanelIframe({ show }: Props) {
                 <AlertBox
                     short
                     severity="info"
-                    title={<FormattedMessage id="docs.iframe.disabled.title" />}
+                    title={<>Connector documentation disabled</>}
                 >
                     <MessageWithLink
                         messageID="docs.iframe.disabled.message"

@@ -1,25 +1,19 @@
 import { Box, Stack, Typography } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 import Form from 'src/components/materialization/OnIncompatibleSchemaChange/Form';
 
 function OnIncompatibleSchemaChange() {
-    const intl = useIntl();
-
     return (
         <Box>
             <Stack spacing={1} sx={{ mb: 2 }}>
                 <Typography variant="formSectionHeader">
-                    {intl.formatMessage({
-                        id: 'incompatibleSchemaChange.header',
-                    })}
+                    Incompatible Schema Change
                 </Typography>
 
                 <Typography>
-                    {intl.formatMessage({
-                        id: 'incompatibleSchemaChange.message.specificationSetting',
-                    })}
+                    The action to take when a schema change is rejected due to
+                    incompatibility. If blank, all bindings will backfill and be
+                    re-materialized.
                 </Typography>
             </Stack>
 

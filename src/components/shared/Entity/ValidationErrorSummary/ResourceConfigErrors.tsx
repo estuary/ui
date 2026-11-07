@@ -1,7 +1,5 @@
 import { useMemo } from 'react';
 
-import { useIntl } from 'react-intl';
-
 import SectionError from 'src/components/shared/Entity/ValidationErrorSummary/SectionError';
 import {
     useBinding_collections,
@@ -11,8 +9,6 @@ import {
 import { hasLength } from 'src/utils/misc-utils';
 
 function ResourceConfigErrors() {
-    const intl = useIntl();
-
     const collections = useBinding_collections();
     const filteredResourceConfigErrors = useBinding_resourceConfigErrors();
     const fullSourceErrorsExist = useBinding_fullSourceErrorsExist();
@@ -22,22 +18,18 @@ function ResourceConfigErrors() {
 
         if (hasLength(filteredResourceConfigErrors)) {
             response.push({
-                message: intl.formatMessage({
-                    id: 'entityCreate.endpointConfig.resourceConfigInvalid',
-                }),
+                message: 'Resource Config invalid',
             });
         }
 
         if (fullSourceErrorsExist) {
             response.push({
-                message: intl.formatMessage({
-                    id: 'entityCreate.endpointConfig.fullSourceInvalid',
-                }),
+                message: 'Time Travel invalid',
             });
         }
 
         return response;
-    }, [filteredResourceConfigErrors, fullSourceErrorsExist, intl]);
+    }, [filteredResourceConfigErrors, fullSourceErrorsExist]);
 
     return (
         <SectionError

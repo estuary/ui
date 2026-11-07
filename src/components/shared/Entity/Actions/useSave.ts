@@ -569,9 +569,7 @@ function useSave(
                 onFailure({
                     error: {
                         title: `${messagePrefix}.save.failure.errorTitle`,
-                        error: intl.formatMessage({
-                            id: 'entityCreate.errors.missingDraftId',
-                        }),
+                        error: 'Missing Draft ID.',
                     },
                 });
                 return;
@@ -623,7 +621,6 @@ function useSave(
             dryRun,
             fullSourceErrorsExist,
             handleCollections,
-            intl,
             messagePrefix,
             onFailure,
             setFormState,

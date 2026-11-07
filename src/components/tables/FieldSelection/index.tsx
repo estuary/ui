@@ -9,7 +9,6 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { Box, Stack, Table, TableContainer, Tooltip } from '@mui/material';
 
 import { debounce } from 'lodash';
-import { useIntl } from 'react-intl';
 import { useUnmount } from 'react-use';
 
 import { useEditorStore_persistedDraftId } from 'src/components/editor/Store/hooks';
@@ -42,8 +41,6 @@ export default function FieldSelectionTable({
     bindingUUID,
     missingServerData,
 }: FieldSelectionTableProps) {
-    const intl = useIntl();
-
     const bindingFieldSelection = useBindingStore(
         (state) => state.selections?.[bindingUUID]
     );
@@ -187,9 +184,7 @@ export default function FieldSelectionTable({
                         placement="top-start"
                         title={
                             draftSpecAssetsMissing
-                                ? intl.formatMessage({
-                                      id: 'fieldSelection.table.empty.message',
-                                  })
+                                ? 'Click "Refresh" to evaluate the fields of the source collection.'
                                 : ''
                         }
                     >
@@ -244,9 +239,7 @@ export default function FieldSelectionTable({
                     <Table
                         size="small"
                         sx={{ minWidth: 350, borderCollapse: 'separate' }}
-                        aria-label={intl.formatMessage({
-                            id: 'fieldSelection.table.label',
-                        })}
+                        aria-label="Field Selection Editor"
                     >
                         <EntityTableHeader
                             columns={columnsToShow}

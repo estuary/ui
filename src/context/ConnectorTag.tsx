@@ -3,7 +3,6 @@ import type { BaseComponentProps } from 'src/types';
 
 import { createContext, useContext, useEffect, useState } from 'react';
 
-import { useIntl } from 'react-intl';
 import { useClient } from 'urql';
 
 import { CONNECTOR_TAG_QUERY } from 'src/api/gql/connectors';
@@ -47,7 +46,6 @@ export const ConnectorTagProvider = ({
         GlobalSearchParams.CONNECTOR_IMAGE_PATH
     );
     const client = useClient();
-    const intl = useIntl();
 
     const [connectorTagState, setConnectorTagState] =
         useState<ConnectorTagState | null>(() =>
@@ -138,9 +136,7 @@ export const ConnectorTagProvider = ({
                 condensed
                 error={{
                     ...BASE_ERROR,
-                    message: intl.formatMessage({
-                        id: 'workflow.connectorTag.error.message',
-                    }),
+                    message: 'Failed to fetch connector details',
                 }}
             />
         );

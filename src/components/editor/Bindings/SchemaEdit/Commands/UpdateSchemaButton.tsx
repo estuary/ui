@@ -2,7 +2,6 @@ import { useState } from 'react';
 
 import { Box, Button } from '@mui/material';
 
-import { useIntl } from 'react-intl';
 import { useUnmount } from 'react-use';
 
 import {
@@ -15,8 +14,6 @@ import { CustomEvents } from 'src/services/types';
 import { useBinding_currentCollection } from 'src/stores/Binding/hooks';
 
 function UpdateSchemaButton() {
-    const intl = useIntl();
-
     const currentCollection = useBinding_currentCollection();
 
     const updateSchema = useBindingsEditorStore_updateSchema();
@@ -51,9 +48,7 @@ function UpdateSchemaButton() {
                 onClick={updateCollectionSchema}
                 disabled={schemaUpdating}
             >
-                {intl.formatMessage({
-                    id: 'workflows.collectionSelector.schemaEdit.cta.syncSchema',
-                })}
+                Synchronize Schema
             </Button>
         </Box>
     );

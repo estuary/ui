@@ -5,7 +5,6 @@ import { useState } from 'react';
 import { Box, Stack, Tooltip } from '@mui/material';
 
 import { useSnackbar } from 'notistack';
-import { useIntl } from 'react-intl';
 
 import { useUpdateDraftedProjection } from 'src/hooks/projections/useUpdateDraftedProjection';
 import { logRocketConsole, logRocketEvent } from 'src/services/shared';
@@ -26,8 +25,6 @@ export const ProjectionList = ({
     maxChips,
     projectedFields,
 }: ProjectionListProps) => {
-    const intl = useIntl();
-
     const { enqueueSnackbar } = useSnackbar();
 
     const { hiddenCount, list, listScroller, showEntireList } =
@@ -56,13 +53,9 @@ export const ProjectionList = ({
                             placement="bottom-start"
                             title={
                                 cannotExist
-                                    ? intl.formatMessage({
-                                          id: 'projection.tooltip.cannotExist',
-                                      })
+                                    ? 'The location cannot exist. It may be outside of permitted array bounds, is a disallowed property, or has an impossible type.'
                                     : metadata?.systemDefined
-                                      ? intl.formatMessage({
-                                            id: 'projection.tooltip.systemDefinedField',
-                                        })
+                                      ? 'The system-defined alias for this location.'
                                       : ''
                             }
                         >
@@ -132,11 +125,7 @@ export const ProjectionList = ({
                                                               );
 
                                                               enqueueSnackbar(
-                                                                  intl.formatMessage(
-                                                                      {
-                                                                          id: 'projection.error.alert.removalFailure',
-                                                                      }
-                                                                  ),
+                                                                  'Failed to update the server when removing field alias. Please try again.',
                                                                   {
                                                                       ...snackbarSettings,
                                                                       variant:

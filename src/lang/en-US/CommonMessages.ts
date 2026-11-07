@@ -1,6 +1,5 @@
 export const endpointConfigHeader = `Endpoint Config`;
 export const CommonMessages: Record<string, string> = {
-    'connector.label': `Connector`,
     // Misc
     'company': `Estuary`,
     'productName': `Estuary`,

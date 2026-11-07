@@ -1,7 +1,5 @@
 import { Box } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 import { truncateTextSx } from 'src/context/Theme';
 import useSourceCapture from 'src/hooks/sourceCapture/useSourceCapture';
 import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
@@ -9,7 +7,6 @@ import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
 import { OutlinedChip } from 'src/styledComponents/chips/OutlinedChip';
 
 function SourceCaptureChip() {
-    const intl = useIntl();
     const formActive = useFormStateStore_isActive();
 
     const { updateDraft } = useSourceCapture();
@@ -18,11 +15,7 @@ function SourceCaptureChip() {
 
     const saving = useSourceCaptureStore((state) => state.saving);
 
-    const label =
-        sourceCapture ??
-        intl.formatMessage({
-            id: 'workflows.sourceCapture.selected.none',
-        });
+    const label = sourceCapture ?? 'no linked capture';
 
     return (
         <OutlinedChip

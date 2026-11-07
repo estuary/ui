@@ -3,7 +3,6 @@ import type { GroupByKeysSaveButtonProps } from 'src/components/fieldSelection/t
 import { Button } from '@mui/material';
 
 import { useSnackbar } from 'notistack';
-import { useIntl } from 'react-intl';
 
 import { useBinding_currentCollection } from 'src/stores/Binding/hooks';
 import { useBindingStore } from 'src/stores/Binding/Store';
@@ -17,7 +16,6 @@ const SaveButton = ({
     loading,
     selections,
 }: GroupByKeysSaveButtonProps) => {
-    const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
 
     const currentCollection = useBinding_currentCollection();
@@ -35,19 +33,10 @@ const SaveButton = ({
             disabled={loading || formActive}
             onClick={() => {
                 if (!selections) {
-                    const errorSource =
-                        currentCollection ??
-                        intl.formatMessage({
-                            id: 'fieldSelection.error.genericTerm.binding',
-                        });
+                    const errorSource = currentCollection ?? 'a binding';
 
                     enqueueSnackbar(
-                        intl.formatMessage(
-                            {
-                                id: 'fieldSelection.error.groupBySaveFailed',
-                            },
-                            { collection: errorSource }
-                        ),
+                        `Group-by key update failed for ${errorSource}.`,
                         { ...snackbarSettings, variant: 'error' }
                     );
 

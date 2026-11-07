@@ -5,8 +5,6 @@ import { useState } from 'react';
 
 import { Box, Collapse, Grid, Stack, Typography } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 import {
     useBindingsEditorStore_skimProjectionResponseEmpty,
     useBindingsEditorStore_skimProjectionResponseError,
@@ -28,8 +26,6 @@ interface Props {
 const EDITOR_HEIGHT = 404;
 
 function PropertiesViewer({ disabled, editorProps }: Props) {
-    const intl = useIntl();
-
     const workflow = useEntityWorkflow();
     const isCaptureWorkflow =
         workflow === 'capture_create' || workflow === 'capture_edit';
@@ -54,7 +50,7 @@ function PropertiesViewer({ disabled, editorProps }: Props) {
                 direction="row"
             >
                 <Typography variant="subtitle1" component="span">
-                    {intl.formatMessage({ id: 'schemaEditor.fields.label' })}
+                    Schema
                 </Typography>
 
                 {disabled ? (
@@ -91,9 +87,7 @@ function PropertiesViewer({ disabled, editorProps }: Props) {
                 <AlertBox
                     short
                     severity="error"
-                    title={intl.formatMessage({
-                        id: 'schemaEditor.error.title',
-                    })}
+                    title="Schema Processing Issues"
                 >
                     {skimProjectionResponseError}
                 </AlertBox>

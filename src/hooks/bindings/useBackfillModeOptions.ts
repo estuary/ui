@@ -1,12 +1,9 @@
 import type { BaseAutoCompleteOption } from 'src/components/shared/specPropEditor/types';
 import type { BackfillMode } from 'src/stores/Binding/slices/Backfill';
 
-import { useIntl } from 'react-intl';
-
 import { useBindingStore } from 'src/stores/Binding/Store';
 
 function useBackfillModeOptions() {
-    const intl = useIntl();
     const backfillMode = useBindingStore((state) => state.backfillMode);
 
     const isOptionEqualToValue = (
@@ -15,21 +12,15 @@ function useBackfillModeOptions() {
 
     const options: BaseAutoCompleteOption<BackfillMode>[] = [
         {
-            description: intl.formatMessage({
-                id: 'workflows.dataFlowBackfill.options.reset.description',
-            }),
-            label: intl.formatMessage({
-                id: 'workflows.dataFlowBackfill.options.reset.label',
-            }),
+            description:
+                'Backfill data from the source, reset inferred schemas, drop and re-create all destination tables and derivations.',
+            label: 'Dataflow Reset',
             val: 'reset',
         },
         {
-            description: intl.formatMessage({
-                id: 'workflows.dataFlowBackfill.options.incremental.description',
-            }),
-            label: intl.formatMessage({
-                id: 'workflows.dataFlowBackfill.options.incremental.label',
-            }),
+            description:
+                'Re-extract all source data and Insert or Append into your existing destination tables without dropping and recreating them.',
+            label: 'Incremental backfill (advanced)',
             val: 'incremental',
         },
     ];

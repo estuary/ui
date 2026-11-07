@@ -3,7 +3,6 @@ import type { AutoCompleteOptionForTargetSchemaExample } from 'src/components/ma
 import { Box, Stack } from '@mui/material';
 
 import { ArrowRight } from 'iconoir-react';
-import { useIntl } from 'react-intl';
 
 import { ExampleField } from 'src/components/materialization/targetNaming/ExampleRow/ExampleField';
 
@@ -29,14 +28,8 @@ export function ExampleRow({
     hideSourceName,
     outputLayout = 'row',
 }: Props) {
-    const intl = useIntl();
-
-    const tableLabel = intl.formatMessage({
-        id: 'destinationLayout.example.table.label',
-    });
-    const schemaLabel = intl.formatMessage({
-        id: 'destinationLayout.example.schema.label',
-    });
+    const tableLabel = 'Table:';
+    const schemaLabel = 'Schema:';
 
     return (
         <Box
