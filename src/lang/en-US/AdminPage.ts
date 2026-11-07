@@ -8,7 +8,6 @@ export const AdminPage: Record<string, string> = {
 
     'admin.cli_api.refreshToken.dialog.alert.tokenEncodingFailed': `An issue was encountered displaying your token. Please generate a new token.`,
 
-    'admin.billing.graph.dataByTask.tooltip': `This graph displays the three, largest data processing tasks over the set interval.`,
     'admin.billing.table.history.label.dataVolume': `Data Volume`,
     'admin.billing.table.history.label.date_start': `Start Date`,
     'admin.billing.table.history.label.date_end': `End Date`,

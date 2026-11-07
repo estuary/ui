@@ -9,7 +9,6 @@ import {
 } from '@mui/material';
 
 import { HelpCircle } from 'iconoir-react';
-import { useIntl } from 'react-intl';
 
 import { eChartsTooltipSX } from 'src/components/graphs/tooltips';
 import {
@@ -27,7 +26,6 @@ function CardWrapper({
     sx,
     tooltipMessageId,
 }: CardWrapperProps) {
-    const intl = useIntl();
     const theme = useTheme();
     const belowLg = useMediaQuery(theme.breakpoints.down('lg'));
 
@@ -86,9 +84,7 @@ function CardWrapper({
                     {tooltipMessageId ? (
                         <Tooltip
                             placement={belowLg ? 'bottom' : 'right'}
-                            title={intl.formatMessage({
-                                id: 'admin.billing.graph.dataByTask.tooltip',
-                            })}
+                            title="This graph displays the three, largest data processing tasks over the set interval."
                         >
                             <HelpCircle
                                 style={{
