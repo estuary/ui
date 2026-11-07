@@ -102,14 +102,6 @@ export const AdminPage: Record<string, string> = {
     'storageMappings.dialog.connectionTests.retry': `Retry`,
     'storageMappings.dialog.connectionTests.testFailed': `Connection test failed`,
 
-    // Data planes card
-    'storageMappings.dialog.dataPlanes.title': `Data Planes`,
-    'storageMappings.dialog.dataPlanes.addAction': `Add data plane`,
-    'storageMappings.dialog.dataPlanes.default': `Default`,
-    'storageMappings.dialog.dataPlanes.setAsDefault': `Set as default`,
-    'storageMappings.dialog.dataPlanes.selector.label': `Data Plane`,
-    'storageMappings.dialog.dataPlanes.allowPublic': `Allow public`,
-
     // Storage locations card
     'storageMappings.dialog.storageLocations.title': `Storage Locations`,
     'storageMappings.dialog.storageLocations.changePrimary': `Change primary store`,
