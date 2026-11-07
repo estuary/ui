@@ -151,13 +151,7 @@ function DetailsSection({ entityName, latestLiveSpec }: DetailsSectionProps) {
     ]);
 
     return (
-        <CardWrapper
-            message={
-                <span>
-                    {intl.formatMessage({ id: 'detailsPanel.details.title' })}
-                </span>
-            }
-        >
+        <CardWrapper message={<span>Details</span>}>
             {!hasLength(data) ? (
                 <CircularProgress />
             ) : (

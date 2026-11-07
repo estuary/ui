@@ -1,5 +1,3 @@
-import { useIntl } from 'react-intl';
-
 import ListAndDetails from 'src/components/editor/ListAndDetails';
 import CardWrapper from 'src/components/shared/CardWrapper';
 import DiffViewer from 'src/components/shared/Entity/Details/History/DiffViewer';
@@ -8,11 +6,8 @@ import { HEIGHT } from 'src/components/shared/Entity/Details/History/shared';
 import { getEditorTotalHeight } from 'src/utils/editor-utils';
 
 function History() {
-    const intl = useIntl();
     return (
-        <CardWrapper
-            message={intl.formatMessage({ id: 'details.history.title' })}
-        >
+        <CardWrapper message="Change History">
             <ListAndDetails
                 displayBorder
                 height={getEditorTotalHeight(HEIGHT)}

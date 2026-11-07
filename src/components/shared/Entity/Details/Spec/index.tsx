@@ -2,8 +2,6 @@ import { useCallback, useMemo, useState } from 'react';
 
 import { Grid, Stack, Typography } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 import LiveSpecEditor from 'src/components/editor/LiveSpec';
 import OutlinedToggleButton from 'src/components/shared/buttons/OutlinedToggleButton';
 import CardWrapper from 'src/components/shared/CardWrapper';
@@ -17,7 +15,6 @@ import { cardHeaderSx } from 'src/context/Theme';
 export type SpecPresentation = 'table' | 'code';
 
 function Spec() {
-    const intl = useIntl();
     const entityType = useEntityType();
 
     const [presentation, setPresentation] = useState<SpecPresentation>('table');
@@ -57,9 +54,7 @@ function Spec() {
                                 alignItems: 'center',
                             }}
                         >
-                            {intl.formatMessage({
-                                id: 'detailsPanel.specification.header',
-                            })}
+                            Specification
                         </Typography>
 
                         <ExternalLink link={docsLink}>Docs</ExternalLink>
@@ -75,9 +70,7 @@ function Spec() {
                                     evaluatePresentation(value, 'code')
                                 }
                             >
-                                {intl.formatMessage({
-                                    id: 'details.spec.cta.formatted',
-                                })}
+                                Table
                             </OutlinedToggleButton>
 
                             <OutlinedToggleButton
@@ -88,9 +81,7 @@ function Spec() {
                                     evaluatePresentation(value, 'table')
                                 }
                             >
-                                {intl.formatMessage({
-                                    id: 'details.spec.cta.raw',
-                                })}
+                                Code
                             </OutlinedToggleButton>
                         </OutlinedToggleButtonGroup>
                     ) : null}

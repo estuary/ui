@@ -6,7 +6,6 @@ import { useMemo } from 'react';
 import { Button, Stack, Typography } from '@mui/material';
 
 import { Refresh } from 'iconoir-react';
-import { useIntl } from 'react-intl';
 
 import HydrationError from 'src/components/collection/DataPreview/HydrationError';
 import ListView from 'src/components/collection/DataPreview/ListView';
@@ -38,7 +37,6 @@ interface Props {
 // }
 
 export function DataPreview({ collectionName }: Props) {
-    const intl = useIntl();
     // const [previewMode, setPreviewMode] = useState<Views>(Views.list);
     // const toggleMode = (_event: any, newValue: Views) => {
     //     setPreviewMode(newValue);
@@ -96,11 +94,7 @@ export function DataPreview({ collectionName }: Props) {
                     spacing={2}
                     sx={{ alignItems: 'center' }}
                 >
-                    <Typography component="span">
-                        {intl.formatMessage({
-                            id: 'detailsPanel.dataPreview.header',
-                        })}
-                    </Typography>
+                    <Typography component="span">Data Preview</Typography>
 
                     <Button
                         variant="text"
@@ -155,9 +149,7 @@ export function DataPreview({ collectionName }: Props) {
 
                 {tenantHidesError || hide ? (
                     <AlertBox short severity="info">
-                        {intl.formatMessage({
-                            id: 'detailsPanel.dataPreview.hidden',
-                        })}
+                        Data previews are disabled for this tenant.
                     </AlertBox>
                 ) : readError ? (
                     <HydrationError readError={readError} />
