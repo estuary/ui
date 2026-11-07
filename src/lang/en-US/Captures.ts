@@ -3,10 +3,10 @@ import { CTAs } from 'src/lang/en-US/CTAs';
 
 export const Captures: Record<string, string> = {
     'capturesTable.title': `Your Captures`,
-    'capturesTable.cta.new': `New Capture`,
+
     'capturesTable.filterLabel': `Filter captures`,
     'capturesTable.delete.removeCollectionsOption': `Delete all collections associated with this capture. Collections used by active tasks will be skipped.`,
-    'capturesTable.ctaGroup.aria': `capture table available actions`,
+
     'captures.message1': `Click "New Capture" to get started.`,
     'captures.message2': `You'll be guided through the process of defining, testing, and publishing a {docLink}.`,
     'captures.message2.docLink': `capture`,
@@ -59,11 +59,7 @@ export const Captures: Record<string, string> = {
     'captureEdit.testNotification.desc': `Your capture succeeded in a dry run and can be saved.`,
 
     // Capture Interval
-    'captureInterval.header': `Polling Interval`,
-    'captureInterval.message': `Controls how often the Capture will check for new data. Intervals are relative to the start of an invocation and not its completion.`,
-    'captureInterval.tooltip': `If the interval is five minutes, and an invocation of the capture finishes after two minutes, then the next invocation will be started after three additional minutes.`,
-    'captureInterval.input.label': `Interval`,
+
     'captureInterval.input.description': `The default polling interval is {value}.`,
     'captureInterval.error.updateFailed': `Polling interval update failed`,
-    'captureInterval.error.intervalFormat': `Intervals must be formatted as [0-9]+(s|m|h).`,
 };
