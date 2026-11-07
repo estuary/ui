@@ -117,9 +117,7 @@ const SaveButton = ({
             }}
             variant="outlined"
         >
-            {intl.formatMessage({
-                id: 'cta.evolve',
-            })}
+            Apply
         </Button>
     );
 };

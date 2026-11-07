@@ -117,7 +117,7 @@ function MarketplaceVerification() {
                         onClick={() => startVerification(prefix)}
                         sx={{ mt: 2 }}
                     >
-                        {intl.formatMessage({ id: 'cta.continue' })}
+                        Continue
                     </Button>
                 </Box>
             </Stack>

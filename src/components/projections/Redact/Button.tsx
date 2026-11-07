@@ -4,8 +4,6 @@ import { useState } from 'react';
 
 import { Button } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 import RedactFieldDialog from 'src/components/projections/Redact/Dialog';
 import { evaluateRedactionEligibility } from 'src/utils/schema-utils';
 
@@ -15,8 +13,6 @@ const RedactFieldButton = ({
     pointer,
     strategy,
 }: BaseRedactFieldProps) => {
-    const intl = useIntl();
-
     const [open, setOpen] = useState(false);
 
     const redactionEligibility = evaluateRedactionEligibility(pointer);
@@ -37,7 +33,7 @@ const RedactFieldButton = ({
                 size="small"
                 variant="outlined"
             >
-                {intl.formatMessage({ id: 'cta.redact' })}
+                Redact
             </Button>
 
             <RedactFieldDialog

@@ -102,7 +102,7 @@ const GroupByKeys = ({ bindingUUID, loading, selections }: BaseButtonProps) => {
                             }}
                             variant="text"
                         >
-                            {intl.formatMessage({ id: 'cta.cancel' })}
+                            Cancel
                         </Button>
 
                         <SaveButton

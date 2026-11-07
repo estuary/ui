@@ -26,7 +26,7 @@ export const ExpandListChip = ({
             )}
             onClick={showEntireList}
             size="small"
-            title={intl.formatMessage({ id: 'cta.showAll' })}
+            title="Show All"
             variant="outlined"
         />
     );

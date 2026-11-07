@@ -100,7 +100,7 @@ export const SSOForm = ({ grantToken }: DefaultLoginProps) => {
                         type="submit"
                         sx={{ mt: 3 }}
                     >
-                        {intl.formatMessage({ id: 'cta.login.sso' })}
+                        Sign in with SSO
                     </Button>
                 </form>
             </Box>

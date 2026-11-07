@@ -101,7 +101,7 @@ function EditProjectionDialog({
                     }}
                     variant="text"
                 >
-                    {intl.formatMessage({ id: 'cta.cancel' })}
+                    Cancel
                 </Button>
 
                 <Button
@@ -188,9 +188,7 @@ function EditProjectionDialog({
                     }}
                     variant="outlined"
                 >
-                    {intl.formatMessage({
-                        id: 'cta.evolve',
-                    })}
+                    Apply
                 </Button>
             </DialogActions>
         </Dialog>

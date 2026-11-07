@@ -1,13 +1,11 @@
 export const CTAs: Record<string, string> = {
+    'cta.evolve': `Apply`,
     'cta.cancel': `Cancel`,
-    'cta.close': `Close`,
+
     'cta.continue': `Continue`,
     'cta.next': `Next`,
     'cta.delete': `Delete`,
-    'cta.edit': `Edit`,
-    'cta.materialize': `Materialize`,
-    'cta.magicLink': `Sign in with magic link`,
-    'cta.verifyOTP': `Sign in with OTP`,
+
     'cta.save': `Save`,
     'cta.saveEntity': `Save and publish`,
     'cta.enable': `Enable`,
@@ -15,27 +13,15 @@ export const CTAs: Record<string, string> = {
     'cta.testConfig': `Test`,
     'cta.generateCatalog.capture': `Next`,
     'cta.generateCatalog.materialization': `Next`,
-    'cta.expandToEdit': `Expand to edit`,
+
     'cta.refresh': `Refresh`,
-    'cta.expandToView': `Expand to view`,
-    'cta.login.google': `Sign in with Google`,
-    'cta.register.google': `Register with Google`,
-    'cta.login.github': `Sign in with GitHub`,
-    'cta.register.github': `Register with GitHub`,
-    'cta.login.azure': `Sign in with Azure`,
-    'cta.register.azure': `Register with Azure`,
+
     'cta.login.sso': `Sign in with SSO`,
-    'cta.showAll': `Show All`,
-    'cta.evolve': `Apply`,
+
     'cta.support': `contact support`,
-    'cta.transform': `Transform`,
-    'cta.goToDetails': `See Details`,
-    'cta.goToAll': `See all`,
+
     // These are dynamically created in the Save button
     'cta.saveEntity.active': `Saving and Publishing...`,
     'cta.testConfig.active': `Testing...`,
     'cta.contactUs': `Contact Us`,
-    'cta.modify': `modify`,
-    'cta.rename': `Rename`,
-    'cta.redact': `Redact`,
 };

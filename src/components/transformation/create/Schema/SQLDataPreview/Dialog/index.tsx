@@ -66,9 +66,7 @@ function SQLDataPreviewDialog({ open, setOpen }: Props) {
             </DialogContent>
 
             <DialogActions>
-                <Button onClick={() => setOpen(false)}>
-                    <FormattedMessage id="cta.close" />
-                </Button>
+                <Button onClick={() => setOpen(false)}>Close</Button>
             </DialogActions>
         </Dialog>
     );

@@ -64,9 +64,7 @@ export default function StatOverview({
                         </Typography>
                     </Stack>
 
-                    <LinkWrapper link={viewAll}>
-                        {intl.formatMessage({ id: 'cta.goToAll' })}
-                    </LinkWrapper>
+                    <LinkWrapper link={viewAll}>See all</LinkWrapper>
                 </Stack>
 
                 <Stack

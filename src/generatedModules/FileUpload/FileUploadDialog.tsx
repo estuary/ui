@@ -271,7 +271,7 @@ export const FileUploadDialog = ({
                     variant="outlined"
                     size="small"
                 >
-                    {intl.formatMessage({ id: 'cta.cancel' })}
+                    Cancel
                 </Button>
                 <Button
                     disabled={!selectedFile || isReading}
@@ -279,7 +279,7 @@ export const FileUploadDialog = ({
                     variant="contained"
                     size="small"
                 >
-                    {intl.formatMessage({ id: 'cta.save' })}
+                    Save
                 </Button>
             </DialogActions>
         </Dialog>

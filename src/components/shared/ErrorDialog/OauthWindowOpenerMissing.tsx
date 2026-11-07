@@ -26,7 +26,7 @@ function OauthWindowOpenerMissing() {
                         window.close();
                     }}
                 >
-                    <FormattedMessage id="cta.close" />
+                    Close
                 </Button>
             }
             dialogTitle={

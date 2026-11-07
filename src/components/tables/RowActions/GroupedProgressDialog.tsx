@@ -62,9 +62,7 @@ function GroupedProgressDialog({
 
             <DialogActions sx={{ p: 3 }}>
                 <Button onClick={onClose} disabled={!done}>
-                    {intl.formatMessage({
-                        id: 'cta.close',
-                    })}
+                    Close
                 </Button>
             </DialogActions>
         </>

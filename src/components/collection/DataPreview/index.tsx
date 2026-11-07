@@ -115,9 +115,7 @@ export function DataPreview({ collectionName }: Props) {
                             height: 'auto',
                         }}
                     >
-                        {intl.formatMessage({
-                            id: 'cta.refresh',
-                        })}
+                        Refresh
                     </Button>
 
                     {/*

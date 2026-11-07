@@ -2,8 +2,6 @@ import type { ProviderButtonProps } from 'src/components/login/Providers/types';
 
 import { Button } from '@mui/material';
 
-import { FormattedMessage } from 'react-intl';
-
 import { defaulticonSize } from 'src/components/login/Providers/buttons/shared';
 
 const AzureButton = ({ login, isRegister, ...props }: ProviderButtonProps) => {
@@ -44,9 +42,7 @@ const AzureButton = ({ login, isRegister, ...props }: ProviderButtonProps) => {
             }
             variant="outlined"
         >
-            <FormattedMessage
-                id={isRegister ? 'cta.register.azure' : 'cta.login.azure'}
-            />
+            {isRegister ? 'Register with Azure' : 'Sign in with Azure'}
         </Button>
     );
 };

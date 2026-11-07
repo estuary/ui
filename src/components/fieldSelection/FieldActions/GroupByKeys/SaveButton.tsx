@@ -65,7 +65,7 @@ const SaveButton = ({
             style={{ textWrap: 'nowrap' }}
             variant="outlined"
         >
-            {intl.formatMessage({ id: 'cta.evolve' })}
+            Apply
         </Button>
     );
 };

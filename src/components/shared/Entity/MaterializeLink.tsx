@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 
 import { Button } from '@mui/material';
 
-import { FormattedMessage, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import { NavLink } from 'react-router-dom';
 
 import { authenticatedRoutes } from 'src/app/routes';
@@ -43,7 +43,7 @@ function MaterializeLink({ liveSpecId, name, variant }: Props) {
                 disableElevation
                 sx={{ mr: 1 }}
             >
-                <FormattedMessage id="cta.materialize" />
+                Materialize
             </Button>
         </NavLink>
     );

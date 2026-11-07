@@ -2,8 +2,6 @@ import { useCallback, useEffect } from 'react';
 
 import { Button } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 import {
     useBindingsEditorStore_editModeEnabled,
     useBindingsEditorStore_setEditModeEnabled,
@@ -14,7 +12,6 @@ import { CustomEvents } from 'src/services/types';
 import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
 
 function SchemaEditToggle() {
-    const intl = useIntl();
     const formActive = useFormStateStore_isActive();
     const editModeEnabled = useBindingsEditorStore_editModeEnabled();
     const setEditModeEnabled = useBindingsEditorStore_setEditModeEnabled();
@@ -46,9 +43,7 @@ function SchemaEditToggle() {
             }}
             disabled={formActive || disableSchemaEditing}
         >
-            {intl.formatMessage({
-                id: editModeEnabled ? 'cta.close' : 'cta.edit',
-            })}
+            {editModeEnabled ? 'Close' : 'Edit'}
         </Button>
     );
 }

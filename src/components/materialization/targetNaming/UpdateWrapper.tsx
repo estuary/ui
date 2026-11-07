@@ -77,9 +77,7 @@ export default function TargetNamingUpdateWrapper() {
             disabled={saving || formActive}
             onClick={openNamingDialog}
         >
-            {intl.formatMessage({
-                id: 'cta.modify',
-            })}
+            modify
         </Button>
     );
 

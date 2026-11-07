@@ -4,8 +4,6 @@ import { useMemo } from 'react';
 
 import { Box, Button, Stack } from '@mui/material';
 
-import { FormattedMessage } from 'react-intl';
-
 import { TaskEndpoint } from 'src/components/shared/Endpoints/TaskEndpoint';
 import Status from 'src/components/shared/Entity/Status';
 import { useEntityType } from 'src/context/EntityContext';
@@ -65,9 +63,7 @@ function LogDialogActions({ close }: LogDialogActionsProps) {
             {endpoints}
 
             <Stack direction="row" spacing={2}>
-                <Button onClick={close}>
-                    <FormattedMessage id="cta.close" />
-                </Button>
+                <Button onClick={close}>Close</Button>
             </Stack>
         </>
     );
