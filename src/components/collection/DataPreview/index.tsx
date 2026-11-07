@@ -37,11 +37,6 @@ interface Props {
 // }
 
 export function DataPreview({ collectionName }: Props) {
-    // const [previewMode, setPreviewMode] = useState<Views>(Views.list);
-    // const toggleMode = (_event: any, newValue: Views) => {
-    //     setPreviewMode(newValue);
-    // };
-
     const isDerivation = useIsCollectionDerivation();
 
     const { error: tenantHidesError, hide } =
@@ -111,24 +106,6 @@ export function DataPreview({ collectionName }: Props) {
                     >
                         Refresh
                     </Button>
-
-                    {/*
-                    <ToggleButtonGroup
-                        color="primary"
-                        size="small"
-                        exclusive
-                        onChange={toggleMode}
-                        value={previewMode}
-                        disabled={!hasLength(journalData.data?.documents)}
-                    >
-                        <ToggleButton value={Views.list}>
-                            <FormattedMessage id="cta.list" />
-                        </ToggleButton>
-                        <ToggleButton value={Views.table}>
-                            <FormattedMessage id="cta.table" />
-                        </ToggleButton>
-                    </ToggleButtonGroup>
-                    */}
                 </Stack>
             }
         >
@@ -158,10 +135,6 @@ export function DataPreview({ collectionName }: Props) {
                 ) : (journalData.data?.documents.length ?? 0) > 0 && spec ? (
                     <ListView journalData={journalData} spec={spec} />
                 ) : null}
-
-                {/*             : (
-                <TableView journalData={journalData} spec={spec} />
-            )}*/}
             </>
         </CardWrapper>
     );
