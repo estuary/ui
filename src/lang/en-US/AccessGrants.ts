@@ -16,7 +16,6 @@ const suffixes = {
 const impact = `${CommonMessages['terms.dataFlow']}s may fail!`;
 
 export const AccessGrants: Record<string, string> = {
-    'accessGrantsTable.header': `Captures`,
     'accessGrantsTable.users.title': `Organization Membership`,
     'accessGrantsTable.users.table.aria.label': `Organization Membership Table`,
     'accessGrantsTable.prefixes.title': `Data Sharing`,
@@ -26,7 +25,6 @@ export const AccessGrants: Record<string, string> = {
     'accessGrants.message1': `No results found.`,
     'accessGrants.message2': `We couldn't find any results matching your search. Please try a different filter.`,
 
-    'accessGrants.table.accessLinks.cta.generate': `Create Links`,
     'accessGrants.table.accessLinks.header.noData': `No active invitations found.`,
     'accessGrants.table.accessLinks.message.noData': `To create an invitation, click the "Create Invite Link" button above. Invitations will be listed here while they are live.`,
     'accessGrants.table.accessLinks.label.prefix': `Prefix`,
@@ -36,8 +34,6 @@ export const AccessGrants: Record<string, string> = {
 
     'accessGrants.actions.extra.confirmation.whatThatMeans': `What will happen?`,
     'accessGrants.actions.extra.confirmation.whatIsChanging': `What is changing?`,
-    'accessGrants.actions.extra.confirmation.whatIsChanging.removing': `removing`,
-    'accessGrants.actions.extra.confirmation.whatIsChanging.access': `access for`,
 
     'accessGrants.actions.extra.confirmation.title': `Extra Attention Required`,
     'accessGrants.actions.extra.confirmation.instructions': `These changes may cause your ${CommonMessages['terms.dataFlow'].toLowerCase()} to fail. Please reach out to {docLink} if you have questions.`,

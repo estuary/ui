@@ -2,14 +2,10 @@ import type { EmailListFieldProps } from 'src/components/admin/Settings/PrefixAl
 
 import { TextField } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 import EmailSelector from 'src/components/admin/Settings/PrefixAlerts/Dialog/SubscriberSection/SubscriberInfo/EmailSelector';
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
 
 const EmailListField = ({ subscription, staticEmail }: EmailListFieldProps) => {
-    const intl = useIntl();
-
     const duplicatePrefixExists = useAlertSubscriptionsStore(
         (state) => state.duplicatePrefixExists
     );
@@ -18,9 +14,7 @@ const EmailListField = ({ subscription, staticEmail }: EmailListFieldProps) => {
         <TextField
             disabled
             fullWidth
-            label={intl.formatMessage({
-                id: 'data.email',
-            })}
+            label="Email"
             required
             size="small"
             slotProps={{

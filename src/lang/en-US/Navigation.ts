@@ -10,7 +10,6 @@ export const Navigation: Record<string, string> = {
     'helpMenu.support.link': `${CommonMessages['support.email']}`,
     'helpMenu.contact': `${CTAs['cta.contactUs']}`,
     'helpMenu.contact.link': `https://estuary.dev/contact-us`,
-    'helpMenu.about': `About ${CommonMessages.productName}`,
     'helpMenu.status': `Status`,
     'helpMenu.status.link': `https://status.estuary.dev/`,
 };

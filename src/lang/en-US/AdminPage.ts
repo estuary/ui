@@ -2,7 +2,6 @@ import { CommonMessages } from 'src/lang/en-US/CommonMessages';
 import { CTAs } from 'src/lang/en-US/CTAs';
 
 export const AdminPage: Record<string, string> = {
-    'admin.header': `Administration`,
     'admin.roles.message': `These are all the ${CommonMessages['terms.permissions']} that are currently provisioned. An administrator can update them in the {docLink}.`,
     'admin.roles.message.docLink': `authorization settings`,
     'admin.roles.message.docPath': `https://go.estuary.dev/provision`,
@@ -17,7 +16,6 @@ export const AdminPage: Record<string, string> = {
     'admin.billing.table.history.label.totalCost': `Total Cost`,
     'admin.billing.table.history.tooltip.date_start': `This billing period began on {timestamp}`,
     'admin.billing.table.history.tooltip.date_end': `This billing period ended on {timestamp}`,
-    'admin.billing.table.history.tooltip.dataVolume': `GB of data processed by tasks`,
     'admin.billing.table.history.emptyTableDefault.header': `No information found.`,
     'admin.billing.table.history.emptyTableDefault.message': `We couldn't find any billing information on file.`,
 
@@ -25,15 +23,10 @@ export const AdminPage: Record<string, string> = {
     'admin.billing.table.line_items.label.count': `Quantity`,
     'admin.billing.table.line_items.label.rate': `Unit Price`,
     'admin.billing.table.line_items.label.subtotal': `Subtotal`,
-    'admin.billing.table.line_items.label.total': `Total Due`,
     'admin.billing.table.line_items.emptyTableDefault.header': `No information found.`,
     'admin.billing.table.line_items.emptyTableDefault.message': `We couldn't find any billing information on file.`,
 
     'admin.grants.confirmation.alert': `Access to all items will be removed and this action cannot be undone. Please review the list to continue.`,
-
-    'admin.users.prefixInvitation.header': `Add Users`,
-
-    'admin.prefix.issueGrant.label.capability': `Capability`,
 
     'admin.dataPlanes.column.header.name': `Name`,
     'admin.dataPlanes.column.header.region': `Region`,
@@ -45,47 +38,16 @@ export const AdminPage: Record<string, string> = {
     'admin.dataPlanes.public.table.noContent.message': `There was an issue reaching our servers. Please try again. If the issue persists, ${CTAs['cta.support']}.`,
 
     'admin.tabs.users': `Account Access`,
-    'admin.tabs.notifications': `Notifications`,
     'admin.tabs.api': `CLI-API`,
     'admin.tabs.billing': `Billing`,
     'admin.tabs.settings': `Settings`,
 
     // Storage Mappings
     'storageMappings.header': `Collection Storage`,
-    'storageMappingsTable.title': `Storage Locations`,
-    'storageMappings.status.active': `Primary`,
-    'storageMappings.prefix.description': `The prefix you want to configure`,
-    'storageMappings.provider.label': `Provider`,
-    'storageMappings.provider.description': `The provider (ex: S3, GCP) you are using`,
-    'storageMappings.bucket.label': `Bucket`,
-    'storageMappings.bucket.description': `The name of the bucket you have setup to store data in.`,
-    'storageMappings.lastUpdated.label': `Last Updated`,
     'storageMappings.message': `Create a Storage Mapping to govern where your data is stored. The primary storage mapping is where new data is written to, both primary and other storage mappings are used to read existing data from.`,
-
-    'storageMappings.wizard.step.configure': `Configuration`,
-    'storageMappings.wizard.step.test': `Continue to connection test`,
-    'storageMappings.dialog.generate.description': `Configure a new collection storage for your data.`,
-    'storageMappings.dialog.generate.alert.keyPrefix': `Your tenant, {tenant}, will be used to prefix the keys written to the specified storage location.`,
-    'storageMappings.dialog.generate.providerOption.AZURE': `Azure Object Storage Service`,
-    'storageMappings.dialog.generate.providerOption.CUSTOM': `An S3-compatible Endpoint`,
-    'storageMappings.dialog.generate.providerOption.GCS': `Google Cloud Storage`,
-    'storageMappings.dialog.generate.providerOption.S3': `Amazon S3`,
-    'storageMappings.dialog.generate.logsHeader': `Please wait while we save and apply your storage mapping.`,
-    'storageMappings.dialog.generate.error.republicationFailed': `There was an error republishing the entities in your system. Please try again.`,
-    'storageMappings.dialog.generate.error.unableToFetchLogs': `There was an issue fetching the logs when applying the new storage mapping. Please contact support to confirm that your system has been updated accordingly.`,
 
     // Create dialog
     'storageMappings.dialog.create.description': `Add a new storage location for your collection data. For information and access requirements, see the {docLink}.`,
     'storageMappings.dialog.create.description.docPath': `https://docs.estuary.dev/getting-started/installation/#configuring-your-cloud-storage-bucket-for-use-with-flow`,
     'storageMappings.dialog.create.description.docLink': `documentation`,
-
-    // Connection tests
-    'storageMappings.dialog.connectionTests.title': `Connection Tests`,
-    'storageMappings.dialog.connectionTests.runTests': `Run tests`,
-    'storageMappings.dialog.connectionTests.allMustPass': `All tests must pass before saving changes.`,
-    'storageMappings.dialog.connectionTests.testFailed': `Connection test failed`,
-
-    // Data planes card
-    'storageMappings.dialog.dataPlanes.title': `Data Planes`,
-    'storageMappings.dialog.dataPlanes.addAction': `Add data plane`,
 };

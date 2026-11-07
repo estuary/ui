@@ -9,8 +9,6 @@ export const JsonForms: Record<string, string> = {
 
     // Custom Renderers
     'dateTimePicker.button.ariaLabel': `Open date time picker for {label}`,
-    'dateTimePicker.picker.currentStep': `Selecting: {currentStep}`,
-    'dateTimePicker.picker.footer': `Timezone: UTC`,
     'datePicker.button.ariaLabel': `Open date picker for {label}`,
     'informational.sshEndpoint.title': `All Estuary traffic comes from a group of IPs that can be whitelisted:`,
     'informational.sshEndpoint.ipv4': `35.226.75.135`,
@@ -22,13 +20,11 @@ export const JsonForms: Record<string, string> = {
 
     // File Upload Dialog
     'fileUpload.input.title': `Upload file`,
-    'fileUpload.dropzone.ariaLabel': `Upload file: drag and drop, or press Enter to browse`,
     'fileUpload.dropzone.instruction': `Drag and drop a file here, or click to browse`,
     'fileUpload.dropzone.maxSize': `Max file size: 5 MB`,
     'fileUpload.dropzone.error.tooLarge': `File exceeds the 5 MB size limit.`,
     'fileUpload.dropzone.error.tooSmall': `File appears to be empty.`,
     'fileUpload.dropzone.error.readFailed': `File read failed. Please try again.`,
-    'fileUpload.dropzone.error.readAborted': `File read aborted. Please try again.`,
 
     // OAuth
     'oauth.error.credentialsMissing': `need to complete OAuth`,
@@ -40,7 +36,6 @@ export const JsonForms: Record<string, string> = {
     'oauth.authenticated': `Authenticated`,
     'oauth.unauthenticated': `Not Authenticated`,
     'oauth.authenticate': `Authenticate your {provider} account`,
-    'oauth.remove': `Remove`,
     'oauth.edit.message': `If you edit your endpoint config and want to continue using OAuth you must reauthenticate.`,
     'oauth.windowOpener.error.dialog.title': `OAuth Failed`,
     'oauth.windowOpener.error.title': `Cannot reach parent window`,

@@ -9,14 +9,8 @@ export const Errors: Record<string, string> = {
     'error.instructions.docLink': `${CTAs['cta.support']}`,
     'error.instructions.docPath': `${CommonMessages['support.email']}`,
 
-    'error.codeLabel': `Code:`,
     'error.messageLabel': `Message:`,
-    'error.detailsLabel': `Details:`,
-    'error.hintLabel': `Hint:`,
-    'error.descriptionLabel': `Description:`,
     'error.tryAgain': `Try again and if the issue persists please contact support.`,
-
-    'error.catalogNameInvalid.message': `{catalogName} is not a valid entity name.`,
 
     'error.fallBack': `no error details to display`,
 
@@ -28,8 +22,6 @@ export const Errors: Record<string, string> = {
     'custom.prefixedName.name.unclean': `cannot contain ./ or ../`,
     'custom.prefixedName.name.endingSlash': `cannot end with /`,
     'custom.prefixedName.name.invalid': `may only include ${CommonMessages['catalogName.limitations']} separated by forward slashes`,
-    'custom.prefixedName.invalid': `You do not have the necessary ${CommonMessages['terms.permissions']}. Please contact an administrator.`,
-    'custom.catalogName.pattern': `must match pattern "organization/name"\nwhich may include ${CommonMessages['catalogName.limitations']}`,
 
     // Draft Errors
     // Also used to SkimProjectionErrors
@@ -42,15 +34,12 @@ export const Errors: Record<string, string> = {
 
     // Page Not Found
     'pageNotFound.heading': `Sorry, that page cannot be found.`,
-    'pageNotFound.message': `Try searching for a page below or go directly to your {dashboard}.`,
 
     // Full Page
     'fullPage.instructions': `Please try again. If the error persists, {docLink}`,
     'fullPage.instructions.docLink': `${CTAs['cta.support']}`,
     'fullPage.instructions.docPath': `${CommonMessages['support.email']}`,
     'fullPage.userInfoSummary.error': `We had an issue while checking if your account has access.`,
-
-    // Wizard Dialog
 
     // Supabase
     'supabase.poller.failed.title': `${CommonMessages['common.failedFetch']}`,

@@ -4,8 +4,6 @@ import { useEffect, useMemo } from 'react';
 
 import { Stack, Typography } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 import AddButton from 'src/components/admin/Settings/PrefixAlerts/Dialog/SubscriberSection/AddButton';
 import SubscriberInfo from 'src/components/admin/Settings/PrefixAlerts/Dialog/SubscriberSection/SubscriberInfo';
 import SummaryEmpty from 'src/components/admin/Settings/PrefixAlerts/Dialog/SubscriberSection/SubscriberInfo/SummaryEmpty';
@@ -13,8 +11,6 @@ import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAler
 import { useGetAlertTypes } from 'src/context/AlertType';
 
 const SubscriberSection = () => {
-    const intl = useIntl();
-
     const [{ fetching, data, error }] = useGetAlertTypes();
 
     const mutableSubscriptionMetadata = useAlertSubscriptionsStore(
@@ -58,13 +54,7 @@ const SubscriberSection = () => {
                 }}
             >
                 <Typography style={{ fontSize: 16, fontWeight: 300 }}>
-                    {intl.formatMessage(
-                        { id: 'alerts.config.dialog.label.subscribers' },
-                        {
-                            count: targetSubscriptionMetadata.subscriptions
-                                .length,
-                        }
-                    )}
+                    {`Recipients (${targetSubscriptionMetadata.subscriptions.length})`}
                 </Typography>
 
                 <AddButton />

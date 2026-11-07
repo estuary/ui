@@ -1,12 +1,9 @@
 import { Stack, Typography, useTheme } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
 import { defaultOutline } from 'src/context/Theme';
 
 const SummaryEmpty = () => {
-    const intl = useIntl();
     const theme = useTheme();
 
     const catalogPrefix = useAlertSubscriptionsStore(
@@ -26,12 +23,11 @@ const SummaryEmpty = () => {
             }}
         >
             <Typography>
-                {intl.formatMessage(
-                    {
-                        id: 'alerts.config.dialog.message.noExistingSubscriptions',
-                    },
-                    { prefix: <b>{catalogPrefix}</b> }
-                )}
+                No emails are configured to be notified for prefix,{' '}
+                <b>{catalogPrefix}</b>.
+                {
+                    ' To receive notifications for this prefix, click "Add Recipient" to get started.'
+                }
             </Typography>
         </Stack>
     );

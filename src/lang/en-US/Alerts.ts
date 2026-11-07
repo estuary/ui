@@ -1,32 +1,19 @@
 export const Alerts: Record<string, string> = {
-    'alerts.config.title': `Alerts`,
-    'alerts.config.message': `Below are tasks with an active alert. If you have taken steps to fix they may take some time to clear.`,
     'alerts.config.header': `Organization Notifications`,
 
-    'alerts.config.dialog.emailSelector.inputError': `Email is incorrectly formatted.`,
-    'alerts.config.dialog.emailSelector.duplicationError': `Email is used by another subscription to this prefix.`,
-    'alerts.config.dialog.error.generic': `An issue was encountered during an alert-related server operation.`,
-    'alerts.config.dialog.label.globalSettings': `Global Settings`,
-    'alerts.config.dialog.label.subscribers': `Recipients ({count})`,
-    'alerts.config.dialog.message.noExistingSubscriptions': `No emails are configured to be notified for prefix, {prefix}. To receive notifications for this prefix, click "Add Recipient" to get started.`,
-    'alerts.config.dialog.message.globalSettings': `Default settings applied to all tasks under this prefix. Individual tasks can override these values in their own notification settings.`,
     'alerts.config.dialog.generate.description': `Choose where you'd like notifications to be sent. Email addresses can be for mailing lists, {docLink}, or individual users.`,
     'alerts.config.dialog.generate.description.docLink': `Slack channels`,
     'alerts.config.dialog.generate.description.docPath': `https://slack.com/intl/en-au/help/articles/206819278-Send-emails-to-Slack`,
     'alerts.config.dialog.generate.header': `Configure Notification Methods`,
-    'alerts.config.dialog.prefixField.duplicate': `One or more subscriptions already exist for this prefix. To edit, please return to the Organization Notifications table and click the Edit button on the corresponding row.`,
     'alerts.config.dialog.update.description': `Choose the notifications you'd like to receive.`,
     'alerts.config.dialog.update.header': `Update Notification Methods`,
 
-    'alerts.config.table.aria.label': `Organization Notifications Table`,
-    'alerts.config.table.filterLabel': `Filter by Prefix or Email`,
     'alerts.config.table.noContent.header': `No subscriptions found.`,
     'alerts.config.table.noContent.message': `To begin receiving email notifications for a prefix you admin, click "Configure Notifications" above to create a subscription.`,
     'alerts.config.table.label.alertMethod': `Notification Method`,
 
     'alerts.overview.title.fetching': `Fetching active alerts...`,
     'alerts.overview.title.active': `Active Alerts Summary`,
-    'alerts.overview.title.active.all': `All Active Alerts`,
     'alerts.overview.title.activeEmpty': `No Active Alerts`,
 
     'alerts.overview.recentAlerts': `Recent Alerts`,
@@ -40,7 +27,6 @@ export const Alerts: Record<string, string> = {
     'alerts.table.data.firedAt': `Fired At`,
     'alerts.table.data.recipients': `Recipients`,
     'alerts.table.data.resolvedAt': `Resolved At`,
-    'alerts.table.data.duration': `Duration`,
     'alerts.table.data.alertType': `Alert Type`,
     'alerts.table.data.details': `Details`,
     'alerts.table.label': `List of all alerts for tenant`,
@@ -61,9 +47,6 @@ export const Alerts: Record<string, string> = {
     'alert.active.fetchError.title': `Unable to fetch active alerts`,
     'alerts.table.recipients.empty': `none configured`,
     'alerts.table.recipients.empty.tooltip': `No emails were configured to be notified.`,
-
-    'alert.active.noAlerts.title': `All Clear!`,
-    'alert.active.noAlerts.message': `No active alerts.`,
 
     // Consumed in ui/src/settings/alerts.ts, ui/src/hooks/useAlertTypeContent.ts,
     // and ui/src/components/admin/Settings/PrefixAlerts/Dialog/GlobalSettings/DataMovementSetting.tsx

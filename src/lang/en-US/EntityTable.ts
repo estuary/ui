@@ -8,7 +8,6 @@ export const EntityTable: Record<string, string> = {
     'entityTable.data.entity': `Name`,
     'entityTable.data.connectorType': `Type`,
     'entityTable.data.lastUpdated': `Last Updated`,
-    'entityTable.data.specTypeWithColon': `Type:`,
     'entityTable.data.lastPublished': `Published`,
     'entityTable.data.actions': `Actions`,
     'entityTable.data.writesTo': `${Data['data.writes_to']}`,
@@ -17,14 +16,9 @@ export const EntityTable: Record<string, string> = {
     'entityTable.data.capability': `Capability`,
     'entityTable.data.detail': `Detail`,
     'entityTable.data.objectRole': `Object`,
-    'entityTable.data.lastPubUserFullName': `Last Updated By`,
     'entityTable.data.catalogPrefix': `Catalog Prefix`,
-    'entityTable.data.provider': `Provider`,
-    'entityTable.data.prefix': `Prefix`,
     'entityTable.data.sharedPrefix': `Shared Prefix`,
     'entityTable.data.sharedWith': `Shared With`,
-    'entityTable.data.description': `Description`,
-    'entityTable.data.user': `User`,
 
     'entityTable.stats.filter.label': `${
         CommonMessages[`filter.time.label`]

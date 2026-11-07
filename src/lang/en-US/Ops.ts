@@ -6,12 +6,9 @@ export const Ops: Record<string, string> = {
     'ops.logsTable.label.level': `Level`,
     'ops.logsTable.label.ts': `Timestamp`,
     'ops.logsTable.label.message': `Message`,
-    'ops.logsTable.label.fields': `Fields`,
-    'ops.logsTable.allOldLogsLoaded': ` Start of logs `,
     'ops.logsTable.emptyTableDefault.header': `No logs found.`,
     'ops.logsTable.emptyTableDefault.message': `We were unable to find any logs. Please press refresh to try loading again.`,
     'ops.logsTable.hydrationError': `We encountered a problem retrieving logs.`,
-    'ops.logsTable.hydrationError.message': `Please check your network connection and try again.`,
 
     // Dynamically generated in /src/components/tables/Logs/HydrationWarning.tsx
     'ops.hydrationWarning.OFFSET_NOT_YET_AVAILABLE.title': `No logs available`,

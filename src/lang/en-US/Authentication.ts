@@ -4,8 +4,6 @@ import { CTAs } from 'src/lang/en-US/CTAs';
 import { Navigation } from 'src/lang/en-US/Navigation';
 
 export const Authentication: Record<string, string> = {
-    'login.documentAcknowledgement': `By accessing ${CommonMessages.productName} you agree to our {terms} and {privacy}.`,
-    'login.jwtExpired': 'Your authorization has expired. Please sign in again.',
     'login.userNotFound.onRefresh':
         'Unable to find user. Please sign in again.',
 
@@ -39,7 +37,6 @@ export const Authentication: Record<string, string> = {
 
     'login.magicLink.register.message': `Please use your work email address to register and continue to ${CommonMessages.productName}.`,
 
-    'login.sso': `Single Sign-On (SSO) Successful`,
     'login.sso.back': `Back to Sign In`,
     'login.sso.header': `Enter your company email to access ${CommonMessages.productName} via Single Sign-On.`,
 
@@ -72,52 +69,31 @@ export const Authentication: Record<string, string> = {
     'login.token.label': `OTP`,
 
     'login.separator': 'or',
-    'login.loginFailed': 'Failed to sign in',
     'login.loginFailed.google': 'Failed to sign in with Google',
     'login.loginFailed.github': 'Failed to sign in with GitHub',
-    'login.registerFailed': 'Failed to register',
     'login.registerFailed.google': 'Failed to register with Google',
     'login.registerFailed.github': 'Failed to register with GitHub',
-    'login.userNotFound': 'User not found. Please sign up below.',
 
     'login.marketPlace.loggedOut': `To apply marketplace subscription, please login below.`,
 
     // Tenant
-    'tenant.message.1': `The organization name will be used as a prefix for everything you create within Estuary. It will only be public if you share data with other organizations.`,
-
-    'tenant.docs.message': `To see a detailed explanation please view our {link}`,
-    'tenant.docs.message.link': `https://docs.estuary.dev/concepts/catalogs/#namespace`,
 
     'tenant.grantDirective.message': `You now have {grantedCapability} access to the following tenant:`,
     'tenant.grantDirective.success.header': `Access Granted`,
     'tenant.grantDirective.success.cta': `Go to Dashboard`,
 
     'tenant.grantDirective.error.header': `Unable to Provision Access`,
-    'tenant.grantDirective.error.message': `A problem was encountered provisioning access to the requested tenant. The access link could have been single-use or revoked by an administrator of the tenant.`,
     'tenant.grantDirective.error.message.help': `For additional context, please {docLink}.`,
     'tenant.grantDirective.error.message.help.docLink': `${CTAs['cta.support']}`,
     'tenant.grantDirective.error.message.help.docPath': `${CommonMessages['support.email']}`,
 
     'tenant.marketplace.header': `Apply marketplace subscription`,
     'tenant.marketplace.message': `Select the tenant that you want the marketplace subscription applied to.`,
-    'tenant.marketplace.error.header': `Unable to apply marketplace subscription`,
-    'tenant.marketplace.error.message': `A problem was encountered connecting the Google Marketplace subscription to the requested tenant.`,
-
-    'tenant.error.failedToFetch.message': `There was an issue while checking if you have access to a tenant.`,
 
     'tenant.usedSso.title': `Successfully Authenticated`,
     'tenant.usedSso.message': `Your account was created successfully and can be added to your organization's ${CommonMessages.company} tenant.`,
     'tenant.usedSso.instructions': `To do so, ask an ${CommonMessages.company} admin at your company to go to the URL below and create an invite link which they can share with you.`,
     'tenant.usedSso.instructions.fullPath': `${window.location.origin}${authenticatedRoutes.admin.accessGrants.fullPath}`,
-
-    // Registration
-    'register.heading': `We're currently accepting Beta partners.`,
-    'register.main.message': `Please enter your information and our team will approve your account.`,
-    'register.label.fullName': `Full Name`,
-    'register.label.email': `Email`,
-    'register.label.company': `Company`,
-    'register.label.intendedUse': `Describe your use case.`,
-    'register.existingAccount': `Already have an account?`,
 
     // No Grants
 };

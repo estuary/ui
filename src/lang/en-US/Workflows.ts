@@ -31,10 +31,7 @@ export const Workflows: Record<string, string> = {
     'workflows.initTask.alert.message.initFailed.docPath': `${CommonMessages['support.email']}`,
     'workflows.initTask.alert.message.patchedSpec': `An issue was encountered recovering your changes. The latest, published record of the task was used to initialize the form.`,
 
-    'workflows.save.review.header': `Review Changes`,
-
     'workflows.collectionSelector.cta.schemaEdit': `CLI`,
-    'workflows.collectionSelector.cta.schemaInference': `Schema Inference`,
     'workflows.collectionSelector.error.title.editorInitialization': `Editor initialization failed`,
     'workflows.collectionSelector.error.title.missingCollectionSchema': `No collection schema to display`,
     'workflows.collectionSelector.error.message.missingCollectionSchema': `This is normally caused by the {itemType} being disabled during {entityType} creation.`,
@@ -50,8 +47,6 @@ export const Workflows: Record<string, string> = {
 
     'workflows.collectionSelector.toggle.enable.tooltip': `Enable all {itemType} in the list below`,
     'workflows.collectionSelector.toggle.disable.tooltip': `Disable all {itemType} in the list below`,
-    'workflows.collectionSelector.toggle.enable.all': `Enable All`,
-    'workflows.collectionSelector.toggle.disable.all': `Disable All`,
 
     'workflows.collectionSelector.notifications.remove': `{count} {itemType} removed`,
     'workflows.collectionSelector.notifications.toggle.enable': `{count} {itemType} enabled`,
@@ -70,21 +65,6 @@ export const Workflows: Record<string, string> = {
     'workflows.collectionSelector.schemaEdit.existingCollection.command2': `flowctl catalog draft --name {catalogName} && flowctl draft develop`,
     'workflows.collectionSelector.schemaEdit.existingCollection.command3': `flowctl draft author --source <flow_catalog_file_location>`,
     'workflows.collectionSelector.schemaEdit.alert.message.schemaUpdateError': `An error was encountered fetching your updated collection schema to display. This does not mean that there was a problem updating the server. Open the CLI popper and click the Synchronize Schema button to try again.`,
-
-    'workflows.collectionSelector.schemaInference.header': `Schema Inference`,
-    'workflows.collectionSelector.schemaInference.message': `${CommonMessages.productName} can help you tighten your collection specification. It will review the documents in a collection and approximate the shape of your data.`,
-    'workflows.collectionSelector.schemaInference.message.schemaDiff': `The difference between the current collection specification and the specification containing the inferred schema is highlighted below.`,
-    'workflows.collectionSelector.schemaInference.message.documentsRead': `A total of {documents_read} documents were evaluated to generate the inferred schema.`,
-    'workflows.collectionSelector.schemaInference.alert.noDocuments.header': `No Documents Found`,
-    'workflows.collectionSelector.schemaInference.alert.noDocuments.message': `We were unable to find any documents in this collection. Consequently, could not infer the shape of its data.`,
-    'workflows.collectionSelector.schemaInference.alert.lowDocumentCount.header': `Low Document Count`,
-    'workflows.collectionSelector.schemaInference.alert.lowDocumentCount.message': `Fewer documents than desired were found. This could mean that your collection isn't seeing very much data.`,
-    'workflows.collectionSelector.schemaInference.alert.generalError.header': `Server Error`,
-    'workflows.collectionSelector.schemaInference.alert.inferenceService.message': `An error was encountered while inferring the shape of the documents in this collection.`,
-    'workflows.collectionSelector.schemaInference.alert.patchService.message': `An error was encountered while applying the inferred schema. Please try again. If the error persists, {docLink}`,
-    'workflows.collectionSelector.schemaInference.alert.patchService.message.docLink': `${CTAs['cta.support']}`,
-    'workflows.collectionSelector.schemaInference.alert.patchService.message.docPath': `${CommonMessages['support.email']}`,
-    'workflows.collectionSelector.schemaInference.cta.continue': `Apply Inferred Schema`,
 
     'workflows.collectionSelector.manualBackfill.notSupported.title': `This {entityType} doesn't support backfills.`,
     'workflows.collectionSelector.manualBackfill.notSupported.message': `Please {docLink} for help with a backfill.`,
@@ -147,7 +127,6 @@ export const Workflows: Record<string, string> = {
     'fieldSelection.message.docPath': `https://docs.estuary.dev/guides/customize-materialization-fields/`,
 
     'fieldSelection.cta.selectAlgorithm': `Field Depth`,
-    'fieldSelection.dialog.refreshFields.header': `Please wait while we gather information about your resource fields`,
     'fieldSelection.refresh.alert': `Refreshing the fields is recommended as editing the config or collection can sometimes change the options below.`,
     'fieldSelection.error.serverUpdateFailed': `Field selection update failed`,
     'fieldSelection.error.validationFailed': `Field selection validation failed. If this issue persists, please contact support.`,
@@ -156,7 +135,6 @@ export const Workflows: Record<string, string> = {
     'fieldSelection.table.cta.excludeAll': `Exclude All`,
     'fieldSelection.table.cta.excludeField': `Exclude`,
     'fieldSelection.table.cta.requireField': `Require`,
-    'fieldSelection.table.cta.selectField': `Select`,
     'fieldSelection.table.empty.header': `No information found`,
     'fieldSelection.table.empty.message': `Click "Refresh" to evaluate the fields of the source collection.`,
     'fieldSelection.table.noDraft.message': `Click "Next" at the top of the page to add this binding to the draft.`,
@@ -183,7 +161,6 @@ export const Workflows: Record<string, string> = {
     'fieldSelection.table.label.userRequires': `User Requires`,
     'fieldSelection.table.label.unknown': `Unknown`,
     'fieldSelection.table.label.filter': `Filter fields`,
-    'fieldSelection.table.tooltip.disabledRowAction': `Action disabled: {reason}.`,
     'fieldSelection.massActionMenu.depthZero.label': `Required Only`,
     'fieldSelection.massActionMenu.depthZero.description': `Select only required fields`,
     'fieldSelection.massActionMenu.depthOne.label': `Depth 1`,
@@ -192,25 +169,16 @@ export const Workflows: Record<string, string> = {
     'fieldSelection.massActionMenu.depthTwo.description': `Select fields at levels one and two`,
     'fieldSelection.massActionMenu.depthUnlimited.label': `Unlimited Depth`,
     'fieldSelection.massActionMenu.depthUnlimited.description': `Select all fields`,
-    'fieldSelection.reviewDialog.header': `Review Field Selections`,
-    'fieldSelection.reviewDialog.description': `Review how the algorithm will impact your field selections.`,
-    'fieldSelection.reviewDialog.label.exclude': `Exclude: {count}`,
-    'fieldSelection.reviewDialog.label.require': `Require: {count}`,
-    'fieldSelection.reviewDialog.label.select': `Select: {count}`,
-    'fieldSelection.reviewDialog.label.unselected': `Unselected: {count}`,
     'fieldSelection.outcomeButton.reject.header': `This field will be excluded because:`,
     'fieldSelection.outcomeButton.reject.header.conflict': `A reason to exclude this field is:`,
     'fieldSelection.outcomeButton.select.header': `This field will be included because:`,
     'fieldSelection.outcomeButton.select.header.conflict': `A reason to include this field is:`,
-    'fieldSelection.outcomeButton.tooltip': `Click to view outcome`,
-    'fieldSelection.outcomeButton.tooltip.conflict': `Click to review conflict`,
     'fieldSelection.cta.groupBy': `Group By`,
     'fieldSelection.groupBy.header': `Configure Materialization Group-By`,
     'fieldSelection.groupBy.description': `Select an ordered subset of scalar fields which will be grouped over. If not specified, the key of the source collection will be used.`,
     'fieldSelection.groupBy.label.field': `Group By`,
     'fieldSelection.groupBy.label.explicitKeys': `The source collection is currently keyed by:`,
     'fieldSelection.groupBy.label.implicitKeys': `The source collection is naturally keyed by:`,
-    'fieldSelection.groupBy.tooltip.implicitKey': `This field is a key of the source collection.`,
     'fieldSelection.groupBy.alert.backfillRequired': `Editing the group-by key may result in a backfill of this binding.`,
 
     // Messages from binding editing
@@ -235,8 +203,6 @@ export const Workflows: Record<string, string> = {
     'incompatibleSchemaChange.error.bindingSettingUpdateFailed': `There was an issue updating the incompatible schema change action for one or more bindings associated with collection, {collection}.`,
     'incompatibleSchemaChange.input.label': `Action on rejected schema change`,
 
-    'incompatibleSchemaChange.error.message': `The current setting "{currentSetting}" does not match a known option. Please update or remove.`,
-
     'incompatibleSchemaChange.options.abort.label': `Abort`,
     'incompatibleSchemaChange.options.abort.description': `Fail the publication of the incompatible schema change. This prevents any schema change from being applied if it is incompatible with the existing schema, as determined by the connector.`,
 
@@ -251,8 +217,6 @@ export const Workflows: Record<string, string> = {
 
     // Source Settings
     'workflows.sourceCapture.optionalSettings.header': `Default Collection Settings`,
-    'workflows.sourceCapture.optionalSettings.deltaUpdates.control': `Enable delta updates on newly added collections`,
-    'workflows.sourceCapture.optionalSettings.targetSchema.control': `Infer schema name from linked data source for new collections`,
 
     // Delta Updates
     'deltaUpdates.input.label': `Default setting for the "Delta Updates" field of newly adding bindings.`,
@@ -337,16 +301,13 @@ export const Workflows: Record<string, string> = {
 
     'entityCreate.endpointConfig.detailsHaveErrors': `The Details section has errors:`,
     'entityCreate.endpointConfig.resourceConfigHaveErrors': `The Collections section has errors:`,
-    'entityCreate.endpointConfig.fullSourceHaveErrors': `The Time Travel section has errors:`,
     'entityCreate.endpointConfig.endpointConfigHaveErrors': `The ${endpointConfigHeader} section has errors:`,
 
     'entityCreate.endpointConfig.noConnectorSelectedTitle': `Please select a Connector to begin`,
     'entityCreate.endpointConfig.noConnectorSelected': `To start the creation process you must select a Connector. You can change this later.`,
 
     'entityCreate.endpointConfig.entityNameMissing': `Name missing`,
-    'entityCreate.endpointConfig.entityNameInvalid': `Name invalid`,
     'entityCreate.endpointConfig.connectorMissing': `Connector missing`,
-    'entityCreate.endpointConfig.endpointConfigMissing': `${endpointConfigHeader} empty`,
     'entityCreate.endpointConfig.collectionsMissing': `${CommonMessages['terms.collections']} missing`,
     'entityCreate.endpointConfig.resourceConfigInvalid': `Resource Config invalid`,
     'entityCreate.endpointConfig.fullSourceInvalid': `Time Travel invalid`,
@@ -394,18 +355,12 @@ export const Workflows: Record<string, string> = {
     // Entities Hydrator
     'entitiesHydrator.error.failedToFetch': `There was an issue while checking if you have any roles.`,
     'storageMappingsHydrator.error.failedToFetch': `There was an issue while checking if you have any storage mappings.`,
-    'dataPlanesHydrator.error.failedToFetch': `There was an issue while checking if you have any data planes.`,
 
     // Entity Not Found
     'entityNotFound.heading': `Sorry, that entity cannot be found.`,
     'entityNotFound.message.default': `The entity you are looking for`,
     'entityNotFound.detail': `was unable to be found.`,
     'entityNotFound.explanation': `This is likely because it has been deleted or you do not have access.`,
-
-    // Entity Status
-    'entityStatus.green': `Running`,
-    'entityStatus.yellow': `Alerts`,
-    'entityStatus.red': `Stopped`,
 
     // Docs
     'docs.iframe.title': `{connector} Documentation`,
@@ -414,7 +369,6 @@ export const Workflows: Record<string, string> = {
     'docs.iframe.disabled.message.docLink': `connector help`,
     'docs.cta.expand': `Help`,
     'docs.cta.expand.tooltip': `Expand Connector Help`,
-    'docs.cta.expand.disabled': `Open 3rd party docs in new window`,
 
     // Schema Editor for Collections
     'schemaEditor.fields.label': `Schema`,
@@ -424,7 +378,6 @@ export const Workflows: Record<string, string> = {
     'schemaEditor.table.empty.message': `We were unable to generate a table from the current schema. Please update the schema.`,
     'schemaEditor.table.empty.filtered.message': `This schema does not contain these kind of fields.`,
     'schemaEditor.error.title': `Schema Processing Issues`,
-    'schemaEditor.error.truncation': `showing {count} of {total} errors`,
     'schemaEditor.table.filter.label': `Filter fields`,
     'schemaEditor.table.filter.option.all': `All`,
     'schemaEditor.table.filter.option.must': `Must exist`,
@@ -456,7 +409,6 @@ export const Workflows: Record<string, string> = {
     // Logs Dialog
     'logs.default': `waiting`,
     'logs.paused': `paused`,
-    'logs.noLogs': `stopped checking for logs`,
     'logs.restartLink': `click here`,
     'logs.tooManyEmpty': `Logs for this build may have ended. {restartCTA} to start waiting for new logs again.`,
     'logs.networkFailure': `We encountered a problem streaming logs. Please check your network connection and {restartCTA} to start waiting for new logs again.`,

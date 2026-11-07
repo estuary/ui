@@ -93,7 +93,7 @@ const AlertSubscriptionDialog = ({
                         size="small"
                         onClick={() => closeDialog()}
                     >
-                        {intl.formatMessage({ id: 'cta.cancel' })}
+                        Cancel
                     </Button>
 
                     <SaveButton closeDialog={() => closeDialog()} />
