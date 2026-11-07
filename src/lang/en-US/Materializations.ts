@@ -3,7 +3,7 @@ import { CTAs } from 'src/lang/en-US/CTAs';
 
 export const Materializations: Record<string, string> = {
     'materializationsTable.title': `Materializations`,
-    'materializationsTable.cta.new': `New Materialization`,
+
     'materializationsTable.filterLabel': `Filter materializations`,
     'materializations.message1': `Click "New Materialization" to get started.`,
     'materializations.message2': `You'll be guided through the process of defining, testing, and publishing a {docLink}.`,
@@ -20,7 +20,6 @@ export const Materializations: Record<string, string> = {
 
     'materializationCreate.generate.failure.errorTitle': `Materialization Preparation Failed`,
 
-    'materializationCreate.resourceConfig.heading': `Resource Configuration`,
     'materializationCreate.save.failedErrorTitle': `Materialization Save Failed`,
     'materializationCreate.save.waitMessage': `Please wait while we test, save, and publish your materialization.`,
 
