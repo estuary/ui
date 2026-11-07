@@ -87,7 +87,6 @@ export const Workflows: Record<string, string> = {
     'workflows.autoDiscovery.update.failed': `Schema evolution update failed`,
 
     'workflows.sourceCapture.header': `Link Capture`,
-    'workflows.sourceCapture.cta.loading': `${CommonMessages['common.loading']}`,
     'workflows.sourceCapture.selected.none': `no linked capture`,
     'workflows.sourceCapture.optin.message': `Linking a capture to a materialization automatically adds all newly discovered collections as bindings to the materialization. Unlinking does not remove any existing bindings.`,
 

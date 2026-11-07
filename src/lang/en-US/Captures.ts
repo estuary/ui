@@ -2,7 +2,6 @@ import { CommonMessages } from 'src/lang/en-US/CommonMessages';
 import { CTAs } from 'src/lang/en-US/CTAs';
 
 export const Captures: Record<string, string> = {
-    'captureTable.header': `Captures`,
     'capturesTable.title': `Your Captures`,
     'capturesTable.cta.new': `New Capture`,
     'capturesTable.filterLabel': `Filter captures`,

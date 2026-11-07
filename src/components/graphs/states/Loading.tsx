@@ -1,7 +1,5 @@
 import { CircularProgress, Stack, Typography } from '@mui/material';
 
-import { FormattedMessage } from 'react-intl';
-
 import { CARD_AREA_HEIGHT } from 'src/utils/billing-utils';
 
 function GraphLoadingState() {
@@ -18,9 +16,7 @@ function GraphLoadingState() {
         >
             <CircularProgress size="1.5rem" />
 
-            <Typography component="div">
-                <FormattedMessage id="common.loading" />
-            </Typography>
+            <Typography component="div">Loading...</Typography>
         </Stack>
     );
 }

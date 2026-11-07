@@ -73,8 +73,6 @@ export const Details: Record<string, string> = {
     'detailsPanel.recentUsage.filter.label.days': `{range} days`,
     'detailsPanel.recentUsage.filter.label.months': `{range} months`,
     'detailsPanel.recentUsage.filter.label.year': `Year`,
-    'detailsPanel.details.relatedEntity.link': `View details for {catalogName}`,
-    'detailsPanel.details.relatedEntity.failed': `failed to find`,
 
     'detailsPanel.graph.syncDelay': `Reporting can be delayed by up to {reportingDelay} for this materialization`,
     'detailsPanel.graph.syncDelay.default': `Reporting can be delayed due to update delay for this materialization`,

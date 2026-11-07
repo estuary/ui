@@ -6,7 +6,6 @@ export const CommonMessages: Record<string, string> = {
     'spec': `data flow specification`,
 
     'common.browserTitle': `Estuary`,
-    'common.loading': `Loading...`,
     'common.running': `Running...`,
     'common.deleting': `Deleting...`,
     'common.deleted': `Deleted`,
