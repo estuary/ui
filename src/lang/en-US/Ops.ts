@@ -8,7 +8,6 @@ export const Ops: Record<string, string> = {
     'ops.logsTable.label.message': `Message`,
     'ops.logsTable.emptyTableDefault.header': `No logs found.`,
     'ops.logsTable.emptyTableDefault.message': `We were unable to find any logs. Please press refresh to try loading again.`,
-    'ops.logsTable.hydrationError': `We encountered a problem retrieving logs.`,
 
     // Dynamically generated in /src/components/tables/Logs/HydrationWarning.tsx
     'ops.hydrationWarning.OFFSET_NOT_YET_AVAILABLE.title': `No logs available`,
@@ -23,8 +22,6 @@ export const Ops: Record<string, string> = {
     'ops.logsTable.waitingForLogs.old.complete': `All older logs read`,
     'ops.logsTable.waitingForLogs.old': `Fetching older logs`,
     'ops.logsTable.waitingForLogs.new': `Waiting for new logs`,
-
-    'ops.shouldNotShowLogs': `This kind of entity does not support logs`,
 
     // Journals
     'journals.notFound.title': `Not Found`,
