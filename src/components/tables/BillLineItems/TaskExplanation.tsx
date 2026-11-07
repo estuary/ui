@@ -4,14 +4,11 @@ import { boxClasses, IconButton, Stack, Typography } from '@mui/material';
 
 import { HelpCircle } from 'iconoir-react';
 import { usePopupState } from 'material-ui-popup-state/hooks';
-import { useIntl } from 'react-intl';
 
 import PopperWrapper from 'src/components/shared/PopperWrapper';
 
 const POPPER_KEY = '';
 function TaskExplanation() {
-    const intl = useIntl();
-
     const anchorElement = useRef(null);
 
     const state = usePopupState({
@@ -49,14 +46,12 @@ function TaskExplanation() {
             >
                 <Stack spacing={1}>
                     <Typography sx={{ fontWeight: 500 }}>
-                        {intl.formatMessage({
-                            id: 'admin.billing.label.lineItems.tooltip.title',
-                        })}
+                        Each active connector counts as a task
                     </Typography>
                     <Typography>
-                        {intl.formatMessage({
-                            id: 'admin.billing.label.lineItems.tooltip',
-                        })}
+                        {
+                            'A connector (AKA "task") is billed based on the pro-rated portion of a month during which it was enabled, as measured in "task-hours". Approximately 720 task-hours accrue for a connector that is running nonstop for an entire month.'
+                        }
                     </Typography>
                 </Stack>
             </PopperWrapper>

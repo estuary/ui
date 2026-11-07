@@ -1,7 +1,5 @@
 import { Box, Divider, Stack, Typography } from '@mui/material';
 
-import { FormattedMessage } from 'react-intl';
-
 import { authenticatedRoutes } from 'src/app/routes';
 import AdminTabs from 'src/components/admin/Tabs';
 import MessageWithLink from 'src/components/content/MessageWithLink';
@@ -21,7 +19,7 @@ function AccessGrants() {
             <Stack spacing={2} sx={{ my: 2 }}>
                 <Box>
                     <Typography component="div" variant="h6" sx={{ mb: 0.5 }}>
-                        <FormattedMessage id="terms.permissions" />
+                        Access Grants
                     </Typography>
 
                     <MessageWithLink messageID="admin.roles.message" />

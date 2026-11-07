@@ -4,14 +4,11 @@ import { useMemo } from 'react';
 
 import { Button } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
 import { useModifyAlertMetadata } from 'src/components/admin/Settings/PrefixAlerts/useModifyAlertMetadata';
 import { isValidEmail } from 'src/validation';
 
 const SaveButton = ({ closeDialog }: DialogActionProps) => {
-    const intl = useIntl();
     const { loading, onClick } = useModifyAlertMetadata(closeDialog);
 
     const errorsExist = useAlertSubscriptionsStore(
@@ -63,7 +60,7 @@ const SaveButton = ({ closeDialog }: DialogActionProps) => {
             loading={loading}
             onClick={onClick}
         >
-            {intl.formatMessage({ id: 'cta.save' })}
+            Save
         </Button>
     );
 };

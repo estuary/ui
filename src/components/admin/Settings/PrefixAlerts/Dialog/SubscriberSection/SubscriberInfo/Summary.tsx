@@ -14,7 +14,6 @@ import {
 } from '@mui/material';
 
 import { NavArrowDown, NavArrowRight, WarningCircle } from 'iconoir-react';
-import { useIntl } from 'react-intl';
 
 import ChipList from 'src/components/shared/ChipList';
 import { useGetAlertTypes } from 'src/context/AlertType';
@@ -26,7 +25,6 @@ const Summary = ({
     subscription,
 }: SubscriberAccordionSummaryProps) => {
     const theme = useTheme();
-    const intl = useIntl();
 
     const [alertTypeResponse] = useGetAlertTypes();
 
@@ -95,11 +93,7 @@ const Summary = ({
                     )}
 
                     <Typography style={{ fontWeight: 500, paddingLeft: 4 }}>
-                        {email.length > 0
-                            ? email
-                            : intl.formatMessage({
-                                  id: 'alerts.config.dialog.label.placeholderSubscriberId',
-                              })}
+                        {email.length > 0 ? email : '(new recipient)'}
                     </Typography>
 
                     {duplicateSubscriptionEmails.includes(
