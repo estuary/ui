@@ -11,16 +11,12 @@ import {
     Typography,
 } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 import MessageWithLink from 'src/components/content/MessageWithLink';
 import { useSSOSignIn } from 'src/components/login/SSO/useSSOSignIn';
 import AlertBox from 'src/components/shared/AlertBox';
 import { hasLength } from 'src/utils/misc-utils';
 
 export const SSOForm = ({ grantToken }: DefaultLoginProps) => {
-    const intl = useIntl();
-
     const { loading, submitError, signInSSO } = useSSOSignIn(grantToken);
 
     const [showErrors, setShowErrors] = useState(false);
@@ -59,7 +55,8 @@ export const SSOForm = ({ grantToken }: DefaultLoginProps) => {
                     <AlertBox severity="error" short>
                         <Typography>{submitError}</Typography>
                         <Typography>
-                            {intl.formatMessage({ id: 'error.tryAgain' })}
+                            Try again and if the issue persists please contact
+                            support.
                         </Typography>
                     </AlertBox>
                 </Box>

@@ -2,15 +2,13 @@ import { CommonMessages } from 'src/lang/en-US/CommonMessages';
 import { CTAs } from 'src/lang/en-US/CTAs';
 
 export const Errors: Record<string, string> = {
+    'error.tryAgain': `Try again and if the issue persists please contact support.`,
     'error.title': `${CommonMessages['common.errors.heading']}`,
     'error.reason.fetchFailed': `There was a network issue while contacting our servers. Please make sure your network is available and try again.`,
 
     'error.instructions': `If the issue persists please {docLink}.`,
     'error.instructions.docLink': `${CTAs['cta.support']}`,
     'error.instructions.docPath': `${CommonMessages['support.email']}`,
-
-    'error.messageLabel': `Message:`,
-    'error.tryAgain': `Try again and if the issue persists please contact support.`,
 
     'error.fallBack': `no error details to display`,
 
@@ -28,18 +26,13 @@ export const Errors: Record<string, string> = {
     'errors.preface.totalCount': `Displaying {displaying} of {total, plural, one {# error} other {# errors}} `,
 
     // Error Boundry
-    'errorBoundry.title': `${CommonMessages['common.errors.heading']}`,
-    'errorBoundry.message1': `There was an unexpected application error. `,
-    'errorBoundry.message2': `Expand to see details.`,
 
     // Page Not Found
-    'pageNotFound.heading': `Sorry, that page cannot be found.`,
 
     // Full Page
     'fullPage.instructions': `Please try again. If the error persists, {docLink}`,
     'fullPage.instructions.docLink': `${CTAs['cta.support']}`,
     'fullPage.instructions.docPath': `${CommonMessages['support.email']}`,
-    'fullPage.userInfoSummary.error': `We had an issue while checking if your account has access.`,
 
     // Supabase
     'supabase.poller.failed.title': `${CommonMessages['common.failedFetch']}`,
