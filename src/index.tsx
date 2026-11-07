@@ -9,6 +9,7 @@ import { createRoot } from 'react-dom/client';
 
 import AppProviders from 'src/context';
 import ApplicationRouter from 'src/context/Router';
+import { SemanticTreeProvider } from 'src/context/SemanticTree';
 
 // Setup Monaco - not in GlobalProviders to make test setup easier for now
 self.MonacoEnvironment = {
@@ -26,7 +27,9 @@ const root = createRoot(container!);
 root.render(
     // <StrictMode>
     <AppProviders>
-        <ApplicationRouter />
+        <SemanticTreeProvider>
+            <ApplicationRouter />
+        </SemanticTreeProvider>
     </AppProviders>
     // </StrictMode>
 );

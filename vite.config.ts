@@ -103,6 +103,8 @@ const writeVersionToFile: () => Plugin = () => ({
 
 // https://vitejs.dev/config/
 export default defineConfig({
+    // Local linked libraries must use the application's React instance.
+    resolve: { dedupe: ['react', 'react-dom'] },
     build: {
         assetsDir: 'static',
         outDir: './build',

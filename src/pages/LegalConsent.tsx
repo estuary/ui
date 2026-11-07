@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Button, CircularProgress, Stack, Typography } from '@mui/material';
 
 import { useSearchParams } from 'react-router-dom';
+import { SemanticBranch, useSemanticLeaf } from 'react-semantic-tree';
 import { useMutation, useQuery } from 'urql';
 
 import { LEGAL_ACCEPT, LEGAL_CHECK, LEGAL_TERMS } from 'src/api/gql/legalTerms';
@@ -37,6 +38,10 @@ function ConsentForm({
         },
         accept,
     ] = useMutation(LEGAL_ACCEPT);
+    const { ref: acceptRef } = useSemanticLeaf<HTMLButtonElement>('Accept');
+    const { ref: declineRef } = useSemanticLeaf<HTMLButtonElement>('Decline');
+    const { ref: reloadRef } =
+        useSemanticLeaf<HTMLButtonElement>('Reload terms');
     const submittingRef = useRef(false);
     const submitError = submitting
         ? null
@@ -94,7 +99,9 @@ function ConsentForm({
                 <AlertBox short severity="error">
                     {loadError.message}
                 </AlertBox>
-                <Button onClick={reload}>Retry</Button>
+                <Button ref={reloadRef} onClick={reload}>
+                    Retry
+                </Button>
             </Stack>
         );
     }
@@ -105,7 +112,9 @@ function ConsentForm({
                 <AlertBox short severity="warning">
                     The requested legal terms are not available.
                 </AlertBox>
-                <Button onClick={reload}>Reload terms</Button>
+                <Button ref={reloadRef} onClick={reload}>
+                    Reload terms
+                </Button>
             </Stack>
         );
     }
@@ -145,13 +154,18 @@ function ConsentForm({
                     submitError ? { ...BASE_ERROR, message: submitError } : null
                 }
                 cta={
-                    <Button disabled={submitting} onClick={reload}>
+                    <Button
+                        ref={reloadRef}
+                        disabled={submitting}
+                        onClick={reload}
+                    >
                         Reload terms
                     </Button>
                 }
             />
             <Stack direction="row" spacing={2}>
                 <Button
+                    ref={declineRef}
                     variant="outlined"
                     disabled={submitting}
                     onClick={() => {
@@ -161,6 +175,7 @@ function ConsentForm({
                     Decline
                 </Button>
                 <Button
+                    ref={acceptRef}
                     variant="contained"
                     disabled={submitting}
                     onClick={() => void acceptTerms()}
@@ -190,35 +205,38 @@ export function LegalConsent() {
     }, [setHeader, updateTitle]);
 
     return (
-        <Stack spacing={3} sx={{ maxWidth: 860, mx: 'auto', py: 4, px: 3 }}>
-            <Typography variant="h4" component="h1">
-                Legal consent
-            </Typography>
-            {!type || params.getAll('type').length !== 1 ? (
-                <AlertBox short severity="error">
-                    This link must specify a valid legal terms type. Ask for a
-                    new link.
-                </AlertBox>
-            ) : !tenant ||
-              params.getAll('tenant').length !== 1 ||
-              !/^[^/]+\/$/.test(tenant) ? (
-                <AlertBox short severity="error">
-                    This link must specify a valid tenant. Ask for a new link.
-                </AlertBox>
-            ) : !canAdminTenant ? (
-                <AlertBox short severity="warning">
-                    You must have admin access to this tenant to review and
-                    accept legal terms. Ask your administrator to accept the
-                    terms.
-                </AlertBox>
-            ) : (
-                <ConsentForm
-                    key={`${type}:${tenant}`}
-                    // Let the server validate types, including ones added after codegen.
-                    type={type as LegalTermsType}
-                    tenant={tenant}
-                />
-            )}
-        </Stack>
+        <SemanticBranch label="Legal Consent">
+            <Stack spacing={3} sx={{ maxWidth: 860, mx: 'auto', py: 4, px: 3 }}>
+                <Typography variant="h4" component="h1">
+                    Legal consent
+                </Typography>
+                {!type || params.getAll('type').length !== 1 ? (
+                    <AlertBox short severity="error">
+                        This link must specify a valid legal terms type. Ask for
+                        a new link.
+                    </AlertBox>
+                ) : !tenant ||
+                  params.getAll('tenant').length !== 1 ||
+                  !/^[^/]+\/$/.test(tenant) ? (
+                    <AlertBox short severity="error">
+                        This link must specify a valid tenant. Ask for a new
+                        link.
+                    </AlertBox>
+                ) : !canAdminTenant ? (
+                    <AlertBox short severity="warning">
+                        You must have admin access to this tenant to review and
+                        accept legal terms. Ask your administrator to accept the
+                        terms.
+                    </AlertBox>
+                ) : (
+                    <ConsentForm
+                        key={`${type}:${tenant}`}
+                        // Let the server validate types, including ones added after codegen.
+                        type={type as LegalTermsType}
+                        tenant={tenant}
+                    />
+                )}
+            </Stack>
+        </SemanticBranch>
     );
 }
