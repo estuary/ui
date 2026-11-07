@@ -108,12 +108,8 @@ const MagicLinkInputs = ({ onSubmit, showToken }: Props) => {
                     fullWidth
                     autoComplete="email"
                     disabled={loading}
-                    helperText={intl.formatMessage({
-                        id: 'login.email.description',
-                    })}
-                    label={intl.formatMessage({
-                        id: 'login.email.label',
-                    })}
+                    helperText="Any valid email you want to use to sign in with"
+                    label="Email"
                     name="email"
                     error={showErrors}
                     color={showErrors ? 'error' : undefined}
@@ -124,12 +120,8 @@ const MagicLinkInputs = ({ onSubmit, showToken }: Props) => {
                         required
                         fullWidth
                         disabled={loading}
-                        helperText={intl.formatMessage({
-                            id: 'login.token.description',
-                        })}
-                        label={intl.formatMessage({
-                            id: 'login.token.label',
-                        })}
+                        helperText="This can be found in the magic link email"
+                        label="OTP"
                         name="token"
                         error={showErrors}
                         color={showErrors ? 'error' : undefined}

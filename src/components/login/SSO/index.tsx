@@ -52,7 +52,7 @@ export const SSOForm = ({ grantToken }: DefaultLoginProps) => {
     return (
         <Stack direction="column" spacing={3} style={{ width: '100%' }}>
             <Typography>
-                {intl.formatMessage({ id: 'login.sso.header' })}
+                Enter your company email to access Estuary via Single Sign-On.
             </Typography>
             {submitError ? (
                 <Box>
@@ -81,12 +81,8 @@ export const SSOForm = ({ grantToken }: DefaultLoginProps) => {
                         disabled={loading}
                         error={showErrors}
                         fullWidth
-                        helperText={intl.formatMessage({
-                            id: 'login.companyEmail.description',
-                        })}
-                        label={intl.formatMessage({
-                            id: 'login.companyEmail.label',
-                        })}
+                        helperText="Please enter your company email"
+                        label="Company Email"
                         name="email"
                         required
                         slotProps={{

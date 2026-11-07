@@ -81,11 +81,12 @@ function MarketplaceVerification() {
                 ) : null}
 
                 <Typography variant="h5" align="center">
-                    {intl.formatMessage({ id: 'tenant.marketplace.header' })}
+                    Apply marketplace subscription
                 </Typography>
 
                 <Typography>
-                    {intl.formatMessage({ id: 'tenant.marketplace.message' })}
+                    Select the tenant that you want the marketplace subscription
+                    applied to.
                 </Typography>
 
                 <Box>
