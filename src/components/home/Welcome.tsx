@@ -9,7 +9,6 @@ import {
 } from '@mui/material';
 
 import { Plus, Xmark } from 'iconoir-react';
-import { FormattedMessage } from 'react-intl';
 
 import HeroImageAndDescription from 'src/components/home/hero';
 import { useShowDashboardWelcome } from 'src/context/DashboardWelcome';
@@ -39,7 +38,7 @@ export default function Welcome() {
                     variant="h5"
                     sx={{ fontSize: welcomeShown ? 24 : 18 }}
                 >
-                    <FormattedMessage id="home.main.header" />
+                    Welcome to Estuary!
                 </Typography>
 
                 <IconButton
