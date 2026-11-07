@@ -2,6 +2,8 @@ import { useState } from 'react';
 
 import { Box, Link, Popover, Stack, Typography } from '@mui/material';
 
+import { useSemanticLeaf } from 'react-semantic-tree';
+
 const SUPPORT_EMAIL = 'support@estuary.dev';
 
 const examples = [
@@ -11,19 +13,28 @@ const examples = [
     'The software is purchased for business use in states that exempt or do not tax business purchases of SaaS',
 ];
 
-const supportLink = (
-    <Link href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</Link>
-);
+function SupportLink() {
+    const { ref } = useSemanticLeaf<HTMLAnchorElement>('Email Support');
+    return (
+        <Link ref={ref} href={`mailto:${SUPPORT_EMAIL}`}>
+            {SUPPORT_EMAIL}
+        </Link>
+    );
+}
 
 export function TaxExemptionNote() {
+    const { ref: semanticExplainTaxExemptionRef } =
+        useSemanticLeaf<HTMLButtonElement>('Explain Tax Exemption');
+
     const [anchor, setAnchor] = useState<HTMLElement | null>(null);
 
     return (
         <>
             <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                Exempt from sales tax? Email {supportLink} with your exemption
+                Exempt from sales tax? Email <SupportLink /> with your exemption
                 certificate.{' '}
                 <Link
+                    ref={semanticExplainTaxExemptionRef}
                     component="button"
                     aria-haspopup="dialog"
                     onClick={(event) => setAnchor(event.currentTarget)}
@@ -64,14 +75,17 @@ export function TaxExemptionNote() {
                             ))}
                         </Box>
                         <Typography variant="body2">
-                            To request an exemption, email {supportLink} with
+                            To request an exemption, email <SupportLink /> with
                             your company name, billing state, and a completed
                             exemption or resale certificate.
                         </Typography>
                     </Box>
                     <Typography
                         variant="caption"
-                        sx={{ color: 'text.secondary', fontStyle: 'italic' }}
+                        sx={{
+                            color: 'text.secondary',
+                            fontStyle: 'italic',
+                        }}
                     >
                         This information is provided for general informational
                         purposes only and does not constitute tax or legal

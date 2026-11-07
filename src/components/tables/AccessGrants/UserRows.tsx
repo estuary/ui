@@ -2,6 +2,8 @@ import type { SelectableTableStore } from 'src/stores/Tables/Store';
 
 import { TableCell, TableRow } from '@mui/material';
 
+import { useSemanticLeaf } from 'react-semantic-tree';
+
 import RowSelect from 'src/components/tables/cells/RowSelect';
 import TimeStamp from 'src/components/tables/cells/TimeStamp';
 import UserName from 'src/components/tables/cells/UserName';
@@ -50,8 +52,12 @@ export const userTableColumns = [
 ];
 
 function Row({ row, selected, setSelected }: RowProps) {
+    const { ref: semanticSelectUserGrantRef } =
+        useSemanticLeaf<HTMLTableRowElement>('Select User Grant');
+
     return (
         <TableRow
+            ref={semanticSelectUserGrantRef}
             key={`Entity-${row.id}`}
             onClick={() => setSelected(row.id, row, !selected)}
             selected={selected}

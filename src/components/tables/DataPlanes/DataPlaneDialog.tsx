@@ -2,6 +2,8 @@ import type { DataPlaneNode } from 'src/api/gql/dataPlanes';
 
 import { Badge, Dialog, DialogContent, Stack, Typography } from '@mui/material';
 
+import { useSemanticLeaf } from 'react-semantic-tree';
+
 import DialogTitleWithClose from 'src/components/shared/Dialog/TitleWithClose';
 import DataPlaneIcon from 'src/components/shared/Entity/DataPlaneIcon';
 import { DataPlaneDialogField } from 'src/components/tables/DataPlanes/DialogFields/DataPlaneDialogField';
@@ -18,6 +20,9 @@ interface DataPlaneDialogProps {
 }
 
 function DataPlaneDialog({ onClose, dataPlane }: DataPlaneDialogProps) {
+    const { ref: semanticCloseRef } =
+        useSemanticLeaf<HTMLButtonElement>('Close');
+
     const parseCidrBlocks = useParseCidrBlocks();
 
     const { cloudProvider, region, scope, name, fqdn } = dataPlane;
@@ -36,6 +41,7 @@ function DataPlaneDialog({ onClose, dataPlane }: DataPlaneDialogProps) {
             aria-labelledby={TITLE_ID}
         >
             <DialogTitleWithClose
+                closeButtonRef={semanticCloseRef}
                 id={TITLE_ID}
                 onClose={onClose}
                 sx={{ pb: 0 }}

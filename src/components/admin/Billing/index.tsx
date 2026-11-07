@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { Divider, Grid, Stack } from '@mui/material';
 
 import { ErrorBoundary } from 'react-error-boundary';
+import { SemanticBranch } from 'react-semantic-tree';
 
 import { BILLING_HISTORY_PAGE_SIZE } from 'src/api/gql/billing';
 import { authenticatedRoutes } from 'src/app/routes';
@@ -45,33 +46,39 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
     const selectedTenant = useTenantStore((state) => state.selectedTenant);
 
     return (
-        <>
-            <AdminTabs />
+        <SemanticBranch label="Admin">
+            <SemanticBranch label="Billing">
+                <SemanticBranch label="Navigation">
+                    <AdminTabs />
+                </SemanticBranch>
 
-            <Grid
-                container
-                spacing={{ xs: 3, md: 2 }}
-                sx={{ py: 2, justifyContent: 'flex-end' }}
-            >
                 <Grid
-                    size={{ xs: 12, md: 3 }}
-                    sx={{ display: 'flex', alignItems: 'end' }}
+                    container
+                    spacing={{ xs: 3, md: 2 }}
+                    sx={{ py: 2, justifyContent: 'flex-end' }}
                 >
-                    <TenantSelector />
+                    <Grid
+                        size={{ xs: 12, md: 3 }}
+                        sx={{ display: 'flex', alignItems: 'end' }}
+                    >
+                        <SemanticBranch label="Tenant Selector">
+                            <TenantSelector />
+                        </SemanticBranch>
+                    </Grid>
                 </Grid>
-            </Grid>
 
-            {/* The selector picks a tenant once the user's tenants load. It lists only tenants with a legacy admin grant, which billing-only users lack. */}
-            {selectedTenant ? (
-                // Remount per tenant so one tenant's results and errors never
-                // show for the next.
-                <BillingForTenant
-                    key={selectedTenant}
-                    tenant={selectedTenant}
-                    showAddPayment={showAddPayment}
-                />
-            ) : null}
-        </>
+                {/* The selector picks a tenant once the user's tenants load. It lists only tenants with a legacy admin grant, which billing-only users lack. */}
+                {selectedTenant ? (
+                    // Remount per tenant so one tenant's results and errors never
+                    // show for the next.
+                    <BillingForTenant
+                        key={selectedTenant}
+                        tenant={selectedTenant}
+                        showAddPayment={showAddPayment}
+                    />
+                ) : null}
+            </SemanticBranch>
+        </SemanticBranch>
     );
 }
 
@@ -153,13 +160,17 @@ function BillingDetails({
                     height={TOTAL_CARD_HEIGHT}
                     message="Recent History"
                 >
-                    <BillingHistoryTable
-                        history={history}
-                        selectedInvoiceId={
-                            selectedInvoice ? invoiceId(selectedInvoice) : null
-                        }
-                        onSelectInvoice={setSelectedInvoiceId}
-                    />
+                    <SemanticBranch label="Billing History">
+                        <BillingHistoryTable
+                            history={history}
+                            selectedInvoiceId={
+                                selectedInvoice
+                                    ? invoiceId(selectedInvoice)
+                                    : null
+                            }
+                            onSelectInvoice={setSelectedInvoiceId}
+                        />
+                    </SemanticBranch>
                 </CardWrapper>
             </Grid>
 
@@ -169,7 +180,9 @@ function BillingDetails({
                     message="Usage by Month"
                 >
                     <GraphStateWrapper>
-                        <UsageByMonthGraph />
+                        <SemanticBranch label="Usage by Month">
+                            <UsageByMonthGraph />
+                        </SemanticBranch>
                     </GraphStateWrapper>
                 </CardWrapper>
             </Grid>
@@ -194,9 +207,11 @@ function BillingDetails({
                     }
                 >
                     {!isLoading ? (
-                        <BillingLineItemsTable
-                            selectedInvoice={selectedInvoice}
-                        />
+                        <SemanticBranch label="Invoice Details">
+                            <BillingLineItemsTable
+                                selectedInvoice={selectedInvoice}
+                            />
+                        </SemanticBranch>
                     ) : (
                         <GraphLoadingState />
                     )}
@@ -209,11 +224,15 @@ function BillingDetails({
 
             <Grid size={{ xs: 12 }}>
                 <Stack spacing={3} divider={<Divider />}>
-                    <BillingContactSection canEdit={canEdit} />
-                    <PaymentMethods
-                        canEdit={canEdit}
-                        showAddPayment={showAddPayment}
-                    />
+                    <SemanticBranch label="Billing Contact">
+                        <BillingContactSection canEdit={canEdit} />
+                    </SemanticBranch>
+                    <SemanticBranch label="Payment Methods">
+                        <PaymentMethods
+                            canEdit={canEdit}
+                            showAddPayment={showAddPayment}
+                        />
+                    </SemanticBranch>
                 </Stack>
             </Grid>
         </Grid>

@@ -3,6 +3,7 @@ import type { BillingPaymentMethodFieldsFragment } from 'src/gql-types/graphql';
 import { Button, TableCell, TableRow } from '@mui/material';
 
 import { Check } from 'iconoir-react';
+import { useSemanticLeaf } from 'react-semantic-tree';
 
 import AmexLogo from 'src/images/payment-methods/amex.png';
 import DiscoverLogo from 'src/images/payment-methods/discover.png';
@@ -35,6 +36,11 @@ export const PaymentMethod = ({
     onPrimary,
     primary,
 }: PaymentMethodProps) => {
+    const { ref: semanticDeletePaymentMethodRef } =
+        useSemanticLeaf<HTMLButtonElement>('Delete Payment Method');
+    const { ref: semanticMakePrimaryRef } =
+        useSemanticLeaf<HTMLButtonElement>('Make Primary');
+
     return (
         <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
             <TableCell>
@@ -72,6 +78,7 @@ export const PaymentMethod = ({
                 {canEdit ? (
                     <>
                         <Button
+                            ref={semanticDeletePaymentMethodRef}
                             size="small"
                             variant="text"
                             onClick={onDelete}
@@ -83,6 +90,7 @@ export const PaymentMethod = ({
                         </Button>
                         {!primary ? (
                             <Button
+                                ref={semanticMakePrimaryRef}
                                 size="small"
                                 variant="text"
                                 onClick={onPrimary}

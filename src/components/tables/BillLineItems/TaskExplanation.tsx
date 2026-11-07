@@ -1,15 +1,15 @@
-import { useRef } from 'react';
-
 import { boxClasses, IconButton, Stack, Typography } from '@mui/material';
 
 import { HelpCircle } from 'iconoir-react';
 import { usePopupState } from 'material-ui-popup-state/hooks';
+import { useSemanticLeaf } from 'react-semantic-tree';
 
 import PopperWrapper from 'src/components/shared/PopperWrapper';
 
 const POPPER_KEY = '';
 function TaskExplanation() {
-    const anchorElement = useRef(null);
+    const { ref: anchorRef, element: anchorElement } =
+        useSemanticLeaf<HTMLButtonElement>('Explain Task Usage');
 
     const state = usePopupState({
         variant: 'popper',
@@ -20,7 +20,7 @@ function TaskExplanation() {
     return (
         <>
             <IconButton
-                ref={anchorElement}
+                ref={anchorRef}
                 onFocus={state.open}
                 onMouseOver={state.open}
                 onBlur={state.close}
@@ -30,7 +30,7 @@ function TaskExplanation() {
             </IconButton>
 
             <PopperWrapper
-                anchorEl={anchorElement.current}
+                anchorEl={anchorElement}
                 open={state.isOpen}
                 setOpen={(previousValue) => {
                     state.setOpen(!previousValue);

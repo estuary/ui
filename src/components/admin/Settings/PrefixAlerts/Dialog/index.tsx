@@ -9,7 +9,7 @@ import {
     Stack,
 } from '@mui/material';
 
-import { useIntl } from 'react-intl';
+import { useSemanticLeaf } from 'react-semantic-tree';
 import { useUnmount } from 'react-use';
 
 import DeleteButton from 'src/components/admin/Settings/PrefixAlerts/Dialog/DeleteButton';
@@ -32,7 +32,11 @@ const AlertSubscriptionDialog = ({
     setOpen,
     staticPrefix,
 }: AlertSubscriptionDialogProps) => {
-    const intl = useIntl();
+    const { ref: semanticCloseRef } =
+        useSemanticLeaf<HTMLButtonElement>('Close');
+
+    const { ref: semanticCancelRef } =
+        useSemanticLeaf<HTMLButtonElement>('Cancel');
 
     const resetSubscriptionState = useAlertSubscriptionsStore(
         (state) => state.resetState
@@ -52,8 +56,14 @@ const AlertSubscriptionDialog = ({
 
     return (
         <Dialog open={open} maxWidth="md" fullWidth aria-labelledby={TITLE_ID}>
-            <DialogTitleWithClose id={TITLE_ID} onClose={closeDialog}>
-                {intl.formatMessage({ id: headerId })}
+            <DialogTitleWithClose
+                closeButtonRef={semanticCloseRef}
+                id={TITLE_ID}
+                onClose={closeDialog}
+            >
+                {headerId === 'alerts.config.dialog.update.header'
+                    ? 'Update Notification Methods'
+                    : 'Configure Notification Methods'}
             </DialogTitleWithClose>
 
             <DialogContent sx={{ mt: 1 }}>
@@ -89,6 +99,7 @@ const AlertSubscriptionDialog = ({
 
                 <Stack direction="row" spacing={1}>
                     <Button
+                        ref={semanticCancelRef}
                         variant="outlined"
                         size="small"
                         onClick={() => closeDialog()}

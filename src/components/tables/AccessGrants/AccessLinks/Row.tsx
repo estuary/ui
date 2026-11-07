@@ -3,6 +3,7 @@ import type { InviteLink } from 'src/gql-types/graphql';
 
 import { Button, TableCell, TableRow, Typography } from '@mui/material';
 
+import { useSemanticLeaf } from 'react-semantic-tree';
 import { useMutation } from 'urql';
 
 import { DELETE_INVITE_LINK } from 'src/api/gql/inviteLinks';
@@ -15,6 +16,9 @@ export function Row({
 }: InviteErrorProps & {
     row: InviteLink;
 }) {
+    const { ref: semanticRemoveAccessLinkRef } =
+        useSemanticLeaf<HTMLButtonElement>('Remove Access Link');
+
     const [{ fetching }, deleteInviteLink] = useMutation(DELETE_INVITE_LINK);
 
     const handleDelete = async () => {
@@ -48,6 +52,7 @@ export function Row({
 
             <TableCell sx={{ width: 50 }}>
                 <Button
+                    ref={semanticRemoveAccessLinkRef}
                     onClick={handleDelete}
                     disabled={fetching}
                     variant="text"

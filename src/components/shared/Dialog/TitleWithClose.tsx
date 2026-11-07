@@ -1,4 +1,5 @@
 import type { SxProps, Theme } from '@mui/material';
+import type { Ref } from 'react';
 import type { BaseComponentProps } from 'src/types';
 
 import { DialogTitle, IconButton } from '@mui/material';
@@ -6,6 +7,7 @@ import { DialogTitle, IconButton } from '@mui/material';
 import { Xmark } from 'iconoir-react';
 
 interface DialogTitleProps extends BaseComponentProps {
+    closeButtonRef?: Ref<HTMLButtonElement>;
     id: string;
     onClose: () => void;
     disabled?: boolean;
@@ -16,12 +18,14 @@ function DialogTitleWithClose({
     children,
     onClose,
     disabled,
+    closeButtonRef,
     ...other
 }: DialogTitleProps) {
     return (
         <DialogTitle {...other}>
             {children}
             <IconButton
+                ref={closeButtonRef}
                 aria-label="Close"
                 disabled={disabled}
                 onClick={onClose}

@@ -1,11 +1,12 @@
 import type { SxProps, Theme } from '@mui/material';
-import type { MouseEvent, ReactNode } from 'react';
+import type { MouseEvent, ReactNode, Ref } from 'react';
 
 import { Link } from '@mui/material';
 
 import { OpenNewWindow } from 'iconoir-react';
 
 export interface ExternalLinkOptions {
+    linkRef?: Ref<HTMLAnchorElement>;
     sx?: SxProps<Theme>;
 }
 
@@ -14,13 +15,14 @@ interface Props extends ExternalLinkOptions {
     link: string;
 }
 
-const ExternalLink = ({ children, link, sx }: Props) => {
+const ExternalLink = ({ children, link, sx, linkRef }: Props) => {
     const onClick = (event: MouseEvent) => {
         event.stopPropagation();
     };
 
     return (
         <Link
+            ref={linkRef}
             href={link}
             target="_blank"
             rel="noopener"

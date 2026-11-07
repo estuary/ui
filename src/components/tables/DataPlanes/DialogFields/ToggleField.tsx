@@ -2,6 +2,8 @@ import { useState } from 'react';
 
 import { Stack, ToggleButtonGroup, Typography } from '@mui/material';
 
+import { useSemanticLeaf } from 'react-semantic-tree';
+
 import SingleLineCode from 'src/components/content/SingleLineCode';
 import OutlinedToggleButton from 'src/components/shared/buttons/OutlinedToggleButton';
 
@@ -9,6 +11,26 @@ interface ToggleOption {
     key: string;
     label: string;
     value: string | null;
+}
+
+function AddressFamilyOption({
+    option,
+    lowercaseButton,
+}: {
+    option: ToggleOption;
+    lowercaseButton?: boolean;
+}) {
+    const { ref } = useSemanticLeaf<HTMLButtonElement>(`Select ${option.key}`);
+    return (
+        <OutlinedToggleButton ref={ref} value={option.key}>
+            <Typography
+                variant="caption"
+                sx={lowercaseButton ? { textTransform: 'none' } : undefined}
+            >
+                {option.label}
+            </Typography>
+        </OutlinedToggleButton>
+    );
 }
 
 interface ToggleFieldProps {
@@ -22,6 +44,9 @@ export function ToggleField({
     options,
     lowercaseButton,
 }: ToggleFieldProps) {
+    const { ref: semanticCopyIPAddressesRef } =
+        useSemanticLeaf<HTMLButtonElement>('Copy IP Addresses');
+
     const validOptions = options.filter((opt) => Boolean(opt.value));
 
     const [selectedKey, setSelectedKey] = useState<string>(
@@ -68,23 +93,19 @@ export function ToggleField({
                     size="small"
                 >
                     {validOptions.map((opt) => (
-                        <OutlinedToggleButton key={opt.key} value={opt.key}>
-                            <Typography
-                                variant="caption"
-                                sx={
-                                    lowercaseButton
-                                        ? { textTransform: 'none' }
-                                        : undefined
-                                }
-                            >
-                                {opt.label}
-                            </Typography>
-                        </OutlinedToggleButton>
+                        <AddressFamilyOption
+                            key={opt.key}
+                            option={opt}
+                            lowercaseButton={lowercaseButton}
+                        />
                     ))}
                 </ToggleButtonGroup>
             </Stack>
 
-            <SingleLineCode value={currentValue ?? '-'} />
+            <SingleLineCode
+                copyButtonRef={semanticCopyIPAddressesRef}
+                value={currentValue ?? '-'}
+            />
         </Stack>
     );
 }

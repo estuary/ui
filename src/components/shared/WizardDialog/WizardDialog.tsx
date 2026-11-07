@@ -7,6 +7,8 @@ import { useCallback, useMemo, useState } from 'react';
 
 import { Collapse, Dialog } from '@mui/material';
 
+import { useSemanticLeaf } from 'react-semantic-tree';
+
 import DialogTitleWithClose from 'src/components/shared/Dialog/TitleWithClose';
 import { WizardContext } from 'src/components/shared/WizardDialog/context';
 import { WizardActions } from 'src/components/shared/WizardDialog/WizardActions';
@@ -23,6 +25,9 @@ export function WizardDialog({
     maxWidth = 'sm',
     showActions = true,
 }: WizardDialogProps) {
+    const { ref: semanticCloseRef } =
+        useSemanticLeaf<HTMLButtonElement>('Close');
+
     const initialStep = 0;
 
     const [currentStep, setCurrentStep] = useState(initialStep);
@@ -126,7 +131,11 @@ export function WizardDialog({
             }}
         >
             <WizardContext.Provider value={contextValue}>
-                <DialogTitleWithClose id={TITLE_ID} onClose={onClose}>
+                <DialogTitleWithClose
+                    closeButtonRef={semanticCloseRef}
+                    id={TITLE_ID}
+                    onClose={onClose}
+                >
                     {displayTitle}
                 </DialogTitleWithClose>
                 <WizardContent />

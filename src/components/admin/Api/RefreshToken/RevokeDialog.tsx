@@ -12,6 +12,8 @@ import {
     Typography,
 } from '@mui/material';
 
+import { useSemanticLeaf } from 'react-semantic-tree';
+
 import { useRevokeRefreshToken } from 'src/api/gql/refreshTokens';
 import Error from 'src/components/shared/Error';
 
@@ -23,6 +25,11 @@ interface Props {
 }
 
 export function RevokeDialog({ open, onClose, id, detail }: Props) {
+    const { ref: semanticCancelRef } =
+        useSemanticLeaf<HTMLButtonElement>('Cancel');
+    const { ref: semanticRemoveRefreshTokenRef } =
+        useSemanticLeaf<HTMLButtonElement>('Remove Refresh Token');
+
     const [, revokeRefreshToken] = useRevokeRefreshToken();
 
     const [saving, setSaving] = useState(false);
@@ -72,10 +79,15 @@ export function RevokeDialog({ open, onClose, id, detail }: Props) {
                 </Stack>
             </DialogContent>
             <DialogActions>
-                <Button onClick={onClose} disabled={saving}>
+                <Button
+                    ref={semanticCancelRef}
+                    onClick={onClose}
+                    disabled={saving}
+                >
                     Cancel
                 </Button>
                 <Button
+                    ref={semanticRemoveRefreshTokenRef}
                     variant="outlined"
                     color="error"
                     onClick={revokeToken}

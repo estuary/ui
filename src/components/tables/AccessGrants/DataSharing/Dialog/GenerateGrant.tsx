@@ -7,6 +7,8 @@ import { useMemo, useState } from 'react';
 
 import { Button, Grid, TextField } from '@mui/material';
 
+import { useSemanticLeaf } from 'react-semantic-tree';
+
 import { createRoleGrant } from 'src/api/roleGrants';
 import PrefixedName from 'src/components/inputs/PrefixedName';
 import AutocompletedField from 'src/components/shared/toolbar/AutocompletedField';
@@ -32,6 +34,9 @@ const namePattern = new RegExp(
 const capabilityOptions: Capability[] = ['read', 'admin', 'write'];
 
 function GenerateGrant({ serverError, setServerError, setOpen }: Props) {
+    const { ref: semanticGenerateGrantRef } =
+        useSemanticLeaf<HTMLButtonElement>('Generate Grant');
+
     // Access Grant Select Table Store
     const hydrate = useZustandStore<
         SelectableTableStore,
@@ -165,6 +170,7 @@ function GenerateGrant({ serverError, setServerError, setOpen }: Props) {
             </Grid>
             <Grid size={{ xs: 4, md: 3 }} sx={{ display: 'flex' }}>
                 <Button
+                    ref={semanticGenerateGrantRef}
                     disabled={formInvalid}
                     onClick={handlers.generateRoleGrant}
                     sx={{ flexGrow: 1 }}

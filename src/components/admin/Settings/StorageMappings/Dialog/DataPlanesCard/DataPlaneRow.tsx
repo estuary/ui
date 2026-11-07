@@ -3,6 +3,7 @@ import type { DataPlaneNode } from 'src/api/gql/dataPlanes';
 import { Box, IconButton, Stack, Tooltip, Typography } from '@mui/material';
 
 import { Star, StarSolid, Xmark } from 'iconoir-react';
+import { useSemanticLeaf } from 'react-semantic-tree';
 
 import { toPresentableName } from 'src/utils/dataPlane-utils';
 
@@ -17,6 +18,11 @@ export function DataPlaneRow({
     handleSetDefault?: () => void;
     handleRemove: () => void;
 }) {
+    const { ref: semanticSetDefaultDataPlaneRef } =
+        useSemanticLeaf<HTMLSpanElement>('Set Default Data Plane');
+    const { ref: semanticRemoveDataPlaneRef } =
+        useSemanticLeaf<HTMLButtonElement>('Remove Data Plane');
+
     return (
         <Stack direction="row" spacing={1} alignItems="center">
             <Box
@@ -51,6 +57,7 @@ export function DataPlaneRow({
                     ) : (
                         <Tooltip title="Set as default" enterDelay={500}>
                             <Box
+                                ref={semanticSetDefaultDataPlaneRef}
                                 component="span"
                                 className="star-outline"
                                 onClick={handleSetDefault}
@@ -79,7 +86,11 @@ export function DataPlaneRow({
                 </Typography>
             </Box>
 
-            <IconButton size="small" onClick={handleRemove}>
+            <IconButton
+                ref={semanticRemoveDataPlaneRef}
+                size="small"
+                onClick={handleRemove}
+            >
                 <Xmark width={16} height={16} />
             </IconButton>
         </Stack>

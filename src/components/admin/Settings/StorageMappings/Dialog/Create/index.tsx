@@ -11,6 +11,7 @@ import {
     useForm,
     useFormContext,
 } from 'react-hook-form';
+import { useSemanticLeaf } from 'react-semantic-tree';
 
 import { useStorageMappingService } from 'src/api/gql/storageMappings';
 import {
@@ -52,6 +53,9 @@ function CreateMappingWizardInner({
     open: boolean;
     onClose: () => void;
 }) {
+    const { ref: semanticStorageDocumentationRef } =
+        useSemanticLeaf<HTMLAnchorElement>('Storage Documentation');
+
     const { error: dataPlanesError } = useDataPlanes();
     const { create } = useStorageMappingService();
     const {
@@ -165,6 +169,7 @@ function CreateMappingWizardInner({
                                       needs its own access to your storage
                                       bucket. For more details, see the{' '}
                                       <Link
+                                          ref={semanticStorageDocumentationRef}
                                           href="https://docs.estuary.dev/getting-started/installation/#configuring-your-cloud-storage-bucket-for-use-with-flow"
                                           target="_blank"
                                           rel="noopener noreferrer"
@@ -181,6 +186,7 @@ function CreateMappingWizardInner({
                       },
                   ],
         [
+            semanticStorageDocumentationRef,
             dataPlanesError,
             formState.isValid,
             allTestsPassing,

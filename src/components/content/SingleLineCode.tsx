@@ -9,6 +9,7 @@ const borderRadius = 3;
 
 function SingleLineCode({
     value,
+    copyButtonRef,
     compact,
     subsequentCommandExists,
     sx,
@@ -52,6 +53,7 @@ function SingleLineCode({
                 disableTouchListener
             >
                 <Button
+                    ref={copyButtonRef}
                     variant="outlined"
                     color={isCopied ? 'success' : undefined}
                     onClick={() => handleCopy(value)}

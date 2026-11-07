@@ -4,10 +4,15 @@ import { useMemo } from 'react';
 
 import { Button } from '@mui/material';
 
+import { useSemanticLeaf } from 'react-semantic-tree';
+
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
 import { useModifyAlertMetadata } from 'src/components/admin/Settings/PrefixAlerts/useModifyAlertMetadata';
 
 const DeleteButton = ({ closeDialog }: DialogActionProps) => {
+    const { ref: semanticDeleteAllNotificationsRef } =
+        useSemanticLeaf<HTMLButtonElement>('Delete All Notifications');
+
     const { loading, onClick } = useModifyAlertMetadata(closeDialog, true);
 
     const errorsExist = useAlertSubscriptionsStore(
@@ -58,6 +63,7 @@ const DeleteButton = ({ closeDialog }: DialogActionProps) => {
 
     return (
         <Button
+            ref={semanticDeleteAllNotificationsRef}
             color="error"
             disabled={disabled}
             loading={loading}

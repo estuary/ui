@@ -4,6 +4,8 @@ import { useState } from 'react';
 
 import { Stack, TableCell, TableRow, useTheme } from '@mui/material';
 
+import { useSemanticLeaf } from 'react-semantic-tree';
+
 import DataPlaneIcon from 'src/components/shared/Entity/DataPlaneIcon';
 import DataPlaneDialog from 'src/components/tables/DataPlanes/DataPlaneDialog';
 import { getEntityTableRowSx } from 'src/context/Theme';
@@ -18,6 +20,9 @@ interface RowProps {
 }
 
 function Row({ row, rowSx, onRowClick }: RowProps) {
+    const { ref: semanticViewDataPlaneRef } =
+        useSemanticLeaf<HTMLTableRowElement>('View Data Plane');
+
     const parseCidrBlocks = useParseCidrBlocks();
     const { ipv4 } = parseCidrBlocks(row.cidrBlocks);
 
@@ -29,6 +34,7 @@ function Row({ row, rowSx, onRowClick }: RowProps) {
 
     return (
         <TableRow
+            ref={semanticViewDataPlaneRef}
             hover
             sx={{
                 ...rowSx,

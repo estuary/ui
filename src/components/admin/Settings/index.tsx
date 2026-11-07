@@ -1,8 +1,6 @@
-import type { PropsWithChildren } from 'react';
+import { Divider, Grid, Stack } from '@mui/material';
 
-import { Box, Divider, Grid, Stack } from '@mui/material';
-
-import { SemanticBranch, useSemanticLeaf } from 'react-semantic-tree';
+import { SemanticBranch } from 'react-semantic-tree';
 
 import { authenticatedRoutes } from 'src/app/routes';
 import { DataPlanes } from 'src/components/admin/Settings/DataPlanes';
@@ -12,20 +10,6 @@ import AdminTabs from 'src/components/admin/Tabs';
 import TenantSelector from 'src/components/shared/TenantSelector';
 import usePageTitle from 'src/hooks/usePageTitle';
 
-// Track section clicks without collecting control text or input values.
-function SettingsSection({
-    label,
-    children,
-}: PropsWithChildren<{ label: string }>) {
-    const { ref } = useSemanticLeaf<HTMLDivElement>(label);
-
-    return (
-        <Box ref={ref} sx={{ display: 'contents' }}>
-            {children}
-        </Box>
-    );
-}
-
 function Settings() {
     usePageTitle({
         header: authenticatedRoutes.admin.settings.title,
@@ -34,9 +18,9 @@ function Settings() {
     return (
         <SemanticBranch label="Admin">
             <SemanticBranch label="Settings">
-                <SettingsSection label="Navigation">
+                <SemanticBranch label="Navigation">
                     <AdminTabs />
-                </SettingsSection>
+                </SemanticBranch>
 
                 <Grid
                     container
@@ -47,30 +31,30 @@ function Settings() {
                         size={{ xs: 12, md: 3 }}
                         sx={{ mt: 2.5, display: 'flex', alignItems: 'end' }}
                     >
-                        <SettingsSection label="Tenant Selector">
+                        <SemanticBranch label="Tenant Selector">
                             <TenantSelector />
-                        </SettingsSection>
+                        </SemanticBranch>
                     </Grid>
                 </Grid>
 
-                <SettingsSection label="Notifications">
+                <SemanticBranch label="Notifications">
                     <PrefixAlerts />
-                </SettingsSection>
+                </SemanticBranch>
 
                 <Stack>
                     <Divider sx={{ mt: 2, mb: 4 }} />
 
-                    <SettingsSection label="Storage Mappings">
+                    <SemanticBranch label="Storage Mappings">
                         <StorageMappings />
-                    </SettingsSection>
+                    </SemanticBranch>
                 </Stack>
 
                 <Stack>
                     <Divider sx={{ mt: 2, mb: 4 }} />
 
-                    <SettingsSection label="Data Planes">
+                    <SemanticBranch label="Data Planes">
                         <DataPlanes />
-                    </SettingsSection>
+                    </SemanticBranch>
                 </Stack>
             </SemanticBranch>
         </SemanticBranch>

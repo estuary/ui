@@ -15,6 +15,7 @@ import {
 } from '@mui/material';
 
 import { Xmark } from 'iconoir-react';
+import { useSemanticLeaf } from 'react-semantic-tree';
 
 import { useCreateRefreshToken } from 'src/api/gql/refreshTokens';
 import SingleLineCode from 'src/components/content/SingleLineCode';
@@ -39,7 +40,12 @@ interface Props {
 }
 
 export function CreateRefreshTokenDialog({ open, onClose, onCreated }: Props) {
+    const { ref: semanticCopyRefreshTokenRef } =
+        useSemanticLeaf<HTMLButtonElement>('Copy Refresh Token');
+
     const theme = useTheme();
+    const { ref: createRef } = useSemanticLeaf<HTMLButtonElement>('Create');
+    const { ref: closeRef } = useSemanticLeaf<HTMLButtonElement>('Close');
 
     const [label, setLabel] = useState('');
     const [token, setToken] = useState('');
@@ -113,7 +119,11 @@ export function CreateRefreshTokenDialog({ open, onClose, onCreated }: Props) {
             >
                 <Typography variant="h6">Create Refresh Token</Typography>
 
-                <IconButton disabled={generating} onClick={onClose}>
+                <IconButton
+                    ref={closeRef}
+                    disabled={generating}
+                    onClick={onClose}
+                >
                     <Xmark
                         aria-label="Close"
                         style={{
@@ -137,7 +147,10 @@ export function CreateRefreshTokenDialog({ open, onClose, onCreated }: Props) {
                                 able to see it again!
                             </Typography>
 
-                            <SingleLineCode value={token} />
+                            <SingleLineCode
+                                copyButtonRef={semanticCopyRefreshTokenRef}
+                                value={token}
+                            />
                         </AlertBox>
                     ) : (
                         <Stack
@@ -166,6 +179,7 @@ export function CreateRefreshTokenDialog({ open, onClose, onCreated }: Props) {
                             />
 
                             <Button
+                                ref={createRef}
                                 disabled={!hasLength(label) || generating}
                                 loading={generating}
                                 type="submit"

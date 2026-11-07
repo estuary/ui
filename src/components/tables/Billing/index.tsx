@@ -13,6 +13,8 @@ import {
     TableRow,
 } from '@mui/material';
 
+import { useSemanticLeaf } from 'react-semantic-tree';
+
 import { BILLING_HISTORY_PAGE_SIZE } from 'src/api/gql/billing';
 import Rows from 'src/components/tables/Billing/Rows';
 import EntityTableBody from 'src/components/tables/EntityTable/TableBody';
@@ -55,6 +57,11 @@ function BillingHistoryTable({
     selectedInvoiceId,
     onSelectInvoice,
 }: BillingHistoryTableProps) {
+    const { ref: semanticPreviousPageRef } =
+        useSemanticLeaf<HTMLButtonElement>('Previous Page');
+    const { ref: semanticNextPageRef } =
+        useSemanticLeaf<HTMLButtonElement>('Next Page');
+
     const {
         invoices: billingHistory,
         page,
@@ -108,6 +115,16 @@ function BillingHistoryTable({
                     <TableFooter>
                         <TableRow>
                             <TablePagination
+                                slotProps={{
+                                    actions: {
+                                        previousButton: {
+                                            ref: semanticPreviousPageRef,
+                                        },
+                                        nextButton: {
+                                            ref: semanticNextPageRef,
+                                        },
+                                    },
+                                }}
                                 // Unknown until the last page.
                                 count={
                                     hasNextPage || isLoading

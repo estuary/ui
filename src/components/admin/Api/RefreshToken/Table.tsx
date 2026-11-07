@@ -18,6 +18,7 @@ import {
 } from '@mui/material';
 
 import { Trash } from 'iconoir-react';
+import { useSemanticLeaf } from 'react-semantic-tree';
 
 import { useRefreshTokens } from 'src/api/gql/refreshTokens';
 import { CreateRefreshTokenDialog } from 'src/components/admin/Api/RefreshToken/CreateDialog';
@@ -33,6 +34,9 @@ interface RowProps {
 }
 
 function Row({ row }: RowProps) {
+    const { ref: semanticRemoveRefreshTokenRef } =
+        useSemanticLeaf<HTMLButtonElement>('Remove Refresh Token');
+
     const [revokeOpen, setRevokeOpen] = useState(false);
 
     return (
@@ -64,6 +68,7 @@ function Row({ row }: RowProps) {
 
             <TableCell>
                 <IconButton
+                    ref={semanticRemoveRefreshTokenRef}
                     aria-label="Remove"
                     className="revoke-action"
                     color="error"
@@ -86,6 +91,16 @@ function Row({ row }: RowProps) {
 }
 
 export function RefreshTokenTable() {
+    const { ref: semanticPreviousPageRef } =
+        useSemanticLeaf<HTMLButtonElement>('Previous Page');
+    const { ref: semanticNextPageRef } =
+        useSemanticLeaf<HTMLButtonElement>('Next Page');
+
+    const { ref: semanticCreateRefreshTokenRef } =
+        useSemanticLeaf<HTMLButtonElement>('Create Refresh Token');
+    const { ref: semanticCreateFirstRefreshTokenRef } =
+        useSemanticLeaf<HTMLAnchorElement>('Create First Refresh Token');
+
     const { currentPage, cursor, goToPage, onPageChange } =
         useCursorPagination();
 
@@ -123,7 +138,11 @@ export function RefreshTokenTable() {
                     justifyContent: 'flex-end',
                 }}
             >
-                <Button onClick={() => setDialogOpen(true)} variant="outlined">
+                <Button
+                    ref={semanticCreateRefreshTokenRef}
+                    onClick={() => setDialogOpen(true)}
+                    variant="outlined"
+                >
                     Create Refresh Token
                 </Button>
 
@@ -172,6 +191,7 @@ export function RefreshTokenTable() {
                                         No refresh tokens found.
                                     </Typography>
                                     <Typography
+                                        ref={semanticCreateFirstRefreshTokenRef}
                                         component="a"
                                         variant="body2"
                                         color="primary"
@@ -211,10 +231,12 @@ export function RefreshTokenTable() {
                                     slotProps={{
                                         actions: {
                                             previousButton: {
+                                                ref: semanticPreviousPageRef,
                                                 disabled:
                                                     !pageInfo.hasPreviousPage,
                                             },
                                             nextButton: {
+                                                ref: semanticNextPageRef,
                                                 disabled: !pageInfo.hasNextPage,
                                             },
                                         },

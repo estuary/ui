@@ -8,6 +8,8 @@ import { useState } from 'react';
 
 import { Button, Dialog } from '@mui/material';
 
+import { useSemanticLeaf } from 'react-semantic-tree';
+
 import GrantWhatIsChanging from 'src/components/tables/RowActions/AccessGrants/GrantWhatIsChanging';
 import RevokeGrant from 'src/components/tables/RowActions/AccessGrants/RevokeGrant';
 import ProgressDialog from 'src/components/tables/RowActions/ProgressDialog';
@@ -22,6 +24,9 @@ import { selectableTableStoreSelectors } from 'src/stores/Tables/Store';
 // TODO (capabilities) - need to see if they remove their own capabilities
 //  and then refresh local cache of access grants.
 function DeleteButton({ selectTableStoreName }: AccessGrantDeleteButtonProps) {
+    const { ref: semanticRemoveGrantsRef } =
+        useSemanticLeaf<HTMLButtonElement>('Remove Grants');
+
     const { describeAllRemovals } = useAccessGrantRemovalDescriptions();
 
     const confirmationModalContext = useConfirmationModalContext();
@@ -100,6 +105,7 @@ function DeleteButton({ selectTableStoreName }: AccessGrantDeleteButtonProps) {
     return (
         <>
             <Button
+                ref={semanticRemoveGrantsRef}
                 variant="outlined"
                 disabled={!selectionsExist}
                 onClick={handlers.showConfirmationDialog}

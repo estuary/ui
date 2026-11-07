@@ -8,6 +8,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Alert, Collapse, Link, Stack } from '@mui/material';
 
 import { useFormContext } from 'react-hook-form';
+import { useSemanticLeaf } from 'react-semantic-tree';
 
 import { storeValidation } from 'src/components/admin/Settings/StorageMappings/Dialog/StorageFields/StorageValidation';
 import {
@@ -35,6 +36,9 @@ export function StorageFields({
     defaultDataPlane = null,
     sx,
 }: StorageFieldsProps) {
+    const { ref: semanticMatchDefaultDataPlaneRef } =
+        useSemanticLeaf<HTMLButtonElement>('Match Default Data Plane');
+
     const { watch, setValue } = useFormContext<StorageMappingFormData>();
 
     const storeProvider = watch(
@@ -96,6 +100,7 @@ export function StorageFields({
                     default data plane. This may result in additional egress
                     fees.{' '}
                     <Link
+                        ref={semanticMatchDefaultDataPlaneRef}
                         component="button"
                         variant="body2"
                         onClick={() => setTrackDefaultDp(true)}

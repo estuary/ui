@@ -1,3 +1,4 @@
+import type { CheckboxProps } from '@mui/material';
 import type { AlertTypeListProps } from 'src/components/admin/Settings/PrefixAlerts/types';
 
 import {
@@ -12,6 +13,7 @@ import {
 } from '@mui/material';
 
 import { Lock } from 'iconoir-react';
+import { useSemanticLeaf } from 'react-semantic-tree';
 
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
 import {
@@ -19,6 +21,14 @@ import {
     defaultOutlineColor_hovered,
     diminishedTextColor,
 } from 'src/context/Theme';
+
+function AlertTypeCheckbox({
+    alertType,
+    ...props
+}: CheckboxProps & { alertType: string }) {
+    const { ref } = useSemanticLeaf<HTMLInputElement>(`Toggle ${alertType}`);
+    return <Checkbox {...props} inputRef={ref} />;
+}
 
 const AlertTypeList = ({ options, subscription }: AlertTypeListProps) => {
     const theme = useTheme();
@@ -76,7 +86,8 @@ const AlertTypeList = ({ options, subscription }: AlertTypeListProps) => {
                             <FormControl fullWidth>
                                 <FormControlLabel
                                     control={
-                                        <Checkbox
+                                        <AlertTypeCheckbox
+                                            alertType={alertType}
                                             checked={selected}
                                             disableRipple={isSystem}
                                             onChange={(event) => {

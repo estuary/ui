@@ -17,6 +17,8 @@ import {
     useTheme,
 } from '@mui/material';
 
+import { useSemanticLeaf } from 'react-semantic-tree';
+
 import { usePaginatedStorageMappings } from 'src/api/gql/storageMappings';
 import { AddStorageButton } from 'src/components/admin/Settings/StorageMappings/AddStorageButton';
 import { getEntityTableRowSx } from 'src/context/Theme';
@@ -35,6 +37,9 @@ const tableColumns = [
 const columnCount = tableColumns.length;
 
 function Row({ row }: { row: StorageMappingTableRow }) {
+    const { ref: semanticEditStorageMappingRef } =
+        useSemanticLeaf<HTMLTableRowElement>('Edit Storage Mapping');
+
     const theme = useTheme();
 
     const { onOpen } = useDialog('EDIT_STORAGE_MAPPING');
@@ -43,6 +48,7 @@ function Row({ row }: { row: StorageMappingTableRow }) {
 
     return (
         <TableRow
+            ref={semanticEditStorageMappingRef}
             hover
             sx={getEntityTableRowSx(theme)}
             onClick={() => onOpen({ prefix: row.catalogPrefix })}
@@ -74,6 +80,11 @@ function TenantStorageMappingsTable({
 }: {
     selectedTenant: string;
 }) {
+    const { ref: semanticPreviousPageRef } =
+        useSemanticLeaf<HTMLButtonElement>('Previous Page');
+    const { ref: semanticNextPageRef } =
+        useSemanticLeaf<HTMLButtonElement>('Next Page');
+
     const { currentPage, cursor, goToPage, onPageChange } =
         useCursorPagination();
 
@@ -167,10 +178,12 @@ function TenantStorageMappingsTable({
                                     slotProps={{
                                         actions: {
                                             previousButton: {
+                                                ref: semanticPreviousPageRef,
                                                 disabled:
                                                     !pageInfo.hasPreviousPage,
                                             },
                                             nextButton: {
+                                                ref: semanticNextPageRef,
                                                 disabled: !pageInfo.hasNextPage,
                                             },
                                         },

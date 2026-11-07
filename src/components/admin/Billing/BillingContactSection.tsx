@@ -9,6 +9,8 @@ import {
     Typography,
 } from '@mui/material';
 
+import { useSemanticLeaf } from 'react-semantic-tree';
+
 import { BillingContactDialog } from 'src/components/admin/Billing/BillingContactDialog';
 import { TaxExemptionNote } from 'src/components/admin/Billing/TaxExemptionNote';
 import CardWrapper from 'src/components/shared/CardWrapper';
@@ -28,6 +30,9 @@ const actionLabels = {
 
 // The page remounts this section when the selected tenant changes.
 export function BillingContactSection({ canEdit }: { canEdit: boolean }) {
+    const { ref: semanticEditBillingContactRef } =
+        useSemanticLeaf<HTMLButtonElement>('Edit Billing Contact');
+
     const tenant = useTenantStore((state) => state.selectedTenant);
     const { contact, isLoading, error } = useBillingContact(tenant);
 
@@ -44,6 +49,7 @@ export function BillingContactSection({ canEdit }: { canEdit: boolean }) {
     const action =
         isLoading || !canEdit ? null : (
             <Button
+                ref={semanticEditBillingContactRef}
                 variant={status === 'complete' ? 'text' : 'contained'}
                 onClick={() => setEditing(true)}
                 sx={{ whiteSpace: 'nowrap' }}

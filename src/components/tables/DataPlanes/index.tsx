@@ -14,6 +14,8 @@ import {
     Toolbar,
 } from '@mui/material';
 
+import { useSemanticLeaf } from 'react-semantic-tree';
+
 import Rows from 'src/components/tables/DataPlanes/Rows';
 import ToggleDataPlaneScope from 'src/components/tables/DataPlanes/ToggleDataPlaneScope';
 import EntityTableBody from 'src/components/tables/EntityTable/TableBody';
@@ -50,6 +52,11 @@ function getTableStatus<T>(data: T[], loading: boolean, error?: CombinedError) {
 }
 
 function DataPlanesTable() {
+    const { ref: semanticPreviousPageRef } =
+        useSemanticLeaf<HTMLButtonElement>('Previous Page');
+    const { ref: semanticNextPageRef } =
+        useSemanticLeaf<HTMLButtonElement>('Next Page');
+
     const { currentPage, cursor, goToPage, onPageChange } =
         useCursorPagination();
 
@@ -148,10 +155,12 @@ function DataPlanesTable() {
                                 slotProps={{
                                     actions: {
                                         previousButton: {
+                                            ref: semanticPreviousPageRef,
                                             disabled:
                                                 !pageInfo?.hasPreviousPage,
                                         },
                                         nextButton: {
+                                            ref: semanticNextPageRef,
                                             disabled: !pageInfo?.hasNextPage,
                                         },
                                     },

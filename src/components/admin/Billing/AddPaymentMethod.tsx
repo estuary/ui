@@ -5,6 +5,7 @@ import { Box, Button, Dialog, DialogTitle } from '@mui/material';
 import { usePostHog } from '@posthog/react';
 import { Elements } from '@stripe/react-stripe-js';
 import { Plus } from 'iconoir-react';
+import { useSemanticLeaf } from 'react-semantic-tree';
 
 import { BillingContactDialog } from 'src/components/admin/Billing/BillingContactDialog';
 import { PaymentForm } from 'src/components/admin/Billing/CapturePaymentMethod';
@@ -32,6 +33,9 @@ function AddPaymentMethod({
     setupIntentSecret,
     tenant,
 }: Props) {
+    const { ref: semanticAddPaymentMethodRef } =
+        useSemanticLeaf<HTMLButtonElement>('Add Payment Method');
+
     const [show, setOpen] = useState(autoOpen);
     const postHog = usePostHog();
     const appearance = useStripeAppearance();
@@ -48,6 +52,7 @@ function AddPaymentMethod({
         <>
             <Box>
                 <Button
+                    ref={semanticAddPaymentMethodRef}
                     loadingPosition="start"
                     disabled={!setupIntentSecret}
                     loading={loading}

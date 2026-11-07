@@ -14,6 +14,8 @@ import {
     Typography,
 } from '@mui/material';
 
+import { useSemanticLeaf } from 'react-semantic-tree';
+
 import { useInviteLinks } from 'src/api/gql/inviteLinks';
 import { Row } from 'src/components/tables/AccessGrants/AccessLinks/Row';
 import EntityTableBody from 'src/components/tables/EntityTable/TableBody';
@@ -53,6 +55,11 @@ const columns: TableColumns[] = [
 ];
 
 export function AccessLinksTable({ setError }: InviteErrorProps) {
+    const { ref: semanticPreviousPageRef } =
+        useSemanticLeaf<HTMLButtonElement>('Previous Page');
+    const { ref: semanticNextPageRef } =
+        useSemanticLeaf<HTMLButtonElement>('Next Page');
+
     const { currentPage, cursor, goToPage, onPageChange } =
         useCursorPagination();
 
@@ -157,10 +164,12 @@ export function AccessLinksTable({ setError }: InviteErrorProps) {
                                     slotProps={{
                                         actions: {
                                             previousButton: {
+                                                ref: semanticPreviousPageRef,
                                                 disabled:
                                                     !pageInfo?.hasPreviousPage,
                                             },
                                             nextButton: {
+                                                ref: semanticNextPageRef,
                                                 disabled:
                                                     !pageInfo?.hasNextPage,
                                             },

@@ -1,10 +1,17 @@
 import { Box, Stack, Typography } from '@mui/material';
 
+import { useSemanticLeaf } from 'react-semantic-tree';
+
 import SingleLineCode from 'src/components/content/SingleLineCode';
 import ExternalLink from 'src/components/shared/ExternalLink';
 import { useUserStore } from 'src/context/User/useUserContextStore';
 
 function AccessToken() {
+    const { ref: semanticAuthenticationDocumentationRef } =
+        useSemanticLeaf<HTMLAnchorElement>('Authentication Documentation');
+    const { ref: semanticCopyAccessTokenRef } =
+        useSemanticLeaf<HTMLButtonElement>('Copy Access Token');
+
     const session = useUserStore((state) => state.session);
 
     return (
@@ -19,7 +26,10 @@ function AccessToken() {
                     Access Token
                 </Typography>
 
-                <ExternalLink link="https://docs.estuary.dev/reference/authentication/#authenticating-flow-using-the-cli">
+                <ExternalLink
+                    linkRef={semanticAuthenticationDocumentationRef}
+                    link="https://docs.estuary.dev/reference/authentication/#authenticating-flow-using-the-cli"
+                >
                     Docs
                 </ExternalLink>
             </Stack>
@@ -29,7 +39,10 @@ function AccessToken() {
             </Typography>
 
             {/* TODO (defect): Display an error in the event the access token does not exist. */}
-            <SingleLineCode value={session?.access_token ?? ''} />
+            <SingleLineCode
+                copyButtonRef={semanticCopyAccessTokenRef}
+                value={session?.access_token ?? ''}
+            />
         </Box>
     );
 }

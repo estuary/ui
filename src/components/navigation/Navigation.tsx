@@ -11,13 +11,14 @@ import {
     HomeSimple,
     Settings,
 } from 'iconoir-react';
+import { SemanticBranch } from 'react-semantic-tree';
 
 import { authenticatedRoutes } from 'src/app/routes';
 import { Pill as AgentSkillsPill } from 'src/components/AgentSkills/Pill';
 import CompanyLogo from 'src/components/graphics/CompanyLogo';
 import CompanyMark from 'src/components/graphics/CompanyMark';
 import { HelpMenu } from 'src/components/menus/HelpMenu';
-import NavLink, { NavButton } from 'src/components/navigation/NavItems';
+import { NavButton, NavLink } from 'src/components/navigation/NavItems';
 import { UserButton, UserMenu } from 'src/components/navigation/User';
 import { UpdateAlert } from 'src/components/UpdateAlert';
 import { useNavigationStore } from 'src/stores/useNavigationStore';
@@ -38,124 +39,131 @@ export const Navigation = () => {
     const toggleOpen = useNavigationStore((state) => state.toggleOpen);
 
     return (
-        <Box
-            sx={{
-                height: '100%',
-                width: open ? NavWidths.FULL : NavWidths.RAIL,
-                flexShrink: 0,
-                overflowY: 'auto',
-                display: 'flex',
-                flexDirection: 'column',
-                background: theme.palette.background.default,
-                boxSizing: 'border-box',
-                transition: theme.transitions.create('width', {
-                    duration: theme.transitions.duration.shortest,
-                }),
-            }}
-        >
-            <Stack
+        <SemanticBranch label="Side Navigation">
+            <Box
                 sx={{
                     height: '100%',
-                    overflowX: 'hidden',
+                    width: open ? NavWidths.FULL : NavWidths.RAIL,
+                    flexShrink: 0,
+                    overflowY: 'auto',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    background: theme.palette.background.default,
+                    boxSizing: 'border-box',
+                    transition: theme.transitions.create('width', {
+                        duration: theme.transitions.duration.shortest,
+                    }),
                 }}
             >
-                <Box
+                <Stack
                     sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        // Left-anchor the brand in both states. The drawer
-                        // animates its width on collapse; centering would fling
-                        // the mark toward the middle of the still-wide rail and
-                        // snap it back as the width settles.
-                        justifyContent: 'flex-start',
-                        height: 48,
-                        px: 2.5,
+                        height: '100%',
+                        overflowX: 'hidden',
                     }}
                 >
-                    {open ? <CompanyLogo /> : <CompanyMark />}
-                </Box>
-
-                <List aria-label="Main navigation">
-                    <NavLink
-                        icon={<HomeSimple />}
-                        title={authenticatedRoutes.home.title}
-                        link={authenticatedRoutes.home.path}
-                        isOpen={open}
-                    />
-                    <NavLink
-                        icon={<CloudUpload />}
-                        title={authenticatedRoutes.captures.title}
-                        link={authenticatedRoutes.captures.path}
-                        isOpen={open}
-                    />
-                    <NavLink
-                        icon={<DatabaseScript />}
-                        title={authenticatedRoutes.collections.title}
-                        link={authenticatedRoutes.collections.path}
-                        isOpen={open}
-                    />
-                    <NavLink
-                        icon={<CloudDownload />}
-                        title={authenticatedRoutes.materializations.title}
-                        link={authenticatedRoutes.materializations.path}
-                        isOpen={open}
-                    />
-                    <NavLink
-                        icon={<Settings />}
-                        title={authenticatedRoutes.admin.title}
-                        link={authenticatedRoutes.admin.path}
-                        isOpen={open}
-                    />
-                </List>
-
-                <Box
-                    aria-label="Secondary navigation"
-                    sx={{ mt: 'auto', pb: 1 }}
-                >
-                    <UpdateAlert isOpen={open} />
-
-                    <Box sx={{ mx: 1, my: 0.25 }}>
-                        <AgentSkillsPill />
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            // Left-anchor the brand in both states. The drawer
+                            // animates its width on collapse; centering would fling
+                            // the mark toward the middle of the still-wide rail and
+                            // snap it back as the width settles.
+                            justifyContent: 'flex-start',
+                            height: 48,
+                            px: 2.5,
+                        }}
+                    >
+                        {open ? <CompanyLogo /> : <CompanyMark />}
                     </Box>
 
-                    <NavButton
-                        icon={<HelpCircle />}
-                        title="Help"
-                        onClick={(e) => setHelpAnchor(e.currentTarget)}
-                        isOpen={open}
-                    />
-                    <HelpMenu
-                        anchorEl={helpAnchor}
-                        onClose={() => setHelpAnchor(null)}
-                    />
+                    <List aria-label="Main navigation">
+                        <NavLink
+                            icon={<HomeSimple />}
+                            title="Welcome"
+                            link={authenticatedRoutes.home.path}
+                            isOpen={open}
+                        />
+                        <NavLink
+                            icon={<CloudUpload />}
+                            title="Sources"
+                            link={authenticatedRoutes.captures.path}
+                            isOpen={open}
+                        />
+                        <NavLink
+                            icon={<DatabaseScript />}
+                            title="Collections"
+                            link={authenticatedRoutes.collections.path}
+                            isOpen={open}
+                        />
+                        <NavLink
+                            icon={<CloudDownload />}
+                            title="Destinations"
+                            link={authenticatedRoutes.materializations.path}
+                            isOpen={open}
+                        />
+                        <NavLink
+                            icon={<Settings />}
+                            title="Admin"
+                            link={authenticatedRoutes.admin.path}
+                            isOpen={open}
+                        />
+                    </List>
 
-                    <NavButton
-                        icon={
-                            <FastArrowLeft
-                                style={{
-                                    transform: open
-                                        ? 'scaleX(1)'
-                                        : 'scaleX(-1)',
-                                    transition: 'all 50ms ease-in-out',
-                                }}
+                    <Box
+                        aria-label="Secondary navigation"
+                        sx={{ mt: 'auto', pb: 1 }}
+                    >
+                        <UpdateAlert isOpen={open} />
+
+                        <Box sx={{ mx: 1, my: 0.25 }}>
+                            <SemanticBranch label="Agent Skills">
+                                <AgentSkillsPill />
+                            </SemanticBranch>
+                        </Box>
+
+                        <NavButton
+                            icon={<HelpCircle />}
+                            title="Help"
+                            onClick={(e) => setHelpAnchor(e.currentTarget)}
+                            isOpen={open}
+                        />
+                        <HelpMenu
+                            anchorEl={helpAnchor}
+                            onClose={() => setHelpAnchor(null)}
+                        />
+
+                        <NavButton
+                            icon={
+                                <FastArrowLeft
+                                    style={{
+                                        transform: open
+                                            ? 'scaleX(1)'
+                                            : 'scaleX(-1)',
+                                        transition: 'all 50ms ease-in-out',
+                                    }}
+                                />
+                            }
+                            title="Collapse"
+                            tooltip="Expand"
+                            onClick={toggleOpen}
+                            isOpen={open}
+                        />
+
+                        <SemanticBranch label="User Menu">
+                            {' '}
+                            <UserButton
+                                onClick={(e) => setMenuAnchor(e.currentTarget)}
+                                isOpen={open}
                             />
-                        }
-                        title="Collapse"
-                        tooltip="Expand"
-                        onClick={toggleOpen}
-                        isOpen={open}
-                    />
-
-                    <UserButton
-                        onClick={(e) => setMenuAnchor(e.currentTarget)}
-                        isOpen={open}
-                    />
-                    <UserMenu
-                        anchorEl={menuAnchor}
-                        onClose={() => setMenuAnchor(null)}
-                    />
-                </Box>
-            </Stack>
-        </Box>
+                        </SemanticBranch>
+                        <UserMenu
+                            anchorEl={menuAnchor}
+                            onClose={() => setMenuAnchor(null)}
+                        />
+                    </Box>
+                </Stack>
+            </Box>
+        </SemanticBranch>
     );
 };

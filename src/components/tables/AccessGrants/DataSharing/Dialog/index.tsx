@@ -14,6 +14,7 @@ import {
 } from '@mui/material';
 
 import { Xmark } from 'iconoir-react';
+import { useSemanticLeaf } from 'react-semantic-tree';
 
 import AlertBox from 'src/components/shared/AlertBox';
 import Error from 'src/components/shared/Error';
@@ -27,6 +28,9 @@ interface Props {
 }
 
 function ShareDataDialog({ open, setOpen }: Props) {
+    const { ref: semanticCloseRef } =
+        useSemanticLeaf<HTMLButtonElement>('Close');
+
     const theme = useTheme();
 
     const [serverError, setServerError] = useState<PostgrestError | null>(null);
@@ -56,7 +60,7 @@ function ShareDataDialog({ open, setOpen }: Props) {
             >
                 <Typography variant="h6">Share Data</Typography>
 
-                <IconButton onClick={closeDialog}>
+                <IconButton ref={semanticCloseRef} onClick={closeDialog}>
                     <Xmark
                         style={{
                             fontSize: '1rem',

@@ -18,6 +18,7 @@ import {
 
 import { AddressElement, Elements, useElements } from '@stripe/react-stripe-js';
 import { uniqBy } from 'lodash';
+import { useSemanticLeaf } from 'react-semantic-tree';
 import { useMutation } from 'urql';
 
 import { SET_BILLING_CONTACT } from 'src/api/gql/billing';
@@ -134,6 +135,11 @@ function BillingContactForm({
     onClose,
     onSaved,
 }: BillingContactFormProps) {
+    const { ref: semanticCancelRef } =
+        useSemanticLeaf<HTMLButtonElement>('Cancel');
+    const { ref: semanticSaveBillingContactRef } =
+        useSemanticLeaf<HTMLButtonElement>('Save Billing Contact');
+
     const elements = useElements();
     const [, setBillingContact] = useMutation(SET_BILLING_CONTACT);
     const [saving, setSaving] = useState(false);
@@ -312,10 +318,16 @@ function BillingContactForm({
             </DialogContent>
 
             <DialogActions sx={{ px: 3, pb: 2.5 }}>
-                <Button variant="text" onClick={onClose} disabled={saving}>
+                <Button
+                    ref={semanticCancelRef}
+                    variant="text"
+                    onClick={onClose}
+                    disabled={saving}
+                >
                     Cancel
                 </Button>
                 <Button
+                    ref={semanticSaveBillingContactRef}
                     variant="contained"
                     onClick={() => void save()}
                     loading={saving}

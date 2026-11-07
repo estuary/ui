@@ -14,6 +14,7 @@ import {
 } from '@mui/material';
 
 import { Xmark } from 'iconoir-react';
+import { useSemanticLeaf } from 'react-semantic-tree';
 
 import Error from 'src/components/shared/Error';
 import { AccessLinksTable } from 'src/components/tables/AccessGrants/AccessLinks';
@@ -22,6 +23,9 @@ import { GenerateInvitation } from 'src/components/tables/AccessGrants/AccessLin
 const TITLE_ID = 'share-prefix-dialog-title';
 
 function PrefixInvitationDialog({ open, setOpen }: BaseDialogProps) {
+    const { ref: semanticCloseRef } =
+        useSemanticLeaf<HTMLButtonElement>('Close');
+
     const theme = useTheme();
 
     const [error, setError] = useState<CombinedError | null>(null);
@@ -50,7 +54,7 @@ function PrefixInvitationDialog({ open, setOpen }: BaseDialogProps) {
             >
                 <Typography variant="h6">Add Users</Typography>
 
-                <IconButton onClick={closeDialog}>
+                <IconButton ref={semanticCloseRef} onClick={closeDialog}>
                     <Xmark
                         style={{
                             fontSize: '1rem',

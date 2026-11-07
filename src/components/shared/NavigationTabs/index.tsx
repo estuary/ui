@@ -4,8 +4,9 @@ import { Fragment, useMemo, useState } from 'react';
 
 import { alpha, Tab, tabClasses, Tabs, tabsClasses } from '@mui/material';
 
-import { useIntl } from 'react-intl';
 import { Link, useLocation } from 'react-router-dom';
+
+import enUSMessages from 'src/lang/en-US';
 
 function NavigationTabs({
     getPath,
@@ -13,14 +14,23 @@ function NavigationTabs({
     tabs,
     TabsProps,
 }: NavigationTabsProps) {
-    const intl = useIntl();
     const [selectedTab, setSelectedTab] = useState(0);
     const { pathname } = useLocation();
 
     const tabsRendered = useMemo(
         () =>
             tabs.map(
-                ({ labelMessageId, path, wrapperProps, Wrapper }, index) => {
+                (
+                    {
+                        labelMessageId,
+                        label,
+                        tabRef,
+                        path,
+                        wrapperProps,
+                        Wrapper,
+                    },
+                    index
+                ) => {
                     const to = getPath ? getPath(path) : path;
                     const WrapperElement = Wrapper ?? Fragment;
 
@@ -30,12 +40,13 @@ function NavigationTabs({
 
                     return (
                         <Tab
-                            key={`${keyPrefix}-${labelMessageId}-${index}`}
+                            ref={tabRef}
+                            key={`${keyPrefix}-${path}-${index}`}
                             label={
                                 <WrapperElement {...(wrapperProps ?? {})}>
-                                    {intl.formatMessage({
-                                        id: labelMessageId,
-                                    })}
+                                    {label ??
+                                        enUSMessages[labelMessageId ?? ''] ??
+                                        labelMessageId}
                                 </WrapperElement>
                             }
                             component={Link}
@@ -44,7 +55,7 @@ function NavigationTabs({
                     );
                 }
             ),
-        [getPath, intl, keyPrefix, pathname, tabs]
+        [getPath, keyPrefix, pathname, tabs]
     );
 
     // A filled pill for the selected tab instead of MUI's sliding underline.

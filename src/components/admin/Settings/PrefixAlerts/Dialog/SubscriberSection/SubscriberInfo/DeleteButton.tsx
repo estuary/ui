@@ -3,10 +3,14 @@ import type { SubscriptionDependentProps } from 'src/components/admin/Settings/P
 import { IconButton, useTheme } from '@mui/material';
 
 import { Xmark } from 'iconoir-react';
+import { useSemanticLeaf } from 'react-semantic-tree';
 
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
 
 const DeleteButton = ({ subscription: { id } }: SubscriptionDependentProps) => {
+    const { ref: semanticRemoveSubscriberRef } =
+        useSemanticLeaf<HTMLButtonElement>('Remove Subscriber');
+
     const theme = useTheme();
 
     const duplicatePrefixExists = useAlertSubscriptionsStore(
@@ -23,6 +27,7 @@ const DeleteButton = ({ subscription: { id } }: SubscriptionDependentProps) => {
 
     return (
         <IconButton
+            ref={semanticRemoveSubscriberRef}
             disabled={duplicatePrefixExists}
             onClick={(event) => {
                 event.stopPropagation();

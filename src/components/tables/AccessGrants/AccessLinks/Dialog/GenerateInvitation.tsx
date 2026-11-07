@@ -18,6 +18,7 @@ import {
 import { useTheme } from '@mui/material/styles';
 
 import { usePostHog } from '@posthog/react';
+import { useSemanticLeaf } from 'react-semantic-tree';
 import { useMutation } from 'urql';
 
 import { CREATE_INVITE_LINK } from 'src/api/gql/inviteLinks';
@@ -45,10 +46,13 @@ const RadioOption = ({
     isSelected: boolean;
     onClick?: () => void;
 }) => {
+    const { ref } = useSemanticLeaf<HTMLInputElement>(
+        value === 'full' ? 'Full Access' : 'Limited Access'
+    );
     return (
         <FormControlLabel
             value={value}
-            control={<Radio size="small" />}
+            control={<Radio inputRef={ref} size="small" />}
             label={label}
             slotProps={{
                 typography: {
@@ -77,6 +81,11 @@ const RadioOption = ({
 };
 
 export function GenerateInvitation({ setError }: InviteErrorProps) {
+    const { ref: semanticAllowMultipleUsesRef } =
+        useSemanticLeaf<HTMLInputElement>('Allow Multiple Uses');
+    const { ref: semanticCreateInviteLinkRef } =
+        useSemanticLeaf<HTMLButtonElement>('Create Invite Link');
+
     const postHog = usePostHog();
     const { palette } = useTheme();
 
@@ -274,6 +283,7 @@ export function GenerateInvitation({ setError }: InviteErrorProps) {
                 <FormControlLabel
                     control={
                         <Checkbox
+                            inputRef={semanticAllowMultipleUsesRef}
                             checked={!singleUse}
                             onChange={(event) => {
                                 setSingleUse(!event.target.checked);
@@ -286,6 +296,7 @@ export function GenerateInvitation({ setError }: InviteErrorProps) {
                     }}
                 />
                 <Button
+                    ref={semanticCreateInviteLinkRef}
                     disabled={
                         fetching ||
                         accessScope === null ||

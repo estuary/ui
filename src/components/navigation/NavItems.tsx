@@ -8,8 +8,8 @@ import {
     Tooltip,
 } from '@mui/material';
 
-import { useIntl } from 'react-intl';
 import { Link, useMatch, useResolvedPath } from 'react-router-dom';
+import { useSemanticLeaf } from 'react-semantic-tree';
 
 // Compact styling for the sidebar's buttons, links, and their contents.
 // Scoped here so other List usages across the app keep default styling.
@@ -45,7 +45,8 @@ interface LinkProps {
     isOpen?: boolean;
 }
 
-const NavLink = ({ icon, title, link, isOpen }: LinkProps) => {
+export const NavLink = ({ icon, title, link, isOpen }: LinkProps) => {
+    const { ref } = useSemanticLeaf<HTMLAnchorElement>(title);
     const resolved = useResolvedPath(link);
     const selected = Boolean(useMatch({ path: resolved.pathname, end: false }));
 
@@ -53,6 +54,7 @@ const NavLink = ({ icon, title, link, isOpen }: LinkProps) => {
         <li>
             <Tooltip title={!isOpen ? title : ''} placement="right">
                 <MuiListItemButton
+                    ref={ref}
                     component={Link}
                     to={link}
                     selected={selected}
@@ -85,10 +87,11 @@ export const NavButton = ({
     onClick,
     isOpen,
 }: ButtonProps) => {
+    const { ref } = useSemanticLeaf<HTMLDivElement>(title);
     return (
         <li>
             <Tooltip title={!isOpen ? tooltip || title : ''} placement="right">
-                <MuiListItemButton onClick={onClick} sx={navButtonSx}>
+                <MuiListItemButton ref={ref} onClick={onClick} sx={navButtonSx}>
                     <ListItemIcon sx={navIconSx}>{icon}</ListItemIcon>
 
                     <ListItemText
@@ -100,12 +103,3 @@ export const NavButton = ({
         </li>
     );
 };
-
-/** @deprecated Prefer the named `NavLink` export with a pre-translated title */
-const NavLinkWrapper = ({ title, ...props }: LinkProps) => {
-    const intl = useIntl();
-
-    return <NavLink {...props} title={intl.formatMessage({ id: title })} />;
-};
-
-export default NavLinkWrapper;

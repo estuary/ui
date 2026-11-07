@@ -19,6 +19,7 @@ import {
     Refresh,
     WarningTriangle,
 } from 'iconoir-react';
+import { useSemanticLeaf } from 'react-semantic-tree';
 
 import { ConnectionInstructions } from 'src/components/admin/Settings/StorageMappings/Dialog/ConnectionTest/ConnectionInstructions';
 import {
@@ -82,6 +83,11 @@ export function ConnectionAccordion({
     onToggle,
     disabled = false,
 }: ConnectionAccordionProps) {
+    const { ref: semanticToggleConnectionDetailsRef } =
+        useSemanticLeaf<HTMLDivElement>('Toggle Connection Details');
+    const { ref: semanticTestConnectionsRef } =
+        useSemanticLeaf<HTMLButtonElement>('Test Connections');
+
     const { connections, testConnections, isTesting } = useConnectionTest();
 
     const prevStatusRef = useRef(connection.status);
@@ -127,6 +133,7 @@ export function ConnectionAccordion({
             }}
         >
             <AccordionSummary
+                ref={semanticToggleConnectionDetailsRef}
                 expandIcon={<NavArrowDown />}
                 sx={{
                     'minHeight': 'unset',
@@ -186,6 +193,7 @@ export function ConnectionAccordion({
                             ) : null}
                         </Box>
                         <Button
+                            ref={semanticTestConnectionsRef}
                             variant="text"
                             size="small"
                             disabled={isTesting}

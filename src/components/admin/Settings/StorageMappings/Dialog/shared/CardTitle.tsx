@@ -29,7 +29,11 @@ export function CardTitle({
         >
             <Typography sx={cardHeaderSx}>{title}</Typography>
             {action ? (
-                <ActionLink onClick={onAction} disabled={actionDisabled}>
+                <ActionLink
+                    semanticLabel={typeof action === 'string' ? action : 'Edit'}
+                    onClick={onAction}
+                    disabled={actionDisabled}
+                >
                     {action}
                 </ActionLink>
             ) : null}

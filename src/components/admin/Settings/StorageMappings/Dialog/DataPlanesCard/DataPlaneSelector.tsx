@@ -1,3 +1,4 @@
+import type { MenuItemProps } from '@mui/material';
 import type { DataPlaneNode } from 'src/api/gql/dataPlanes';
 
 import {
@@ -10,7 +11,14 @@ import {
     Stack,
 } from '@mui/material';
 
+import { useSemanticLeaf } from 'react-semantic-tree';
+
 import { toPresentableName } from 'src/utils/dataPlane-utils';
+
+function DataPlaneOption(props: MenuItemProps) {
+    const { ref } = useSemanticLeaf<HTMLLIElement>('Select Data Plane');
+    return <MenuItem {...props} ref={ref} />;
+}
 
 export function DataPlaneSelector({
     options,
@@ -27,11 +35,20 @@ export function DataPlaneSelector({
     onAccept: (dataPlane: DataPlaneNode) => void;
     onToggleAllowPublic: (value: boolean) => void;
 }) {
+    const { ref: semanticAllowPublicDataPlanesRef } =
+        useSemanticLeaf<HTMLInputElement>('Allow Public Data Planes');
+
+    const { ref: openRef } =
+        useSemanticLeaf<HTMLDivElement>('Choose Data Plane');
     return (
         <Stack spacing={1} direction="row" alignItems="end" sx={{ px: 1 }}>
             <FormControl fullWidth size="small" required>
-                <InputLabel>Data Plane</InputLabel>
+                <InputLabel>{'Data Plane'}</InputLabel>
                 <Select
+                    SelectDisplayProps={{
+                        ...{ ref: openRef },
+                        role: 'combobox',
+                    }}
                     value=""
                     label="Data Plane"
                     onChange={(e) => {
@@ -44,9 +61,9 @@ export function DataPlaneSelector({
                     }}
                 >
                     {options.map((dp) => (
-                        <MenuItem key={dp.name} value={dp.name}>
+                        <DataPlaneOption key={dp.name} value={dp.name}>
                             {toPresentableName(dp)} ({dp.scope})
-                        </MenuItem>
+                        </DataPlaneOption>
                     ))}
                 </Select>
             </FormControl>
@@ -54,6 +71,7 @@ export function DataPlaneSelector({
                 <FormControlLabel
                     control={
                         <Checkbox
+                            inputRef={semanticAllowPublicDataPlanesRef}
                             checked={allowPublicChecked}
                             disabled={allowPublicDisabled}
                             onChange={(e) =>
