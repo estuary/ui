@@ -7,14 +7,16 @@ export const Authentication: Record<string, string> = {
     'login.login.message': `Get started with ${CommonMessages.productName}`,
     'login.register.message': `Get started with ${CommonMessages.productName}`,
 
+    'login.register.perks1.emphasis': `No credit card`,
     'login.register.perks1': `{emphasis} required`,
-
+    'login.register.perks2.emphasis': `free trial`,
     'login.register.perks2': `30 days {emphasis}`,
     'login.register.perks3': `Build streaming and batch ${CommonMessages['terms.dataFlow'].toLowerCase()}s fast, no code or infrastructure.`,
-
+    'login.register.perks3.emphasis': ``,
     'login.register.perks4': `Move data across 200+ sources and destinations instantly.`,
-
+    'login.register.perks4.emphasis': ``,
     'login.register.perks5': `Choose fully managed, BYOC, or private cloud to fit your needs.`,
+    'login.register.perks5.emphasis': ``,
 
     'login.register.alt.coalesce': `Coalesce`,
     'login.register.alt.resend': `Resend`,
