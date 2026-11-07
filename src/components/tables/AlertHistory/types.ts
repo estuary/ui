@@ -13,10 +13,6 @@ export interface AlertHistoryTableProps {
     disableFooter?: boolean;
 }
 
-export interface AlertTruncationMessageProps {
-    alertCount: number;
-}
-
 export interface RowsProps {
     columns: TableColumns[];
     data: AlertHistoryForTaskQueryResponse['alerts']['edges'];

@@ -10,13 +10,8 @@ export const Ops: Record<string, string> = {
     'ops.logsTable.allOldLogsLoaded': ` Start of logs `,
     'ops.logsTable.emptyTableDefault.header': `No logs found.`,
     'ops.logsTable.emptyTableDefault.message': `We were unable to find any logs. Please press refresh to try loading again.`,
-    'ops.logsTable.footer.lines': `{count} {count, plural,
-        one {log}
-        other {logs}
-    }`,
     'ops.logsTable.hydrationError': `We encountered a problem retrieving logs.`,
     'ops.logsTable.hydrationError.message': `Please check your network connection and try again.`,
-    'ops.logsTable.tailNewLogs': `stay at bottom as new logs load`,
 
     // Dynamically generated in /src/components/tables/Logs/HydrationWarning.tsx
     'ops.hydrationWarning.OFFSET_NOT_YET_AVAILABLE.title': `No logs available`,

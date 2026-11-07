@@ -120,6 +120,4 @@ export const Authentication: Record<string, string> = {
     'register.existingAccount': `Already have an account?`,
 
     // No Grants
-    'noGrants.main.message': `Our team is reviewing your account and will get back to you shortly.`,
-    'noGrants.main.title': `Thanks For Signing Up`,
 };

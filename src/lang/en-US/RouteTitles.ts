@@ -21,7 +21,6 @@ export const RouteTitles: Record<string, string> = {
     'routeTitle.error.entityNotFound': `Entity Not Found`,
     'routeTitle.error.pageNotFound': `Page Not Found`,
     'routeTitle.loginLoading': `Checking Credentials`,
-    'routeTitle.noGrants': `Signed Up`,
     'routeTitle.materializationCreate': `Create Materialization`,
     'routeTitle.materializationDetails': `Materialization Details`,
     'routeTitle.materializationEdit': `Edit Materialization`,

@@ -15,7 +15,6 @@ export const CTAs: Record<string, string> = {
     'cta.magicLink': `Sign in with magic link`,
     'cta.verifyOTP': `Sign in with OTP`,
     'cta.clickHere': `Click here`,
-    'cta.details': `Details`,
     'cta.preview': `Preview`,
     'cta.save': `Save`,
     'cta.saveEntity': `Save and publish`,
