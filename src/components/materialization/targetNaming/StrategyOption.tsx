@@ -76,11 +76,7 @@ export function StrategyOption({
                 {selected && example ? (
                     <PreformattedBlock>
                         <Stack>
-                            <Typography>
-                                {intl.formatMessage({
-                                    id: 'common.examples',
-                                })}
-                            </Typography>
+                            <Typography>Examples</Typography>
                             <Stack sx={{ pl: 0.5 }} spacing={1}>
                                 <ExampleRow example={example} />
                                 {publicExample ? (

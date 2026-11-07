@@ -32,15 +32,15 @@ function ConnectorToolbar({
     const protocolOptions: ProtocolOption[] = useConstant(() => [
         {
             protocol: null,
-            message: intl.formatMessage({ id: 'common.optionsAll' }),
+            message: 'All',
         },
         {
             protocol: 'capture',
-            message: intl.formatMessage({ id: 'terms.capture' }),
+            message: 'Capture',
         },
         {
             protocol: 'materialization',
-            message: intl.formatMessage({ id: 'terms.materialization' }),
+            message: 'Materialization',
         },
     ]);
 
@@ -109,9 +109,7 @@ function ConnectorToolbar({
                             options={protocolOptions.map(
                                 ({ message }) => message
                             )}
-                            defaultValue={intl.formatMessage({
-                                id: 'common.optionsAll',
-                            })}
+                            defaultValue="All"
                             changeHandler={handlers.setProtocol}
                         />
                     </Grid>

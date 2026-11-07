@@ -14,12 +14,8 @@ import { filteredTargetNamingOptions } from 'src/stores/SourceCapture/shared';
 function useTargetSchemaOptions(): AutoCompleteOptionForTargetSchema[] {
     const intl = useIntl();
 
-    const publicTablePrefix = intl.formatMessage({
-        id: `defaults.public`,
-    });
-    const tablePrefix = intl.formatMessage({
-        id: `defaults.schema`,
-    });
+    const publicTablePrefix = 'public';
+    const tablePrefix = 'anvils';
 
     return useMemo(
         () =>

@@ -100,7 +100,7 @@ function DateFilter({ disabled, header, selectableTableStoreName }: Props) {
             >
                 <ListItem>
                     <Typography sx={{ fontWeight: '500' }}>
-                        <FormattedMessage id="filter.time.label" />
+                        Stats Range
                     </Typography>
                 </ListItem>
                 <Divider />

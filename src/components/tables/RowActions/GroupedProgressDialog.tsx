@@ -11,15 +11,11 @@ import {
     Typography,
 } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 function GroupedProgressDialog({
     selectedEntities,
     finished,
     renderComponent,
 }: GroupedProgressDialogProps) {
-    const intl = useIntl();
-
     const [done, setDone] = useState(false);
     const [finishedCount, setFinishedCount] = useState(0);
 
@@ -46,9 +42,7 @@ function GroupedProgressDialog({
         <>
             <DialogTitle>
                 <Typography component="div" variant="h6">
-                    {intl.formatMessage({
-                        id: done ? 'common.done' : 'common.inProgress',
-                    })}
+                    {done ? 'Done' : 'In Progress'}
                 </Typography>
             </DialogTitle>
 

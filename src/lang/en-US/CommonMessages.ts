@@ -1,5 +1,6 @@
 export const endpointConfigHeader = `Endpoint Config`;
 export const CommonMessages: Record<string, string> = {
+    'connector.label': `Connector`,
     // Misc
     'company': `Estuary`,
     'productName': `Estuary`,
@@ -57,8 +58,6 @@ export const CommonMessages: Record<string, string> = {
     'common.timestamp.local.label': `Local`,
 
     // Aria
-    'aria.openExpand': `show more`,
-    'aria.closeExpand': `show less`,
 
     // Terms
     'terms.connectors': `Connectors`,
@@ -89,8 +88,7 @@ export const CommonMessages: Record<string, string> = {
     'terms.sources.plural': `{count, plural, one {capture} other {captures}}`,
 
     // Common fields
-    'entityName.label': `Name`,
-    'connector.label': `Connector`,
+
     'connector.description': `The external system you're connecting to.`,
     'description.description': `Describe your changes or why you're changing things.`,
 
@@ -125,7 +123,7 @@ export const CommonMessages: Record<string, string> = {
     // Confirmation Dialog
     'confirm.title': `Are you sure?`,
     'confirm.loseData': `You have unsaved work. If you continue, you will lose your changes.`,
-    'confirm.oauth': `You are in the process of OAuth. If you continue, you will lose your changes.`,
+
     'confirm.doNotShowAgain': `Do not show again`,
 
     // TODO (entity-status): Reassess once a decision is made regarding the language
@@ -138,5 +136,4 @@ export const CommonMessages: Record<string, string> = {
     'defaults.tenant': `acmeCo`,
     'defaults.schema': `anvils`,
     'defaults.table': `orders`,
-    'defaults.public': `public`,
 };

@@ -30,7 +30,7 @@ function EditCommandsHeader() {
                     id: 'workflows.collectionSelector.schemaEdit.flowctlDocLink',
                 })}
             >
-                <FormattedMessage id="terms.documentation" />
+                Docs
             </ExternalLink>
         </Box>
     );

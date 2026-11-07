@@ -32,13 +32,11 @@ export default function useConnectorField(
 
     const connectorSchema = useMemo(
         () => ({
-            description: intl.formatMessage({
-                id: 'connector.description',
-            }),
+            description: "The external system you're connecting to.",
             oneOf: connectorsOneOf,
             type: 'object',
         }),
-        [connectorsOneOf, intl]
+        [connectorsOneOf]
     );
 
     const connectorUISchema = {

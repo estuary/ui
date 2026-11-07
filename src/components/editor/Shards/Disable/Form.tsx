@@ -79,9 +79,7 @@ function ShardsDisableForm() {
                 update(checked === 'true');
             }}
         >
-            {intl.formatMessage({
-                id: !localState ? 'common.enabled' : 'common.disabled',
-            })}
+            {!localState ? 'Enabled' : 'Disabled'}
         </BooleanToggleButton>
     );
 }

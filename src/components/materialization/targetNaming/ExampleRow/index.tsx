@@ -52,12 +52,9 @@ export function ExampleRow({
                     <code>
                         {example.sourceName ?? (
                             <>
-                                {intl.formatMessage({ id: 'defaults.tenant' })}/
+                                acmeCo/
                                 <b>{example.tablePrefix}</b>/
-                                {example.sourceTable ??
-                                    intl.formatMessage({
-                                        id: 'defaults.table',
-                                    })}
+                                {example.sourceTable ?? 'orders'}
                             </>
                         )}
                     </code>

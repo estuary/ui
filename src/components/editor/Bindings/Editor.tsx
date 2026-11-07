@@ -142,7 +142,7 @@ function BindingsEditor({ itemType, readOnly = false }: Props) {
                                     >
                                         <FormattedMessage id="workflows.collectionSelector.header.collectionSchema" />
                                         <ExternalLink link="https://docs.estuary.dev/concepts/collections/#schemas">
-                                            <FormattedMessage id="terms.documentation" />
+                                            Docs
                                         </ExternalLink>
                                     </Typography>
 

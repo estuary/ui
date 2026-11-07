@@ -62,9 +62,7 @@ function Spec() {
                             })}
                         </Typography>
 
-                        <ExternalLink link={docsLink}>
-                            {intl.formatMessage({ id: 'terms.documentation' })}
-                        </ExternalLink>
+                        <ExternalLink link={docsLink}>Docs</ExternalLink>
                     </Stack>
 
                     {entityType === 'collection' ? (

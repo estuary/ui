@@ -117,7 +117,10 @@ export const useOauthHandler = (
     const when = useCallback(() => {
         return loading;
     }, [loading]);
-    useBeforeUnload(when, intl.formatMessage({ id: 'confirm.oauth' }));
+    useBeforeUnload(
+        when,
+        'You are in the process of OAuth. If you continue, you will lose your changes.'
+    );
 
     return useMemo(
         () => ({

@@ -82,9 +82,7 @@ export default function StatOverview({
                             byteUnit
                             error={monthlyUsageError}
                             indeterminate={monthlyUsageIndeterminate}
-                            label={intl.formatMessage({
-                                id: 'filter.time.thisMonth',
-                            })}
+                            label="This Month"
                             loading={monthlyUsageLoading ?? false}
                             tooltip={`${monthlyUsage} ${intl.formatMessage({
                                 id:

@@ -56,9 +56,7 @@ function ErrorFallback({ error }: { error: Error }): JSX.Element {
             <IconButton
                 onClick={handleExpandClick}
                 aria-expanded={expanded}
-                aria-label={intl.formatMessage({
-                    id: expanded ? 'aria.closeExpand' : 'aria.openExpand',
-                })}
+                aria-label={expanded ? 'show less' : 'show more'}
                 // TODO (show more): The concept of "show more/show less" buttons are duplicated and this specific styling is for sure
                 sx={{
                     marginRight: 0,

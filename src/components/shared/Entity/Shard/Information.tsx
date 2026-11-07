@@ -51,9 +51,7 @@ function ShardInformation({ taskName, taskTypes }: Props) {
                             id: 'detailsPanel.shardDetails.docPath',
                         })}
                     >
-                        {intl.formatMessage({
-                            id: 'terms.documentation',
-                        })}
+                        Docs
                     </ExternalLink>
                 </Stack>
             }

@@ -73,9 +73,7 @@ function DetailsSection({ entityName, latestLiveSpec }: DetailsSectionProps) {
 
         if (latestLiveSpec.connectorName) {
             response.push({
-                title: intl.formatMessage({
-                    id: 'connector.label',
-                }),
+                title: 'Connector',
                 val: <ConnectorSection latestLiveSpec={latestLiveSpec} />,
             });
         }
