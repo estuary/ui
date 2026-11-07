@@ -6,7 +6,6 @@ import { useState } from 'react';
 import { Badge, Button, ButtonGroup, Menu, MenuItem } from '@mui/material';
 
 import { MinusSquare, NavArrowDown, Square } from 'iconoir-react';
-import { FormattedMessage } from 'react-intl';
 
 import { useZustandStore } from 'src/context/Zustand/provider';
 import { SelectTableStoreNames } from 'src/stores/names';
@@ -92,13 +91,9 @@ function RowSelectorCheckBox({
                     horizontal: 'left',
                 }}
             >
-                <MenuItem onClick={() => updateAll(true)}>
-                    <FormattedMessage id="entityTable.rowSelector.all" />
-                </MenuItem>
+                <MenuItem onClick={() => updateAll(true)}>All</MenuItem>
 
-                <MenuItem onClick={() => updateAll(false)}>
-                    <FormattedMessage id="entityTable.rowSelector.none" />
-                </MenuItem>
+                <MenuItem onClick={() => updateAll(false)}>None</MenuItem>
             </Menu>
         </ButtonGroup>
     );

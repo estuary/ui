@@ -14,7 +14,7 @@ import {
 } from '@mui/material';
 
 import { Calendar } from 'iconoir-react';
-import { FormattedMessage, useIntl } from 'react-intl';
+import { FormattedMessage } from 'react-intl';
 
 import DateFilterOption from 'src/components/filters/Date/FilterOption';
 import { useZustandStore } from 'src/context/Zustand/provider';
@@ -27,8 +27,6 @@ interface Props {
 }
 
 function DateFilter({ disabled, header, selectableTableStoreName }: Props) {
-    const intl = useIntl();
-
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
 
@@ -74,10 +72,7 @@ function DateFilter({ disabled, header, selectableTableStoreName }: Props) {
                 aria-controls={open ? 'stat-filter-selector-menu' : undefined}
                 aria-haspopup="true"
                 aria-expanded={open ? 'true' : undefined}
-                aria-label={intl.formatMessage(
-                    { id: 'entityTable.stats.filter.label' },
-                    { statsFilter }
-                )}
+                aria-label="Stats Range Menu"
                 onClick={handlers.openMenu}
                 disabled={disabled}
                 variant="text"

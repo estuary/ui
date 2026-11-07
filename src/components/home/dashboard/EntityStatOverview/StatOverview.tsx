@@ -84,12 +84,7 @@ export default function StatOverview({
                             indeterminate={monthlyUsageIndeterminate}
                             label="This Month"
                             loading={monthlyUsageLoading ?? false}
-                            tooltip={`${monthlyUsage} ${intl.formatMessage({
-                                id:
-                                    entityType === 'materialization'
-                                        ? `entityTable.stats.bytes_read`
-                                        : `entityTable.stats.bytes_written`,
-                            })}`}
+                            tooltip={`${monthlyUsage} ${entityType === 'materialization' ? 'Bytes Read' : 'Bytes Written'}`}
                             value={monthlyUsage}
                         />
                     ) : null}

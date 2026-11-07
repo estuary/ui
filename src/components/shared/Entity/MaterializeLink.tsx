@@ -4,7 +4,6 @@ import { useMemo } from 'react';
 
 import { Button } from '@mui/material';
 
-import { useIntl } from 'react-intl';
 import { NavLink } from 'react-router-dom';
 
 import { authenticatedRoutes } from 'src/app/routes';
@@ -18,7 +17,6 @@ interface Props {
 }
 
 function MaterializeLink({ liveSpecId, name, variant }: Props) {
-    const intl = useIntl();
     const to = useMemo(() => {
         return getPathWithParams(
             authenticatedRoutes.materializations.create.fullPath,
@@ -32,10 +30,7 @@ function MaterializeLink({ liveSpecId, name, variant }: Props) {
         <NavLink
             style={{ textDecoration: 'none' }}
             to={to}
-            aria-label={intl.formatMessage(
-                { id: 'entityTable.materialize.aria' },
-                { name }
-            )}
+            aria-label={`Materialize ${name}`}
         >
             <Button
                 variant={variant ?? 'text'}

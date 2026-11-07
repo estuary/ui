@@ -11,7 +11,7 @@ import {
 } from '@mui/material';
 
 import { ViewColumns3 } from 'iconoir-react';
-import { FormattedMessage, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 import IconMenu from 'src/components/menus/IconMenu';
 import { useDisplayTableColumns } from 'src/context/TableSettings';
@@ -30,9 +30,7 @@ function SelectColumnMenu({
 
     return (
         <IconMenu
-            ariaLabel={intl.formatMessage({
-                id: 'entityTable.selectColumn.button.ariaLabel',
-            })}
+            ariaLabel="Open Table Column Customization Menu"
             disableCloseOnClick
             disabled={disabled}
             icon={
@@ -46,15 +44,13 @@ function SelectColumnMenu({
             }
             identifier="select-table-columns-menu"
             outlinedButton
-            tooltip={intl.formatMessage({
-                id: 'entityTable.selectColumn.button.tooltip',
-            })}
+            tooltip="Select Columns"
         >
             <Typography
                 component={Box}
                 sx={{ minWidth: 'max-content', px: 2, pb: 1, fontWeight: 500 }}
             >
-                <FormattedMessage id="entityTable.selectColumn.menu.header" />
+                Select Columns
             </Typography>
 
             <Stack sx={{ px: 2 }}>

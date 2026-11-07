@@ -127,9 +127,7 @@ function DetailsSection({ entityName, latestLiveSpec }: DetailsSectionProps) {
         // Add last updated - without user as Estuary folks
         //  sometimes update stuff and that might look odd
         response.push({
-            title: intl.formatMessage({
-                id: 'entityTable.data.lastUpdated',
-            }),
+            title: 'Last Updated',
             val: `${intl.formatDate(latestLiveSpec.updated_at, TIME_SETTINGS)}`,
         });
 
