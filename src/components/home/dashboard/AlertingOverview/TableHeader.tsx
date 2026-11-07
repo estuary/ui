@@ -24,11 +24,7 @@ export default function TableHeader() {
                         id: 'entityName.label',
                     })}
                 </TableCell>
-                <TableCell component={tdComponent}>
-                    {intl.formatMessage({
-                        id: 'alerts.overview.recentAlerts',
-                    })}
-                </TableCell>
+                <TableCell component={tdComponent}>Recent Alerts</TableCell>
             </TableRow>
         </TableHead>
     );

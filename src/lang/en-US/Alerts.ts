@@ -12,41 +12,17 @@ export const Alerts: Record<string, string> = {
     'alerts.config.table.noContent.message': `To begin receiving email notifications for a prefix you admin, click "Configure Notifications" above to create a subscription.`,
     'alerts.config.table.label.alertMethod': `Notification Method`,
 
-    'alerts.overview.title.fetching': `Fetching active alerts...`,
-    'alerts.overview.title.active': `Active Alerts Summary`,
-    'alerts.overview.title.activeEmpty': `No Active Alerts`,
-
-    'alerts.overview.recentAlerts': `Recent Alerts`,
-    'alerts.overview.label': `List of most recent alerts grouped by name`,
-
-    'alerts.details.title': `Alert Details`,
-    'alerts.details.preview': `...{lineCount} lines hidden`,
-
-    'alerts.history.title.active': `Active Alerts`,
-    'alerts.history.title.resolved': `Resolved Alerts`,
     'alerts.table.data.firedAt': `Fired At`,
     'alerts.table.data.recipients': `Recipients`,
     'alerts.table.data.resolvedAt': `Resolved At`,
     'alerts.table.data.alertType': `Alert Type`,
     'alerts.table.data.details': `Details`,
-    'alerts.table.label': `List of all alerts for tenant`,
+
     'alerts.table.empty.header': `No alerts found`,
     'alerts.table.error.message': `There was an error attempting to fetch resolved alerts.`,
     // dynamically built in ui/src/components/tables/AlertHistory/index.tsx
     'alerts.table.empty.message.active': `No active alerts`,
     'alerts.table.empty.message.resolved': `No resolved alerts`,
-
-    'alerts.table.reduced': `Showing {count} of {total} total alerts.`,
-
-    'alerts.table.firedAt.tooltip': `{relative}`,
-    'alerts.table.resolvedAt.tooltip': `alert resolved {alertDuration}`,
-    'alerts.table.pagination.displayedRows': `{status} alerts | {from} to {to}`,
-    'alerts.table.pagination.displayedRows.active': `active`,
-    'alerts.table.pagination.displayedRows.resolved': `resolved`,
-
-    'alert.active.fetchError.title': `Unable to fetch active alerts`,
-    'alerts.table.recipients.empty': `none configured`,
-    'alerts.table.recipients.empty.tooltip': `No emails were configured to be notified.`,
 
     // Consumed in ui/src/settings/alerts.ts, ui/src/hooks/useAlertTypeContent.ts,
     // and ui/src/components/admin/Settings/PrefixAlerts/Dialog/GlobalSettings/DataMovementSetting.tsx
