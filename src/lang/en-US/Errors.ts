@@ -51,7 +51,6 @@ export const Errors: Record<string, string> = {
     'fullPage.userInfoSummary.error': `We had an issue while checking if your account has access.`,
 
     // Wizard Dialog
-    'wizardDialog.error.step': `An error occurred during this step`,
 
     // Supabase
     'supabase.poller.failed.title': `${CommonMessages['common.failedFetch']}`,

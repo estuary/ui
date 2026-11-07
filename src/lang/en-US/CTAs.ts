@@ -43,8 +43,6 @@ export const CTAs: Record<string, string> = {
     'cta.evolve': `Apply`,
     'cta.support': `contact support`,
     'cta.transform': `Transform`,
-    'cta.back': `Back`,
-    'cta.remove': `Remove`,
     'cta.goToDetails': `See Details`,
     'cta.goToAll': `See all`,
     'cta.reset': `Reset`,
