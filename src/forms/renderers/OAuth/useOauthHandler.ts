@@ -1,7 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
 
 import { isEmpty } from 'lodash';
-import { useIntl } from 'react-intl';
 import { useBeforeUnload } from 'react-use';
 
 import { accessToken, authURL } from 'src/api/oauth';
@@ -17,7 +16,6 @@ export const useOauthHandler = (
     provider: string | undefined,
     successHandler: (tokenResponse: any) => void
 ) => {
-    const intl = useIntl();
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const endpointConfigData = useEndpointConfigStore_endpointConfig_data();
     const connectorId = useDetailsFormStore(
@@ -29,18 +27,13 @@ export const useOauthHandler = (
         (error: any) => {
             if (error === 'access_denied') {
                 setErrorMessage(
-                    intl.formatMessage(
-                        {
-                            id: 'oauth.authentication.denied',
-                        },
-                        { provider }
-                    )
+                    `To use OAuth as your authentication you must allow our app access to your ${provider ?? ''} account.`
                 );
             } else {
                 setErrorMessage(error);
             }
         },
-        [intl, provider]
+        [provider]
     );
 
     // handler for the useOauth stuff
@@ -66,23 +59,17 @@ export const useOauthHandler = (
 
             if (tokenResponse.error) {
                 setErrorMessage(
-                    intl.formatMessage(
-                        { id: 'oauth.accessToken.error' },
-                        { provider }
-                    )
+                    `There was an issue attempting to get the access token from ${provider ?? ''}. Try again and if the issue persists please contact support.`
                 );
             } else if (isEmpty(tokenResponse.data)) {
                 setErrorMessage(
-                    intl.formatMessage(
-                        { id: 'oauth.emptyData.error' },
-                        { provider }
-                    )
+                    `We failed to get the data we need to populate the ${provider ?? ''} OAuth configuration. Try again and if the issue persists please contact support.`
                 );
             } else {
                 successHandler(tokenResponse);
             }
         },
-        [endpointConfigData, intl, provider, successHandler]
+        [endpointConfigData, provider, successHandler]
     );
 
     // This does not make the call - just wiring stuff up and getting
@@ -100,7 +87,7 @@ export const useOauthHandler = (
 
         if (fetchAuthURL.error) {
             setErrorMessage(
-                intl.formatMessage({ id: 'oauth.fetchAuthURL.error' })
+                'We failed to fetch the proper URL to start OAuth. Try again and if the issue persists please contact support.'
             );
         } else if (!isEmpty(fetchAuthURL.data)) {
             // This kicks off the call and the success is handled with the onSuccess/onError
@@ -110,7 +97,7 @@ export const useOauthHandler = (
                 fetchAuthURL.data.code_verifier
             );
         }
-    }, [connectorId, endpointConfigData, getAuth, intl]);
+    }, [connectorId, endpointConfigData, getAuth]);
 
     // Loading usually means there is an OAuth in progress so make sure
     //  they want to close the window.
