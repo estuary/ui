@@ -6,7 +6,6 @@ import { useCallback } from 'react';
 
 import { Box, ListItem, Typography } from '@mui/material';
 
-import { FormattedMessage } from 'react-intl';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import { FixedSizeList } from 'react-window';
 
@@ -70,10 +69,7 @@ function CollectionList({ content, fixedAttributeType }: Props) {
     return (
         <ListItem>
             <Typography sx={{ mt: 1 }}>
-                <FormattedMessage
-                    id="newTransform.config.message.listEmpty"
-                    values={{ contentType: fixedAttributeType }}
-                />
+                {`Click on the plus sign above to add a ${fixedAttributeType}.`}
             </Typography>
         </ListItem>
     );

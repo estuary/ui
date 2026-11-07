@@ -2,7 +2,6 @@ import { CommonMessages } from 'src/lang/en-US/CommonMessages';
 import { CTAs } from 'src/lang/en-US/CTAs';
 
 export const Errors: Record<string, string> = {
-    'error.tryAgain': `Try again and if the issue persists please contact support.`,
     'error.title': `${CommonMessages['common.errors.heading']}`,
     'error.reason.fetchFailed': `There was a network issue while contacting our servers. Please make sure your network is available and try again.`,
 

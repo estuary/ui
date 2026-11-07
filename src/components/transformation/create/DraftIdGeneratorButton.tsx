@@ -6,7 +6,6 @@ import { Button } from '@mui/material';
 
 import { usePostHog } from '@posthog/react';
 import { useSnackbar } from 'notistack';
-import { useIntl } from 'react-intl';
 
 import { createEntityDraft } from 'src/api/drafts';
 import { createDraftSpec, modifyDraftSpec } from 'src/api/draftSpecs';
@@ -28,8 +27,6 @@ function DraftIdGeneratorButton({
     sourceCollectionSet,
     buttonVariant,
 }: DraftIdGeneratorButtonProps) {
-    const intl = useIntl();
-
     // Draft Editor Store
     const draftId = useEditorStore_id();
 
@@ -47,13 +44,13 @@ function DraftIdGeneratorButton({
 
     const submitButtonError = useMemo(() => {
         if (sourceCollectionSet && sourceCollectionSet.size < 1) {
-            return intl.formatMessage({ id: 'newTransform.errors.collection' });
+            return 'Select source collections';
         } else if (!entityName) {
-            return intl.formatMessage({ id: 'newTransform.errors.name' });
+            return 'Name your Derived Collection';
         } else {
             return null;
         }
-    }, [intl, entityName, sourceCollectionSet]);
+    }, [entityName, sourceCollectionSet]);
 
     const { enqueueSnackbar } = useSnackbar();
     const displayError = useCallback(
@@ -72,11 +69,7 @@ function DraftIdGeneratorButton({
     const generateDraftWithSpecs = useMemo(
         () => async () => {
             if (!catalogName) {
-                throw new Error(
-                    intl.formatMessage({
-                        id: 'newTransform.errors.nameInvalid',
-                    })
-                );
+                throw new Error('Invalid entity name');
             }
 
             let evaluatedDraftId = '';
@@ -106,9 +99,7 @@ function DraftIdGeneratorButton({
 
                 if (modifyResponse.error) {
                     throw new Error(
-                        intl.formatMessage({
-                            id: 'newTransform.errors.draftModifyFailed',
-                        })
+                        'We failed to apply a template to your draft.'
                     );
                 }
             } else if (sourceCollectionSet) {
@@ -139,9 +130,7 @@ function DraftIdGeneratorButton({
 
                 if (createResponse.error) {
                     throw new Error(
-                        intl.formatMessage({
-                            id: 'newTransform.errors.draftCreateFailed',
-                        })
+                        'We failed to generate your draft. Try again and if the issue persists please contact support.'
                     );
                 }
             }
@@ -151,7 +140,6 @@ function DraftIdGeneratorButton({
         [
             catalogName,
             draftId,
-            intl,
             language,
             migrations,
             sourceCollectionArray,
@@ -169,20 +157,14 @@ function DraftIdGeneratorButton({
                 // we know that computedEntityName will exist because
                 // generateDraftWithSpecs() checks it and throws otherwise
                 if (!catalogName) {
-                    throw new Error(
-                        intl.formatMessage({
-                            id: 'newTransform.errors.nameMissing',
-                        })
-                    );
+                    throw new Error('Missing entity name');
                 }
 
                 const evaluatedDraftId = await generateDraftWithSpecs();
 
                 if (!evaluatedDraftId) {
                     throw new Error(
-                        intl.formatMessage({
-                            id: 'newTransform.errors.draftCreateFailed',
-                        })
+                        'We failed to generate your draft. Try again and if the issue persists please contact support.'
                     );
                 }
 
@@ -198,9 +180,7 @@ function DraftIdGeneratorButton({
                     language,
                 });
                 displayError(
-                    intl.formatMessage({
-                        id: 'newTransform.errors.draftCreateFailed',
-                    })
+                    'We failed to generate your draft. Try again and if the issue persists please contact support.'
                 );
                 console.error(e);
                 return null;
@@ -208,14 +188,7 @@ function DraftIdGeneratorButton({
                 setUrlLoading(false);
             }
         },
-        [
-            catalogName,
-            displayError,
-            generateDraftWithSpecs,
-            intl,
-            language,
-            postHog,
-        ]
+        [catalogName, displayError, generateDraftWithSpecs, language, postHog]
     );
 
     return (
@@ -232,11 +205,7 @@ function DraftIdGeneratorButton({
                 }
             }}
         >
-            {submitButtonError
-                ? submitButtonError
-                : intl.formatMessage({
-                      id: 'newTransform.button.cta',
-                  })}
+            {submitButtonError ? submitButtonError : 'Create Draft'}
         </Button>
     );
 }

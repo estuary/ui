@@ -2,8 +2,6 @@ import { useState } from 'react';
 
 import { Button } from '@mui/material';
 
-import { FormattedMessage } from 'react-intl';
-
 import SQLDataPreviewDialog from 'src/components/transformation/create/Schema/SQLDataPreview/Dialog';
 
 function SQLDataPreviewButton() {
@@ -17,7 +15,7 @@ function SQLDataPreviewButton() {
                     setOpen(true);
                 }}
             >
-                <FormattedMessage id="newTransform.schema.cta.generatePreview" />
+                Preview
             </Button>
 
             <SQLDataPreviewDialog open={open} setOpen={setOpen} />

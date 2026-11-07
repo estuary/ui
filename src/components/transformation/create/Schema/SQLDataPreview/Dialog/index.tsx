@@ -11,8 +11,6 @@ import {
     Typography,
 } from '@mui/material';
 
-import { FormattedMessage } from 'react-intl';
-
 import { defaultOutline } from 'src/context/Theme';
 import { useTransformationCreate_name } from 'src/stores/TransformationCreate/hooks';
 
@@ -28,9 +26,7 @@ function SQLDataPreviewDialog({ open, setOpen }: Props) {
 
     return (
         <Dialog open={open} maxWidth="md" fullWidth aria-labelledby={TITLE_ID}>
-            <DialogTitle>
-                <FormattedMessage id="newTransform.schema.dataPreview.header" />
-            </DialogTitle>
+            <DialogTitle>Data Preview</DialogTitle>
 
             <DialogContent>
                 <Box
