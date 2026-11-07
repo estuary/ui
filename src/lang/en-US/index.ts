@@ -16,7 +16,6 @@ import { GeneratedModules } from 'src/lang/en-US/GeneratedModules';
 import { HomePage } from 'src/lang/en-US/HomePage';
 import { JsonForms } from 'src/lang/en-US/JsonForms';
 import { Materializations } from 'src/lang/en-US/Materializations';
-import { MonacoEditor } from 'src/lang/en-US/MonacoEditor';
 import { Navigation } from 'src/lang/en-US/Navigation';
 import { Ops } from 'src/lang/en-US/Ops';
 import { PrefixedName } from 'src/lang/en-US/PrefixedName';
@@ -45,7 +44,6 @@ const enUSMessages: Record<string, string> = {
     ...JsonForms,
     ...Authentication,
     ...Materializations,
-    ...MonacoEditor,
     ...Navigation,
     ...Ops,
     ...PrefixedName,
