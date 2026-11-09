@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 
 import { Button, Stack, Typography } from '@mui/material';
 
-import { useIntl } from 'react-intl';
 import { Navigate, useSearchParams } from 'react-router-dom';
 
 import { unauthenticatedRoutes } from 'src/app/routes';
@@ -21,7 +20,6 @@ import { supabaseClient } from 'src/services/supabaseClient';
 // them to the normal SSO login page, where the grant token is preserved in the URL.
 
 export function SSORequired() {
-    const intl = useIntl();
     const [searchParams] = useSearchParams();
     const domain = searchParams.get('domain');
     const [loading, setLoading] = useState(false);
@@ -78,20 +76,14 @@ export function SSORequired() {
                     isRegister={false}
                 />
 
-                <Typography>
-                    {intl.formatMessage({
-                        id: 'login.sso.required.message',
-                    })}
-                </Typography>
+                <Typography>Your organization requires SSO.</Typography>
 
                 <Button
                     variant="contained"
                     onClick={handleSSOLogin}
                     loading={loading}
                 >
-                    {intl.formatMessage({
-                        id: 'login.sso.required.cta',
-                    })}
+                    Continue to SSO Login
                 </Button>
             </Stack>
         </FullPageDialog>

@@ -11,8 +11,6 @@ import {
 } from '@jsonforms/material-renderers';
 import { withJsonFormsControlProps } from '@jsonforms/react';
 
-import { useIntl } from 'react-intl';
-
 import { FileUploadDialog } from 'src/generatedModules/FileUpload/FileUploadDialog';
 import { Options } from 'src/types/jsonforms';
 
@@ -25,7 +23,6 @@ const MultiLineSecretRenderer = (props: any) => {
     // eslint-disable-next-line @typescript-eslint/unbound-method
     const { handleChange, path, enabled } = props;
 
-    const intl = useIntl();
     const [isUploadOpen, setIsUploadOpen] = useState(false);
 
     const handleFileRead = useCallback(
@@ -62,18 +59,14 @@ const MultiLineSecretRenderer = (props: any) => {
                         onClick={() => setIsUploadOpen(true)}
                         sx={{ whiteSpace: 'nowrap' }}
                     >
-                        {intl.formatMessage({
-                            id: 'multiLineSecret.openDialog.cta',
-                        })}
+                        Use secret from file
                     </Button>
                 </Box>
             </Stack>
 
             <FileUploadDialog
                 open={isUploadOpen}
-                title={intl.formatMessage({
-                    id: 'multiLineSecret.openDialog.cta',
-                })}
+                title="Use secret from file"
                 onClose={() => setIsUploadOpen(false)}
                 onFileRead={handleFileRead}
             />

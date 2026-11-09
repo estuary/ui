@@ -1,7 +1,5 @@
 import { Box, Stack, Typography } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 import OnIncompatibleSchemaChange from 'src/components/materialization/OnIncompatibleSchemaChange';
 import TargetNamingUpdateWrapper from 'src/components/materialization/targetNaming/UpdateWrapper';
 import Backfill from 'src/components/shared/Entity/Backfill';
@@ -13,8 +11,6 @@ import { useBindingStore } from 'src/stores/Binding/Store';
 import { useTargetNaming_model } from 'src/stores/TargetNaming/hooks';
 
 export default function AdvancedOptions() {
-    const intl = useIntl();
-
     const entityType = useEntityType();
 
     const onIncompatibleSchemaChangeErrorExists = useBindingStore(
@@ -35,9 +31,7 @@ export default function AdvancedOptions() {
                 forceOpen={onIncompatibleSchemaChangeErrorExists}
                 header={
                     <Typography component="span" variant="formSectionHeader">
-                        {intl.formatMessage({
-                            id: 'workflows.advancedSettings.title',
-                        })}
+                        Advanced Options
                     </Typography>
                 }
                 hideBorder

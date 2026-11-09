@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 
 import { useSnackbar } from 'notistack';
-import { useIntl } from 'react-intl';
 
 import useShards from 'src/components/editor/Shards/Disable/useShards';
 import BooleanToggleButton from 'src/components/shared/buttons/BooleanToggleButton';
@@ -14,7 +13,6 @@ import { FormStatus } from 'src/stores/FormState/types';
 import { snackbarSettings } from 'src/utils/notification-utils';
 
 function ShardsDisableForm() {
-    const intl = useIntl();
     const entityType = useEntityType();
 
     const { enqueueSnackbar } = useSnackbar();
@@ -51,14 +49,7 @@ function ShardsDisableForm() {
                     setLocalState(!newVal);
 
                     enqueueSnackbar(
-                        intl.formatMessage(
-                            {
-                                id: 'workflows.disable.update.error',
-                            },
-                            {
-                                entityType,
-                            }
-                        ),
+                        `Failed to update ${entityType}. Please check your network connection and try again.`,
                         { ...snackbarSettings, variant: 'error' }
                     );
                 })
@@ -68,7 +59,7 @@ function ShardsDisableForm() {
                     setFormState({ status: FormStatus.UPDATED });
                 });
         },
-        [enqueueSnackbar, entityType, intl, setFormState, updateDisable]
+        [enqueueSnackbar, entityType, setFormState, updateDisable]
     );
 
     return (
@@ -79,9 +70,7 @@ function ShardsDisableForm() {
                 update(checked === 'true');
             }}
         >
-            {intl.formatMessage({
-                id: !localState ? 'common.enabled' : 'common.disabled',
-            })}
+            {!localState ? 'Enabled' : 'Disabled'}
         </BooleanToggleButton>
     );
 }

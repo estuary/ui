@@ -11,8 +11,6 @@ import {
     Typography,
 } from '@mui/material';
 
-import { FormattedMessage } from 'react-intl';
-
 function ProgressDialog({
     selectedEntities,
     finished,
@@ -45,9 +43,7 @@ function ProgressDialog({
         <>
             <DialogTitle>
                 <Typography component="div" variant="h6">
-                    <FormattedMessage
-                        id={done ? 'common.done' : 'common.inProgress'}
-                    />
+                    {done ? 'Done' : 'In Progress'}
                 </Typography>
             </DialogTitle>
 
@@ -63,7 +59,7 @@ function ProgressDialog({
 
             <DialogActions sx={{ p: 3 }}>
                 <Button onClick={onClose} disabled={!done}>
-                    <FormattedMessage id="cta.close" />
+                    Close
                 </Button>
             </DialogActions>
         </>

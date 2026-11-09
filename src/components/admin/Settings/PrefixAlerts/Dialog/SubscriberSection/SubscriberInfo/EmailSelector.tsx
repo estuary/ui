@@ -17,7 +17,6 @@ import {
 import { useShallow } from 'zustand/react/shallow';
 
 import { debounce } from 'lodash';
-import { useIntl } from 'react-intl';
 
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
 import { useEvaluateSubscriptionIneligibility } from 'src/components/admin/Settings/PrefixAlerts/useEvaluateSubscriptionIneligibility';
@@ -40,8 +39,6 @@ const sanitizeEmail = (value: string) => {
 function EmailSelector({
     subscription: { email: subscribedEmail, id: subscriptionId },
 }: SubscriptionDependentProps) {
-    const intl = useIntl();
-
     const serverErrors = useAlertSubscriptionsStore(
         (state) => state.initializationErrors
     );
@@ -177,9 +174,7 @@ function EmailSelector({
                     <TextField
                         {...params}
                         error={inputErrorDisplayed || duplicateEmailDetected}
-                        label={intl.formatMessage({
-                            id: 'data.email',
-                        })}
+                        label="Email"
                         onBlur={(_event) => {
                             updateDebouncedEmail.current(
                                 sanitizeEmail(inputValue)
@@ -246,17 +241,13 @@ function EmailSelector({
 
             {inputErrorDisplayed ? (
                 <FormHelperText error>
-                    {intl.formatMessage({
-                        id: 'alerts.config.dialog.emailSelector.inputError',
-                    })}
+                    Email is incorrectly formatted.
                 </FormHelperText>
             ) : null}
 
             {duplicateEmailDetected ? (
                 <FormHelperText error>
-                    {intl.formatMessage({
-                        id: 'alerts.config.dialog.emailSelector.duplicationError',
-                    })}
+                    Email is used by another subscription to this prefix.
                 </FormHelperText>
             ) : null}
         </FormControl>

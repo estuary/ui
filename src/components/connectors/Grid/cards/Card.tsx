@@ -2,8 +2,6 @@ import type { CardProps } from 'src/components/connectors/Grid/cards/types';
 
 import { Box, Grid, Stack } from '@mui/material';
 
-import { FormattedMessage } from 'react-intl';
-
 import ExternalLink from 'src/components/shared/ExternalLink';
 import Tile from 'src/components/shared/Tile';
 import {
@@ -70,7 +68,7 @@ export default function Card({
                                         textAlign: 'center',
                                     }}
                                 >
-                                    <FormattedMessage id="common.recommended" />
+                                    Recommended
                                 </Box>
                             ) : null}
                         </Stack>
@@ -95,7 +93,7 @@ export default function Card({
                                 {docsUrl ? (
                                     <Box>
                                         <ExternalLink link={docsUrl}>
-                                            <FormattedMessage id="terms.documentation" />
+                                            Docs
                                         </ExternalLink>
                                     </Box>
                                 ) : null}

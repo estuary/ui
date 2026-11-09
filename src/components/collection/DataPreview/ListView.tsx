@@ -18,7 +18,6 @@ import { globalStateClasses } from '@mui/utils';
 import { Editor } from '@monaco-editor/react';
 import { JsonPointer } from 'json-ptr';
 import { isEmpty } from 'lodash';
-import { useIntl } from 'react-intl';
 
 import { EditorResizeWrapper } from 'src/components/editor/EditorResizeWrapper';
 import ListAndDetails from 'src/components/editor/ListAndDetails';
@@ -44,7 +43,6 @@ function ListView({
     const [selectedKey, setSelectedKey] = useState<string>('');
 
     const theme = useTheme();
-    const intl = useIntl();
 
     const buildRecordKey = useCallback(
         (record: Record<string, any>) => {
@@ -112,9 +110,7 @@ function ListView({
                                     textTransform: 'uppercase',
                                 }}
                             >
-                                {intl.formatMessage({
-                                    id: 'detailsPanel.dataPreview.listView.header',
-                                })}
+                                Keys
                             </Typography>
                             <List
                                 sx={{

@@ -2,8 +2,6 @@ import type { ViewDetailsProps } from 'src/components/shared/Entity/EntityNameDe
 
 import { Box, Tooltip } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 import LinkWrapper from 'src/components/shared/LinkWrapper';
 
 function EntityNameDetailsLink({
@@ -12,15 +10,10 @@ function EntityNameDetailsLink({
     newWindow,
     plain,
 }: ViewDetailsProps) {
-    const intl = useIntl();
-
     const link = (
         <LinkWrapper
             newWindow={newWindow}
-            ariaLabel={intl.formatMessage(
-                { id: 'entityTable.viewDetails.aria' },
-                { name }
-            )}
+            ariaLabel={`View details of ${name}`}
             link={path}
             plain={plain}
         >
@@ -36,9 +29,7 @@ function EntityNameDetailsLink({
         <Tooltip
             placement="bottom"
             style={{ maxWidth: 'fit-content' }}
-            title={intl.formatMessage({
-                id: 'entityTable.detailsLink',
-            })}
+            title="View details"
         >
             <Box>{link}</Box>
         </Tooltip>

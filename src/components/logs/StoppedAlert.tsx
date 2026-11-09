@@ -28,7 +28,7 @@ function StoppedAlert() {
                                 sx={linkButtonSx}
                                 onClick={reset}
                             >
-                                <FormattedMessage id="logs.restartLink" />
+                                click here
                             </Button>
                         ),
                     }}

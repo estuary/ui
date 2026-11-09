@@ -7,7 +7,7 @@ import { Button, Menu, MenuItem, Stack, Typography } from '@mui/material';
 import { useShallow } from 'zustand/react/shallow';
 
 import { Calendar } from 'iconoir-react';
-import { FormattedMessage, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 import { DataGrains } from 'src/components/graphs/types';
 import { cardHeaderSx, linkButtonSx } from 'src/context/Theme';
@@ -43,7 +43,7 @@ function DetailsRange() {
     return (
         <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
             <Typography id="hourly-filter-selector__label" sx={cardHeaderSx}>
-                <FormattedMessage id="detailsPanel.recentUsage.title.prefix" />
+                Usage over the past
             </Typography>
 
             <Button
@@ -84,12 +84,7 @@ function DetailsRange() {
                         })
                     }
                 >
-                    {intl.formatMessage(
-                        { id: 'detailsPanel.recentUsage.filter.label.hours' },
-                        {
-                            range: 6,
-                        }
-                    )}
+                    6 hours
                 </MenuItem>
                 <MenuItem
                     onClick={() =>
@@ -99,12 +94,7 @@ function DetailsRange() {
                         })
                     }
                 >
-                    {intl.formatMessage(
-                        { id: 'detailsPanel.recentUsage.filter.label.hours' },
-                        {
-                            range: 12,
-                        }
-                    )}
+                    12 hours
                 </MenuItem>
                 <MenuItem
                     onClick={() =>
@@ -114,12 +104,7 @@ function DetailsRange() {
                         })
                     }
                 >
-                    {intl.formatMessage(
-                        { id: 'detailsPanel.recentUsage.filter.label.hours' },
-                        {
-                            range: 24,
-                        }
-                    )}
+                    24 hours
                 </MenuItem>
                 <MenuItem
                     onClick={() =>
@@ -129,12 +114,7 @@ function DetailsRange() {
                         })
                     }
                 >
-                    {intl.formatMessage(
-                        { id: 'detailsPanel.recentUsage.filter.label.hours' },
-                        {
-                            range: 48,
-                        }
-                    )}
+                    48 hours
                 </MenuItem>
                 <MenuItem
                     onClick={() =>
@@ -144,14 +124,7 @@ function DetailsRange() {
                         })
                     }
                 >
-                    {intl.formatMessage(
-                        {
-                            id: 'detailsPanel.recentUsage.filter.label.days',
-                        },
-                        {
-                            range: 30,
-                        }
-                    )}
+                    30 days
                 </MenuItem>
                 <MenuItem
                     onClick={() =>
@@ -161,9 +134,7 @@ function DetailsRange() {
                         })
                     }
                 >
-                    {intl.formatMessage({
-                        id: 'detailsPanel.recentUsage.filter.label.year',
-                    })}
+                    Year
                 </MenuItem>
             </Menu>
         </Stack>

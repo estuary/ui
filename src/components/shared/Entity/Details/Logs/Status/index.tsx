@@ -1,7 +1,5 @@
 import { Box, Stack, Typography } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 import SectionUpdated from 'src/components/shared/Entity/Details/Logs/Status/Overview/SectionUpdated';
 import RefreshButton from 'src/components/shared/Entity/Details/Logs/Status/RefreshButton';
 import SectionFormatter from 'src/components/shared/Entity/Details/Logs/Status/SectionFormatter';
@@ -10,8 +8,6 @@ import ServerError from 'src/components/shared/Entity/Details/Logs/Status/Server
 import { useUserInfoSummaryStore } from 'src/context/UserInfoSummary/useUserInfoSummaryStore';
 
 export default function Status() {
-    const intl = useIntl();
-
     const hasSupportRole = useUserInfoSummaryStore(
         (state) => state.hasSupportAccess
     );
@@ -34,9 +30,7 @@ export default function Status() {
                         style={{ alignItems: 'center', marginBottom: 2 }}
                     >
                         <Typography variant="h6" style={{ marginBottom: 4 }}>
-                            {intl.formatMessage({
-                                id: 'details.ops.status.header',
-                            })}
+                            Status
                         </Typography>
 
                         <RefreshButton />

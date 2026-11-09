@@ -14,7 +14,6 @@ import {
 
 import { Lock } from 'iconoir-react';
 import { orderBy } from 'lodash';
-import { useIntl } from 'react-intl';
 
 import ChipListCell from 'src/components/tables/cells/ChipList';
 import { FieldList } from 'src/components/tables/cells/projections/FieldList';
@@ -35,7 +34,6 @@ import { translateRedactionStrategy } from 'src/utils/schema-utils';
 import { isColumnVisible } from 'src/utils/table-utils';
 
 function Row({ columns, row }: RowProps) {
-    const intl = useIntl();
     const theme = useTheme();
 
     const workflow = useEntityWorkflow();
@@ -83,17 +81,11 @@ function Row({ columns, row }: RowProps) {
                             placement="bottom-start"
                             title={
                                 redacted
-                                    ? intl.formatMessage(
-                                          {
-                                              id: 'projection.tooltip.locationRedacted',
-                                          },
-                                          {
-                                              strategy:
-                                                  translateRedactionStrategy(
-                                                      row.inference.redact
-                                                  ),
-                                          }
-                                      )
+                                    ? `This location is redacted using strategy: ${
+                                          translateRedactionStrategy(
+                                              row.inference.redact
+                                          ) ?? ''
+                                      }.`
                                     : ''
                             }
                         >
@@ -122,16 +114,11 @@ function Row({ columns, row }: RowProps) {
                     placement="bottom-start"
                     title={
                         redacted
-                            ? intl.formatMessage(
-                                  {
-                                      id: 'projection.tooltip.locationRedacted',
-                                  },
-                                  {
-                                      strategy: translateRedactionStrategy(
-                                          row.inference.redact
-                                      ),
-                                  }
-                              )
+                            ? `This location is redacted using strategy: ${
+                                  translateRedactionStrategy(
+                                      row.inference.redact
+                                  ) ?? ''
+                              }.`
                             : ''
                     }
                 >

@@ -7,7 +7,7 @@ import { Box, Button, TextField, Typography } from '@mui/material';
 
 import { isEmpty } from 'lodash';
 import { useSnackbar } from 'notistack';
-import { FormattedMessage, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 
 import { authenticatedRoutes } from 'src/app/routes';
@@ -108,12 +108,8 @@ const MagicLinkInputs = ({ onSubmit, showToken }: Props) => {
                     fullWidth
                     autoComplete="email"
                     disabled={loading}
-                    helperText={intl.formatMessage({
-                        id: 'login.email.description',
-                    })}
-                    label={intl.formatMessage({
-                        id: 'login.email.label',
-                    })}
+                    helperText="Any valid email you want to use to sign in with"
+                    label="Email"
                     name="email"
                     error={showErrors}
                     color={showErrors ? 'error' : undefined}
@@ -124,12 +120,8 @@ const MagicLinkInputs = ({ onSubmit, showToken }: Props) => {
                         required
                         fullWidth
                         disabled={loading}
-                        helperText={intl.formatMessage({
-                            id: 'login.token.description',
-                        })}
-                        label={intl.formatMessage({
-                            id: 'login.token.label',
-                        })}
+                        helperText="This can be found in the magic link email"
+                        label="OTP"
                         name="token"
                         error={showErrors}
                         color={showErrors ? 'error' : undefined}
@@ -147,9 +139,7 @@ const MagicLinkInputs = ({ onSubmit, showToken }: Props) => {
                     sx={{ mt: 3 }}
                     disabled={loading}
                 >
-                    <FormattedMessage
-                        id={showToken ? 'cta.verifyOTP' : 'cta.magicLink'}
-                    />
+                    {showToken ? 'Sign in with OTP' : 'Sign in with magic link'}
                 </Button>
             </form>
         </>

@@ -1,14 +1,10 @@
 import type { InputBaseComponentProps } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 import AlertBox from 'src/components/shared/AlertBox';
 import { useEntityTypeTranslatedForWorkflows } from 'src/context/EntityContext';
 import { useEntitiesStore_capabilities_adminable } from 'src/stores/Entities/hooks';
 
 function AdminCapabilityGuard({ children }: InputBaseComponentProps) {
-    const intl = useIntl();
-
     const entityType = useEntityTypeTranslatedForWorkflows();
 
     const objectRoles = useEntitiesStore_capabilities_adminable(true);
@@ -18,16 +14,9 @@ function AdminCapabilityGuard({ children }: InputBaseComponentProps) {
             <AlertBox
                 severity="error"
                 short
-                title={intl.formatMessage({
-                    id: 'workflows.guards.admin.title',
-                })}
+                title="Missing required Access Grants or Storage Mapping"
             >
-                {intl.formatMessage(
-                    { id: 'workflows.guards.admin.message' },
-                    {
-                        entityType,
-                    }
-                )}
+                {`You must have the admin capability to at least one prefix with a storage mapping to create a ${entityType}. Please contact an administrator to request access.`}
             </AlertBox>
         );
     }

@@ -54,9 +54,7 @@ export const useUpdateDraftedProjection = () => {
             if (!draftId || !collectionData) {
                 return Promise.reject({
                     ...BASE_ERROR,
-                    message: intl.formatMessage({
-                        id: 'projection.error.alert.draftId',
-                    }),
+                    message: 'draft ID or stored draft spec not found',
                 });
             }
 

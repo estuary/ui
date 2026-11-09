@@ -5,13 +5,10 @@ import { useMemo } from 'react';
 import { TableCell, Tooltip } from '@mui/material';
 
 import { DateTime } from 'luxon';
-import { useIntl } from 'react-intl';
 
 import TimeStamp from 'src/components/tables/cells/activeResolved/TimeStamp';
 
 function ActiveCell({ firedAt }: ActiveOrResolvedCellsProps) {
-    const intl = useIntl();
-
     const [outputDate, outputTime, tooltipTitle] = useMemo(() => {
         const firedAtDate = DateTime.fromISO(firedAt).toUTC();
 
@@ -21,14 +18,9 @@ function ActiveCell({ firedAt }: ActiveOrResolvedCellsProps) {
                 ...DateTime.TIME_WITH_SECONDS,
                 timeZoneName: 'short',
             }),
-            intl.formatMessage(
-                { id: 'alerts.table.firedAt.tooltip' },
-                {
-                    relative: firedAtDate.toRelative(),
-                }
-            ),
+            firedAtDate.toRelative() ?? '',
         ];
-    }, [firedAt, intl]);
+    }, [firedAt]);
 
     return (
         <TableCell>

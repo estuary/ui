@@ -3,7 +3,6 @@ import type { SelectableTableStore } from 'src/stores/Tables/Store';
 
 import { Button } from '@mui/material';
 
-import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router';
 
 import { authenticatedRoutes } from 'src/app/routes';
@@ -61,7 +60,7 @@ function Materialize({ selectableTableStoreName }: Props) {
             disabled={!hasSelections}
             onClick={handlers.materialize}
         >
-            <FormattedMessage id="cta.materialize" />
+            Materialize
         </Button>
     );
 }

@@ -2,10 +2,7 @@ import type { AddCollectionDialogCTAProps } from 'src/components/shared/Entity/t
 
 import { Button } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 function DefaultCancelButton({ toggle }: AddCollectionDialogCTAProps) {
-    const intl = useIntl();
     return (
         <Button
             variant="outlined"
@@ -13,7 +10,7 @@ function DefaultCancelButton({ toggle }: AddCollectionDialogCTAProps) {
                 toggle(false);
             }}
         >
-            {intl.formatMessage({ id: 'cta.cancel' })}
+            Cancel
         </Button>
     );
 }

@@ -10,7 +10,6 @@ import {
 } from '@mui/material';
 
 import { findIndex } from 'lodash';
-import { useIntl } from 'react-intl';
 
 import { DataGridRowSkeleton } from 'src/components/collection/CollectionSkeletons';
 import { formatDate } from 'src/components/shared/Entity/Details/History/shared';
@@ -22,7 +21,6 @@ import { BASE_ERROR } from 'src/services/supabase';
 import { hasLength } from 'src/utils/misc-utils';
 
 function PublicationList() {
-    const intl = useIntl();
     const theme = useTheme();
 
     const {
@@ -87,7 +85,7 @@ function PublicationList() {
                     textTransform: 'uppercase',
                 }}
             >
-                {intl.formatMessage({ id: 'details.history.list.title' })}
+                Changes
             </Typography>
 
             {isValidating ? (
@@ -104,9 +102,7 @@ function PublicationList() {
                     error={
                         error ?? {
                             ...BASE_ERROR,
-                            message: intl.formatMessage({
-                                id: 'details.history.noPublications',
-                            }),
+                            message: 'No publications were found.',
                         }
                     }
                 />

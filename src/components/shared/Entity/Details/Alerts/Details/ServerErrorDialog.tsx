@@ -5,7 +5,6 @@ import { useState } from 'react';
 import { Box, Button, Dialog, DialogContent, useTheme } from '@mui/material';
 
 import { Expand } from 'iconoir-react';
-import { useIntl } from 'react-intl';
 
 import ServerErrorDetail from 'src/components/shared/Alerts/ServerErrorDetails';
 import DialogTitleWithClose from 'src/components/shared/Dialog/TitleWithClose';
@@ -15,7 +14,6 @@ function ServerErrorDialog({
     datum,
     detail: { dataVal },
 }: ServerErrorDialogProps) {
-    const intl = useIntl();
     const theme = useTheme();
 
     const [open, setOpen] = useState(false);
@@ -48,7 +46,7 @@ function ServerErrorDialog({
                     id={`alert-details-${datum.firedAt}_${datum.alertType}`}
                     onClose={closeDialog}
                 >
-                    {intl.formatMessage({ id: 'alerts.details.title' })}
+                    Alert Details
                 </DialogTitleWithClose>
 
                 <DialogContent>

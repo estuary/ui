@@ -1,7 +1,5 @@
 import { Typography } from '@mui/material';
 
-import { FormattedMessage, useIntl } from 'react-intl';
-
 import SingleLineCode from 'src/components/content/SingleLineCode';
 import {
     useEditorStore_id,
@@ -10,8 +8,6 @@ import {
 import { useBinding_currentCollection } from 'src/stores/Binding/hooks';
 
 function ExistingSchemaCommands() {
-    const intl = useIntl();
-
     // Binding Store
     const currentCollection = useBinding_currentCollection();
 
@@ -20,37 +16,22 @@ function ExistingSchemaCommands() {
     const persistedDraftId = useEditorStore_persistedDraftId();
 
     const pullDraftCommands = {
-        1: intl.formatMessage(
-            {
-                id: 'workflows.collectionSelector.schemaEdit.existingCollection.command1',
-            },
-            {
-                draftId: persistedDraftId ?? draftId,
-            }
-        ),
-        2: intl.formatMessage(
-            {
-                id: 'workflows.collectionSelector.schemaEdit.existingCollection.command2',
-            },
-            {
-                catalogName: currentCollection,
-            }
-        ),
+        1: `flowctl draft select --id ${persistedDraftId ?? draftId ?? ''}`,
+        2: `flowctl catalog draft --name ${currentCollection ?? ''} && flowctl draft develop`,
     };
 
-    const pushLocalEditsCommand = intl.formatMessage({
-        id: 'workflows.collectionSelector.schemaEdit.existingCollection.command3',
-    });
+    const pushLocalEditsCommand =
+        'flowctl draft author --source <flow_catalog_file_location>';
 
     return (
         <>
             <Typography sx={{ mb: 3 }}>
-                <FormattedMessage id="workflows.collectionSelector.schemaEdit.description" />
+                Use the commands below to edit the schema for this collection.
+                Once executed, click the Synchronize Schema button below to pull
+                the changes on the server into the UI.
             </Typography>
 
-            <Typography sx={{ mb: 1 }}>
-                <FormattedMessage id="workflows.collectionSelector.schemaEdit.message1" />
-            </Typography>
+            <Typography sx={{ mb: 1 }}>Pull down the draft to edit</Typography>
 
             <SingleLineCode
                 value={pullDraftCommands[1]}
@@ -60,7 +41,7 @@ function ExistingSchemaCommands() {
             <SingleLineCode value={pullDraftCommands[2]} />
 
             <Typography sx={{ mt: 3, mb: 1 }}>
-                <FormattedMessage id="workflows.collectionSelector.schemaEdit.message2" />
+                Push your changes up to the server
             </Typography>
 
             <SingleLineCode value={pushLocalEditsCommand} />

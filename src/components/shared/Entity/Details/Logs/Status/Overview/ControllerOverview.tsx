@@ -1,7 +1,5 @@
 import { Grid, Stack, Typography } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 import CardWrapper from 'src/components/shared/CardWrapper';
 import ActivationDetail from 'src/components/shared/Entity/Details/Logs/Status/Overview/ActivationDetail';
 import ControllerStatus from 'src/components/shared/Entity/Details/Logs/Status/Overview/ControllerStatus';
@@ -9,8 +7,6 @@ import ControllerUpdatedDetail from 'src/components/shared/Entity/Details/Logs/S
 import { cardHeaderSx } from 'src/context/Theme';
 
 export default function ControllerOverview() {
-    const intl = useIntl();
-
     return (
         <Grid size={{ xs: 12, md: 6, lg: 3 }}>
             <CardWrapper>
@@ -21,9 +17,7 @@ export default function ControllerOverview() {
                     <ControllerStatus />
 
                     <Typography component="div" sx={{ ...cardHeaderSx, mr: 3 }}>
-                        {intl.formatMessage({
-                            id: 'details.ops.status.overview.controller.header',
-                        })}
+                        Controller
                     </Typography>
                 </Stack>
 

@@ -36,14 +36,7 @@ function useAlertTypeContent() {
                     if (detailKey === 'evaluation_interval' && dataVal) {
                         const interval = options[dataVal];
                         if (interval) {
-                            dataVal = intl.formatMessage(
-                                {
-                                    id: 'alerts.alertType.details.humanReadable.serverError.evaluation_interval',
-                                },
-                                {
-                                    interval,
-                                }
-                            );
+                            dataVal = `There has been zero data movement for\nthe configured timeframe of ${interval}.`;
                         }
                     }
 
@@ -73,12 +66,8 @@ function useAlertTypeContent() {
                               )
                             : [
                                   {
-                                      display: intl.formatMessage({
-                                          id: 'alerts.table.recipients.empty',
-                                      }),
-                                      title: intl.formatMessage({
-                                          id: 'alerts.table.recipients.empty.tooltip',
-                                      }),
+                                      display: 'none configured',
+                                      title: 'No emails were configured to be notified.',
                                   },
                               ],
                     firedAtReadable: DateTime.fromISO(firedAt)

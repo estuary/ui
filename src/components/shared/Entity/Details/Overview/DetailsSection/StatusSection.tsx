@@ -2,8 +2,6 @@ import type { StatusSectionProps } from 'src/components/shared/Entity/Details/Ov
 
 import { Typography } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 import AlertBox from 'src/components/shared/AlertBox';
 import { useEntityStatusStore_singleResponse } from 'src/stores/EntityStatus/hooks';
 
@@ -16,14 +14,10 @@ function StatusSection({ entityName }: StatusSectionProps) {
 
     const disabled = Boolean(statusSingleResponse?.disabled);
 
-    const intl = useIntl();
-
     if (disabled) {
         return (
             <AlertBox severity="warning" short sx={{ maxWidth: 'fit-content' }}>
-                {intl.formatMessage({
-                    id: 'detailsPanel.status.taskDisabled.message',
-                })}
+                Task is disabled
             </AlertBox>
         );
     }

@@ -5,7 +5,6 @@ import { Box } from '@mui/material';
 import { JsonForms } from '@jsonforms/react';
 
 import { isEmpty } from 'lodash';
-import { FormattedMessage } from 'react-intl';
 
 import AlertBox from 'src/components/shared/AlertBox';
 import { useEntityType } from 'src/context/EntityContext';
@@ -63,12 +62,7 @@ function EndpointConfigForm({ readOnly }: Props) {
             />
             {endpointCanBeEmpty ? (
                 <AlertBox short severity="info">
-                    <FormattedMessage
-                        id="entityCreate.endpointConfig.configCanBeBlank.message"
-                        values={{
-                            entityType,
-                        }}
-                    />
+                    {`This ${entityType} requires no configuration.`}
                 </AlertBox>
             ) : null}
         </Box>

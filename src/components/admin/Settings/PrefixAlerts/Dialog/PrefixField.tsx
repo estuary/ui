@@ -2,7 +2,6 @@ import type { PrefixFieldProps } from 'src/components/admin/Settings/PrefixAlert
 
 import { TextField } from '@mui/material';
 
-import { useIntl } from 'react-intl';
 import { useMount } from 'react-use';
 
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
@@ -12,8 +11,6 @@ import { useTenantStore } from 'src/stores/Tenant';
 import { appendWithForwardSlash } from 'src/utils/misc-utils';
 
 export default function PrefixField({ staticPrefix }: PrefixFieldProps) {
-    const intl = useIntl();
-
     const selectedTenant = useTenantStore((state) => state.selectedTenant);
     const objectRoles = useEntitiesStore_capabilities_adminable();
 
@@ -45,9 +42,7 @@ export default function PrefixField({ staticPrefix }: PrefixFieldProps) {
         <TextField
             disabled
             fullWidth
-            label={intl.formatMessage({
-                id: 'common.tenant',
-            })}
+            label="Prefix"
             required
             size="small"
             slotProps={{
@@ -63,21 +58,17 @@ export default function PrefixField({ staticPrefix }: PrefixFieldProps) {
             error={prefixErrors.length > 0}
             errorMessage={
                 prefixErrors.length === 1
-                    ? intl.formatMessage({
-                          id: `custom.prefixedName.prefix.${prefixErrors[0]}`,
-                      })
+                    ? prefixErrors[0] === 'missing'
+                        ? 'please select an organization'
+                        : 'may only include letters, numbers, periods, underscores, and hyphens separated by forward slashes'
                     : undefined
             }
             helperText={
                 duplicatePrefixExists
-                    ? intl.formatMessage({
-                          id: 'alerts.config.dialog.prefixField.duplicate',
-                      })
+                    ? 'One or more subscriptions already exist for this prefix. To edit, please return to the Organization Notifications table and click the Edit button on the corresponding row.'
                     : undefined
             }
-            label={intl.formatMessage({
-                id: 'common.tenant',
-            })}
+            label="Prefix"
             leaves={objectRoles}
             onBlur={() =>
                 setSubscribedPrefix(appendWithForwardSlash(catalogPrefix))

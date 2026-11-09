@@ -1,7 +1,5 @@
 import type { BaseComponentProps } from 'src/types';
 
-import { FormattedMessage } from 'react-intl';
-
 import FullPageError from 'src/components/fullPage/Error';
 import { useStorageMappingsHydrator } from 'src/stores/Entities/hooks';
 
@@ -14,7 +12,10 @@ export const StorageMappingsHydrator = ({ children }: BaseComponentProps) => {
             <FullPageError
                 error={error}
                 message={
-                    <FormattedMessage id="storageMappingsHydrator.error.failedToFetch" />
+                    <>
+                        There was an issue while checking if you have any
+                        storage mappings.
+                    </>
                 }
             />
         );

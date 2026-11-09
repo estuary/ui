@@ -11,8 +11,6 @@ import {
     Typography,
 } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 import {
     buildStrategyFromState,
     SCHEMA_TEMPLATE_STRING,
@@ -36,8 +34,6 @@ export function TargetNamingFormContent({
     exampleCollections,
     disabled,
 }: TargetNamingFormContentProps) {
-    const intl = useIntl();
-
     const {
         canSubmitForm,
         example,
@@ -117,9 +113,9 @@ export function TargetNamingFormContent({
     return (
         <Stack spacing={2}>
             <Typography variant="body2" color="text.secondary">
-                {intl.formatMessage({
-                    id: 'destinationLayout.dialog.subtitle',
-                })}
+                How should source schemas map to your destination? This applies
+                to newly added bindings. You can override individual bindings
+                later.
             </Typography>
 
             {!isKeyValid ? (
@@ -170,9 +166,7 @@ export function TargetNamingFormContent({
                                             }}
                                         />
                                     }
-                                    label={intl.formatMessage({
-                                        id: 'destinationLayout.dialog.matchSourceStructure.customize',
-                                    })}
+                                    label="Add a prefix or suffix to table or schema names"
                                 />
                                 {matchSourceTemplatesEnabled ? (
                                     <Stack
@@ -257,9 +251,7 @@ export function TargetNamingFormContent({
                                             size="small"
                                         />
                                     }
-                                    label={intl.formatMessage({
-                                        id: 'destinationLayout.dialog.skipCommonDefaults.label',
-                                    })}
+                                    label="Skip common defaults (public, dbo)"
                                 />
                             </Stack>
                         ) : null}

@@ -2,8 +2,6 @@ import type { MenuActionProps } from 'src/components/fieldSelection/types';
 
 import { Box, Button, Stack } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 import SaveButton from 'src/components/fieldSelection/FieldActions/AlgorithmMenu/SaveButton';
 
 export default function MenuActions({
@@ -12,8 +10,6 @@ export default function MenuActions({
     handleClick,
     selectionAlgorithm,
 }: MenuActionProps) {
-    const intl = useIntl();
-
     return (
         <Stack
             direction="row"
@@ -26,7 +22,7 @@ export default function MenuActions({
                 onClick={close}
                 variant="text"
             >
-                {intl.formatMessage({ id: 'cta.cancel' })}
+                Cancel
             </Button>
 
             <SaveButton

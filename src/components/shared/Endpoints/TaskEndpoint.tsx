@@ -2,8 +2,6 @@ import type { TaskEndpointProps } from 'src/components/shared/Endpoints/types';
 
 import { Box, Typography } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 import { EndpointLink } from 'src/components/shared/Endpoints/EndpointLink';
 import { useEntityType } from 'src/context/EntityContext';
 import { useShardEndpoints } from 'src/hooks/shards/useShardEndpoints';
@@ -15,8 +13,6 @@ import useShardHydration from 'src/hooks/shards/useShardHydration';
 // directing the user to the task details where they can see a complete listing.
 // If the task doesn't expose any endpoints, then nothing will be rendered.
 export function TaskEndpoint({ reactorAddress, taskName }: TaskEndpointProps) {
-    const intl = useIntl();
-
     useShardHydration([taskName]);
 
     const entityType = useEntityType();
@@ -41,9 +37,8 @@ export function TaskEndpoint({ reactorAddress, taskName }: TaskEndpointProps) {
         // TODO (task endpoints) We really ought to link them to the details page here, but that page doesn't exist yet.
         message = (
             <Typography>
-                {intl.formatMessage({
-                    id: 'taskEndpoint.multipleEndpoints.message',
-                })}
+                multiple endpoints exposed, see task details for their
+                addresses.
             </Typography>
         );
     }

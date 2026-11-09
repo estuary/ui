@@ -7,8 +7,6 @@ import { Button } from '@mui/material';
 
 import { useStore } from 'zustand';
 
-import { FormattedMessage } from 'react-intl';
-
 import { TargetNamingFormContent } from 'src/components/materialization/targetNaming/FormContent';
 import { useConfirmationModalContext } from 'src/context/Confirmation';
 import invariableStores from 'src/context/Zustand/invariableStores';
@@ -96,7 +94,7 @@ function UpdateResourceConfigButton({ toggle }: AddCollectionDialogCTAProps) {
             disabled={selected.size < 1 || updating}
             onClick={handleContinue}
         >
-            <FormattedMessage id="cta.continue" />
+            Continue
         </Button>
     );
 }

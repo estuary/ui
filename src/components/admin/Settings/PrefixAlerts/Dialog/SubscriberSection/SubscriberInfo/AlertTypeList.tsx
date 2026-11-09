@@ -12,7 +12,6 @@ import {
 } from '@mui/material';
 
 import { Lock } from 'iconoir-react';
-import { useIntl } from 'react-intl';
 
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
 import {
@@ -22,7 +21,6 @@ import {
 } from 'src/context/Theme';
 
 const AlertTypeList = ({ options, subscription }: AlertTypeListProps) => {
-    const intl = useIntl();
     const theme = useTheme();
 
     const serverErrors = useAlertSubscriptionsStore(
@@ -39,11 +37,7 @@ const AlertTypeList = ({ options, subscription }: AlertTypeListProps) => {
 
     return (
         <Stack spacing={1}>
-            <Typography style={{ fontWeight: 500 }}>
-                {intl.formatMessage({
-                    id: 'entityTable.data.alertTypes',
-                })}
-            </Typography>
+            <Typography style={{ fontWeight: 500 }}>Alert Types</Typography>
 
             <List component="div" disablePadding>
                 {options.map((option, index) => {

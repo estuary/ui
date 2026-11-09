@@ -4,7 +4,6 @@ import { Box, Stack, Tooltip, Typography, useTheme } from '@mui/material';
 
 import { HelpCircle } from 'iconoir-react';
 import { isEmpty } from 'lodash';
-import { FormattedMessage, useIntl } from 'react-intl';
 
 import SQLEditor from 'src/components/transformation/create/Config/SQLEditor';
 import EmptySQLEditor from 'src/components/transformation/create/Config/SQLEditor/Empty';
@@ -20,7 +19,6 @@ import {
 } from 'src/stores/TransformationCreate/hooks';
 
 function DerivationCatalogEditor() {
-    const intl = useIntl();
     const theme = useTheme();
 
     // Transformation Create Store
@@ -96,13 +94,11 @@ function DerivationCatalogEditor() {
                                 sx={{ alignItems: 'center' }}
                             >
                                 <Typography variant="subtitle1">
-                                    <FormattedMessage id="newTransform.editor.streaming.shuffleKeys.header" />
+                                    Shuffle Keys
                                 </Typography>
 
                                 <Tooltip
-                                    title={intl.formatMessage({
-                                        id: 'newTransform.editor.streaming.shuffleKeys.tooltip',
-                                    })}
+                                    title="Select a key from your source collection schemas to help scale joins"
                                     placement="right"
                                 >
                                     <HelpCircle

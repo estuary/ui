@@ -12,14 +12,12 @@ function SsoUserMessage() {
 
     return (
         <FullPageWrapper fullWidth>
-            <AlertBox
-                short
-                severity="info"
-                title={intl.formatMessage({ id: 'tenant.usedSso.title' })}
-            >
+            <AlertBox short severity="info" title="Successfully Authenticated">
                 <Stack spacing={2}>
                     <Typography>
-                        {intl.formatMessage({ id: 'tenant.usedSso.message' })}
+                        {
+                            "Your account was created successfully and can be added to your organization's Estuary tenant."
+                        }
                     </Typography>
 
                     <Stack spacing={1}>

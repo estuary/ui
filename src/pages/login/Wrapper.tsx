@@ -3,7 +3,6 @@ import type { LoginWrapperProps } from 'src/pages/login/types';
 import { Button, Grid, Stack } from '@mui/material';
 
 import { NavArrowLeft } from 'iconoir-react';
-import { useIntl } from 'react-intl';
 
 import { unauthenticatedRoutes } from 'src/app/routes';
 import FullPageDialog from 'src/components/fullPage/Dialog';
@@ -24,7 +23,6 @@ const LoginWrapper = ({
 }: LoginWrapperProps) => {
     useLoginBodyClass();
 
-    const intl = useIntl();
     const backHref = useLinkWithGrantToken(unauthenticatedRoutes.login.path);
 
     return (
@@ -53,7 +51,7 @@ const LoginWrapper = ({
                             style={{ alignSelf: 'start' }}
                             variant="text"
                         >
-                            {intl.formatMessage({ id: 'login.sso.back' })}
+                            Back to Sign In
                         </Button>
                     ) : null}
                     <Stack spacing={4} style={{ width: '100%' }}>

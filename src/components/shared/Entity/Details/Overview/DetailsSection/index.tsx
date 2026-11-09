@@ -73,18 +73,14 @@ function DetailsSection({ entityName, latestLiveSpec }: DetailsSectionProps) {
 
         if (latestLiveSpec.connectorName) {
             response.push({
-                title: intl.formatMessage({
-                    id: 'connector.label',
-                }),
+                title: 'Connector',
                 val: <ConnectorSection latestLiveSpec={latestLiveSpec} />,
             });
         }
 
         if (entityType !== 'collection') {
             response.push({
-                title: intl.formatMessage({
-                    id: 'data.connectorStatus',
-                }),
+                title: 'Connector Status',
                 val: <StatusSection entityName={entityName} />,
             });
         }
@@ -116,7 +112,7 @@ function DetailsSection({ entityName, latestLiveSpec }: DetailsSectionProps) {
             );
 
             response.push({
-                title: intl.formatMessage({ id: 'data.dataPlane' }),
+                title: 'Data Plane',
                 val: (
                     <DataPlane
                         dataPlaneName={dataPlaneName}
@@ -131,17 +127,13 @@ function DetailsSection({ entityName, latestLiveSpec }: DetailsSectionProps) {
         // Add last updated - without user as Estuary folks
         //  sometimes update stuff and that might look odd
         response.push({
-            title: intl.formatMessage({
-                id: 'entityTable.data.lastUpdated',
-            }),
+            title: 'Last Updated',
             val: `${intl.formatDate(latestLiveSpec.updated_at, TIME_SETTINGS)}`,
         });
 
         // At when it was created
         response.push({
-            title: intl.formatMessage({
-                id: 'data.created_at',
-            }),
+            title: 'Created',
             val: intl.formatDate(latestLiveSpec.created_at, TIME_SETTINGS),
         });
 
@@ -157,13 +149,7 @@ function DetailsSection({ entityName, latestLiveSpec }: DetailsSectionProps) {
     ]);
 
     return (
-        <CardWrapper
-            message={
-                <span>
-                    {intl.formatMessage({ id: 'detailsPanel.details.title' })}
-                </span>
-            }
-        >
+        <CardWrapper message={<span>Details</span>}>
             {!hasLength(data) ? (
                 <CircularProgress />
             ) : (

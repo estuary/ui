@@ -5,8 +5,6 @@ import type {
 
 import { useState } from 'react';
 
-import { useIntl } from 'react-intl';
-
 import AutocompletedField from 'src/components/shared/toolbar/AutocompletedField';
 
 interface Props {
@@ -16,26 +14,18 @@ interface Props {
 }
 
 function ExistFilter({ fieldFilter, setFieldFilter, disabled }: Props) {
-    const intl = useIntl();
-
     const fieldOptions: AutoCompleteOptionForExistFilter[] = [
         {
             id: 'ALL',
-            label: intl.formatMessage({
-                id: 'schemaEditor.table.filter.option.all',
-            }),
+            label: 'All',
         },
         {
             id: 'MUST',
-            label: intl.formatMessage({
-                id: 'schemaEditor.table.filter.option.must',
-            }),
+            label: 'Must exist',
         },
         {
             id: 'MAY',
-            label: intl.formatMessage({
-                id: 'schemaEditor.table.filter.option.may',
-            }),
+            label: 'May exist',
         },
     ];
 
@@ -53,9 +43,7 @@ function ExistFilter({ fieldFilter, setFieldFilter, disabled }: Props) {
                 setLocalValue(value);
             }}
             defaultValue={localValue}
-            label={intl.formatMessage({
-                id: 'schemaEditor.table.filter.label',
-            })}
+            label="Filter fields"
             options={fieldOptions}
             AutoCompleteOptions={{
                 isOptionEqualToValue: (option, value) => option.id === value.id,

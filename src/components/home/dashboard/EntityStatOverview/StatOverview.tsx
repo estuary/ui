@@ -64,9 +64,7 @@ export default function StatOverview({
                         </Typography>
                     </Stack>
 
-                    <LinkWrapper link={viewAll}>
-                        {intl.formatMessage({ id: 'cta.goToAll' })}
-                    </LinkWrapper>
+                    <LinkWrapper link={viewAll}>See all</LinkWrapper>
                 </Stack>
 
                 <Stack
@@ -84,16 +82,9 @@ export default function StatOverview({
                             byteUnit
                             error={monthlyUsageError}
                             indeterminate={monthlyUsageIndeterminate}
-                            label={intl.formatMessage({
-                                id: 'filter.time.thisMonth',
-                            })}
+                            label="This Month"
                             loading={monthlyUsageLoading ?? false}
-                            tooltip={`${monthlyUsage} ${intl.formatMessage({
-                                id:
-                                    entityType === 'materialization'
-                                        ? `entityTable.stats.bytes_read`
-                                        : `entityTable.stats.bytes_written`,
-                            })}`}
+                            tooltip={`${monthlyUsage} ${entityType === 'materialization' ? 'Bytes Read' : 'Bytes Written'}`}
                             value={monthlyUsage}
                         />
                     ) : null}

@@ -2,7 +2,6 @@ import { useCallback, useMemo } from 'react';
 
 import { usePostHog } from '@posthog/react';
 import { useSnackbar } from 'notistack';
-import { useIntl } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 
 import { getLiveSpecIdByPublication } from 'src/api/publicationSpecsExt';
@@ -32,7 +31,6 @@ function useEntityWorkflowHelpers() {
     const { enqueueSnackbar } = useSnackbar();
     const navigate = useNavigate();
     const entityType = useEntityType();
-    const intl = useIntl();
 
     // Calls _most_ store resets needed
     const baseEntityStoreReset = useBaseEntityStoreReset();
@@ -127,9 +125,7 @@ function useEntityWorkflowHelpers() {
 
         if (!liveSpecId) {
             enqueueSnackbar(
-                intl.formatMessage({
-                    id: 'entityCreate.errors.cannotFetchLiveSpec',
-                }),
+                'Unable to fetch the proper details to materialize. Try again.',
                 { ...snackbarSettings, variant: 'error' }
             );
             logRocketEvent('Capture_Materialize', { status: 'failure' });
@@ -144,7 +140,7 @@ function useEntityWorkflowHelpers() {
                 )
             );
         }
-    }, [catalogName, enqueueSnackbar, exit, intl, postHog, pubId]);
+    }, [catalogName, enqueueSnackbar, exit, postHog, pubId]);
 
     return { callFailed, closeLogs, exit, materializeCollections, resetState };
 }

@@ -1,7 +1,6 @@
 import { IconButton, Stack, Tooltip, Typography } from '@mui/material';
 
 import { HelpCircle } from 'iconoir-react';
-import { FormattedMessage } from 'react-intl';
 
 function SchemaKeyHeader() {
     return (
@@ -13,11 +12,16 @@ function SchemaKeyHeader() {
             }}
         >
             <Typography variant="subtitle1" component="div">
-                <FormattedMessage id="schemaEditor.key.label" />
+                Key
             </Typography>
             <Tooltip
                 leaveDelay={250}
-                title={<FormattedMessage id="schemaEditor.key.helper" />}
+                title={
+                    <>
+                        Ordered JSON Pointers that define how a composite key
+                        may be extracted from a collection document.
+                    </>
+                }
                 placement="right"
             >
                 <IconButton>
