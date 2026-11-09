@@ -17,10 +17,10 @@ function EntityWarnings() {
 
     return (
         <Collapse in={warnEmptyBindings} unmountOnExit>
-            <AlertBox short severity="warning" title={<>No collections</>}>
-                {
-                    'You have not added any collections yet. This means there will be\n                no data output from this materialization. To add collections,\n                use the Output Collections section.'
-                }
+            <AlertBox short severity="warning" title="No collections">
+                You have not added any collections yet. This means there will be
+                no data output from this materialization. To add collections,
+                use the Output Collections section.
             </AlertBox>
         </Collapse>
     );
