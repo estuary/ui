@@ -20,7 +20,7 @@ function EntityWarnings() {
             <AlertBox short severity="warning" title="No collections">
                 You have not added any collections yet. This means there will be
                 no data output from this materialization. To add collections,
-                use the Output Collections section.
+                use the Source Collections section.
             </AlertBox>
         </Collapse>
     );
