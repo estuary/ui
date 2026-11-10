@@ -92,7 +92,7 @@ export const startMaterialization = async (
 ) => {
     await page.goto('http://localhost:3000/materializations/create');
     await page.getByRole('button', { name: connector }).first().click();
-    await page.getByRole('textbox', { name: 'Name' }).fill(name);
+    await page.getByRole('textbox', { name: 'Name', exact: true }).fill(name);
 };
 
 // Connectors that name schemas ask how collections map to them before
@@ -116,4 +116,52 @@ export const addCollection = async (page: Page, collection: string) => {
         .getByRole('checkbox')
         .check();
     await page.getByRole('button', { name: 'Continue' }).click();
+};
+
+export interface ConnectorSpec {
+    config_schema_json: object;
+    resource_config_schema_json: object;
+    documentation_url: string;
+}
+
+// Registers a materialization connector from its spec, as the agent would once
+// it has pulled the image. Forms can then be tested without the connector
+// image or the system it connects to.
+export const registerMaterializationConnector = async (
+    imageName: string,
+    title: string,
+    spec: ConnectorSpec
+) => {
+    await query(
+        `insert into connectors
+            (image_name, external_url, title, short_description, logo_url, recommended)
+        values (
+            $1, $2,
+            jsonb_build_object('en-US', $3::text),
+            jsonb_build_object('en-US', $3::text),
+            jsonb_build_object('en-US', $2::text),
+            false
+        )
+        on conflict (image_name) do nothing`,
+        [imageName, spec.documentation_url, title]
+    );
+
+    await query(
+        `insert into connector_tags
+            (connector_id, image_tag, protocol, documentation_url,
+            endpoint_spec_schema, resource_spec_schema, job_status)
+        select id, ':dev', 'materialization', $2, $3::json, $4::json,
+            '{"type": "success"}'
+        from connectors where image_name = $1
+        on conflict (connector_id, image_tag) do update set
+            endpoint_spec_schema = excluded.endpoint_spec_schema,
+            resource_spec_schema = excluded.resource_spec_schema,
+            job_status = excluded.job_status`,
+        [
+            imageName,
+            spec.documentation_url,
+            JSON.stringify(spec.config_schema_json),
+            JSON.stringify(spec.resource_config_schema_json),
+        ]
+    );
 };

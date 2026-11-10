@@ -1,0 +1,139 @@
+{
+    "config_schema_json": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "https://github.com/estuary/connectors/materialize-elasticsearch/config",
+        "properties": {
+            "endpoint": {
+                "type": "string",
+                "title": "Endpoint",
+                "description": "Endpoint host or URL. Must start with http:// or https://. If using Elastic Cloud this follows the format https://CLUSTER_ID.REGION.CLOUD_PLATFORM.DOMAIN:PORT",
+                "pattern": "^(http://|https://).+$",
+                "order": 0
+            },
+            "hardDelete": {
+                "type": "boolean",
+                "title": "Hard Delete",
+                "description": "If this option is enabled items deleted in the source will also be deleted from the destination. By default is disabled and _meta/op in the destination will signify whether rows have been deleted (soft-delete).",
+                "default": false,
+                "order": 1,
+                "nonsensitive": true
+            },
+            "credentials": {
+                "type": "object",
+                "order": 1,
+                "oneOf": [
+                    {
+                        "type": "object",
+                        "title": "Username and Password",
+                        "properties": {
+                            "username": {
+                                "type": "string",
+                                "title": "Username",
+                                "description": "Username to use with the Elasticsearch API."
+                            },
+                            "password": {
+                                "type": "string",
+                                "secret": true,
+                                "title": "Password",
+                                "description": "Password for the user."
+                            }
+                        },
+                        "required": ["username", "password"]
+                    },
+                    {
+                        "type": "object",
+                        "title": "API Key",
+                        "properties": {
+                            "apiKey": {
+                                "type": "string",
+                                "secret": true,
+                                "title": "API Key",
+                                "description": "API key for authenticating with the Elasticsearch API. Must be the 'encoded' API key credentials, which is the Base64-encoding of the UTF-8 representation of the id and api_key joined by a colon (:)."
+                            }
+                        },
+                        "required": ["apiKey"]
+                    }
+                ]
+            },
+            "advanced": {
+                "properties": {
+                    "number_of_replicas": {
+                        "type": "integer",
+                        "title": "Index Replicas",
+                        "description": "The number of replicas to create new indexes with. Leave blank to use the cluster default.",
+                        "nonsensitive": true
+                    },
+                    "feature_flags": {
+                        "type": "string",
+                        "title": "Feature Flags",
+                        "description": "This property is intended for Estuary internal use. You should only modify this field as directed by Estuary support.",
+                        "nonsensitive": true
+                    }
+                },
+                "type": "object",
+                "title": "Advanced Options",
+                "description": "Options for advanced users. You should not typically need to modify these.",
+                "advanced": true
+            },
+            "networkTunnel": {
+                "properties": {
+                    "sshForwarding": {
+                        "properties": {
+                            "sshEndpoint": {
+                                "type": "string",
+                                "title": "SSH Endpoint",
+                                "description": "Endpoint of the remote SSH server that supports tunneling (in the form of ssh://user@hostname[:port])",
+                                "pattern": "^ssh://.+@.+$"
+                            },
+                            "privateKey": {
+                                "type": "string",
+                                "title": "SSH Private Key",
+                                "description": "Private key to connect to the remote SSH server.",
+                                "multiline": true,
+                                "secret": true
+                            }
+                        },
+                        "additionalProperties": false,
+                        "type": "object",
+                        "required": ["sshEndpoint", "privateKey"],
+                        "title": "SSH Forwarding"
+                    }
+                },
+                "additionalProperties": false,
+                "type": "object",
+                "title": "Network Tunnel",
+                "description": "Connect to your system through an SSH server that acts as a bastion host for your network."
+            }
+        },
+        "type": "object",
+        "required": ["endpoint", "credentials"],
+        "title": "Elasticsearch Connection"
+    },
+    "resource_config_schema_json": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "https://github.com/estuary/connectors/materialize-elasticsearch/resource",
+        "properties": {
+            "index": {
+                "type": "string",
+                "description": "Name of the Elasticsearch index to store the materialization results.",
+                "x-collection-name": true
+            },
+            "delta_updates": {
+                "type": "boolean",
+                "description": "Should updates to this table be done via delta updates. Default is false.",
+                "default": false,
+                "nonsensitive": true,
+                "x-delta-updates": true
+            },
+            "number_of_shards": {
+                "type": "integer",
+                "description": "The number of shards to create the index with. Leave blank to use the cluster default.",
+                "nonsensitive": true
+            }
+        },
+        "type": "object",
+        "required": ["index", "delta_updates"],
+        "title": "Elasticsearch Index"
+    },
+    "documentation_url": "https://go.estuary.dev/materialize-elasticsearch"
+}

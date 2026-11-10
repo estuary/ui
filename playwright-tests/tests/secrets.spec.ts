@@ -1,3 +1,6 @@
+import { readFileSync } from 'fs';
+import { resolve } from 'path';
+
 import {
     clickNext,
     editLiveCapture,
@@ -9,6 +12,13 @@ import {
     startHttpIngestCapture,
 } from '../helpers/captures';
 import { deleteLiveSpecs, query, raiseTaskQuota } from '../helpers/db';
+import {
+    addCollection,
+    ensureSourceCollection,
+    getDraftedMaterializations,
+    registerMaterializationConnector,
+    startMaterialization,
+} from '../helpers/materializations';
 import { USERS } from '../helpers/users';
 import { defaultPageSetup } from '../helpers/utils';
 import { expect, Page, test } from '@playwright/test';
@@ -191,5 +201,106 @@ test.describe.serial('Capture secrets added in edit:', () => {
 
         const published = await getLiveCapture(name);
         expectTokenReference(published!.spec);
+    });
+});
+
+// Covers a secret inside a `oneOf` with no `discriminator`, using
+// materialize-elasticsearch's `credentials` (Username and Password, or API
+// Key). Nothing in the data says which option was picked once secret values are
+// pulled out of it, so the connector keeps the sops flow.
+// https://github.com/estuary/ui/pull/2155#discussion_r4475264057
+
+const ELASTICSEARCH_IMAGE = 'ghcr.io/estuary/materialize-elasticsearch';
+
+test.describe('Materialization secret in an undiscriminated union:', () => {
+    test.setTimeout(240000);
+
+    const uuid = crypto.randomUUID().split('-')[0];
+
+    let page: Page;
+    let collection: string;
+
+    const startElasticsearch = async (name: string) => {
+        await startMaterialization(page, /Elasticsearch/i, name);
+        await page
+            .getByRole('textbox', { name: 'Endpoint' })
+            .fill('https://localhost:9200');
+    };
+
+    // Adds a collection, which create requires, then clicks Next and returns
+    // the drafted config, sops-encrypted with no secret references
+    const nextDraftsSopsConfig = async (name: string) => {
+        await addCollection(page, collection);
+        await page.getByRole('button', { name: 'Next', exact: true }).click();
+        await expect
+            .poll(async () => (await getDraftedMaterializations(name)).length, {
+                timeout: 60000,
+            })
+            .toBeGreaterThan(0);
+
+        const { spec } = (await getDraftedMaterializations(name)).at(-1)!;
+        expect(spec.secrets).toBeUndefined();
+        expect(spec.endpoint.connector.config.sops).toBeDefined();
+
+        return spec.endpoint.connector.config;
+    };
+
+    test.beforeAll(async ({ browser }) => {
+        page = await browser.newPage();
+        const { tenant } = await defaultPageSetup(
+            page,
+            test,
+            USERS.materializations
+        );
+        await raiseTaskQuota(tenant);
+        collection = await ensureSourceCollection(page, tenant);
+
+        await registerMaterializationConnector(
+            ELASTICSEARCH_IMAGE,
+            'Elasticsearch',
+            JSON.parse(
+                readFileSync(
+                    resolve(
+                        __dirname,
+                        '../../src/test/fixtures/elasticsearchSpec.json'
+                    ),
+                    'utf8'
+                )
+            )
+        );
+    });
+
+    test('shows credentials as plain inputs, not secrets', async () => {
+        await startElasticsearch(`${uuid}-form`);
+
+        await expect(page.getByLabel(/^Password/)).toBeVisible();
+        await expect(
+            page.getByRole('button', { name: /^(Set|Edit) secret$/ })
+        ).toHaveCount(0);
+    });
+
+    test('the second option (API Key) encrypts its credential', async () => {
+        const name = `${uuid}-apikey`;
+
+        await startElasticsearch(name);
+        await page.getByRole('tab', { name: 'API Key' }).click();
+        await page.getByLabel(/^API Key/).fill('pw-api-key');
+
+        const config = await nextDraftsSopsConfig(name);
+        expect(Object.keys(config.credentials)).toEqual(['apiKey_sops']);
+    });
+
+    test('the first option (Username and Password) encrypts its credential', async () => {
+        const name = `${uuid}-basic`;
+
+        await startElasticsearch(name);
+        await page.getByRole('textbox', { name: 'Username' }).fill('elastic');
+        await page.getByLabel(/^Password/).fill('pw-password');
+
+        const config = await nextDraftsSopsConfig(name);
+        expect(Object.keys(config.credentials).sort()).toEqual([
+            'password_sops',
+            'username',
+        ]);
     });
 });

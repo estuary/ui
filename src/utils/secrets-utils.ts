@@ -15,7 +15,7 @@ import {
     values,
 } from 'lodash';
 
-import { getDiscriminatorIndex } from 'src/forms/shared';
+import { getDiscriminator, getDiscriminatorIndex } from 'src/forms/shared';
 import { Annotations } from 'src/types/jsonforms';
 
 // A task's `secrets` stanza. Maps secret catalog name -> JSON pointer of the
@@ -38,7 +38,8 @@ export function toJsonPointer(path: string) {
 
 // Secrets are supported for plain string properties of objects. A secret
 // anywhere else (inside an array, or as a combinator option) has no stable
-// pointer, and OAuth needs the sops flow to inject client credentials.
+// pointer, a union without a discriminator can't tell which option holds it,
+// and OAuth needs the sops flow to inject client credentials.
 export function canUseSecrets(schema: Schema): boolean {
     const seen = new WeakSet<object>();
 
@@ -68,6 +69,10 @@ export function canUseSecrets(schema: Schema): boolean {
             );
         }
 
+        if (isSecretUnionWithoutDiscriminator(current)) {
+            return false;
+        }
+
         return (
             values(current.properties).every((property) =>
                 supported(property, true)
@@ -79,6 +84,23 @@ export function canUseSecrets(schema: Schema): boolean {
     }
 
     return supported(schema, false);
+}
+
+// Secret values are pulled out of the form data, so without a discriminator
+// nothing in the data says which option was picked (e.g. Elasticsearch's
+// Username and Password or API Key `credentials`). An option and null is fine.
+function isSecretUnionWithoutDiscriminator(schema: Schema) {
+    if (getDiscriminator(schema)) {
+        return false;
+    }
+
+    return ['oneOf', 'anyOf'].some((keyword) => {
+        const options = castArray(schema[keyword] ?? []).filter(
+            (option) => isPlainObject(option) && option.type !== 'null'
+        );
+
+        return options.length > 1 && containsSecret(options);
+    });
 }
 
 // A config with sops, or with plaintext secret values, keeps the legacy flow:

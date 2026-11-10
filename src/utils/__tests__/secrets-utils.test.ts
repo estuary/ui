@@ -2,6 +2,7 @@ import type { Schema } from 'src/types';
 
 import { cloneDeep } from 'lodash';
 
+import elasticsearchSpec from 'src/test/fixtures/elasticsearchSpec.json';
 import {
     buildSecretsStanza,
     canUseSecrets,
@@ -234,6 +235,76 @@ describe('canUseSecrets', () => {
                 })
             )
         ).toBe(false);
+    });
+
+    test('rejects a secret in a union without a discriminator', () => {
+        expect(
+            canUseSecrets(
+                elasticsearchSpec.config_schema_json as unknown as Schema
+            )
+        ).toBe(false);
+
+        // A const tag per option isn't enough without the discriminator
+        expect(
+            canUseSecrets(
+                withProperty({
+                    type: 'object',
+                    oneOf: [
+                        {
+                            type: 'object',
+                            properties: {
+                                method: { type: 'string', const: 'key' },
+                                key: { type: 'string', secret: true },
+                            },
+                        },
+                        {
+                            type: 'object',
+                            properties: {
+                                method: { type: 'string', const: 'token' },
+                                token: { type: 'string', secret: true },
+                            },
+                        },
+                    ],
+                })
+            )
+        ).toBe(false);
+    });
+
+    test('allows a secret in an option of a union with null', () => {
+        expect(
+            canUseSecrets(
+                withProperty({
+                    anyOf: [
+                        {
+                            type: 'object',
+                            properties: {
+                                password: { type: 'string', secret: true },
+                            },
+                        },
+                        { type: 'null' },
+                    ],
+                })
+            )
+        ).toBe(true);
+    });
+
+    test('allows a union without a discriminator or secrets', () => {
+        expect(
+            canUseSecrets(
+                withProperty({
+                    oneOf: [
+                        {
+                            type: 'object',
+                            properties: { a: { type: 'string' } },
+                        },
+                        {
+                            type: 'object',
+                            properties: { b: { type: 'string' } },
+                        },
+                    ],
+                })
+            )
+        ).toBe(true);
     });
 
     test('rejects OAuth', () => {
