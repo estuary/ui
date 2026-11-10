@@ -115,7 +115,7 @@ const capabilities = (bits?: CapabilityBit[]) => ({
             ? [
                   {
                       __typename: 'PrefixRefEdge',
-                      node: { __typename: 'PrefixRef', capabilities: bits },
+                      node: { __typename: 'PrefixRef', capabilityBits: bits },
                   },
               ]
             : [],

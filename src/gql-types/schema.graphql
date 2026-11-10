@@ -2173,7 +2173,10 @@ input PrefixFilter {
 """A prefix to which the user is authorized."""
 type PrefixRef {
   """Fine-grained capabilities the user has at this prefix."""
-  capabilities: [CapabilityBit!]!
+  capabilities: [CapabilityBit!]! @deprecated(reason: "Use capabilityBits instead.")
+
+  """Fine-grained capabilities the user has at this prefix."""
+  capabilityBits: [CapabilityBit!]!
 
   """The prefix to which the user is authorized."""
   prefix: Prefix!
@@ -2185,7 +2188,7 @@ type PrefixRef {
   entirely from the `bundles` column rather than the legacy column.
   
   Exists solely so the dashboard's read/write/admin prefix-bucket
-  store keeps working until it migrates to consuming `capabilities`
+  store keeps working until it migrates to consuming `capabilityBits`
   directly. Once that migration lands, this field and its derivation
   can be deleted.
   """
