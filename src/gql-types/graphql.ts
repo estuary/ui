@@ -2250,8 +2250,13 @@ export type PrefixFilter = {
 /** A prefix to which the user is authorized. */
 export type PrefixRef = {
   __typename?: 'PrefixRef';
-  /** Fine-grained capabilities the user has at this prefix. */
+  /**
+   * Fine-grained capabilities the user has at this prefix.
+   * @deprecated Use capabilityBits instead.
+   */
   capabilities: Array<CapabilityBit>;
+  /** Fine-grained capabilities the user has at this prefix. */
+  capabilityBits: Array<CapabilityBit>;
   /** The prefix to which the user is authorized. */
   prefix: Scalars['Prefix']['output'];
   /**
@@ -2261,7 +2266,7 @@ export type PrefixRef = {
    * entirely from the `bundles` column rather than the legacy column.
    *
    * Exists solely so the dashboard's read/write/admin prefix-bucket
-   * store keeps working until it migrates to consuming `capabilities`
+   * store keeps working until it migrates to consuming `capabilityBits`
    * directly. Once that migration lands, this field and its derivation
    * can be deleted.
    */
