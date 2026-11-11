@@ -1,43 +1,32 @@
-import { useMemo } from 'react';
+import type { DataByHourRange } from 'src/components/graphs/types';
 
-import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
-
-import { getStatsForDashboard } from 'src/api/stats';
+import { DataGrains } from 'src/components/graphs/types';
+import { useCatalogStats } from 'src/hooks/catalogStats/useCatalogStats';
 import { useTenantStore } from 'src/stores/Tenant';
-import { hasLength, RESPONSE_DATA_LIMIT } from 'src/utils/misc-utils';
 
-export default function useMonthlyUsage() {
+const CURRENT_MONTH: DataByHourRange = { grain: DataGrains.monthly, amount: 1 };
+
+const CATALOG_STATS_OPTS = {
+    pollingIntervalMs: 15000,
+};
+
+export function useMonthlyUsage() {
     const selectedTenant = useTenantStore((state) => state.selectedTenant);
 
-    const query = useMemo(
-        () =>
-            hasLength(selectedTenant)
-                ? getStatsForDashboard(selectedTenant)
-                : null,
-        [selectedTenant]
+    const { data, error, fetching } = useCatalogStats(
+        selectedTenant,
+        CURRENT_MONTH,
+        CATALOG_STATS_OPTS
     );
 
-    const { data, error, isLoading } = useQuery(query);
-
-    const [captureUsage, materializationUsage] = useMemo(() => {
-        let dataWritten = 0;
-        let dataRead = 0;
-
-        if (!error && data) {
-            data.forEach((datum) => {
-                dataWritten += datum.bytes_written_by_me ?? 0;
-                dataRead += datum.bytes_read_by_me ?? 0;
-            });
-        }
-
-        return [dataWritten, dataRead];
-    }, [data, error]);
+    const [stats] = data[selectedTenant] ?? [];
+    const captureUsage = stats ? Number(stats.writtenByMe.bytesTotal) : 0;
+    const materializationUsage = stats ? Number(stats.readByMe.bytesTotal) : 0;
 
     return {
         captureUsage,
         error,
-        indeterminate: data ? data.length >= RESPONSE_DATA_LIMIT : false,
-        isLoading,
+        isLoading: fetching,
         materializationUsage,
     };
 }

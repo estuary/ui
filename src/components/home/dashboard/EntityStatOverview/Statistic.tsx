@@ -1,4 +1,3 @@
-import type { PostgrestError } from '@supabase/postgrest-js';
 import type { ReactNode } from 'react';
 
 import { Box, Tooltip, Typography } from '@mui/material';
@@ -11,7 +10,7 @@ interface Props {
     tooltip: string;
     value: number;
     byteUnit?: boolean;
-    error?: PostgrestError;
+    error?: boolean;
     indeterminate?: boolean;
 }
 
