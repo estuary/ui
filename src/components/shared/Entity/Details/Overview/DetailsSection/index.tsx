@@ -54,18 +54,13 @@ export function DetailsSection({
 
     // Passing an empty name leaves the queries unissued, so this costs nothing
     // for a task with no backlog rows to show
-    const {
-        backlog,
-        error: backlogError,
-        loading: backlogLoading,
-        timeLag,
-        timeLagLoading,
-    } = useMaterializationBacklog(
-        // TODO: this is a bit of a hack. An empty string below prevents the hook from firing - necessary because
-        // DetailsSection is used for more than just materializations. Would be nice to split this out into more composable components.
-        showBacklog ? entityName : '',
-        boundCollections
-    );
+    const { backlog, backlogError, backlogLoading, timeLag, timeLagLoading } =
+        useMaterializationBacklog(
+            // TODO: this is a bit of a hack. An empty string below prevents the hook from firing - necessary because
+            // DetailsSection is used for more than just materializations. Would be nice to split this out into more composable components.
+            showBacklog ? entityName : '',
+            boundCollections
+        );
 
     const data = useMemo(() => {
         const response = [];
