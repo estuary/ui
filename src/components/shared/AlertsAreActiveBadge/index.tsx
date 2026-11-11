@@ -4,12 +4,11 @@ import type {
     LiveSpecVariables,
 } from 'src/types/gql';
 
-import { useEffect } from 'react';
-
 import { Badge, badgeClasses } from '@mui/material';
 
-import { gql, useQuery } from 'urql';
+import { gql } from 'urql';
 
+import { usePollingQuery } from 'src/api/gql/usePollingQuery';
 import { errorMain } from 'src/context/Theme';
 
 const POLLING_INTERVAL = 45000;
@@ -36,21 +35,12 @@ function AlertsAreActiveBadge({
     children,
     catalogName,
 }: AlertsAreActiveBadgeProps) {
-    const [{ fetching, data }, reexecuteQuery] = useQuery({
+    const { fetching, data } = usePollingQuery({
         query: ActiveAlertCountQuery,
         variables: { catalogName },
         pause: !catalogName,
+        pollingIntervalMs: POLLING_INTERVAL,
     });
-
-    useEffect(() => {
-        if (fetching) return;
-
-        const timerId = setTimeout(() => {
-            reexecuteQuery({ requestPolicy: 'network-only' });
-        }, POLLING_INTERVAL);
-
-        return () => clearTimeout(timerId);
-    }, [fetching, reexecuteQuery]);
 
     const activeAlertCount =
         data?.liveSpecs.edges[0]?.node.activeAlerts.length ?? 0;
