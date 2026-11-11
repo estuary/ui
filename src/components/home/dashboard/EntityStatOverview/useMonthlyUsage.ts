@@ -6,12 +6,17 @@ import { useTenantStore } from 'src/stores/Tenant';
 
 const CURRENT_MONTH: DataByHourRange = { grain: DataGrains.monthly, amount: 1 };
 
+const CATALOG_STATS_OPTS = {
+    pollingIntervalMs: 15000,
+};
+
 export function useMonthlyUsage() {
     const selectedTenant = useTenantStore((state) => state.selectedTenant);
 
     const { data, error, fetching } = useCatalogStats(
         selectedTenant,
-        CURRENT_MONTH
+        CURRENT_MONTH,
+        CATALOG_STATS_OPTS
     );
 
     const [stats] = data[selectedTenant] ?? [];
