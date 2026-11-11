@@ -3,6 +3,7 @@ import type { WriteDraftFn } from 'src/components/shared/Entity/types';
 import { useCallback } from 'react';
 
 import { useEditorStore_persistedDraftId } from 'src/components/editor/Store/hooks';
+import { useAddSecretsToSpecDef } from 'src/components/shared/Entity/hooks/useAddSecretsToSpecDef';
 import { useEncryptEndpointConfig } from 'src/components/shared/Entity/hooks/useEncryptEndpointConfig';
 import { useEntityWorkflow_Editing } from 'src/context/Workflow';
 import { useCreateDraft } from 'src/hooks/drafts/useCreateDraft';
@@ -15,7 +16,14 @@ import {
     useBinding_resourceConfigs,
 } from 'src/stores/Binding/hooks';
 import { useDetailsForm_imagePath } from 'src/stores/DetailsForm/hooks';
-import { NEW_TASK_PUBLICATION_ID } from 'src/utils/workflow-utils';
+import {
+    useSecretsStore_setSecretsSaved,
+    useSecretsStore_usesSecrets,
+} from 'src/stores/Secrets/hooks';
+import {
+    NEW_TASK_PUBLICATION_ID,
+    validateEndpointConfig,
+} from 'src/utils/workflow-utils';
 
 const ERROR_TITLE = 'captureCreate.generate.failedErrorTitle';
 
@@ -35,6 +43,9 @@ export function useWriteCaptureDraft(
     const generateSpecDef = useGenerateSpecDef('capture');
     const getDraftSpec = useGetDraftSpec('capture');
     const saveDraftSpec = useSaveDraftSpec('capture');
+    const addSecretsToSpecDef = useAddSecretsToSpecDef();
+    const setSecretsSaved = useSecretsStore_setSecretsSaved();
+    const usesSecrets = useSecretsStore_usesSecrets();
 
     const persistedDraftId = useEditorStore_persistedDraftId();
     const imagePath = useDetailsForm_imagePath();
@@ -96,6 +107,20 @@ export function useWriteCaptureDraft(
             startedOver ? {} : bindings
         );
 
+        // The discover and publications resolve secrets from the drafted capture
+        const secretsError = await addSecretsToSpecDef(
+            catalogName,
+            draftSpecDef
+        );
+        if (secretsError) {
+            return { error: { title: ERROR_TITLE, error: secretsError } };
+        }
+
+        const configError = validateEndpointConfig(draftSpecDef, usesSecrets);
+        if (configError) {
+            return { error: { title: ERROR_TITLE, error: configError } };
+        }
+
         const saveError = await saveDraftSpec(
             draftId,
             catalogName,
@@ -105,6 +130,8 @@ export function useWriteCaptureDraft(
         if (saveError) {
             return { error: { title: ERROR_TITLE, error: saveError } };
         }
+
+        setSecretsSaved();
 
         return {
             value: {
@@ -126,5 +153,8 @@ export function useWriteCaptureDraft(
         persistedDraftId,
         resourceConfigs,
         saveDraftSpec,
+        addSecretsToSpecDef,
+        setSecretsSaved,
+        usesSecrets,
     ]);
 }

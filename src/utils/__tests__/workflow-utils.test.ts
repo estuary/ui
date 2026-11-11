@@ -1,5 +1,8 @@
 import { generateMockBinding } from 'src/test/test-utils';
-import { getBindingIndex } from 'src/utils/workflow-utils';
+import {
+    getBindingIndex,
+    validateEndpointConfig,
+} from 'src/utils/workflow-utils';
 
 describe('getBindingIndex', () => {
     let defaultResponse: number, matchedCollection: string;
@@ -160,5 +163,51 @@ describe('getBindingIndex', () => {
                 )
             ).toBe(1);
         });
+    });
+});
+
+describe('validateEndpointConfig', () => {
+    const ENCRYPTED = { password_sops: 'ENC[...]', sops: {} };
+    const PLAINTEXT = { password: 'hunter2' };
+
+    const specDef = (endpoint: object) => ({ bindings: [], endpoint }) as any;
+    const connectorSpecDef = (config: object) =>
+        specDef({ connector: { image: 'source-x:dev', config } });
+
+    test('accepts an encrypted connector config', () => {
+        expect(validateEndpointConfig(connectorSpecDef(ENCRYPTED), false)).toBe(
+            null
+        );
+    });
+
+    test('accepts a Dekaf config', () => {
+        expect(
+            validateEndpointConfig(
+                specDef({ dekaf: { variant: 'generic', config: ENCRYPTED } }),
+                false
+            )
+        ).toBe(null);
+    });
+
+    test('rejects an endpoint that is not a connector or Dekaf', () => {
+        expect(
+            validateEndpointConfig(
+                specDef({ local: { command: ['run'], config: {} } }),
+                false
+            )?.message
+        ).toMatch(/connector or dekaf/);
+    });
+
+    test('rejects an unencrypted config when the task does not use secrets', () => {
+        expect(
+            validateEndpointConfig(connectorSpecDef(PLAINTEXT), false)?.message
+        ).toMatch(/must be encrypted/);
+    });
+
+    // Its secret values live in secrets, not the config
+    test('accepts an unencrypted config when the task uses secrets', () => {
+        expect(validateEndpointConfig(connectorSpecDef(PLAINTEXT), true)).toBe(
+            null
+        );
     });
 });
