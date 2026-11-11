@@ -175,7 +175,6 @@ function useWatchDiscover() {
             const { draft_id, capture_name } = value;
             const { error: reloadError } = await reloadDraftedTask(
                 draft_id,
-                'capture',
                 capture_name
             );
             if (reloadError) {

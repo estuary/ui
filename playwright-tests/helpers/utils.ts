@@ -34,15 +34,31 @@ const updateSavedAuth = (filePath: string, updates: Partial<AuthFile>) => {
 };
 
 // Used to fetch the OTP we need during login. This hits your actual local InBucket from Supabase
-export const getLoginMessage = async (username: string) => {
+// Waits for an email to this exact address sent after `since`, so an older
+// (already invalidated) code is never used.
+export const getLoginMessage = async (email: string, since: Date) => {
     console.log('getLoginMessage:latest message:searching');
 
     const requestContext = await request.newContext();
-    const messages = await requestContext
-        .get(`${inbucketURL}/api/v1/search?query=to:"${username}"&limit=1`)
-        .then((res) => res.json());
+    let latestMessageId: string | undefined;
+    for (let attempt = 0; attempt < 20 && !latestMessageId; attempt += 1) {
+        const messages = await requestContext
+            .get(`${inbucketURL}/api/v1/search?query=to:"${email}"&limit=10`)
+            .then((res) => res.json());
 
-    const latestMessageId = messages?.messages[0]?.ID;
+        latestMessageId = messages?.messages?.find(
+            (message: any) =>
+                new Date(message.Created) >= since &&
+                message.To?.some(
+                    (to: any) =>
+                        to.Address?.toLowerCase() === email.toLowerCase()
+                )
+        )?.ID;
+
+        if (!latestMessageId) {
+            await new Promise((resolve) => setTimeout(resolve, 500));
+        }
+    }
 
     if (latestMessageId) {
         console.log('getLoginMessage:latest message:narrowing');
@@ -102,13 +118,15 @@ export const startSessionWithUser = async (
     const email = authSettings?.email ?? `${name}${emailDomain}`;
     await expect(page.getByText('Get started with Estuary')).toBeVisible();
     await page.getByLabel('Email').type(email);
+    // Small buffer for clock skew between this machine and InBucket
+    const requestedAt = new Date(Date.now() - 2000);
     await page.getByRole('button', { name: 'Sign in with magic link' }).click();
     await expect(
         page.getByText('Magic link sent. Please check your email.')
     ).toBeVisible();
 
     console.log('startingSession:login:token:fetch');
-    const { token } = await getLoginMessage(name);
+    const { token } = await getLoginMessage(email, requestedAt);
 
     console.log('startingSession:login:token:enter');
     await page
@@ -341,6 +359,12 @@ const restoreSession = async (
 
     if (!(await welcome.isVisible())) {
         console.log('restoreSession:expired', { name });
+
+        // A session can outlive its user (e.g. a reset local stack) and land on
+        // tenant onboarding, so drop it before signing in again
+        await page.context().clearCookies();
+        await page.evaluate(() => window.localStorage.clear());
+
         return null;
     }
 

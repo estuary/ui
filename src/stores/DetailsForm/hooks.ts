@@ -32,3 +32,12 @@ export const useDetailsForm_endpointConfig = ():
             : endpointConfig_default;
     });
 };
+
+// The selected connector's image path, or empty for Dekaf, which has no image
+export const useDetailsForm_imagePath = () => {
+    return useDetailsFormStore((state) =>
+        isDekafConnector(state.details.data.connectorImage)
+            ? ''
+            : state.details.data.connectorImage.imagePath
+    );
+};

@@ -1,3 +1,4 @@
+import type { CaptureDef, MaterializationDef } from 'deps/flow/flow';
 import type { FullSource } from 'src/stores/Binding/slices/TimeTravel';
 import type { Schema } from 'src/types';
 
@@ -123,3 +124,26 @@ export interface ValidatedBinding {
     constraints: ConstraintDictionary;
     resourcePath: string[];
 }
+
+export type SpecDef = CaptureDef | MaterializationDef;
+
+export interface LiveSpec {
+    id: string;
+    catalogName: string;
+    spec: SpecDef;
+    dataPlane: {
+        id: string;
+        name: string | null;
+        reactorAddress: string | null;
+    };
+}
+
+interface DraftSpec<S extends SpecDef> {
+    catalog_name: string;
+    spec_type: string;
+    spec: S;
+    expect_pub_id: string | null;
+}
+
+export type CaptureDraftSpec = DraftSpec<CaptureDef>;
+export type MaterializationsDraftSpec = DraftSpec<MaterializationDef>;

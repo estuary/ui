@@ -1,8 +1,8 @@
-import type { ConnectorConfig } from 'deps/flow/flow';
 import type {
-    CaptureDraftSpec,
-    MaterializationsDraftSpec,
-} from 'src/hooks/drafts/useGetDraftSpec';
+    CaptureDef,
+    ConnectorConfig,
+    MaterializationDef,
+} from 'deps/flow/flow';
 import type {
     ResourceConfig,
     ResourceConfigDictionary,
@@ -11,15 +11,15 @@ import type { SourceCaptureDef } from 'src/types';
 
 import { renderHook } from '@testing-library/react';
 
-import { useGenerateDraftSpec } from 'src/hooks/drafts/useGenerateDraftSpec';
+import { useGenerateSpecDef } from 'src/hooks/drafts/useGenerateSpecDef';
 import {
     generateMockConnectorConfig,
     generateMockResourceConfig,
 } from 'src/test/test-utils';
 
 const renderGenerators = () => ({
-    capture: renderHook(() => useGenerateDraftSpec('capture')).result.current,
-    materialization: renderHook(() => useGenerateDraftSpec('materialization'))
+    capture: renderHook(() => useGenerateSpecDef('capture')).result.current,
+    materialization: renderHook(() => useGenerateSpecDef('materialization'))
         .result.current,
 });
 
@@ -32,7 +32,7 @@ const mockResourceConfig = (
     data: { fiz: 'resource' },
 });
 
-describe('generating a task draft spec', () => {
+describe('generating a task spec def', () => {
     let uuidOne: string,
         uuidTwo: string,
         uuidThree: string,
@@ -41,21 +41,19 @@ describe('generating a task draft spec', () => {
         resourceConfig_three: ResourceConfig,
         connectorConfig: ConnectorConfig,
         resourceConfigs: ResourceConfigDictionary,
-        existingCapture: CaptureDraftSpec | null,
-        existingMaterialization: MaterializationsDraftSpec | null,
+        existingCapture: CaptureDef | null,
+        existingMaterialization: MaterializationDef | null,
         sourceCaptureDefinition: SourceCaptureDef | null;
 
-    let generateCaptureDraftSpec: ReturnType<
-        typeof renderGenerators
-    >['capture'];
-    let generateMaterializationDraftSpec: ReturnType<
+    let generateCaptureSpecDef: ReturnType<typeof renderGenerators>['capture'];
+    let generateMaterializationSpecDef: ReturnType<
         typeof renderGenerators
     >['materialization'];
 
     beforeEach(() => {
         ({
-            capture: generateCaptureDraftSpec,
-            materialization: generateMaterializationDraftSpec,
+            capture: generateCaptureSpecDef,
+            materialization: generateMaterializationSpecDef,
         } = renderGenerators());
 
         uuidOne = crypto.randomUUID();
@@ -73,9 +71,8 @@ describe('generating a task draft spec', () => {
         sourceCaptureDefinition = null;
     });
 
-    const draftedCapture = (): CaptureDraftSpec => ({
-        expect_pub_id: '00:00:00:00:00:00:00:00',
-        spec: {
+    const draftedCapture = (): CaptureDef =>
+        ({
             bindings: [
                 {
                     target: 'mock/binding/one',
@@ -96,18 +93,17 @@ describe('generating a task draft spec', () => {
             endpoint: {
                 connector: connectorConfig,
             },
-        } as any,
-    });
+        }) as any;
 
     describe('when no existing data or binding data', () => {
         test('bindings will be empty', () => {
-            const response = generateCaptureDraftSpec(
+            const response = generateCaptureSpecDef(
                 null,
                 connectorConfig,
                 {},
                 {}
             );
-            expect(response.spec.bindings).toStrictEqual([]);
+            expect(response.bindings).toStrictEqual([]);
         });
     });
 
@@ -117,13 +113,13 @@ describe('generating a task draft spec', () => {
         });
 
         test('existing bindings will be cleaned out as they assume they were deleted', () => {
-            const response = generateCaptureDraftSpec(
+            const response = generateCaptureSpecDef(
                 existingCapture,
                 connectorConfig,
                 {},
                 {}
             );
-            expect(response.spec.bindings).toStrictEqual([]);
+            expect(response.bindings).toStrictEqual([]);
         });
     });
 
@@ -133,7 +129,7 @@ describe('generating a task draft spec', () => {
         });
 
         test('existing bindings will have their config overwritten and new ones added', () => {
-            const response = generateCaptureDraftSpec(
+            const response = generateCaptureSpecDef(
                 existingCapture,
                 connectorConfig,
                 {
@@ -147,7 +143,7 @@ describe('generating a task draft spec', () => {
                     [resourceConfig_three.meta.collectionName]: [uuidThree],
                 }
             );
-            expect(response.spec.bindings).toStrictEqual([
+            expect(response.bindings).toStrictEqual([
                 {
                     resource: {
                         fiz: 'resource',
@@ -172,13 +168,13 @@ describe('generating a task draft spec', () => {
 
         describe('duplicates in existing bindings', () => {
             beforeEach(() => {
-                const bindings = (existingCapture?.spec as any).bindings;
+                const { bindings } = existingCapture as any;
                 bindings.push(bindings[0]);
                 bindings.push(bindings[0]);
             });
 
             test('when the resource config contains a single instance of a duplicated binding, update one binding instance', () => {
-                const response = generateCaptureDraftSpec(
+                const response = generateCaptureSpecDef(
                     existingCapture,
                     connectorConfig,
                     {
@@ -196,7 +192,7 @@ describe('generating a task draft spec', () => {
                     }
                 );
 
-                expect(response.spec.bindings).toStrictEqual([
+                expect(response.bindings).toStrictEqual([
                     {
                         resource: { bar: 'updated' },
                         target: 'mock/binding/one',
@@ -234,21 +230,15 @@ describe('generating a task draft spec', () => {
 
             test('`target` property is used to identify the associated collection', () => {
                 expect(
-                    (
-                        generateCaptureDraftSpec(
-                            existingCapture,
-                            connectorConfig,
-                            resourceConfigs,
-                            {
-                                [resourceConfig_one.meta.collectionName]: [
-                                    uuidOne,
-                                ],
-                                [resourceConfig_two.meta.collectionName]: [
-                                    uuidTwo,
-                                ],
-                            }
-                        ).spec as any
-                    ).bindings.map(({ target }: any) => target)
+                    generateCaptureSpecDef(
+                        existingCapture,
+                        connectorConfig,
+                        resourceConfigs,
+                        {
+                            [resourceConfig_one.meta.collectionName]: [uuidOne],
+                            [resourceConfig_two.meta.collectionName]: [uuidTwo],
+                        }
+                    ).bindings.map(({ target }) => target)
                 ).toStrictEqual([
                     resourceConfig_one.meta.collectionName,
                     resourceConfig_two.meta.collectionName,
@@ -259,34 +249,31 @@ describe('generating a task draft spec', () => {
         describe('when entity type is materialization', () => {
             beforeEach(() => {
                 existingMaterialization = {
-                    expect_pub_id: '00:00:00:00:00:00:00:00',
-                    spec: {
-                        bindings: [
-                            {
-                                source: 'mock/binding/one',
-                                resource: {
-                                    table: 'table_name',
-                                    delta_updates: false,
-                                },
+                    bindings: [
+                        {
+                            source: 'mock/binding/one',
+                            resource: {
+                                table: 'table_name',
+                                delta_updates: false,
                             },
-                            {
-                                source: 'mock/binding/two',
-                                resource: {
-                                    table: 'table_name_two',
-                                    delta_updates: false,
-                                },
-                                backfill: 2,
-                            },
-                        ],
-                        endpoint: {
-                            connector: connectorConfig,
                         },
-                    } as any,
-                };
+                        {
+                            source: 'mock/binding/two',
+                            resource: {
+                                table: 'table_name_two',
+                                delta_updates: false,
+                            },
+                            backfill: 2,
+                        },
+                    ],
+                    endpoint: {
+                        connector: connectorConfig,
+                    },
+                } as any;
             });
 
             const generate = () =>
-                generateMaterializationDraftSpec(
+                generateMaterializationSpecDef(
                     existingMaterialization,
                     connectorConfig,
                     resourceConfigs,
@@ -295,7 +282,7 @@ describe('generating a task draft spec', () => {
                         [resourceConfig_two.meta.collectionName]: [uuidTwo],
                     },
                     { sourceCaptureDefinition }
-                ).spec as any;
+                ) as any;
 
             test('`source` property is used to identify the associated collection', () => {
                 expect(
@@ -322,15 +309,10 @@ describe('generating a task draft spec', () => {
                 });
 
                 test('will use `sourceCapture` property if already defined', () => {
-                    if (existingMaterialization) {
-                        existingMaterialization = {
-                            ...existingMaterialization,
-                            spec: {
-                                ...existingMaterialization.spec,
-                                sourceCapture: {},
-                            } as any,
-                        };
-                    }
+                    existingMaterialization = {
+                        ...existingMaterialization,
+                        sourceCapture: {},
+                    } as any;
 
                     expect(generate().sourceCapture).toStrictEqual(
                         sourceCaptureDefinition
@@ -344,16 +326,11 @@ describe('generating a task draft spec', () => {
                 });
 
                 test('will remove `source` and `sourceCapture` property if no definition is provided', () => {
-                    if (existingMaterialization) {
-                        existingMaterialization = {
-                            ...existingMaterialization,
-                            spec: {
-                                ...existingMaterialization.spec,
-                                source: 'foo',
-                                sourceCapture: 'foo',
-                            } as any,
-                        };
-                    }
+                    existingMaterialization = {
+                        ...existingMaterialization,
+                        source: 'foo',
+                        sourceCapture: 'foo',
+                    } as any;
 
                     const response = generate();
 
@@ -363,71 +340,51 @@ describe('generating a task draft spec', () => {
             });
         });
     });
-    describe('draft spec fields and edge cases', () => {
-        const NEW_PUB_ID = '00:00:00:00:00:00:00:00';
-        const LIVE_PUB_ID = '16:86:68:55:a8:00:03:78';
 
+    describe('spec def fields and edge cases', () => {
         // Plain objects, so the drafted spec can be compared before and after
         const plainEndpoint = { image: 'source:dev', config: { sops: {} } };
-        const plainDraftedCapture = (
-            expectPubId: string | null
-        ): CaptureDraftSpec => ({
-            ...draftedCapture(),
-            expect_pub_id: expectPubId,
-            spec: {
-                ...draftedCapture().spec,
+        const plainDraftedCapture = (): CaptureDef =>
+            ({
+                ...draftedCapture(),
                 endpoint: { connector: plainEndpoint },
-            } as any,
-        });
+            }) as any;
 
         const bothBindings = () => ({
             [resourceConfig_one.meta.collectionName]: [uuidOne],
             [resourceConfig_two.meta.collectionName]: [uuidTwo],
         });
 
-        test('a new capture expects no live spec and gets the starter defaults', () => {
-            const response = generateCaptureDraftSpec(
+        test('a new capture gets the starter defaults', () => {
+            const response = generateCaptureSpecDef(
                 null,
                 plainEndpoint,
                 {},
                 {}
             );
 
-            expect(response.expect_pub_id).toBe(NEW_PUB_ID);
-            expect((response.spec as any).autoDiscover).toEqual({
+            expect(response.autoDiscover).toEqual({
                 addNewBindings: true,
                 evolveIncompatibleCollections: true,
             });
         });
 
-        test('a drafted capture keeps its precondition and gets no starter defaults', () => {
-            const response = generateCaptureDraftSpec(
-                plainDraftedCapture(LIVE_PUB_ID),
+        test('a drafted capture gets no starter defaults', () => {
+            const response = generateCaptureSpecDef(
+                plainDraftedCapture(),
                 plainEndpoint,
                 {},
                 {}
             );
 
-            expect(response.expect_pub_id).toBe(LIVE_PUB_ID);
-            expect((response.spec as any).autoDiscover).toBeUndefined();
-        });
-
-        test('a drafted capture with no precondition keeps none', () => {
-            expect(
-                generateCaptureDraftSpec(
-                    plainDraftedCapture(null),
-                    plainEndpoint,
-                    {},
-                    {}
-                ).expect_pub_id
-            ).toBeNull();
+            expect(response.autoDiscover).toBeUndefined();
         });
 
         test('the drafted spec passed in is not changed', () => {
-            const drafted = plainDraftedCapture(LIVE_PUB_ID);
+            const drafted = plainDraftedCapture();
             const before = JSON.stringify(drafted);
 
-            generateCaptureDraftSpec(
+            generateCaptureSpecDef(
                 drafted,
                 { image: 'source:dev', config: { sops: {}, rate: 9 } },
                 {
@@ -450,14 +407,12 @@ describe('generating a task draft spec', () => {
                 data: { fiz: 'updated two' },
             };
 
-            const bindings = (
-                generateCaptureDraftSpec(
-                    plainDraftedCapture(LIVE_PUB_ID),
-                    plainEndpoint,
-                    { [uuidOne]: resourceConfig_one, [uuidTwo]: staleTwo },
-                    bothBindings()
-                ).spec as any
-            ).bindings;
+            const { bindings } = generateCaptureSpecDef(
+                plainDraftedCapture(),
+                plainEndpoint,
+                { [uuidOne]: resourceConfig_one, [uuidTwo]: staleTwo },
+                bothBindings()
+            );
 
             expect(bindings).toHaveLength(2);
             expect(bindings[0].target).toBe('mock/binding/one');
@@ -469,60 +424,55 @@ describe('generating a task draft spec', () => {
         });
 
         test('disabling a binding sets `disable`, and enabling removes it', () => {
-            const generate = (disable: boolean, drafted: CaptureDraftSpec) =>
-                (
-                    generateCaptureDraftSpec(
-                        drafted,
-                        plainEndpoint,
-                        {
-                            [uuidOne]: {
-                                ...resourceConfig_one,
-                                meta: { ...resourceConfig_one.meta, disable },
-                            },
+            const generate = (disable: boolean, drafted: CaptureDef) =>
+                generateCaptureSpecDef(
+                    drafted,
+                    plainEndpoint,
+                    {
+                        [uuidOne]: {
+                            ...resourceConfig_one,
+                            meta: { ...resourceConfig_one.meta, disable },
                         },
-                        { [resourceConfig_one.meta.collectionName]: [uuidOne] }
-                    ).spec as any
+                    },
+                    { [resourceConfig_one.meta.collectionName]: [uuidOne] }
                 ).bindings[0];
 
-            const disabled = generate(true, plainDraftedCapture(LIVE_PUB_ID));
+            const disabled = generate(true, plainDraftedCapture());
             expect(disabled.disable).toBe(true);
 
-            const drafted = plainDraftedCapture(LIVE_PUB_ID);
-            (drafted.spec as any).bindings[0].disable = true;
+            const drafted = plainDraftedCapture();
+            drafted.bindings[0].disable = true;
             expect(generate(false, drafted)).not.toHaveProperty('disable');
         });
 
         test('a Dekaf endpoint is written under `endpoint.dekaf`', () => {
             const dekaf = { variant: 'generic', config: { sops: {} } };
 
-            const { endpoint } = generateMaterializationDraftSpec(
+            const { endpoint } = generateMaterializationSpecDef(
                 null,
                 dekaf as any,
                 {},
                 {}
-            ).spec as any;
+            );
 
             expect(endpoint).toEqual({ dekaf });
         });
 
         test('omitted materialization options are removed from the drafted spec', () => {
-            const drafted: MaterializationsDraftSpec = {
-                expect_pub_id: LIVE_PUB_ID,
-                spec: {
-                    bindings: [],
-                    endpoint: { connector: plainEndpoint },
-                    sourceCapture: { capture: 'acmeCo/source' },
-                    targetNaming: { strategy: 'singleSchema', schema: 'x' },
-                    onIncompatibleSchemaChange: 'abort',
-                } as any,
-            };
+            const drafted = {
+                bindings: [],
+                endpoint: { connector: plainEndpoint },
+                sourceCapture: { capture: 'acmeCo/source' },
+                targetNaming: { strategy: 'singleSchema', schema: 'x' },
+                onIncompatibleSchemaChange: 'abort',
+            } as any;
 
-            const spec = generateMaterializationDraftSpec(
+            const spec = generateMaterializationSpecDef(
                 drafted,
                 plainEndpoint,
                 {},
                 {}
-            ).spec as any;
+            ) as any;
 
             expect(spec.sourceCapture).toBeUndefined();
             expect(spec.targetNaming).toBeUndefined();
