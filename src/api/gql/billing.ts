@@ -242,7 +242,7 @@ export const BILLING_CAPABILITIES_QUERY = graphql(`
         ) {
             edges {
                 node {
-                    capabilities
+                    capabilityBits
                 }
             }
         }
