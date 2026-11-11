@@ -47,14 +47,18 @@ export function DetailsSection({
     const showBacklog = entityType === 'materialization' && runtimeV2;
 
     // Passing an empty name leaves the queries unissued, so this costs nothing
-    // for a task with no backlog rows to show. Where it does apply, the request
-    // is shared with the rows themselves rather than repeated.
-    const { loading: backlogLoading, timeLagLoading } =
-        useMaterializationBacklog(
-            // TODO: this is a bit of a hack. An empty string below prevents the hook from firing - necessary because
-            // DetailsSection is used for more than just materializations. Would be nice to split this out into more composable components.
-            showBacklog ? entityName : ''
-        );
+    // for a task with no backlog rows to show
+    const {
+        backlog,
+        error: backlogError,
+        loading: backlogLoading,
+        timeLag,
+        timeLagLoading,
+    } = useMaterializationBacklog(
+        // TODO: this is a bit of a hack. An empty string below prevents the hook from firing - necessary because
+        // DetailsSection is used for more than just materializations. Would be nice to split this out into more composable components.
+        showBacklog ? entityName : ''
+    );
 
     const data = useMemo(() => {
         const response = [];
@@ -97,7 +101,12 @@ export function DetailsSection({
         if (showBacklog) {
             response.push({
                 title: 'Data Backlog',
-                val: <BacklogSection entityName={entityName} />,
+                val: (
+                    <BacklogSection
+                        backlog={backlog}
+                        error={Boolean(backlogError)}
+                    />
+                ),
             });
 
             // Both rows are shown for any V2 materialization. When the lag cannot
@@ -106,7 +115,7 @@ export function DetailsSection({
             // rather than dropping out.
             response.push({
                 title: 'Time Behind',
-                val: <TimeLagSection entityName={entityName} />,
+                val: <TimeLagSection timeLag={timeLag} />,
             });
         }
 
@@ -148,12 +157,15 @@ export function DetailsSection({
 
         return response;
     }, [
+        backlog,
+        backlogError,
         backlogLoading,
         entityName,
         entityType,
         intl,
         latestLiveSpec,
         showBacklog,
+        timeLag,
         timeLagLoading,
     ]);
 

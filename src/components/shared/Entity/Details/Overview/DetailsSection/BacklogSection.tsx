@@ -1,15 +1,15 @@
+import type { MaterializationBacklog } from 'src/hooks/details/shared';
+
 import { Typography } from '@mui/material';
 
 import { formatBytes } from 'src/components/tables/cells/stats/shared';
-import { useMaterializationBacklog } from 'src/hooks/details/useMaterializationBacklog';
 
 interface BacklogSectionProps {
-    entityName: string;
+    backlog: MaterializationBacklog | null;
+    error?: Boolean;
 }
 
-export function BacklogSection({ entityName }: BacklogSectionProps) {
-    const { backlog, error } = useMaterializationBacklog(entityName);
-
+export function BacklogSection({ backlog, error }: BacklogSectionProps) {
     // A failed request leaves `backlog` null, the same shape as a caught-up
     // task, so check the error first to avoid reporting a stats failure as
     // "current".

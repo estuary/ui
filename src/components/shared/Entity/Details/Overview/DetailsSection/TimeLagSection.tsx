@@ -1,12 +1,13 @@
+import type { MaterializationTimeLag } from 'src/hooks/details/shared';
+
 import { Typography } from '@mui/material';
 
 import { Duration } from 'luxon';
 
-import { useMaterializationBacklog } from 'src/hooks/details/useMaterializationBacklog';
 import { toHumanDuration } from 'src/services/luxon';
 
 interface TimeLagSectionProps {
-    entityName: string;
+    timeLag: MaterializationTimeLag | null;
 }
 
 // One unit is enough to convey a lag at a glance — "1 day" rather than trailing
@@ -14,9 +15,7 @@ interface TimeLagSectionProps {
 const formatLag = (seconds: number) =>
     toHumanDuration(Duration.fromObject({ seconds }), { maxUnits: 1 });
 
-export function TimeLagSection({ entityName }: TimeLagSectionProps) {
-    const { timeLag } = useMaterializationBacklog(entityName);
-
+export function TimeLagSection({ timeLag }: TimeLagSectionProps) {
     if (!timeLag) {
         return <Typography component="div">&mdash;</Typography>;
     }
