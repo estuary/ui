@@ -13,6 +13,8 @@ import {
     latestPublishedByCollection,
     parseMaterializationBacklog,
 } from 'src/hooks/details/shared';
+import { useEntitiesStore_capabilities_readable } from 'src/stores/Entities/hooks';
+import { hasLength } from 'src/utils/misc-utils';
 
 const POLLING_INTERVAL_MS = 60000;
 
@@ -55,10 +57,19 @@ export function useMaterializationBacklog(
         [boundCollections, data]
     );
 
+    // `catalogStats` rejects the whole request if any name is unreadable, so
+    // only ask for source collections the user can read (a read-only user
+    // may not reach a collection shared with the task's prefix).
+    const readablePrefixes = useEntitiesStore_capabilities_readable();
+
     const collectionNames = useMemo(
         () =>
-            backlog?.bindings.map(({ collectionName }) => collectionName) ?? [],
-        [backlog]
+            (backlog?.bindings ?? [])
+                .map(({ collectionName }) => collectionName)
+                .filter((name) =>
+                    readablePrefixes.some((prefix) => name.startsWith(prefix))
+                ),
+        [backlog, readablePrefixes]
     );
 
     const { data: collectionStats, error: collectionStatsError } =
@@ -83,10 +94,15 @@ export function useMaterializationBacklog(
 
     // The lag needs the follow-up query as well, which cannot start until the
     // bindings are known. A failure there has to end the wait too, or a caller
-    // holding a placeholder until this clears would hold it indefinitely.
+    // holding a placeholder until this clears would hold it indefinitely. With
+    // no readable source collections the query never runs, so there's no wait.
     const timeLagLoading =
         loading ||
-        Boolean(backlog && !collectionStats && !collectionStatsError);
+        Boolean(
+            hasLength(collectionNames) &&
+                !collectionStats &&
+                !collectionStatsError
+        );
 
     return {
         backlog,
