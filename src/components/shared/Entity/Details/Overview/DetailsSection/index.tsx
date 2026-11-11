@@ -1,4 +1,4 @@
-import type { DetailsSectionProps } from 'src/components/shared/Entity/Details/Overview/DetailsSection/types';
+import type { LiveSpecsQuery_details } from 'src/hooks/useLiveSpecs';
 
 import { useMemo } from 'react';
 
@@ -9,9 +9,9 @@ import { useIntl } from 'react-intl';
 import CardWrapper from 'src/components/shared/CardWrapper';
 import DataPlane from 'src/components/shared/Entity/DataPlane';
 import { BacklogSection } from 'src/components/shared/Entity/Details/Overview/DetailsSection/BacklogSection';
-import ConnectorSection from 'src/components/shared/Entity/Details/Overview/DetailsSection/ConnectorSection';
+import { ConnectorSection } from 'src/components/shared/Entity/Details/Overview/DetailsSection/ConnectorSection';
 import { TIME_SETTINGS } from 'src/components/shared/Entity/Details/Overview/DetailsSection/shared';
-import StatusSection from 'src/components/shared/Entity/Details/Overview/DetailsSection/StatusSection';
+import { StatusSection } from 'src/components/shared/Entity/Details/Overview/DetailsSection/StatusSection';
 import { TimeLagSection } from 'src/components/shared/Entity/Details/Overview/DetailsSection/TimeLagSection';
 import KeyValueList from 'src/components/shared/KeyValueList';
 import { useEntityType } from 'src/context/EntityContext';
@@ -24,8 +24,18 @@ import {
     parseDataPlaneName,
 } from 'src/utils/dataPlane-utils';
 import { hasLength } from 'src/utils/misc-utils';
+import { getCollectionName } from 'src/utils/workflow-utils';
 
-function DetailsSection({ entityName, latestLiveSpec }: DetailsSectionProps) {
+interface DetailsSectionProps {
+    entityName: string;
+    latestLiveSpec: LiveSpecsQuery_details | null;
+    loading: boolean;
+}
+
+export function DetailsSection({
+    entityName,
+    latestLiveSpec,
+}: DetailsSectionProps) {
     const intl = useIntl();
 
     const entityType = useEntityType();
@@ -37,15 +47,25 @@ function DetailsSection({ entityName, latestLiveSpec }: DetailsSectionProps) {
     const runtimeV2 = useShardDetail_runtimeV2(entityName);
     const showBacklog = entityType === 'materialization' && runtimeV2;
 
+    const boundCollections = useMemo(
+        () => (latestLiveSpec?.spec?.bindings ?? []).map(getCollectionName),
+        [latestLiveSpec]
+    );
+
     // Passing an empty name leaves the queries unissued, so this costs nothing
-    // for a task with no backlog rows to show. Where it does apply, the request
-    // is shared with the rows themselves rather than repeated.
-    const { loading: backlogLoading, timeLagLoading } =
-        useMaterializationBacklog(
-            // TODO: this is a bit of a hack. An empty string below prevents the hook from firing - necessary because
-            // DetailsSection is used for more than just materializations. Would be nice to split this out into more composable components.
-            showBacklog ? entityName : ''
-        );
+    // for a task with no backlog rows to show
+    const {
+        backlog,
+        error: backlogError,
+        loading: backlogLoading,
+        timeLag,
+        timeLagLoading,
+    } = useMaterializationBacklog(
+        // TODO: this is a bit of a hack. An empty string below prevents the hook from firing - necessary because
+        // DetailsSection is used for more than just materializations. Would be nice to split this out into more composable components.
+        showBacklog ? entityName : '',
+        boundCollections
+    );
 
     const data = useMemo(() => {
         const response = [];
@@ -88,7 +108,12 @@ function DetailsSection({ entityName, latestLiveSpec }: DetailsSectionProps) {
         if (showBacklog) {
             response.push({
                 title: 'Data Backlog',
-                val: <BacklogSection entityName={entityName} />,
+                val: (
+                    <BacklogSection
+                        backlog={backlog}
+                        error={Boolean(backlogError)}
+                    />
+                ),
             });
 
             // Both rows are shown for any V2 materialization. When the lag cannot
@@ -97,7 +122,7 @@ function DetailsSection({ entityName, latestLiveSpec }: DetailsSectionProps) {
             // rather than dropping out.
             response.push({
                 title: 'Time Behind',
-                val: <TimeLagSection entityName={entityName} />,
+                val: <TimeLagSection timeLag={timeLag} />,
             });
         }
 
@@ -139,12 +164,15 @@ function DetailsSection({ entityName, latestLiveSpec }: DetailsSectionProps) {
 
         return response;
     }, [
+        backlog,
+        backlogError,
         backlogLoading,
         entityName,
         entityType,
         intl,
         latestLiveSpec,
         showBacklog,
+        timeLag,
         timeLagLoading,
     ]);
 
@@ -158,5 +186,3 @@ function DetailsSection({ entityName, latestLiveSpec }: DetailsSectionProps) {
         </CardWrapper>
     );
 }
-
-export default DetailsSection;

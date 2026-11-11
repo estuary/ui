@@ -1,3 +1,4 @@
+import type { DataByHourRange } from 'src/components/graphs/types';
 import type {
     MaterializationBacklog,
     MaterializationTimeLag,
@@ -5,53 +6,76 @@ import type {
 
 import { useMemo } from 'react';
 
-import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
-
-import {
-    getCollectionsLastPublished,
-    getMaterializationBacklog,
-} from 'src/api/stats';
+import { DataGrains } from 'src/components/graphs/types';
+import { useCatalogTaskStats } from 'src/hooks/catalogStats/useCatalogTaskStats';
 import {
     computeMaterializationTimeLag,
     latestPublishedByCollection,
     parseMaterializationBacklog,
 } from 'src/hooks/details/shared';
+import { useEntitiesStore_capabilities_readable } from 'src/stores/Entities/hooks';
 import { hasLength } from 'src/utils/misc-utils';
 
-const REFRESH_INTERVAL = 15000;
+const POLLING_INTERVAL_MS = 60000;
 
-const SWR_CONFIG = {
-    revalidateOnMount: true,
-    refreshInterval: REFRESH_INTERVAL,
+// 48 hours covers an idle or paused task that hasn't reported recently.
+// Grain needs to be hourly, not daily, since a zero `bytesBehind` is left
+// out of the stats, so a daily row keeps the day's last nonzero reading after
+// the task catches up.
+const BACKLOG_RANGE: DataByHourRange = { grain: DataGrains.hourly, amount: 48 };
+
+// `lastPublishedAt` reduces by maximizing, so a month's row already holds the
+// latest publication within that month; two months of rows place the frontier
+// of any collection still being written to.
+const LAST_PUBLISHED_RANGE: DataByHourRange = {
+    grain: DataGrains.monthly,
+    amount: 2,
 };
 
 // How far behind a materialization is, in bytes and in time. The bytes come from
 // the task's newest hourly stats row that describes its bindings; the time lag
 // additionally needs where each source collection has been published up to, so it
 // resolves in a second step once the bindings are known.
-export function useMaterializationBacklog(catalogName: string) {
-    const { data, error, isValidating } = useQuery(
-        hasLength(catalogName) ? getMaterializationBacklog(catalogName) : null,
-        SWR_CONFIG
+export function useMaterializationBacklog(
+    catalogName: string,
+    boundCollections: string[]
+) {
+    // The window moves every hour; `useCatalogTaskStats` keeps the last result
+    // meanwhile, so the backlog doesn't blank out
+    const { data, error, fetching } = useCatalogTaskStats(
+        catalogName,
+        BACKLOG_RANGE,
+        {
+            pause: !catalogName,
+            pollingIntervalMs: POLLING_INTERVAL_MS,
+        }
     );
 
     const backlog = useMemo<MaterializationBacklog | null>(
-        () => (data ? parseMaterializationBacklog(data) : null),
-        [data]
+        () =>
+            data ? parseMaterializationBacklog(data, boundCollections) : null,
+        [boundCollections, data]
     );
+
+    // `catalogStats` rejects the whole request if any name is unreadable, so
+    // only ask for source collections the user can read (a read-only user
+    // may not reach a collection shared with the task's prefix).
+    const readablePrefixes = useEntitiesStore_capabilities_readable();
 
     const collectionNames = useMemo(
         () =>
-            backlog?.bindings.map(({ collectionName }) => collectionName) ?? [],
-        [backlog]
+            (backlog?.bindings ?? [])
+                .map(({ collectionName }) => collectionName)
+                .filter((name) =>
+                    readablePrefixes.some((prefix) => name.startsWith(prefix))
+                ),
+        [backlog, readablePrefixes]
     );
 
-    const { data: collectionStats, error: collectionStatsError } = useQuery(
-        hasLength(collectionNames)
-            ? getCollectionsLastPublished(collectionNames)
-            : null,
-        SWR_CONFIG
-    );
+    const { data: collectionStats, error: collectionStatsError } =
+        useCatalogTaskStats(collectionNames, LAST_PUBLISHED_RANGE, {
+            pollingIntervalMs: POLLING_INTERVAL_MS,
+        });
 
     const timeLag = useMemo<MaterializationTimeLag | null>(() => {
         if (!backlog || !collectionStats) {
@@ -66,20 +90,25 @@ export function useMaterializationBacklog(catalogName: string) {
 
     // True only until the first response lands. A background refresh leaves these
     // false, so a value already on screen is never replaced by a loading state.
-    const loading = isValidating && !data;
+    const loading = fetching && !data;
 
     // The lag needs the follow-up query as well, which cannot start until the
     // bindings are known. A failure there has to end the wait too, or a caller
-    // holding a placeholder until this clears would hold it indefinitely.
+    // holding a placeholder until this clears would hold it indefinitely. With
+    // no readable source collections the query never runs, so there's no wait.
     const timeLagLoading =
         loading ||
-        Boolean(backlog && !collectionStats && !collectionStatsError);
+        Boolean(
+            hasLength(collectionNames) &&
+                !collectionStats &&
+                !collectionStatsError
+        );
 
     return {
         backlog,
         loading,
         error,
-        isValidating,
+        isValidating: fetching,
         timeLag,
         timeLagLoading,
     };

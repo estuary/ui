@@ -9,7 +9,7 @@ import { DataPreview } from 'src/components/collection/DataPreview';
 import { useEditorStore_specs } from 'src/components/editor/Store/hooks';
 import { TaskEndpoints } from 'src/components/shared/Endpoints/TaskEndpoints';
 import { Bindings } from 'src/components/shared/Entity/Details/Overview/Bindings';
-import DetailsSection from 'src/components/shared/Entity/Details/Overview/DetailsSection';
+import { DetailsSection } from 'src/components/shared/Entity/Details/Overview/DetailsSection';
 import { ShardAwareSectionOrder } from 'src/components/shared/Entity/Details/Overview/ShardAwareSectionOrder';
 import Usage from 'src/components/shared/Entity/Details/Usage';
 import ShardInformation from 'src/components/shared/Entity/Shard/Information';
