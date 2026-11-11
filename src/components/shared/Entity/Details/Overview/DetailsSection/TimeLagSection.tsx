@@ -1,11 +1,13 @@
-import type { TimeLagSectionProps } from 'src/components/shared/Entity/Details/Overview/DetailsSection/types';
-
 import { Typography } from '@mui/material';
 
 import { Duration } from 'luxon';
 
 import { useMaterializationBacklog } from 'src/hooks/details/useMaterializationBacklog';
 import { toHumanDuration } from 'src/services/luxon';
+
+interface TimeLagSectionProps {
+    entityName: string;
+}
 
 // One unit is enough to convey a lag at a glance — "1 day" rather than trailing
 // hours and minutes that will be stale by the time they are read.

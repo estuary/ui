@@ -1,11 +1,15 @@
-import type { ConnectorSectionProps } from 'src/components/shared/Entity/Details/Overview/DetailsSection/types';
+import type { LiveSpecsQuery_details } from 'src/hooks/useLiveSpecs';
 
 import { Stack } from '@mui/material';
 
 import ConnectorName from 'src/components/connectors/ConnectorName';
 import ExternalLink from 'src/components/shared/ExternalLink';
 
-function ConnectorSection({ latestLiveSpec }: ConnectorSectionProps) {
+interface ConnectorSectionProps {
+    latestLiveSpec: LiveSpecsQuery_details;
+}
+
+export function ConnectorSection({ latestLiveSpec }: ConnectorSectionProps) {
     return (
         <Stack
             direction="row"
@@ -31,5 +35,3 @@ function ConnectorSection({ latestLiveSpec }: ConnectorSectionProps) {
         </Stack>
     );
 }
-
-export default ConnectorSection;

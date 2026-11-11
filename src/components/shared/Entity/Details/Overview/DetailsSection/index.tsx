@@ -1,4 +1,4 @@
-import type { DetailsSectionProps } from 'src/components/shared/Entity/Details/Overview/DetailsSection/types';
+import type { LiveSpecsQuery_details } from 'src/hooks/useLiveSpecs';
 
 import { useMemo } from 'react';
 
@@ -9,9 +9,9 @@ import { useIntl } from 'react-intl';
 import CardWrapper from 'src/components/shared/CardWrapper';
 import DataPlane from 'src/components/shared/Entity/DataPlane';
 import { BacklogSection } from 'src/components/shared/Entity/Details/Overview/DetailsSection/BacklogSection';
-import ConnectorSection from 'src/components/shared/Entity/Details/Overview/DetailsSection/ConnectorSection';
+import { ConnectorSection } from 'src/components/shared/Entity/Details/Overview/DetailsSection/ConnectorSection';
 import { TIME_SETTINGS } from 'src/components/shared/Entity/Details/Overview/DetailsSection/shared';
-import StatusSection from 'src/components/shared/Entity/Details/Overview/DetailsSection/StatusSection';
+import { StatusSection } from 'src/components/shared/Entity/Details/Overview/DetailsSection/StatusSection';
 import { TimeLagSection } from 'src/components/shared/Entity/Details/Overview/DetailsSection/TimeLagSection';
 import KeyValueList from 'src/components/shared/KeyValueList';
 import { useEntityType } from 'src/context/EntityContext';
@@ -25,7 +25,16 @@ import {
 } from 'src/utils/dataPlane-utils';
 import { hasLength } from 'src/utils/misc-utils';
 
-function DetailsSection({ entityName, latestLiveSpec }: DetailsSectionProps) {
+interface DetailsSectionProps {
+    entityName: string;
+    latestLiveSpec: LiveSpecsQuery_details | null;
+    loading: boolean;
+}
+
+export function DetailsSection({
+    entityName,
+    latestLiveSpec,
+}: DetailsSectionProps) {
     const intl = useIntl();
 
     const entityType = useEntityType();
@@ -158,5 +167,3 @@ function DetailsSection({ entityName, latestLiveSpec }: DetailsSectionProps) {
         </CardWrapper>
     );
 }
-
-export default DetailsSection;

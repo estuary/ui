@@ -1,9 +1,11 @@
-import type { BacklogSectionProps } from 'src/components/shared/Entity/Details/Overview/DetailsSection/types';
-
 import { Typography } from '@mui/material';
 
 import { formatBytes } from 'src/components/tables/cells/stats/shared';
 import { useMaterializationBacklog } from 'src/hooks/details/useMaterializationBacklog';
+
+interface BacklogSectionProps {
+    entityName: string;
+}
 
 export function BacklogSection({ entityName }: BacklogSectionProps) {
     const { backlog, error } = useMaterializationBacklog(entityName);
