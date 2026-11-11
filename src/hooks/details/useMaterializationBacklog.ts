@@ -14,11 +14,13 @@ import {
     parseMaterializationBacklog,
 } from 'src/hooks/details/shared';
 
-const POLLING_INTERVAL_MS = 15000;
+const POLLING_INTERVAL_MS = 60000;
 
-// The newest hourly row that describes the bindings is usually the current
-// hour's, but a usage heartbeat can open an hour without them.
-const BACKLOG_RANGE: DataByHourRange = { grain: DataGrains.hourly, amount: 6 };
+// 48 hours covers an idle or paused task that hasn't reported recently.
+// Grain needs to be hourly, not daily, since a zero `bytesBehind` is left
+// out of the stats, so a daily row keeps the day's last nonzero reading after
+// the task catches up.
+const BACKLOG_RANGE: DataByHourRange = { grain: DataGrains.hourly, amount: 48 };
 
 // `lastPublishedAt` reduces by maximizing, so a month's row already holds the
 // latest publication within that month; two months of rows place the frontier
@@ -32,7 +34,10 @@ const LAST_PUBLISHED_RANGE: DataByHourRange = {
 // the task's newest hourly stats row that describes its bindings; the time lag
 // additionally needs where each source collection has been published up to, so it
 // resolves in a second step once the bindings are known.
-export function useMaterializationBacklog(catalogName: string) {
+export function useMaterializationBacklog(
+    catalogName: string,
+    boundCollections: string[]
+) {
     // The window moves every hour; `useCatalogTaskStats` keeps the last result
     // meanwhile, so the backlog doesn't blank out
     const { data, error, fetching } = useCatalogTaskStats(
@@ -45,8 +50,9 @@ export function useMaterializationBacklog(catalogName: string) {
     );
 
     const backlog = useMemo<MaterializationBacklog | null>(
-        () => (data ? parseMaterializationBacklog(data) : null),
-        [data]
+        () =>
+            data ? parseMaterializationBacklog(data, boundCollections) : null,
+        [boundCollections, data]
     );
 
     const collectionNames = useMemo(

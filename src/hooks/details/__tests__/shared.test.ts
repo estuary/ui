@@ -36,39 +36,50 @@ const statsRow = (
     },
 });
 
+const BOUND = ['acmeCo/orders', 'acmeCo/shipments'];
+
 describe('parseMaterializationBacklog', () => {
     test('sums the readings of every binding in the row', () => {
-        const backlog = parseMaterializationBacklog([
-            statsRow('2026-08-07T19:00:00Z', {
-                'acmeCo/orders': { bytesBehind: 1000 },
-                'acmeCo/shipments': { bytesBehind: 2500 },
-            }),
-        ]);
+        const backlog = parseMaterializationBacklog(
+            [
+                statsRow('2026-08-07T19:00:00Z', {
+                    'acmeCo/orders': { bytesBehind: 1000 },
+                    'acmeCo/shipments': { bytesBehind: 2500 },
+                }),
+            ],
+            BOUND
+        );
 
         expect(backlog?.bytesBehind).toBe(3500);
     });
 
     test('reads only the newest row, ignoring older readings', () => {
-        const backlog = parseMaterializationBacklog([
-            statsRow('2026-08-07T18:00:00Z', {
-                'acmeCo/orders': { bytesBehind: 2500 },
-            }),
-            statsRow('2026-08-07T19:00:00Z', {
-                'acmeCo/orders': { bytesBehind: 1000 },
-            }),
-        ]);
+        const backlog = parseMaterializationBacklog(
+            [
+                statsRow('2026-08-07T18:00:00Z', {
+                    'acmeCo/orders': { bytesBehind: 2500 },
+                }),
+                statsRow('2026-08-07T19:00:00Z', {
+                    'acmeCo/orders': { bytesBehind: 1000 },
+                }),
+            ],
+            BOUND
+        );
 
         expect(backlog?.bytesBehind).toBe(1000);
         expect(backlog?.timestamp).toBe(toSeconds('2026-08-07T19:00:00Z'));
     });
 
     test('treats a binding with a zero reading as caught up', () => {
-        const backlog = parseMaterializationBacklog([
-            statsRow('2026-08-07T19:00:00Z', {
-                'acmeCo/orders': { bytesBehind: 1000 },
-                'acmeCo/shipments': {},
-            }),
-        ]);
+        const backlog = parseMaterializationBacklog(
+            [
+                statsRow('2026-08-07T19:00:00Z', {
+                    'acmeCo/orders': { bytesBehind: 1000 },
+                    'acmeCo/shipments': {},
+                }),
+            ],
+            BOUND
+        );
 
         expect(backlog?.bytesBehind).toBe(1000);
         expect(backlog?.bindings).toHaveLength(2);
@@ -77,12 +88,15 @@ describe('parseMaterializationBacklog', () => {
     // A usage heartbeat opens the hour's row without describing any bindings, so
     // the newest row can exist while saying nothing about the task.
     test('skips a newer row that carries no binding stats at all', () => {
-        const backlog = parseMaterializationBacklog([
-            statsRow('2026-08-07T20:00:00Z'),
-            statsRow('2026-08-07T19:00:00Z', {
-                'acmeCo/orders': { bytesBehind: 1000 },
-            }),
-        ]);
+        const backlog = parseMaterializationBacklog(
+            [
+                statsRow('2026-08-07T20:00:00Z'),
+                statsRow('2026-08-07T19:00:00Z', {
+                    'acmeCo/orders': { bytesBehind: 1000 },
+                }),
+            ],
+            BOUND
+        );
 
         expect(backlog?.bytesBehind).toBe(1000);
         expect(backlog?.timestamp).toBe(toSeconds('2026-08-07T19:00:00Z'));
@@ -91,12 +105,15 @@ describe('parseMaterializationBacklog', () => {
     // The whole task is current when every binding has caught up, which is what
     // the card shows in place of a figure.
     test('totals zero when no binding reports a reading', () => {
-        const backlog = parseMaterializationBacklog([
-            statsRow('2026-08-07T20:00:00Z', {
-                'acmeCo/orders': {},
-                'acmeCo/shipments': {},
-            }),
-        ]);
+        const backlog = parseMaterializationBacklog(
+            [
+                statsRow('2026-08-07T20:00:00Z', {
+                    'acmeCo/orders': {},
+                    'acmeCo/shipments': {},
+                }),
+            ],
+            BOUND
+        );
 
         expect(backlog?.bytesBehind).toBe(0);
         expect(backlog?.bindings).toHaveLength(2);
@@ -106,19 +123,25 @@ describe('parseMaterializationBacklog', () => {
     // materializations that have yet to process anything.
     test('returns null when no row has materialize stats', () => {
         expect(
-            parseMaterializationBacklog([statsRow('2026-08-07T20:00:00Z')])
+            parseMaterializationBacklog(
+                [statsRow('2026-08-07T20:00:00Z')],
+                BOUND
+            )
         ).toBeNull();
-        expect(parseMaterializationBacklog([])).toBeNull();
+        expect(parseMaterializationBacklog([], BOUND)).toBeNull();
     });
 
     test('carries each binding source timestamp through for the time lag', () => {
-        const backlog = parseMaterializationBacklog([
-            statsRow('2026-08-07T19:00:00Z', {
-                'acmeCo/orders': {
-                    lastSourcePublishedAt: '2026-08-07T12:00:00Z',
-                },
-            }),
-        ]);
+        const backlog = parseMaterializationBacklog(
+            [
+                statsRow('2026-08-07T19:00:00Z', {
+                    'acmeCo/orders': {
+                        lastSourcePublishedAt: '2026-08-07T12:00:00Z',
+                    },
+                }),
+            ],
+            BOUND
+        );
 
         expect(backlog?.bindings[0].lastSourcePublishedAt).toBe(
             '2026-08-07T12:00:00Z'
@@ -149,15 +172,18 @@ describe('parseMaterializationBacklog', () => {
                 bytesBehind: 1130136,
             },
         });
+        const rowCollections = (row.taskStats?.materialize ?? []).map(
+            ({ collection }) => collection
+        );
 
         test('totals the three bindings that are behind', () => {
-            expect(parseMaterializationBacklog([row])?.bytesBehind).toBe(
-                1134378
-            );
+            expect(
+                parseMaterializationBacklog([row], rowCollections)?.bytesBehind
+            ).toBe(1134378);
         });
 
         test('keeps all twelve bindings, worst first', () => {
-            const backlog = parseMaterializationBacklog([row]);
+            const backlog = parseMaterializationBacklog([row], rowCollections);
 
             expect(backlog?.bindings).toHaveLength(12);
             expect(
@@ -178,15 +204,15 @@ describe('parseMaterializationBacklog', () => {
         });
 
         test('renders the total the way the card does', () => {
-            const backlog = parseMaterializationBacklog([row]);
+            const backlog = parseMaterializationBacklog([row], rowCollections);
 
             expect(formatBytes(backlog?.bytesBehind, 1)).toBe('1.1 MB');
         });
 
         test('reports the stats document timestamp', () => {
-            expect(parseMaterializationBacklog([row])?.timestamp).toBe(
-                toSeconds('2026-08-07T20:00:00.000Z')
-            );
+            expect(
+                parseMaterializationBacklog([row], rowCollections)?.timestamp
+            ).toBe(toSeconds('2026-08-07T20:00:00.000Z'));
         });
     });
 });

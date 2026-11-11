@@ -24,6 +24,7 @@ import {
     parseDataPlaneName,
 } from 'src/utils/dataPlane-utils';
 import { hasLength } from 'src/utils/misc-utils';
+import { getCollectionName } from 'src/utils/workflow-utils';
 
 interface DetailsSectionProps {
     entityName: string;
@@ -46,6 +47,11 @@ export function DetailsSection({
     const runtimeV2 = useShardDetail_runtimeV2(entityName);
     const showBacklog = entityType === 'materialization' && runtimeV2;
 
+    const boundCollections = useMemo(
+        () => (latestLiveSpec?.spec?.bindings ?? []).map(getCollectionName),
+        [latestLiveSpec]
+    );
+
     // Passing an empty name leaves the queries unissued, so this costs nothing
     // for a task with no backlog rows to show
     const {
@@ -57,7 +63,8 @@ export function DetailsSection({
     } = useMaterializationBacklog(
         // TODO: this is a bit of a hack. An empty string below prevents the hook from firing - necessary because
         // DetailsSection is used for more than just materializations. Would be nice to split this out into more composable components.
-        showBacklog ? entityName : ''
+        showBacklog ? entityName : '',
+        boundCollections
     );
 
     const data = useMemo(() => {

@@ -83,6 +83,11 @@ export function useBindings(
         [entityType, intervals, latestLiveSpec]
     );
 
+    const boundCollections = useMemo(
+        () => specRows.map(({ collection }) => collection),
+        [specRows]
+    );
+
     // Captures have no upstream frontier to be behind. Passing '' leans
     // on the checks in `useMaterializationBacklog` to skip it.
     const {
@@ -92,7 +97,8 @@ export function useBindings(
         timeLag,
         timeLagLoading,
     } = useMaterializationBacklog(
-        entityType === 'materialization' ? entityName : ''
+        entityType === 'materialization' ? entityName : '',
+        boundCollections
     );
 
     const bindings = useMemo(

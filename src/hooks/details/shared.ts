@@ -27,8 +27,8 @@ export interface MaterializationTimeLag {
 
 // The most recent stats row that actually describes the task's bindings.
 //
-// An hourly row is opened by whichever stats document lands first in that hour,
-// and a usage heartbeat carries no `materialize` block at all — so the newest row
+// A row is opened by whichever stats document lands first in its interval, and
+// a usage heartbeat carries no `materialize` block at all — so the newest row
 // for a task can exist while saying nothing about its bindings.
 const newestBindingStats = (
     rows: CatalogTaskStats[]
@@ -42,17 +42,16 @@ const newestBindingStats = (
 // that report no reading have caught up and contribute nothing, so a total of
 // zero means the task is current.
 //
-// Returns null when no row describes the bindings at all.
+// Only the bound collections count: a row keeps a removed binding's last
+// reading until its interval ends. Returns null when no row describes them.
 export const parseMaterializationBacklog = (
-    rows: CatalogTaskStats[]
+    rows: CatalogTaskStats[],
+    boundCollections: string[]
 ): MaterializationBacklog | null => {
     const latest = newestBindingStats(rows);
 
-    if (!latest) {
-        return null;
-    }
-
-    const bindings = (latest.taskStats?.materialize ?? [])
+    const bindings = (latest?.taskStats?.materialize ?? [])
+        .filter(({ collection }) => boundCollections.includes(collection))
         .map((bindingStats) => ({
             collectionName: bindingStats.collection,
             bytesBehind: Number(bindingStats.bytesBehind),
@@ -60,6 +59,10 @@ export const parseMaterializationBacklog = (
                 bindingStats.lastSourcePublishedAt ?? undefined,
         }))
         .sort((left, right) => right.bytesBehind - left.bytesBehind);
+
+    if (!latest || !hasLength(bindings)) {
+        return null;
+    }
 
     return {
         bindings,
