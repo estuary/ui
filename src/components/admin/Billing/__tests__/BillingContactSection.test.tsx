@@ -229,7 +229,9 @@ test('saves only once the address is complete', async () => {
     stripe.getValue.mockResolvedValue(austin);
     fireEvent.click(save);
     await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
-    expect(saves.map((saved) => saved.emails)).toEqual([completeContact.emails]);
+    expect(saves.map((saved) => saved.emails)).toEqual([
+        completeContact.emails,
+    ]);
 });
 
 test('saves additional emails after the billing email', async () => {
