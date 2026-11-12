@@ -13,7 +13,7 @@ const SECRET_CAPABILITIES_QUERY = graphql(`
             edges {
                 node {
                     prefix
-                    capabilityBits
+                    capabilities
                 }
             }
         }
@@ -35,7 +35,7 @@ export function useCanEditSecret(catalogName: string) {
 
     const canEdit =
         data?.prefixes.edges.some(({ node }) =>
-            node.capabilityBits.includes('EditSecret')
+            node.capabilities.includes('EditSecret')
         ) ?? false;
 
     return { canEdit, fetching, error };

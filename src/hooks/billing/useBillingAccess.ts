@@ -2,7 +2,7 @@ import { useQuery } from 'urql';
 
 import { BILLING_CAPABILITIES_QUERY } from 'src/api/gql/billing';
 
-// Billing is authorized against the tenant itself, so only bits held at the
+// Billing is authorized against the tenant itself, so only bundles held at the
 // tenant prefix count. A grant on `acme/team/` does not cover `acme/`.
 export function useBillingAccess(tenant: string) {
     // Callers remount when the tenant changes, so no earlier tenant's data is retained here.
@@ -11,7 +11,7 @@ export function useBillingAccess(tenant: string) {
         variables: { tenant },
     });
 
-    const capabilities = data?.prefixes.edges[0]?.node.capabilityBits ?? [];
+    const capabilities = data?.prefixes.edges[0]?.node.capabilities ?? [];
 
     return {
         canView: capabilities.includes('ViewBilling'),

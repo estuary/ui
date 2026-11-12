@@ -394,6 +394,28 @@ enum CapabilityBit {
 }
 
 """
+A stable, named bundle of capability bits. Grants and token capability
+masks name bundles rather than bits, so bits may be added, split, or
+merged without changing stored grants or minted tokens.
+"""
+enum CapabilityBundle {
+  Admin
+  Assume
+  Billing
+  CreateSandbox
+  Delegate
+  EditBilling
+  EditSecret
+  Editor
+  ManageDataPlane
+  ManageServiceAccounts
+  TeamAdmin
+  ViewBilling
+  Viewer
+  Writer
+}
+
+"""
 Stats for one binding of a capture, keyed by the collection it writes to.
 """
 type CaptureBindingStats {
@@ -2172,8 +2194,10 @@ input PrefixFilter {
 
 """A prefix to which the user is authorized."""
 type PrefixRef {
-  """Fine-grained capabilities the user has at this prefix."""
-  capabilities: [CapabilityBit!]! @deprecated(reason: "Use capabilityBits instead.")
+  """
+  Capability bundles that cover the user's capability bits at this prefix.
+  """
+  capabilities: [CapabilityBundle!]!
 
   """Fine-grained capabilities the user has at this prefix."""
   capabilityBits: [CapabilityBit!]!

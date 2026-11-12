@@ -1,3 +1,5 @@
+import type { CapabilityBundle } from 'src/gql-types/graphql';
+
 import { renderHook } from '@testing-library/react';
 import { CombinedError, useQuery } from 'urql';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
@@ -12,7 +14,7 @@ vi.mock(import('urql'), async (importOriginal) => ({
 const mockedUseQuery = vi.mocked(useQuery);
 
 function mockPrefixes(
-    nodes: { prefix: string; capabilityBits: string[] }[] | undefined,
+    nodes: { prefix: string; capabilities: CapabilityBundle[] }[] | undefined,
     state: { fetching?: boolean; error?: CombinedError } = {}
 ) {
     mockedUseQuery.mockReturnValue([
@@ -51,10 +53,10 @@ describe('useCanEditSecret', () => {
 
     test('should allow editing when any covering prefix grants EditSecret', () => {
         mockPrefixes([
-            { prefix: 'acmeCo/', capabilityBits: ['CatalogRead'] },
+            { prefix: 'acmeCo/', capabilities: ['Viewer'] },
             {
                 prefix: 'acmeCo/team/',
-                capabilityBits: ['ViewSecret', 'EditSecret'],
+                capabilities: ['EditSecret'],
             },
         ]);
         const { result } = renderHook(() =>
@@ -66,7 +68,7 @@ describe('useCanEditSecret', () => {
 
     test('should not allow editing without EditSecret capability', () => {
         mockPrefixes([
-            { prefix: 'acmeCo/', capabilityBits: ['ViewSecret', 'SpecEdit'] },
+            { prefix: 'acmeCo/', capabilities: ['Viewer', 'Writer'] },
         ]);
         const { result } = renderHook(() =>
             useCanEditSecret('acmeCo/team/api-key')
