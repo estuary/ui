@@ -5,7 +5,6 @@ import { useMemo } from 'react';
 
 import { Button, Divider, Stack, Typography } from '@mui/material';
 
-import { FormattedMessage } from 'react-intl';
 import { useMount } from 'react-use';
 
 import FullPageWrapper from 'src/app/FullPageWrapper';
@@ -47,11 +46,7 @@ function FullPageError({
         <FullPageWrapper>
             <Stack spacing={2}>
                 <Typography variant="h5">
-                    {title ? (
-                        title
-                    ) : (
-                        <FormattedMessage id="common.failedFetch" />
-                    )}
+                    {title ? title : 'Unable to reach server'}
                 </Typography>
                 {messageContent}
                 <Typography variant="subtitle1">

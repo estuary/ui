@@ -11,7 +11,7 @@ export function useBillingAccess(tenant: string) {
         variables: { tenant },
     });
 
-    const capabilities = data?.prefixes.edges[0]?.node.capabilities ?? [];
+    const capabilities = data?.prefixes.edges[0]?.node.capabilityBits ?? [];
 
     return {
         canView: capabilities.includes('ViewBilling'),

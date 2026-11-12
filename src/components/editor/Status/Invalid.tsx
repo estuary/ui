@@ -1,7 +1,6 @@
 import { Typography } from '@mui/material';
 
 import { DatabaseWarning } from 'iconoir-react';
-import { FormattedMessage } from 'react-intl';
 
 interface Props {
     iconSize: number;
@@ -10,9 +9,7 @@ interface Props {
 function Invalid({ iconSize }: Props) {
     return (
         <>
-            <Typography>
-                <FormattedMessage id="common.invalid" />
-            </Typography>
+            <Typography>Invalid</Typography>
 
             <DatabaseWarning style={{ fontSize: iconSize }} />
         </>

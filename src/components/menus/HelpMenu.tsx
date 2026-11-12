@@ -1,7 +1,5 @@
 import { Menu } from '@mui/material';
 
-import { FormattedMessage, useIntl } from 'react-intl';
-
 import ExternalLinkMenuItem from 'src/components/shared/ExternalLinkMenuItem';
 
 interface HelpMenuProps {
@@ -10,8 +8,6 @@ interface HelpMenuProps {
 }
 
 export function HelpMenu({ anchorEl, onClose }: HelpMenuProps) {
-    const intl = useIntl();
-
     return (
         <Menu
             anchorEl={anchorEl}
@@ -27,30 +23,20 @@ export function HelpMenu({ anchorEl, onClose }: HelpMenuProps) {
                 vertical: 'bottom',
             }}
         >
-            <ExternalLinkMenuItem
-                link={intl.formatMessage({ id: 'helpMenu.docs.link' })}
-            >
-                <FormattedMessage id="helpMenu.docs" />
+            <ExternalLinkMenuItem link="https://docs.estuary.dev/">
+                Docs
             </ExternalLinkMenuItem>
-            <ExternalLinkMenuItem
-                link={intl.formatMessage({ id: 'helpMenu.status.link' })}
-            >
-                <FormattedMessage id="helpMenu.status" />
+            <ExternalLinkMenuItem link="https://status.estuary.dev/">
+                Status
             </ExternalLinkMenuItem>
-            <ExternalLinkMenuItem
-                link={intl.formatMessage({ id: 'helpMenu.slack.link' })}
-            >
-                <FormattedMessage id="helpMenu.slack" />
+            <ExternalLinkMenuItem link="https://join.slack.com/t/estuary-dev/shared_invite/zt-86nal6yr-VPbv~YfZE9Q~6Zl~gmZdFQ">
+                Estuary Slack
             </ExternalLinkMenuItem>
-            <ExternalLinkMenuItem
-                link={intl.formatMessage({ id: 'helpMenu.support.link' })}
-            >
-                <FormattedMessage id="helpMenu.support" />
+            <ExternalLinkMenuItem link="mailto:support@estuary.dev">
+                Email Support
             </ExternalLinkMenuItem>
-            <ExternalLinkMenuItem
-                link={intl.formatMessage({ id: 'helpMenu.contact.link' })}
-            >
-                <FormattedMessage id="helpMenu.contact" />
+            <ExternalLinkMenuItem link="https://estuary.dev/contact-us">
+                Contact Us
             </ExternalLinkMenuItem>
         </Menu>
     );

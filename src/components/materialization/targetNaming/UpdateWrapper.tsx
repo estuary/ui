@@ -2,8 +2,6 @@ import type { StrategyKey } from 'src/components/materialization/targetNaming/St
 
 import { Box, Button, Stack, Typography } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 import TargetNamingDialog from 'src/components/materialization/targetNaming/Dialog';
 import { ExampleRow } from 'src/components/materialization/targetNaming/ExampleRow';
 import {
@@ -25,7 +23,6 @@ import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
 // Shown in Advanced Options for rootTargetNaming specs.
 // Lets the user re-open the Destination Layout dialog to change their selection.
 export default function TargetNamingUpdateWrapper() {
-    const intl = useIntl();
     const formActive = useFormStateStore_isActive();
 
     const {
@@ -77,9 +74,7 @@ export default function TargetNamingUpdateWrapper() {
             disabled={saving || formActive}
             onClick={openNamingDialog}
         >
-            {intl.formatMessage({
-                id: 'cta.modify',
-            })}
+            modify
         </Button>
     );
 
@@ -87,15 +82,13 @@ export default function TargetNamingUpdateWrapper() {
         <Stack spacing={1}>
             <Stack spacing={1} sx={{ mb: 2 }}>
                 <Typography variant="formSectionHeader">
-                    {intl.formatMessage({
-                        id: 'destinationLayout.title',
-                    })}
+                    Default Naming Convention
                 </Typography>
 
                 <Typography>
-                    {intl.formatMessage({
-                        id: 'destinationLayout.dialog.message',
-                    })}
+                    Controls how collection names are mapped to destination
+                    tables and schemas. Becomes the default setting for newly
+                    added bindings.
                 </Typography>
             </Stack>
 
@@ -138,9 +131,7 @@ export default function TargetNamingUpdateWrapper() {
                                     color="text.secondary"
                                     variant="body2"
                                 >
-                                    {intl.formatMessage({
-                                        id: 'destinationLayout.selected.none',
-                                    })}
+                                    no convention set
                                 </Typography>
                             </StrategyOptionWrapper>
                             {modifyButton}

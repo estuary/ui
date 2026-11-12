@@ -1,5 +1,4 @@
 import type {
-    ChipProps,
     TableCellProps,
     ToggleButtonProps,
     TooltipProps,
@@ -13,12 +12,6 @@ import type { FieldOutcome, RejectOutput, SelectOutput } from 'src/types/wasm';
 export interface BaseFieldOutcomeProps {
     bindingUUID: string | null;
     outcome: FieldOutcome;
-}
-
-export interface ChipStatusProps {
-    messageId: string;
-    color: ChipProps['color'];
-    TableCellProps?: Partial<TableCellProps>;
 }
 
 export interface FieldActionButtonProps extends ToggleButtonProps {

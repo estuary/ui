@@ -1,7 +1,5 @@
 import { alertTitleClasses, Box } from '@mui/material';
 
-import { FormattedMessage } from 'react-intl';
-
 import AlertBox from 'src/components/shared/AlertBox';
 import { useEntityType } from 'src/context/EntityContext';
 import useGlobalSearchParams, {
@@ -28,30 +26,13 @@ function ShardsDisableWarning() {
                 <AlertBox
                     short
                     severity="warning"
-                    title={
-                        <FormattedMessage
-                            id="workflows.disable.autoEnabledAlert.title"
-                            values={{
-                                entityType,
-                            }}
-                        />
-                    }
+                    title={`${entityType} enabled`}
                 >
                     <Box>
-                        <FormattedMessage
-                            id="workflows.disable.autoEnabledAlert.message"
-                            values={{
-                                entityType,
-                            }}
-                        />
+                        {`We have automatically enabled this ${entityType} to ensure we can test the connection with the endpoint.`}
                     </Box>
                     <Box>
-                        <FormattedMessage
-                            id="workflows.disable.autoEnabledAlert.instructions"
-                            values={{
-                                entityType,
-                            }}
-                        />
+                        {`To keep the ${entityType} disabled you will need to disable before publishing.`}
                     </Box>
                 </AlertBox>
             </Box>

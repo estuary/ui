@@ -16,7 +16,6 @@ import {
 
 import { Check, EditPencil, Xmark } from 'iconoir-react';
 import { useFieldArray, useFormContext } from 'react-hook-form';
-import { useIntl } from 'react-intl';
 
 import { useConnectionTest } from 'src/components/admin/Settings/StorageMappings/Dialog/ConnectionTest';
 import { ActionLink } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/ActionLink';
@@ -39,7 +38,6 @@ function CompactStoreRow({
     inactive?: boolean;
     sx?: SxProps<Theme>;
 }) {
-    const intl = useIntl();
     const details: string[] = [store.provider];
     if (store.provider === 'AZURE') {
         if (store.storageAccountName) details.push(store.storageAccountName);
@@ -74,13 +72,7 @@ function CompactStoreRow({
                         fontStyle: inactive ? 'italic' : undefined,
                     }}
                 >
-                    {inactive
-                        ? intl.formatMessage({
-                              id: 'storageMappings.dialog.storageLocations.inactive',
-                          })
-                        : intl.formatMessage({
-                              id: 'storageMappings.dialog.storageLocations.primary',
-                          })}
+                    {inactive ? 'Inactive' : 'Primary'}
                 </Typography>
             </Stack>
             <Typography variant="caption" color="text.secondary">
@@ -97,7 +89,6 @@ function NestedFormActions({
     onAccept: () => void;
     onCancel: () => void;
 }) {
-    const intl = useIntl();
     return (
         <Stack
             direction="row"
@@ -118,10 +109,7 @@ function NestedFormActions({
                     gap: 0.5,
                 }}
             >
-                {intl.formatMessage({
-                    id: 'storageMappings.dialog.storageLocations.accept',
-                })}{' '}
-                <Check width={20} height={20} />
+                Accept <Check width={20} height={20} />
             </Link>
             <Divider orientation="vertical" flexItem />
             <Link
@@ -134,10 +122,7 @@ function NestedFormActions({
                     gap: 0.5,
                 }}
             >
-                {intl.formatMessage({
-                    id: 'storageMappings.dialog.storageLocations.cancel',
-                })}{' '}
-                <Xmark width={20} height={20} />
+                Cancel <Xmark width={20} height={20} />
             </Link>
         </Stack>
     );
@@ -172,7 +157,6 @@ export function StorageLocationsCard({
     formOpen: boolean;
     setFormOpen: (editing: boolean) => void;
 }) {
-    const intl = useIntl();
     const { control, watch, trigger, getValues } =
         useFormContext<StorageMappingFormData>();
     const {
@@ -301,19 +285,13 @@ export function StorageLocationsCard({
                         theme.transitions.create('margin-bottom'),
                 }}
             >
-                <Typography sx={cardHeaderSx}>
-                    {intl.formatMessage({
-                        id: 'storageMappings.dialog.storageLocations.title',
-                    })}
-                </Typography>
+                <Typography sx={cardHeaderSx}>Storage Locations</Typography>
                 <Collapse in={!showNestedStorageForm}>
                     <ActionLink
                         onClick={handleStartAdding}
                         disabled={hasNewStore}
                     >
-                        {intl.formatMessage({
-                            id: 'storageMappings.dialog.storageLocations.changePrimary',
-                        })}
+                        Change primary store
                     </ActionLink>
                 </Collapse>
             </Stack>
@@ -384,9 +362,8 @@ export function StorageLocationsCard({
                         color="text.secondary"
                         sx={{ mt: 1 }}
                     >
-                        {intl.formatMessage({
-                            id: 'storageMappings.dialog.storageLocations.historicalNote',
-                        })}
+                        Previous stores are kept for historical data. New data
+                        will be directed to the primary store.
                     </Typography>
                 </Collapse>
             </Stack>

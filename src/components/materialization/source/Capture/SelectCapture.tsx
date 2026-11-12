@@ -5,7 +5,6 @@ import { Button } from '@mui/material';
 import { useShallow } from 'zustand/react/shallow';
 
 import { isString } from 'lodash';
-import { useIntl } from 'react-intl';
 
 import { useEditorStore_queryResponse_draftSpecs } from 'src/components/editor/Store/hooks';
 import AddSourceCaptureToSpecButton from 'src/components/materialization/source/Capture/AddSourceCaptureToSpecButton';
@@ -18,7 +17,6 @@ import { readSourceCaptureDefinitionFromSpec } from 'src/utils/entity-utils';
 const DIALOG_ID = 'add-source-capture-search-dialog';
 
 function SelectCapture() {
-    const intl = useIntl();
     const formActive = useFormStateStore_isActive();
     const isEdit = useEntityWorkflow_Editing();
     const defaultedOnce = useRef(false);
@@ -74,11 +72,7 @@ function SelectCapture() {
                 disabled={showLoading || formActive}
                 onClick={handleModifyClick}
             >
-                {intl.formatMessage({
-                    id: showLoading
-                        ? 'workflows.sourceCapture.cta.loading'
-                        : 'cta.modify',
-                })}
+                {showLoading ? 'Loading...' : 'modify'}
             </Button>
 
             <AddDialog
@@ -88,7 +82,7 @@ function SelectCapture() {
                 PrimaryCTA={AddSourceCaptureToSpecButton}
                 selectedCollections={selectedCollections}
                 toggle={toggleDialog}
-                title={intl.formatMessage({ id: 'captureTable.header' })}
+                title="Captures"
             />
         </>
     );

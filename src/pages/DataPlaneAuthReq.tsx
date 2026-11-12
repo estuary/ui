@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 
 import { Box, Toolbar, Typography } from '@mui/material';
 
-import { useIntl } from 'react-intl';
 import { useSearchParams } from 'react-router-dom';
 
 import { getLiveSpecs_dataPlaneAuthReq } from 'src/api/liveSpecsExt';
@@ -23,8 +22,6 @@ interface RedirectResult {
 
 const DataPlaneAuthReq = () => {
     usePageTitle({ header: authenticatedRoutes.dataPlaneAuth.title });
-
-    const intl = useIntl();
 
     const [searchParams] = useSearchParams();
     const catalogPrefix = searchParams.get('prefix');
@@ -139,25 +136,14 @@ const DataPlaneAuthReq = () => {
                         error={
                             typeof redirectResult.error === 'string'
                                 ? {
-                                      message: intl.formatMessage(
-                                          {
-                                              id: 'dataPlaneAuthReq.error.message',
-                                          },
-                                          {
-                                              catalogPrefix,
-                                              error: redirectResult.error,
-                                          }
-                                      ),
+                                      message: `Authorization to access ${catalogPrefix ?? ''} failed: ${redirectResult.error}`,
                                   }
                                 : redirectResult.error
                         }
                     />
                 ) : (
                     <Typography>
-                        {intl.formatMessage(
-                            { id: 'dataPlaneAuthReq.waiting.message' },
-                            { catalogPrefix, originalUrl }
-                        )}
+                        {`Please wait while we authorize access to ${catalogPrefix ?? ''}. You will be redirected shortly.`}
                     </Typography>
                 )}
             </Box>

@@ -9,7 +9,6 @@ import {
 } from '@mui/material';
 
 import { isEqual, isObject } from 'lodash';
-import { FormattedMessage } from 'react-intl';
 
 import useAutoDiscovery from 'src/components/capture/useAutoDiscovery';
 import { useEditorStore_queryResponse_draftSpecs } from 'src/components/editor/Store/hooks';
@@ -147,7 +146,7 @@ function AutoDiscoverySettings({ readOnly }: Props) {
     return (
         <Stack spacing={1}>
             <Typography variant="formSectionHeader">
-                <FormattedMessage id="workflows.autoDiscovery.header" />
+                Schema Evolution
             </Typography>
 
             <Stack spacing={2} direction="row">
@@ -167,9 +166,7 @@ function AutoDiscoverySettings({ readOnly }: Props) {
                                 }}
                             />
                         }
-                        label={
-                            <FormattedMessage id="workflows.autoDiscovery.label.optIntoDiscovery" />
-                        }
+                        label={<>Automatically keep schemas up to date</>}
                     />
                 </FormControl>
 
@@ -189,9 +186,7 @@ function AutoDiscoverySettings({ readOnly }: Props) {
                                 }}
                             />
                         }
-                        label={
-                            <FormattedMessage id="workflows.autoDiscovery.label.addNewBindings" />
-                        }
+                        label={<>Automatically add new collections</>}
                     />
                 </FormControl>
 
@@ -212,7 +207,7 @@ function AutoDiscoverySettings({ readOnly }: Props) {
                             />
                         }
                         label={
-                            <FormattedMessage id="workflows.autoDiscovery.label.evolveIncompatibleCollection" />
+                            <>Changing primary keys re-versions collections</>
                         }
                     />
                 </FormControl>

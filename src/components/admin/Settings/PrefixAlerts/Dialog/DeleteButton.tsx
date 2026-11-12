@@ -4,13 +4,10 @@ import { useMemo } from 'react';
 
 import { Button } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
 import { useModifyAlertMetadata } from 'src/components/admin/Settings/PrefixAlerts/useModifyAlertMetadata';
 
 const DeleteButton = ({ closeDialog }: DialogActionProps) => {
-    const intl = useIntl();
     const { loading, onClick } = useModifyAlertMetadata(closeDialog, true);
 
     const errorsExist = useAlertSubscriptionsStore(
@@ -68,7 +65,7 @@ const DeleteButton = ({ closeDialog }: DialogActionProps) => {
             size="small"
             variant="outlined"
         >
-            {intl.formatMessage({ id: 'alerts.config.dialog.cta.deleteAll' })}
+            Delete Prefix Alerts
         </Button>
     );
 };

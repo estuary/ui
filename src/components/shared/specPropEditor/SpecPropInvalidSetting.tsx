@@ -49,9 +49,7 @@ function SpecPropInvalidSetting({
                         return updateDraftedSetting();
                     }}
                 >
-                    {intl.formatMessage({
-                        id: 'specPropEditor.error.cta',
-                    })}
+                    Remove Setting
                 </Button>
             ) : null}
         </AlertBox>

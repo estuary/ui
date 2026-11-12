@@ -8,7 +8,6 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { Grid, Stack, Typography } from '@mui/material';
 
-import { FormattedMessage } from 'react-intl';
 import { useUpdateEffect } from 'react-use';
 
 import CollectionSchemaEditorSkeleton from 'src/components/collection/schema/Editor/Skeleton';
@@ -147,7 +146,7 @@ function CollectionSchemaEditor({ entityName, localZustandScope }: Props) {
                             }}
                         >
                             <Typography variant="subtitle1" component="div">
-                                <FormattedMessage id="entityName.label" />
+                                Name
                             </Typography>
 
                             <Typography sx={{ ml: 1.5 }}>

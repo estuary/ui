@@ -16,7 +16,6 @@ import {
 } from '@mui/material';
 
 import { WarningTriangle } from 'iconoir-react';
-import { useIntl } from 'react-intl';
 
 import MessageWithLink from 'src/components/content/MessageWithLink';
 import AlertBox from 'src/components/shared/AlertBox';
@@ -26,7 +25,6 @@ function ConfirmationWithExplanation({
     message,
     selected,
 }: ConfirmationWithExplanationProps) {
-    const intl = useIntl();
     const theme = useTheme();
 
     const { dangerous: potentiallyDangerousUpdates, normal: normalUpdates } =
@@ -89,9 +87,7 @@ function ConfirmationWithExplanation({
                         my: 1,
                         p: 3,
                     }}
-                    headerMessage={intl.formatMessage({
-                        id: 'accessGrants.actions.extra.confirmation.title',
-                    })}
+                    headerMessage="Extra Attention Required"
                     severity="warning"
                 >
                     <Typography component="div">
@@ -106,15 +102,11 @@ function ConfirmationWithExplanation({
                 <TableHead>
                     <TableRow style={{ width: '100%' }}>
                         <TableCell style={{ width: '50%' }}>
-                            {intl.formatMessage({
-                                id: 'accessGrants.actions.extra.confirmation.whatIsChanging',
-                            })}
+                            What is changing?
                         </TableCell>
                         <TableCell />
                         <TableCell style={{ width: '50%' }}>
-                            {intl.formatMessage({
-                                id: 'accessGrants.actions.extra.confirmation.whatThatMeans',
-                            })}
+                            What will happen?
                         </TableCell>
                     </TableRow>
                 </TableHead>

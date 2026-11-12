@@ -12,7 +12,7 @@ vi.mock(import('urql'), async (importOriginal) => ({
 const mockedUseQuery = vi.mocked(useQuery);
 
 function mockPrefixes(
-    nodes: { prefix: string; capabilities: string[] }[] | undefined,
+    nodes: { prefix: string; capabilityBits: string[] }[] | undefined,
     state: { fetching?: boolean; error?: CombinedError } = {}
 ) {
     mockedUseQuery.mockReturnValue([
@@ -51,10 +51,10 @@ describe('useCanEditSecret', () => {
 
     test('should allow editing when any covering prefix grants EditSecret', () => {
         mockPrefixes([
-            { prefix: 'acmeCo/', capabilities: ['CatalogRead'] },
+            { prefix: 'acmeCo/', capabilityBits: ['CatalogRead'] },
             {
                 prefix: 'acmeCo/team/',
-                capabilities: ['ViewSecret', 'EditSecret'],
+                capabilityBits: ['ViewSecret', 'EditSecret'],
             },
         ]);
         const { result } = renderHook(() =>
@@ -66,7 +66,7 @@ describe('useCanEditSecret', () => {
 
     test('should not allow editing without EditSecret capability', () => {
         mockPrefixes([
-            { prefix: 'acmeCo/', capabilities: ['ViewSecret', 'SpecEdit'] },
+            { prefix: 'acmeCo/', capabilityBits: ['ViewSecret', 'SpecEdit'] },
         ]);
         const { result } = renderHook(() =>
             useCanEditSecret('acmeCo/team/api-key')

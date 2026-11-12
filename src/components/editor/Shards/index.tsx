@@ -1,7 +1,5 @@
 import { Box, Typography } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 import ShardsDisable from 'src/components/editor/Shards/Disable';
 import { useEditorStore_persistedDraftId } from 'src/components/editor/Store/hooks';
 import WrapperWithHeader from 'src/components/shared/Entity/WrapperWithHeader';
@@ -14,8 +12,6 @@ interface Props {
 }
 
 function ShardsEditor({ renderOpen }: Props) {
-    const intl = useIntl();
-
     const forcedToEnable = useGlobalSearchParams(
         GlobalSearchParams.FORCED_SHARD_ENABLE
     );
@@ -31,11 +27,7 @@ function ShardsEditor({ renderOpen }: Props) {
             <WrapperWithHeader
                 forceOpen={Boolean(forcedToEnable || renderOpen)}
                 header={
-                    <Typography component="span">
-                        {intl.formatMessage({
-                            id: 'workflows.advancedSettings.title',
-                        })}
-                    </Typography>
+                    <Typography component="span">Advanced Options</Typography>
                 }
             >
                 <ShardsDisable />

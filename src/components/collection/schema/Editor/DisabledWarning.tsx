@@ -1,12 +1,8 @@
-import { useIntl } from 'react-intl';
-
 import AlertBox from 'src/components/shared/AlertBox';
 import { useEntityType } from 'src/context/EntityContext';
 import { useSchemaEvolution_autoDiscover } from 'src/stores/SchemaEvolution/hooks';
 
 function DisabledWarning() {
-    const intl = useIntl();
-
     const entityType = useEntityType();
 
     const autoDiscover = useSchemaEvolution_autoDiscover();
@@ -20,13 +16,11 @@ function DisabledWarning() {
             sx={{ maxWidth: 'fit-content' }}
             short
             severity="warning"
-            title={intl.formatMessage({
-                id: 'schemaEditor.editing.disabled.title',
-            })}
+            title="Editing disabled"
         >
-            {intl.formatMessage({
-                id: 'schemaEditor.editing.disabled.message',
-            })}
+            {
+                'To edit collections, disable "Automatically keep schemas up to date" under "Schema Evolution"'
+            }
         </AlertBox>
     );
 }

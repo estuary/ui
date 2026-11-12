@@ -1,7 +1,5 @@
 import { Stack, Typography } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 import DataMovementSetting from 'src/components/admin/Settings/PrefixAlerts/Dialog/GlobalSettings/DataMovementSetting';
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
 import { useInitializeAlertConfig } from 'src/components/admin/Settings/PrefixAlerts/useInitializeAlertConfig';
@@ -9,8 +7,6 @@ import { defaultOutline } from 'src/context/Theme';
 import { AlertConfigKeys } from 'src/utils/notification-utils';
 
 const GlobalSettings = () => {
-    const intl = useIntl();
-
     const { loading } = useInitializeAlertConfig();
 
     const catalogPrefix = useAlertSubscriptionsStore(
@@ -36,15 +32,13 @@ const GlobalSettings = () => {
         >
             <Stack spacing="4px">
                 <Typography style={{ fontSize: 16, fontWeight: 300 }}>
-                    {intl.formatMessage({
-                        id: 'alerts.config.dialog.label.globalSettings',
-                    })}
+                    Global Settings
                 </Typography>
 
                 <Typography>
-                    {intl.formatMessage({
-                        id: 'alerts.config.dialog.message.globalSettings',
-                    })}
+                    Default settings applied to all tasks under this prefix.
+                    Individual tasks can override these values in their own
+                    notification settings.
                 </Typography>
             </Stack>
 

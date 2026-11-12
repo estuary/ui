@@ -1,16 +1,11 @@
 import { Grid } from '@mui/material';
 
 import StatOverview from 'src/components/home/dashboard/EntityStatOverview/StatOverview';
-import useMonthlyUsage from 'src/components/home/dashboard/EntityStatOverview/useMonthlyUsage';
+import { useMonthlyUsage } from 'src/components/home/dashboard/EntityStatOverview/useMonthlyUsage';
 
 export default function EntityStatOverview() {
-    const {
-        captureUsage,
-        error,
-        indeterminate,
-        isLoading,
-        materializationUsage,
-    } = useMonthlyUsage();
+    const { captureUsage, error, isLoading, materializationUsage } =
+        useMonthlyUsage();
 
     return (
         <>
@@ -18,8 +13,7 @@ export default function EntityStatOverview() {
                 <StatOverview
                     entityType="capture"
                     monthlyUsage={captureUsage}
-                    monthlyUsageError={error}
-                    monthlyUsageIndeterminate={indeterminate}
+                    monthlyUsageError={Boolean(error)}
                     monthlyUsageLoading={isLoading}
                 />
             </Grid>
@@ -32,8 +26,7 @@ export default function EntityStatOverview() {
                 <StatOverview
                     entityType="materialization"
                     monthlyUsage={materializationUsage}
-                    monthlyUsageError={error}
-                    monthlyUsageIndeterminate={indeterminate}
+                    monthlyUsageError={Boolean(error)}
                     monthlyUsageLoading={isLoading}
                 />
             </Grid>

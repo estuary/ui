@@ -36,14 +36,29 @@ export function getEmptyTableMessage(
     switch (tableStatus) {
         case TableStatuses.TECHNICAL_DIFFICULTIES:
             return (
-                <FormattedMessage id="entityTable.technicalDifficulties.message" />
+                // eslint-disable-next-line react/jsx-no-useless-fragment -- Preserve the JSX.Element return contract.
+                <>
+                    {
+                        "We apologize for the inconvenience. You'll find a message describing the issue at the top of the page."
+                    }
+                </>
             );
         case TableStatuses.UNMATCHED_FILTER:
             return (
-                <FormattedMessage id="entityTable.unmatchedFilter.message" />
+                // eslint-disable-next-line react/jsx-no-useless-fragment -- Preserve the JSX.Element return contract.
+                <>
+                    {
+                        "We couldn't find any data matching your search. Please try a different filter."
+                    }
+                </>
             );
         case TableStatuses.NETWORK_FAILED:
-            return <FormattedMessage id="entityTable.networkFailed.message" />;
+            return (
+                <>
+                    Please check your internet connection and reload the
+                    application.
+                </>
+            );
         default: {
             const { disableDoclink, message } = intlConfig;
 

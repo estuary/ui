@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 
 import { useSnackbar } from 'notistack';
-import { useIntl } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 
 import { authenticatedRoutes, unauthenticatedRoutes } from 'src/app/routes';
@@ -21,7 +20,7 @@ import { supabaseClient } from 'src/services/supabaseClient';
 
 function MarketplaceCallback() {
     const navigate = useNavigate();
-    const intl = useIntl();
+
     const { enqueueSnackbar } = useSnackbar();
 
     const { 1: setMarketplaceVerify } = useMarketplaceLocalStorage();
@@ -31,9 +30,7 @@ function MarketplaceCallback() {
             .signOut()
             .then(() => {
                 enqueueSnackbar(
-                    intl.formatMessage({
-                        id: 'login.marketPlace.loggedOut',
-                    }),
+                    'To apply marketplace subscription, please login below.',
                     {
                         anchorOrigin: {
                             vertical: 'top',
@@ -61,7 +58,7 @@ function MarketplaceCallback() {
                     }
                 );
             });
-    }, [enqueueSnackbar, intl, navigate, setMarketplaceVerify]);
+    }, [enqueueSnackbar, navigate, setMarketplaceVerify]);
 
     return <FullPageSpinner />;
 }

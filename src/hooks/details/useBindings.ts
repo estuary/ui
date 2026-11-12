@@ -1,19 +1,15 @@
-import type {
-    BindingRow,
-    BindingTaskStats,
-} from 'src/components/shared/Entity/Details/Overview/Bindings/types';
+import type { TaskBindingStats } from 'src/api/catalogStats';
+import type { BindingRow } from 'src/components/shared/Entity/Details/Overview/Bindings/types';
 import type { LiveSpecsQuery_details } from 'src/hooks/useLiveSpecs';
 import type { Entity } from 'src/types';
 
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 
-import { CATALOG_TASK_STATS_QUERY } from 'src/api/gql/catalogStats';
-import { usePollingQuery } from 'src/api/gql/usePollingQuery';
 import {
     attachBacklogReadings,
     buildBindingRows,
 } from 'src/components/shared/Entity/Details/Overview/Bindings/shared';
-import { toCatalogStatsBy } from 'src/hooks/catalogStats/useCatalogStats';
+import { useCatalogTaskStats } from 'src/hooks/catalogStats/useCatalogTaskStats';
 import { useMaterializationBacklog } from 'src/hooks/details/useMaterializationBacklog';
 import { useDetailsUsageStore } from 'src/stores/DetailsUsage/useDetailsUsageStore';
 
@@ -50,36 +46,31 @@ export function useBindings(
 ): UseBindingsResponse {
     const range = useDetailsUsageStore((state) => state.range);
 
-    const { data, error, fetching } = usePollingQuery({
-        query: CATALOG_TASK_STATS_QUERY,
-        pause: !entityName || entityType === 'collection',
-        // Slower than the chart's 15s: the same window costs the chart four
-        // numbers per interval and costs this every binding.
-        pollingIntervalMs: 60000,
-        variables: { by: toCatalogStatsBy([entityName], range) },
-    });
+    const { data, error, fetching, stale } = useCatalogTaskStats(
+        entityName,
+        range,
+        {
+            pause: !entityName || entityType === 'collection',
+            // Slower than the chart's 15s: the same window costs the chart four
+            // numbers per interval and costs this every binding.
+            pollingIntervalMs: 60000,
+        }
+    );
 
-    // `usePollingQuery` drops the data while a new range loads, which would
-    // zero every volume and reshuffle the volume-sorted table. Hold the last
-    // result instead; the cells render skeletons over it meanwhile.
-    const [retained, setRetained] = useState(data);
-    if (data && data !== retained) {
-        setRetained(data);
-    }
-
-    const statsLoading = fetching && !data;
-    const current = data ?? (statsLoading ? retained : undefined);
+    // While a new range loads, the last range's result stands in so volumes
+    // don't zero out and reshuffle the table; the cells render skeletons over it
+    const statsLoading = stale || (fetching && !data);
 
     const intervals = useMemo(
         () =>
-            current
-                ? current.catalogStats.edges
-                      .map(({ node }) => node.taskStats)
-                      .filter((stats): stats is BindingTaskStats =>
+            data
+                ? data
+                      .map(({ taskStats }) => taskStats)
+                      .filter((stats): stats is TaskBindingStats =>
                           Boolean(stats)
                       )
                 : null,
-        [current]
+        [data]
     );
 
     const specRows = useMemo(
@@ -92,8 +83,13 @@ export function useBindings(
         [entityType, intervals, latestLiveSpec]
     );
 
-    // Captures have no upstream frontier to be behind. Passing '' leans on the
-    // `hasLength` gate `useMaterializationBacklog` already uses to skip it.
+    const boundCollections = useMemo(
+        () => specRows.map(({ collection }) => collection),
+        [specRows]
+    );
+
+    // Captures have no upstream frontier to be behind. Passing '' leans
+    // on the checks in `useMaterializationBacklog` to skip it.
     const {
         backlog,
         error: backlogError,
@@ -101,7 +97,8 @@ export function useBindings(
         timeLag,
         timeLagLoading,
     } = useMaterializationBacklog(
-        entityType === 'materialization' ? entityName : ''
+        entityType === 'materialization' ? entityName : '',
+        boundCollections
     );
 
     const bindings = useMemo(

@@ -1,14 +1,10 @@
 import { Button, DialogActions } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 import { useWizard } from 'src/components/shared/WizardDialog/context';
 
 // Renders Back/Next/Save buttons and error text for the current wizard step.
 // Button visibility and labels adapt based on step position and per-step config.
 export function WizardActions() {
-    const intl = useIntl();
-
     const {
         isFirstStep,
         isLastStep,
@@ -32,7 +28,7 @@ export function WizardActions() {
                     onClick={retreat}
                     disabled={isNavigating}
                 >
-                    {intl.formatMessage({ id: 'cta.back' })}
+                    Back
                 </Button>
             ) : null}
 
@@ -44,10 +40,7 @@ export function WizardActions() {
                 loading={isNavigating}
                 sx={{ whiteSpace: 'nowrap' }}
             >
-                {currentStepConfig?.nextLabel ??
-                    (isLastStep
-                        ? intl.formatMessage({ id: 'cta.save' })
-                        : intl.formatMessage({ id: 'cta.next' }))}
+                {currentStepConfig?.nextLabel ?? (isLastStep ? 'Save' : 'Next')}
             </Button>
         </DialogActions>
     );

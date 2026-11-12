@@ -1,7 +1,5 @@
 import { Stack, Typography } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 import DeltaUpdatesUpdateWrapper from 'src/components/materialization/source/deltaUpdates/UpdateWrapper';
 import FieldsRecommendedUpdateWrapper from 'src/components/materialization/source/fieldsRecommended/UpdateWrapper';
 import TargetSchemaUpdateWrapper from 'src/components/materialization/source/targetSchema/UpdateWrapper';
@@ -9,8 +7,6 @@ import { useBinding_sourceCaptureFlags } from 'src/stores/Binding/hooks';
 import { useTargetNaming_model } from 'src/stores/TargetNaming/hooks';
 
 function SourceConfiguration() {
-    const intl = useIntl();
-
     const {
         sourceCaptureDeltaUpdatesSupported,
         sourceCaptureTargetSchemaSupported,
@@ -30,9 +26,7 @@ function SourceConfiguration() {
                             : undefined,
                 }}
             >
-                {intl.formatMessage({
-                    id: 'workflows.sourceCapture.optionalSettings.header',
-                })}
+                Default Collection Settings
             </Typography>
 
             <Stack spacing={3}>

@@ -2,15 +2,11 @@ import type { HydrationErrorAlertProps } from 'src/components/shared/Entity/Deta
 
 import { useMemo } from 'react';
 
-import { useIntl } from 'react-intl';
-
 import AlertBox from 'src/components/shared/AlertBox';
 import Message from 'src/components/shared/Error/Message';
 import { BASE_ERROR } from 'src/services/supabase';
 
 function HydrationErrorAlert({ hydrationError }: HydrationErrorAlertProps) {
-    const intl = useIntl();
-
     return useMemo(() => {
         if (!hydrationError) {
             return null;
@@ -19,9 +15,7 @@ function HydrationErrorAlert({ hydrationError }: HydrationErrorAlertProps) {
         return (
             <AlertBox
                 severity="error"
-                title={intl.formatMessage({
-                    id: 'ops.logsTable.hydrationError',
-                })}
+                title="We encountered a problem retrieving logs."
                 short
                 sx={{
                     maxWidth: 'fit-content',
@@ -35,7 +29,7 @@ function HydrationErrorAlert({ hydrationError }: HydrationErrorAlertProps) {
                 />
             </AlertBox>
         );
-    }, [hydrationError, intl]);
+    }, [hydrationError]);
 }
 
 export default HydrationErrorAlert;

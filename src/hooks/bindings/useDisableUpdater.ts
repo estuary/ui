@@ -5,7 +5,6 @@ import { useCallback, useMemo } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 
 import { useSnackbar } from 'notistack';
-import { useIntl } from 'react-intl';
 
 import {
     useEditorStore_id,
@@ -22,8 +21,6 @@ import { snackbarSettings } from 'src/utils/notification-utils';
 import { getCollectionName } from 'src/utils/workflow-utils';
 
 function useDisableUpdater(bindingUUID?: string) {
-    const intl = useIntl();
-
     const entityType = useEntityType();
 
     const draftId = useEditorStore_id();
@@ -135,9 +132,7 @@ function useDisableUpdater(bindingUUID?: string) {
                 })
                 .catch((error) => {
                     enqueueSnackbar(
-                        intl.formatMessage({
-                            id: 'workflows.collectionSelector.notifications.toggle.disable.error',
-                        }),
+                        'Changes reverted. Unable to update server. Please try again.',
                         { ...snackbarSettings, variant: 'error' }
                     );
 
@@ -150,7 +145,6 @@ function useDisableUpdater(bindingUUID?: string) {
         [
             enqueueSnackbar,
             generateToggleDisableUpdates,
-            intl,
             toggleDisable,
             setFormState,
             setSaving,

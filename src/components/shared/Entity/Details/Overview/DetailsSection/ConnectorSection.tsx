@@ -1,15 +1,15 @@
-import type { ConnectorSectionProps } from 'src/components/shared/Entity/Details/Overview/DetailsSection/types';
+import type { LiveSpecsQuery_details } from 'src/hooks/useLiveSpecs';
 
 import { Stack } from '@mui/material';
-
-import { useIntl } from 'react-intl';
 
 import ConnectorName from 'src/components/connectors/ConnectorName';
 import ExternalLink from 'src/components/shared/ExternalLink';
 
-function ConnectorSection({ latestLiveSpec }: ConnectorSectionProps) {
-    const intl = useIntl();
+interface ConnectorSectionProps {
+    latestLiveSpec: LiveSpecsQuery_details;
+}
 
+export function ConnectorSection({ latestLiveSpec }: ConnectorSectionProps) {
     return (
         <Stack
             direction="row"
@@ -29,13 +29,9 @@ function ConnectorSection({ latestLiveSpec }: ConnectorSectionProps) {
                 <ExternalLink
                     link={latestLiveSpec.connector_tag_documentation_url}
                 >
-                    {intl.formatMessage({
-                        id: 'terms.documentation',
-                    })}
+                    Docs
                 </ExternalLink>
             ) : null}
         </Stack>
     );
 }
-
-export default ConnectorSection;

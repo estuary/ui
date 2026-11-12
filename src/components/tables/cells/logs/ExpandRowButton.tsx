@@ -1,7 +1,6 @@
 import { Box, IconButton, Tooltip } from '@mui/material';
 
 import { NavArrowRight } from 'iconoir-react';
-import { useIntl } from 'react-intl';
 
 import { EXPAND_ROW_TRANSITION } from 'src/components/tables/Logs/shared';
 
@@ -10,12 +9,9 @@ interface Props {
 }
 
 function ExpandRowButton({ expanded }: Props) {
-    const intl = useIntl();
     return (
         <Tooltip
-            title={intl.formatMessage({
-                id: expanded ? 'aria.closeExpand' : 'aria.openExpand',
-            })}
+            title={expanded ? 'show less' : 'show more'}
             placement="top"
             enterDelay={500}
         >

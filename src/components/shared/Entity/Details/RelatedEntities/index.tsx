@@ -1,7 +1,5 @@
 import type { RelatedEntitiesProps } from 'src/components/shared/Entity/Details/RelatedEntities/types';
 
-import { useIntl } from 'react-intl';
-
 import ChipList from 'src/components/shared/ChipList';
 import useDetailsNavigator from 'src/hooks/useDetailsNavigator';
 import { ENTITY_SETTINGS } from 'src/settings/entity';
@@ -12,8 +10,6 @@ function RelatedEntities({
     error,
     newWindow,
 }: RelatedEntitiesProps) {
-    const intl = useIntl();
-
     const { generatePath } = useDetailsNavigator(
         ENTITY_SETTINGS[entityType].routes.details
     );
@@ -23,11 +19,7 @@ function RelatedEntities({
             <ChipList
                 disabled
                 stripPath={false}
-                values={[
-                    intl.formatMessage({
-                        id: 'detailsPanel.details.relatedEntity.failed',
-                    }),
-                ]}
+                values={['failed to find']}
                 maxChips={1}
             />
         );
@@ -38,11 +30,7 @@ function RelatedEntities({
             <ChipList
                 disabled
                 stripPath={false}
-                values={[
-                    entities === null
-                        ? intl.formatMessage({ id: 'common.loading' })
-                        : 'N/A',
-                ]}
+                values={[entities === null ? 'Loading...' : 'N/A']}
                 maxChips={1}
             />
         );
@@ -55,14 +43,7 @@ function RelatedEntities({
                 catalog_name: catalogName,
             }),
             newWindow: false,
-            title: intl.formatMessage(
-                {
-                    id: 'detailsPanel.details.relatedEntity.link',
-                },
-                {
-                    catalogName,
-                }
-            ),
+            title: `View details for ${catalogName}`,
         };
     });
 

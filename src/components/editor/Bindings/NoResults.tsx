@@ -1,10 +1,6 @@
 import { Box } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 function NoResults() {
-    const intl = useIntl();
-
     return (
         <Box
             sx={{
@@ -16,9 +12,7 @@ function NoResults() {
                 justifyContent: 'center',
             }}
         >
-            {intl.formatMessage({
-                id: 'entityCreate.bindingsConfig.noResults',
-            })}
+            No results found.
         </Box>
     );
 }

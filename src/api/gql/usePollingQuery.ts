@@ -9,6 +9,10 @@ import { useQuery } from 'urql';
 
 import { usePageVisibility } from 'src/hooks/usePageVisibility';
 
+// Without a polling interval, returning to the tab still refetches, but only
+// once the data is at least this old
+const MIN_STALE_ON_VISIBLE_MS = 5000;
+
 type UsePollingQueryArgs<
     Variables extends AnyVariables = AnyVariables,
     Data = any,
@@ -17,9 +21,10 @@ type UsePollingQueryArgs<
 };
 
 /**
- * Executes the given query on the specified interval. Does not run
+ * Executes the given query on the specified interval. Does not poll
  * if `pollingIntervalMs` is falsey. Polling is disabled while the
- * page is not visible.
+ * page is not visible. Either way, the query refetches when a hidden
+ * tab becomes visible again and the data is stale.
  */
 export function usePollingQuery<
     Data = any,
@@ -39,7 +44,7 @@ export function usePollingQuery<
     const pollingIntervalMs = args.pollingIntervalMs || null;
 
     const { pause } = args;
-    const canRefetch = !fetching && !pause && !!pollingIntervalMs;
+    const canRefetch = !fetching && !pause;
     const wasFetching = useRef(false);
 
     // Keep track of the last successful fetch time.
@@ -62,7 +67,7 @@ export function usePollingQuery<
         const isStale =
             !updatedAt ||
             DateTime.now().diff(updatedAt).toMillis() >=
-                (pollingIntervalMs ?? 0);
+                (pollingIntervalMs ?? MIN_STALE_ON_VISIBLE_MS);
 
         if (pageBecameVisible && canRefetch && isStale) {
             reexecuteQuery({ requestPolicy: 'network-only' });

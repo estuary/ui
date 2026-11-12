@@ -4,14 +4,10 @@ import { useState } from 'react';
 
 import { Button, TableCell } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 import AlertSubscriptionDialog from 'src/components/admin/Settings/PrefixAlerts/Dialog';
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
 
 function AlertEditButton({ prefix, ...props }: EditButtonProps) {
-    const intl = useIntl();
-
     const setIsEditFlow = useAlertSubscriptionsStore(
         (state) => state.setIsEditFlow
     );
@@ -29,7 +25,7 @@ function AlertEditButton({ prefix, ...props }: EditButtonProps) {
                     setOpen(true);
                 }}
             >
-                {intl.formatMessage({ id: 'cta.edit' })}
+                Edit
             </Button>
 
             <AlertSubscriptionDialog

@@ -3,8 +3,6 @@ import type { TableColumns } from 'src/types';
 
 import { Box, TableBody, TableCell, TableRow, Typography } from '@mui/material';
 
-import { FormattedMessage } from 'react-intl';
-
 import StatusIndicatorAndLabel from 'src/components/shared/Entity/Shard/StatusIndicatorAndLabel';
 import TableLoadingRows from 'src/components/tables/Loading';
 import { semiTransparentBackgroundIntensified } from 'src/context/Theme';
@@ -62,7 +60,7 @@ function InformationTableBody({
                                 justifyContent: 'center',
                             }}
                         >
-                            <FormattedMessage id="detailsPanel.shardDetails.noStatusFound" />
+                            No shard status to report
                         </Box>
                     </TableCell>
                 </TableRow>

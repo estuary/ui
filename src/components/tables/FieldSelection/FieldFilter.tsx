@@ -3,7 +3,6 @@ import type { ChangeEvent } from 'react';
 import { inputBaseClasses, TextField } from '@mui/material';
 
 import { debounce } from 'lodash';
-import { useIntl } from 'react-intl';
 import { useUnmount } from 'react-use';
 
 import {
@@ -17,8 +16,6 @@ interface Props {
 }
 
 export default function FieldFilter({ disabled }: Props) {
-    const intl = useIntl();
-
     const searchQuery = useBinding_searchQuery();
     const setSearchQuery = useBinding_setSearchQuery();
 
@@ -40,9 +37,7 @@ export default function FieldFilter({ disabled }: Props) {
         <TextField
             defaultValue={searchQuery}
             disabled={disabled}
-            label={intl.formatMessage({
-                id: 'fieldSelection.table.label.filter',
-            })}
+            label="Filter fields"
             id={`entityTable-search__${TablePrefixes.fieldSelection}`}
             onChange={filterTable}
             size="small"
