@@ -28,9 +28,8 @@ export function ConnectorSection({ latestLiveSpec }: ConnectorSectionProps) {
             {latestLiveSpec.connector_tag_documentation_url ? (
                 <ExternalLink
                     link={latestLiveSpec.connector_tag_documentation_url}
-                >
-                    Docs
-                </ExternalLink>
+                    label="Docs"
+                />
             ) : null}
         </Stack>
     );

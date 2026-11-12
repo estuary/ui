@@ -13,6 +13,7 @@ import {
     useForm,
     useFormContext,
 } from 'react-hook-form';
+import { Branch } from 'react-semantic-tree';
 
 import {
     useStorageMappings,
@@ -183,9 +184,10 @@ function DialogInner({
                                 Update your data plane or collection storage
                                 configuration below. For information and access
                                 requirements, see the{' '}
-                                <ExternalLink link="https://docs.estuary.dev/getting-started/installation/#configuring-your-cloud-storage-bucket-for-use-with-flow">
-                                    documentation
-                                </ExternalLink>
+                                <ExternalLink
+                                    label="documentation"
+                                    link="https://docs.estuary.dev/getting-started/installation/#configuring-your-cloud-storage-bucket-for-use-with-flow"
+                                />
                                 .
                             </Typography>
                             <Stack spacing={2}>
@@ -372,12 +374,17 @@ export function UpdateMappingWizard() {
                 key={storageMapping.catalogPrefix}
                 catalogPrefix={storageMapping.catalogPrefix}
             >
-                <DialogInner
-                    key={storageMapping.catalogPrefix}
-                    mapping={storageMapping}
-                    open={open}
-                    onClose={handleClose}
-                />
+                <Branch
+                    label="Edit Wizard"
+                    metadata={{ prefix: storageMapping.catalogPrefix }}
+                >
+                    <DialogInner
+                        key={storageMapping.catalogPrefix}
+                        mapping={storageMapping}
+                        open={open}
+                        onClose={handleClose}
+                    />
+                </Branch>
             </ConnectionTestProvider>
         </FormProvider>
     );

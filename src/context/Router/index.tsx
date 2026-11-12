@@ -693,7 +693,9 @@ const router = createBrowserRouter(
                         path={authenticatedRoutes.admin.path}
                         element={
                             <Branch label="Admin">
-                                <AdminTabs />
+                                <Branch label="Tab Nav">
+                                    <AdminTabs />
+                                </Branch>
                                 <Outlet />
                             </Branch>
                         }

@@ -3,7 +3,7 @@ import type { WizardStep } from 'src/components/shared/WizardDialog/types';
 
 import { useCallback, useEffect, useMemo } from 'react';
 
-import { Link, Stack, Typography } from '@mui/material';
+import { Stack, Typography } from '@mui/material';
 
 import {
     FormProvider,
@@ -11,6 +11,7 @@ import {
     useForm,
     useFormContext,
 } from 'react-hook-form';
+import { Branch } from 'react-semantic-tree';
 
 import { useStorageMappingService } from 'src/api/gql/storageMappings';
 import {
@@ -24,6 +25,7 @@ import { StorageFields } from 'src/components/admin/Settings/StorageMappings/Dia
 import MessageWithLink from 'src/components/content/MessageWithLink';
 import AlertBox from 'src/components/shared/AlertBox';
 import CardWrapper from 'src/components/shared/CardWrapper';
+import ExternalLink from 'src/components/shared/ExternalLink';
 import { WizardDialog } from 'src/components/shared/WizardDialog/WizardDialog';
 import { cardHeaderSx } from 'src/context/Theme';
 import { useDataPlanes } from 'src/hooks/dataPlanes/useDataPlanes';
@@ -110,7 +112,7 @@ function CreateMappingWizardInner({
                           component: (
                               <>
                                   <MessageWithLink messageID="storageMappings.dialog.create.description" />
-                                  <Stack spacing={2}>
+                                  <Stack spacing={2} sx={{ mt: 1 }}>
                                       <CardWrapper>
                                           <PrefixCard />
                                       </CardWrapper>
@@ -134,12 +136,16 @@ function CreateMappingWizardInner({
                                           />
                                       </CardWrapper>
                                       <CardWrapper>
-                                          <Typography sx={cardHeaderSx}>
-                                              Storage Locations
-                                          </Typography>
-                                          <StorageFields
-                                              defaultDataPlane={dataPlanes[0]}
-                                          />
+                                          <Branch label="Storage Locations">
+                                              <Typography sx={cardHeaderSx}>
+                                                  Storage Locations
+                                              </Typography>
+                                              <StorageFields
+                                                  defaultDataPlane={
+                                                      dataPlanes[0]
+                                                  }
+                                              />
+                                          </Branch>
                                       </CardWrapper>
                                   </Stack>
                               </>
@@ -164,13 +170,10 @@ function CreateMappingWizardInner({
                                       Each data plane that processes your data
                                       needs its own access to your storage
                                       bucket. For more details, see the{' '}
-                                      <Link
-                                          href="https://docs.estuary.dev/getting-started/installation/#configuring-your-cloud-storage-bucket-for-use-with-flow"
-                                          target="_blank"
-                                          rel="noopener noreferrer"
-                                      >
-                                          documentation
-                                      </Link>
+                                      <ExternalLink
+                                          label="documentation"
+                                          link="https://docs.estuary.dev/getting-started/installation/#configuring-your-cloud-storage-bucket-for-use-with-flow"
+                                      />
                                   </Typography>
 
                                   <ConnectionList />
@@ -225,7 +228,9 @@ export function CreateMappingWizard() {
     return (
         <FormProvider {...methods}>
             <ConnectionTestProvider catalogPrefix={catalogPrefix}>
-                <CreateMappingWizardInner open={open} onClose={onClose} />
+                <Branch label="Create Wizard">
+                    <CreateMappingWizardInner open={open} onClose={onClose} />
+                </Branch>
             </ConnectionTestProvider>
         </FormProvider>
     );

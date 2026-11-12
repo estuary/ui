@@ -1,5 +1,7 @@
 import { Divider, Grid, Typography } from '@mui/material';
 
+import { withBranch } from 'react-semantic-tree';
+
 import { authenticatedRoutes } from 'src/app/routes';
 import AccessToken from 'src/components/admin/Api/AccessToken';
 import { RefreshToken } from 'src/components/admin/Api/RefreshToken';
@@ -34,4 +36,4 @@ function AdminApi() {
     );
 }
 
-export default AdminApi;
+export default withBranch('API')(AdminApi);

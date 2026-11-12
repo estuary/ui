@@ -1,9 +1,11 @@
+import { withBranch } from 'react-semantic-tree';
+
 import DataPlanesTable from 'src/components/tables/DataPlanes';
 import { StandAloneTableTitle } from 'src/components/tables/EntityTable/StandAloneTableTitle';
 
 const docsUrl = 'https://docs.estuary.dev/reference/allow-ip-addresses/';
 
-export function DataPlanes() {
+function _DataPlanes() {
     return (
         <>
             <StandAloneTableTitle title="Data Planes" docsUrl={docsUrl} />
@@ -11,3 +13,5 @@ export function DataPlanes() {
         </>
     );
 }
+
+export const DataPlanes = withBranch('Data Planes')(_DataPlanes);

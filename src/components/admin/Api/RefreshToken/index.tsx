@@ -1,8 +1,10 @@
 import { Box, Stack, Typography } from '@mui/material';
 
+import { withBranch } from 'react-semantic-tree';
+
 import { RefreshTokenTable } from 'src/components/admin/Api/RefreshToken/Table';
 
-export function RefreshToken() {
+function _RefreshToken() {
     return (
         <Box sx={{ mb: 5 }}>
             <Stack sx={{ mb: 1 }}>
@@ -26,3 +28,5 @@ export function RefreshToken() {
         </Box>
     );
 }
+
+export const RefreshToken = withBranch('Refresh Tokens')(_RefreshToken);

@@ -58,9 +58,7 @@ export default function LegacyCard({
                                 {Logo}
 
                                 {docsUrl ? (
-                                    <ExternalLink link={docsUrl}>
-                                        Docs
-                                    </ExternalLink>
+                                    <ExternalLink link={docsUrl} label="Docs" />
                                 ) : null}
                             </Stack>
 

@@ -7,7 +7,6 @@ import useConstant from 'use-constant';
 import {
     Autocomplete,
     Button,
-    Dialog,
     DialogActions,
     DialogContent,
     DialogTitle,
@@ -18,6 +17,7 @@ import {
 
 import { AddressElement, Elements, useElements } from '@stripe/react-stripe-js';
 import { uniqBy } from 'lodash';
+import { useLeaf } from 'react-semantic-tree';
 import { useMutation } from 'urql';
 
 import { SET_BILLING_CONTACT } from 'src/api/gql/billing';
@@ -30,6 +30,7 @@ import {
 } from 'src/components/admin/Billing/stripe';
 import { useStripeLoadError } from 'src/components/admin/Billing/useStripeLoadError';
 import AlertBox from 'src/components/shared/AlertBox';
+import { SemanticDialog as Dialog } from 'src/components/shared/Semantic/Dialog';
 import {
     fromStripeAddress,
     getContactStatus,
@@ -116,7 +117,13 @@ export function BillingContactDialog({
 
     return (
         // No onClose: Escape or a click outside would discard the entered contact, so only Cancel closes it.
-        <Dialog open={open} maxWidth="sm" fullWidth data-private>
+        <Dialog
+            semantic={{ label: 'Dialog' }}
+            open={open}
+            maxWidth="sm"
+            fullWidth
+            data-private
+        >
             <Elements
                 stripe={getStripe()}
                 options={{ appearance, loader: 'auto' }}
@@ -134,6 +141,10 @@ function BillingContactForm({
     onClose,
     onSaved,
 }: BillingContactFormProps) {
+    const { ref: semanticSaveBillingContactRef } = useLeaf(
+        'Save Billing Contact'
+    );
+
     const elements = useElements();
     const [, setBillingContact] = useMutation(SET_BILLING_CONTACT);
     const [saving, setSaving] = useState(false);
@@ -316,6 +327,7 @@ function BillingContactForm({
                     Cancel
                 </Button>
                 <Button
+                    ref={semanticSaveBillingContactRef}
                     variant="contained"
                     onClick={() => void save()}
                     loading={saving}

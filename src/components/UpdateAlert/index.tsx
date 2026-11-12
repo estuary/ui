@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { Popover } from '@mui/material';
 
 import { ReloadWindow } from 'iconoir-react';
+import { useLeaf } from 'react-semantic-tree';
 import useSWR from 'swr';
 
 import { getLatestVersionDetails } from 'src/api/meta';
@@ -19,6 +20,7 @@ interface UpdateAlertProps {
 // matches the commit baked into this bundle, meaning a newer version of
 // the dashboard has been deployed since this tab loaded.
 export function UpdateAlert({ isOpen }: UpdateAlertProps) {
+    const { ref: updateRef } = useLeaf('Update');
     const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
     const [hasLatest, setHasLatest] = useState<boolean>(true);
@@ -52,6 +54,7 @@ export function UpdateAlert({ isOpen }: UpdateAlertProps) {
     return (
         <>
             <NavButton
+                ref={updateRef}
                 icon={<ReloadWindow />}
                 title="Update"
                 onClick={(e) => setAnchorEl(e.currentTarget)}

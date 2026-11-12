@@ -27,16 +27,7 @@ export function EndpointLink({ endpoint, hostName }: EndpointLinkProps) {
     if (isHttp(endpoint)) {
         const linkText = formatHttpUrl(fullHostName);
 
-        linky = (
-            <ExternalLink
-                link={linkText}
-                children={
-                    <Typography sx={{ textTransform: 'none' }}>
-                        {linkText}
-                    </Typography>
-                }
-            />
-        );
+        linky = <ExternalLink link={linkText} label={linkText} />;
     } else {
         linky = (
             <Typography>

@@ -14,6 +14,7 @@ import {
 } from '@mui/material';
 
 import { NavArrowDown, NavArrowRight, WarningCircle } from 'iconoir-react';
+import { useLeaf } from 'react-semantic-tree';
 
 import ChipList from 'src/components/shared/ChipList';
 import { useGetAlertTypes } from 'src/context/AlertType';
@@ -24,6 +25,10 @@ const Summary = ({
     expanded,
     subscription,
 }: SubscriberAccordionSummaryProps) => {
+    const { ref: semanticToggleSubscriberDetailsRef } = useLeaf(
+        'Toggle Subscriber Details'
+    );
+
     const theme = useTheme();
 
     const [alertTypeResponse] = useGetAlertTypes();
@@ -62,6 +67,7 @@ const Summary = ({
 
     return (
         <AccordionSummary
+            ref={semanticToggleSubscriberDetailsRef}
             sx={{
                 'minHeight': 40,
                 'px': 1,

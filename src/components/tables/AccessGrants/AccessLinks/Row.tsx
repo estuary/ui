@@ -24,6 +24,11 @@ export function Row({
 
         setError(result.error ?? null);
     };
+    const metadata = {
+        catalogPrefix: row.catalogPrefix,
+        capability: row.capability,
+        singleUse: row.singleUse,
+    };
 
     return (
         <TableRow hover>
@@ -42,13 +47,7 @@ export function Row({
             </TableCell>
 
             <TableCell>
-                <Branch
-                    metadata={{
-                        catalogPrefix: row.catalogPrefix,
-                        capability: row.capability,
-                        singleUse: row.singleUse,
-                    }}
-                >
+                <Branch metadata={metadata}>
                     <CopyAccessLink
                         token={row.token}
                         ssoProviderId={row.ssoProviderId}
@@ -59,16 +58,18 @@ export function Row({
             <TimeStamp time={row.createdAt} />
 
             <TableCell sx={{ width: 50 }}>
-                <Button
-                    ref={ref}
-                    onClick={handleDelete}
-                    disabled={fetching}
-                    variant="text"
-                    size="small"
-                    aria-label="Remove"
-                >
-                    Remove
-                </Button>
+                <Branch metadata={metadata}>
+                    <Button
+                        ref={ref}
+                        onClick={handleDelete}
+                        disabled={fetching}
+                        variant="text"
+                        size="small"
+                        aria-label="Remove"
+                    >
+                        Remove
+                    </Button>
+                </Branch>
             </TableCell>
         </TableRow>
     );

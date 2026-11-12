@@ -4,11 +4,15 @@ import { useMemo } from 'react';
 
 import { Button } from '@mui/material';
 
+import { useLeaf } from 'react-semantic-tree';
+
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
 import { useModifyAlertMetadata } from 'src/components/admin/Settings/PrefixAlerts/useModifyAlertMetadata';
 import { isValidEmail } from 'src/validation';
 
 const SaveButton = ({ closeDialog }: DialogActionProps) => {
+    const { ref: semanticSaveNotificationsRef } = useLeaf('Save Notifications');
+
     const { loading, onClick } = useModifyAlertMetadata(closeDialog);
 
     const errorsExist = useAlertSubscriptionsStore(
@@ -54,6 +58,7 @@ const SaveButton = ({ closeDialog }: DialogActionProps) => {
 
     return (
         <Button
+            ref={semanticSaveNotificationsRef}
             variant="contained"
             size="small"
             disabled={disabled}
