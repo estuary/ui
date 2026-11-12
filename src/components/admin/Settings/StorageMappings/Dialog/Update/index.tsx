@@ -75,16 +75,13 @@ function DialogInner({
 
     const { getValues, watch, setValue, reset } =
         useFormContext<StorageMappingFormData>();
-    const {
-        append: appendDataPlane,
-        remove: removeDataPlaneField,
-        move: moveDataPlane,
-    } = useFieldArray({
-        name: 'dataPlanes',
-        rules: {
-            required: 'At least one data plane is required',
-        },
-    });
+    const { append: appendDataPlane, replace: replaceDataPlanes } =
+        useFieldArray({
+            name: 'dataPlanes',
+            rules: {
+                required: 'At least one data plane is required',
+            },
+        });
     const allowPublic = watch('allowPublic');
     const dataPlanes = watch('dataPlanes');
     const fragmentStores = watch('fragmentStores');
@@ -102,15 +99,15 @@ function DialogInner({
         [appendDataPlane, connectToDp, testConnections]
     );
 
-    const deselectDataPlane = useCallback(
-        (index: number) => {
-            const dp = dataPlanes[index];
-            removeDataPlaneField(index);
-            if (dp) {
-                disconnectDp(dp);
-            }
+    const changeDataPlanes = useCallback(
+        (nextDataPlanes: DataPlaneNode[]) => {
+            const nextNames = new Set(nextDataPlanes.map((dp) => dp.name));
+            dataPlanes.forEach((dp) => {
+                if (!nextNames.has(dp.name)) disconnectDp(dp);
+            });
+            replaceDataPlanes(nextDataPlanes);
         },
-        [dataPlanes, removeDataPlaneField, disconnectDp]
+        [dataPlanes, replaceDataPlanes, disconnectDp]
     );
 
     const [nestedStoreFormOpen, setNestedStoreFormOpen] = useState(false);
@@ -192,17 +189,9 @@ function DialogInner({
                                 <CardWrapper>
                                     <DataPlanesCard
                                         dataPlanes={dataPlanes}
-                                        defaultDataPlane={
-                                            dataPlanes.length > 0
-                                                ? dataPlanes[0]
-                                                : null
-                                        }
                                         allowPublicChecked={allowPublic}
                                         onSelect={selectDataPlane}
-                                        onRemove={deselectDataPlane}
-                                        onSelectDefault={(index) =>
-                                            moveDataPlane(index, 0)
-                                        }
+                                        onChange={changeDataPlanes}
                                         onToggleAllowPublic={(value) =>
                                             setValue('allowPublic', value)
                                         }
@@ -234,8 +223,7 @@ function DialogInner({
             nestedStoreFormOpen,
             title,
             allowPublic,
-            deselectDataPlane,
-            moveDataPlane,
+            changeDataPlanes,
             save,
             selectDataPlane,
             setValue,
