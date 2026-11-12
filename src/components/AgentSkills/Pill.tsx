@@ -2,6 +2,7 @@ import { Box, Link, Paper, Tooltip, Typography, useTheme } from '@mui/material';
 
 import { usePostHog } from '@posthog/react';
 import { NavArrowRight } from 'iconoir-react';
+import { useLeaf } from 'react-semantic-tree';
 
 import {
     AGENT_SKILLS_URL,
@@ -13,11 +14,13 @@ import {
 import { SparkleIcon } from 'src/components/AgentSkills/SparkleIcon';
 
 function TooltipContent({ onClick }: { onClick: () => void }) {
+    const { ref: semanticPopoverRef } = useLeaf('Agent Skills Popover');
     const theme = useTheme();
     const mode = theme.palette.mode;
 
     return (
         <Paper
+            ref={semanticPopoverRef}
             elevation={0}
             onClick={onClick}
             sx={{
@@ -79,6 +82,11 @@ function TooltipContent({ onClick }: { onClick: () => void }) {
 }
 
 export function Pill() {
+    const { ref: semanticAgentSkillsRef } = useLeaf(
+        'Agent Skills',
+        { href: AGENT_SKILLS_URL },
+        { mount: true, hover: true }
+    );
     const postHog = usePostHog();
     const toastDismissed = useAgentSkillsStore((s) => s.toastDismissed);
 
@@ -116,6 +124,7 @@ export function Pill() {
             }}
         >
             <Link
+                ref={semanticAgentSkillsRef}
                 href={AGENT_SKILLS_URL}
                 target="_blank"
                 rel="noopener noreferrer"

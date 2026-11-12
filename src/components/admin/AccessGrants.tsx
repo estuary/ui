@@ -29,8 +29,9 @@ function AccessGrants() {
             <Branch label="User Grants">
                 <AccessGrantsTable tablePrefix="ag" showUser />
             </Branch>
-
-            <AccessGrantsTable tablePrefix="pr" />
+            <Branch label="Role Grants">
+                <AccessGrantsTable tablePrefix="pr" />
+            </Branch>
         </>
     );
 }

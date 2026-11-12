@@ -9,15 +9,19 @@ import {
 } from '@mui/material';
 
 import { Plus, Xmark } from 'iconoir-react';
+import { useLeaf, withBranch } from 'react-semantic-tree';
 
 import HeroImageAndDescription from 'src/components/home/hero';
 import { useShowDashboardWelcome } from 'src/context/DashboardWelcome';
 import { defaultOutline, semiTransparentBackground } from 'src/context/Theme';
 
-export default function Welcome() {
+function Welcome() {
     const theme = useTheme();
 
     const { welcomeShown, setWelcomeShown } = useShowDashboardWelcome();
+    const { ref: toggleWelcomeRef } = useLeaf(
+        welcomeShown ? 'Collapse' : 'Expand'
+    );
 
     return (
         <Box
@@ -42,6 +46,7 @@ export default function Welcome() {
                 </Typography>
 
                 <IconButton
+                    ref={toggleWelcomeRef}
                     onClick={() => setWelcomeShown(!welcomeShown)}
                     style={{ position: 'absolute', top: 14, right: 8 }}
                 >
@@ -59,3 +64,5 @@ export default function Welcome() {
         </Box>
     );
 }
+
+export default withBranch('Welcome Card')(Welcome);

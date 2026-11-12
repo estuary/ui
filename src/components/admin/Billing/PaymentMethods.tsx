@@ -15,6 +15,7 @@ import {
     Typography,
 } from '@mui/material';
 
+import { withBranch } from 'react-semantic-tree';
 import { useMutation } from 'urql';
 
 import {
@@ -252,4 +253,4 @@ function PaymentMethods({ canEdit, showAddPayment }: PaymentMethodsProps) {
     );
 }
 
-export default PaymentMethods;
+export default withBranch('Payment Methods')(PaymentMethods);

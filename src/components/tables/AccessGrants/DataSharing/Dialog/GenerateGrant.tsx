@@ -7,6 +7,8 @@ import { useMemo, useState } from 'react';
 
 import { Button, Grid, TextField } from '@mui/material';
 
+import { useLeaf } from 'react-semantic-tree';
+
 import { createRoleGrant } from 'src/api/roleGrants';
 import PrefixedName from 'src/components/inputs/PrefixedName';
 import AutocompletedField from 'src/components/shared/toolbar/AutocompletedField';
@@ -53,6 +55,12 @@ function GenerateGrant({ serverError, setServerError, setOpen }: Props) {
     const [objectRoleHasErrors, setObjectRoleHasErrors] = useState(false);
     const [subjectRole, setSubjectRole] = useState('');
     const [capability, setCapability] = useState(capabilityOptions[0]);
+
+    const { ref: grantRef } = useLeaf('Generate Grant', {
+        capability,
+        objectRole,
+        subjectRole,
+    });
 
     const handlers = {
         evaluateSubjectRole: (
@@ -165,6 +173,7 @@ function GenerateGrant({ serverError, setServerError, setOpen }: Props) {
             </Grid>
             <Grid size={{ xs: 4, md: 3 }} sx={{ display: 'flex' }}>
                 <Button
+                    ref={grantRef}
                     disabled={formInvalid}
                     onClick={handlers.generateRoleGrant}
                     sx={{ flexGrow: 1 }}

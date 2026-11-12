@@ -20,6 +20,7 @@ import {
     useElements,
     useStripe,
 } from '@stripe/react-stripe-js';
+import { useLeaf } from 'react-semantic-tree';
 
 import {
     billingAddressOptions,
@@ -44,6 +45,13 @@ export const PaymentForm = ({
     onSuccess,
     onError,
 }: PaymentFormProps) => {
+    const { ref: semanticUseDifferentAddressRef } = useLeaf(
+        'Use Different Address'
+    );
+    const { ref: semanticSubmitPaymentMethodRef } = useLeaf(
+        'Submit Payment Method'
+    );
+
     const stripe = useStripe();
     const elements = useElements();
 
@@ -179,6 +187,11 @@ export const PaymentForm = ({
                         <FormControlLabel
                             control={
                                 <Checkbox
+                                    slotProps={{
+                                        input: {
+                                            ref: semanticUseDifferentAddressRef,
+                                        },
+                                    }}
                                     checked={useDifferentAddress}
                                     disabled={loading}
                                     onChange={(_event, checked) =>
@@ -228,7 +241,11 @@ export const PaymentForm = ({
                         {error}
                     </Typography>
                 ) : null}
-                <Button onClick={handleSubmit} disabled={loading || loadError}>
+                <Button
+                    ref={semanticSubmitPaymentMethodRef}
+                    onClick={handleSubmit}
+                    disabled={loading || loadError}
+                >
                     {loading ? <CircularProgress size={15} /> : 'Submit'}
                 </Button>
             </DialogActions>

@@ -11,6 +11,7 @@ import {
 
 import { usePostHog } from '@posthog/react';
 import { NavArrowRight, Xmark } from 'iconoir-react';
+import { useLeaf } from 'react-semantic-tree';
 
 import {
     AGENT_SKILLS_URL,
@@ -28,6 +29,17 @@ const toastIn = keyframes`
 `;
 
 export function Toast() {
+    const { ref: semanticToastRef } = useLeaf('Agent Skills Toast', {
+        href: AGENT_SKILLS_URL,
+        // Kind of messy but necessary because the entire card is clickable
+        target: (event: Event | undefined) => {
+            const target = event?.target;
+            if (!(target instanceof Element)) return undefined;
+            if (target.closest('button')) return 'close button';
+            if (target.closest('a')) return 'link';
+            return 'card body';
+        },
+    });
     const theme = useTheme();
     const mode = theme.palette.mode;
     const postHog = usePostHog();
@@ -45,6 +57,7 @@ export function Toast() {
 
     return (
         <Box
+            ref={semanticToastRef}
             onClick={handleClick}
             sx={{
                 'position': 'fixed',

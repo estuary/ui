@@ -1,5 +1,7 @@
 import type { SingleLineCodeProps } from 'src/components/content/types';
 
+import { forwardRef } from 'react';
+
 import { Box, Button, Tooltip, Typography, useTheme } from '@mui/material';
 
 import { codeBackground, getButtonIcon } from 'src/context/Theme';
@@ -7,68 +9,69 @@ import { useCopyToClipboard } from 'src/hooks/useCopyToClipboard';
 
 const borderRadius = 3;
 
-function SingleLineCode({
-    value,
-    compact,
-    subsequentCommandExists,
-    sx,
-}: SingleLineCodeProps) {
-    const theme = useTheme();
+const SingleLineCode = forwardRef<HTMLButtonElement, SingleLineCodeProps>(
+    function SingleLineCode(
+        { value, compact, subsequentCommandExists, sx },
+        ref
+    ) {
+        const theme = useTheme();
 
-    const { isCopied, handleCopy } = useCopyToClipboard('SingleLineCode');
+        const { isCopied, handleCopy } = useCopyToClipboard('SingleLineCode');
 
-    return (
-        <Box
-            sx={{
-                maxWidth: 1000,
-                mb: subsequentCommandExists ? 1 : undefined,
-                display: 'flex',
-                bgcolor: codeBackground[theme.palette.mode],
-                borderRadius,
-                ...(sx ?? {}),
-            }}
-        >
-            <Typography
-                noWrap
+        return (
+            <Box
                 sx={{
-                    p: 1,
-                    flexGrow: 1,
-                    overflowX: 'auto',
-                    textOverflow: 'unset',
-                    fontFamily: 'monospace',
-                    fontSize: 13,
+                    maxWidth: 1000,
+                    mb: subsequentCommandExists ? 1 : undefined,
+                    display: 'flex',
+                    bgcolor: codeBackground[theme.palette.mode],
+                    borderRadius,
+                    ...(sx ?? {}),
                 }}
             >
-                {value}
-            </Typography>
-
-            <Tooltip
-                title="Copied"
-                placement="right"
-                open={isCopied}
-                arrow
-                disableFocusListener
-                disableHoverListener
-                disableTouchListener
-            >
-                <Button
-                    variant="outlined"
-                    color={isCopied ? 'success' : undefined}
-                    onClick={() => handleCopy(value)}
+                <Typography
+                    noWrap
                     sx={{
-                        minWidth: compact ? 32 : 64,
-                        px: 1,
-                        borderTopLeftRadius: 0,
-                        borderTopRightRadius: borderRadius,
-                        borderBottomLeftRadius: 0,
-                        borderBottomRightRadius: borderRadius,
+                        p: 1,
+                        flexGrow: 1,
+                        overflowX: 'auto',
+                        textOverflow: 'unset',
+                        fontFamily: 'monospace',
+                        fontSize: 13,
                     }}
                 >
-                    {getButtonIcon(theme, isCopied ? 'success' : undefined)}
-                </Button>
-            </Tooltip>
-        </Box>
-    );
-}
+                    {value}
+                </Typography>
+
+                <Tooltip
+                    title="Copied"
+                    placement="right"
+                    open={isCopied}
+                    arrow
+                    disableFocusListener
+                    disableHoverListener
+                    disableTouchListener
+                >
+                    <Button
+                        ref={ref}
+                        variant="outlined"
+                        color={isCopied ? 'success' : undefined}
+                        onClick={() => handleCopy(value)}
+                        sx={{
+                            minWidth: compact ? 32 : 64,
+                            px: 1,
+                            borderTopLeftRadius: 0,
+                            borderTopRightRadius: borderRadius,
+                            borderBottomLeftRadius: 0,
+                            borderBottomRightRadius: borderRadius,
+                        }}
+                    >
+                        {getButtonIcon(theme, isCopied ? 'success' : undefined)}
+                    </Button>
+                </Tooltip>
+            </Box>
+        );
+    }
+);
 
 export default SingleLineCode;

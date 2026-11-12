@@ -2,14 +2,21 @@ import { useState } from 'react';
 
 import { Button } from '@mui/material';
 
+import { useLeaf } from 'react-semantic-tree';
+
 import AlertSubscriptionDialog from 'src/components/admin/Settings/PrefixAlerts/Dialog';
 
 function AlertGenerateButton() {
+    const { ref: semanticCreateNotificationRef } = useLeaf(
+        'Create Notification'
+    );
+
     const [open, setOpen] = useState(false);
 
     return (
         <>
             <Button
+                ref={semanticCreateNotificationRef}
                 variant="outlined"
                 onClick={(event) => {
                     event.preventDefault();

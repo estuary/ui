@@ -1,5 +1,7 @@
 import { Stack, Typography } from '@mui/material';
 
+import { useLeaf } from 'react-semantic-tree';
+
 import SingleLineCode from 'src/components/content/SingleLineCode';
 
 interface DataPlaneDialogFieldProps {
@@ -13,6 +15,8 @@ export function DataPlaneDialogField({
     value,
     showCopyButton = true,
 }: DataPlaneDialogFieldProps) {
+    const { ref } = useLeaf('Copy Field', { label });
+
     return (
         <Stack
             sx={{
@@ -23,7 +27,7 @@ export function DataPlaneDialogField({
                 {label}
             </Typography>
             {showCopyButton ? (
-                <SingleLineCode value={value ?? '-'} />
+                <SingleLineCode ref={ref} value={value ?? '-'} />
             ) : (
                 <Typography color="text.secondary">{value ?? '-'}</Typography>
             )}

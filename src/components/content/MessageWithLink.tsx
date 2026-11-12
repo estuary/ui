@@ -27,11 +27,10 @@ function MessageWithLink({
                                 id: `${messageID}.docPath`,
                             })
                         }
-                    >
-                        {intl.formatMessage({
+                        label={intl.formatMessage({
                             id: `${messageID}.docLink`,
                         })}
-                    </ExternalLink>
+                    />
                 ),
                 ...intlValues,
             }}

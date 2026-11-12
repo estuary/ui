@@ -41,7 +41,7 @@ function EndpointConfigHeader() {
                 <>
                     <Divider orientation="vertical" flexItem sx={{ mx: 1 }} />
 
-                    <ExternalLink link={docsURL}>Connector Help</ExternalLink>
+                    <ExternalLink link={docsURL} label="Connector Help" />
                 </>
             ) : null}
         </>

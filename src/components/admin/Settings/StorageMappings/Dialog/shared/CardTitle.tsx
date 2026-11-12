@@ -29,9 +29,11 @@ export function CardTitle({
         >
             <Typography sx={cardHeaderSx}>{title}</Typography>
             {action ? (
-                <ActionLink onClick={onAction} disabled={actionDisabled}>
-                    {action}
-                </ActionLink>
+                <ActionLink
+                    label={action}
+                    onClick={onAction}
+                    disabled={actionDisabled}
+                />
             ) : null}
         </Stack>
     );

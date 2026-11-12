@@ -1,5 +1,7 @@
 import { Typography } from '@mui/material';
 
+import { Branch } from 'react-semantic-tree';
+
 import {
     ConnectionList,
     useConnectionTest,
@@ -10,7 +12,7 @@ export function ConnectionTestsCard() {
     const { testConnections, connections, isTesting } = useConnectionTest();
 
     return (
-        <>
+        <Branch label="Connection Tests">
             <CardTitle
                 title="Connection Tests"
                 action="Run tests"
@@ -28,6 +30,6 @@ export function ConnectionTestsCard() {
             <Typography>All tests must pass before saving changes.</Typography>
 
             <ConnectionList autoTest />
-        </>
+        </Branch>
     );
 }

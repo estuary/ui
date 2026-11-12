@@ -1,9 +1,10 @@
 import type { DataPlaneNode } from 'src/api/gql/dataPlanes';
 
-import { Badge, Dialog, DialogContent, Stack, Typography } from '@mui/material';
+import { Badge, DialogContent, Stack, Typography } from '@mui/material';
 
 import DialogTitleWithClose from 'src/components/shared/Dialog/TitleWithClose';
 import DataPlaneIcon from 'src/components/shared/Entity/DataPlaneIcon';
+import { SemanticDialog as Dialog } from 'src/components/shared/Semantic/Dialog';
 import { DataPlaneDialogField } from 'src/components/tables/DataPlanes/DialogFields/DataPlaneDialogField';
 import { ToggleField } from 'src/components/tables/DataPlanes/DialogFields/ToggleField';
 import useParseCidrBlocks from 'src/hooks/useParseCidrBlocks';
@@ -29,6 +30,10 @@ function DataPlaneDialog({ onClose, dataPlane }: DataPlaneDialogProps) {
 
     return (
         <Dialog
+            semantic={{
+                label: 'Dialog',
+                metadata: { dataPlane: dataPlaneDisplayName },
+            }}
             open
             onClose={onClose}
             maxWidth="sm"

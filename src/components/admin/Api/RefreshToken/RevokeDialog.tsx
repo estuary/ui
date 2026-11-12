@@ -4,7 +4,6 @@ import { useState } from 'react';
 
 import {
     Button,
-    Dialog,
     DialogActions,
     DialogContent,
     DialogTitle,
@@ -12,8 +11,11 @@ import {
     Typography,
 } from '@mui/material';
 
+import { useLeaf } from 'react-semantic-tree';
+
 import { useRevokeRefreshToken } from 'src/api/gql/refreshTokens';
 import Error from 'src/components/shared/Error';
+import { SemanticDialog as Dialog } from 'src/components/shared/Semantic/Dialog';
 
 interface Props {
     open: boolean;
@@ -23,6 +25,8 @@ interface Props {
 }
 
 export function RevokeDialog({ open, onClose, id, detail }: Props) {
+    const { ref: cancelRef } = useLeaf('Cancel');
+    const { ref: removeRef } = useLeaf('Remove');
     const [, revokeRefreshToken] = useRevokeRefreshToken();
 
     const [saving, setSaving] = useState(false);
@@ -47,6 +51,7 @@ export function RevokeDialog({ open, onClose, id, detail }: Props) {
 
     return (
         <Dialog
+            semantic={{ label: 'Revoke Dialog' }}
             open={open}
             onClose={onClose}
             slotProps={{
@@ -72,10 +77,11 @@ export function RevokeDialog({ open, onClose, id, detail }: Props) {
                 </Stack>
             </DialogContent>
             <DialogActions>
-                <Button onClick={onClose} disabled={saving}>
+                <Button ref={cancelRef} onClick={onClose} disabled={saving}>
                     Cancel
                 </Button>
                 <Button
+                    ref={removeRef}
                     variant="outlined"
                     color="error"
                     onClick={revokeToken}

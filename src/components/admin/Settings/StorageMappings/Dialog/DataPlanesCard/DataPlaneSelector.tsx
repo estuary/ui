@@ -1,3 +1,4 @@
+import type { MenuItemProps } from '@mui/material';
 import type { DataPlaneNode } from 'src/api/gql/dataPlanes';
 
 import {
@@ -6,11 +7,30 @@ import {
     FormControlLabel,
     InputLabel,
     MenuItem,
-    Select,
     Stack,
 } from '@mui/material';
 
+import { useLeaf } from 'react-semantic-tree';
+
+import { Select } from 'src/components/shared/Semantic/Select';
 import { toPresentableName } from 'src/utils/dataPlane-utils';
+
+function DataPlaneOption({
+    dataPlane,
+    ...props
+}: MenuItemProps & { dataPlane: DataPlaneNode }) {
+    const { ref: semanticRef } = useLeaf(
+        'Select',
+        {
+            name: dataPlane.name,
+        },
+        {
+            hover: true,
+        }
+    );
+
+    return <MenuItem {...props} ref={semanticRef} />;
+}
 
 export function DataPlaneSelector({
     options,
@@ -27,6 +47,8 @@ export function DataPlaneSelector({
     onAccept: (dataPlane: DataPlaneNode) => void;
     onToggleAllowPublic: (value: boolean) => void;
 }) {
+    const { ref: allowPublicRef } = useLeaf('Allow Public');
+
     return (
         <Stack spacing={1} direction="row" alignItems="end" sx={{ px: 1 }}>
             <FormControl fullWidth size="small" required>
@@ -44,9 +66,13 @@ export function DataPlaneSelector({
                     }}
                 >
                     {options.map((dp) => (
-                        <MenuItem key={dp.name} value={dp.name}>
+                        <DataPlaneOption
+                            key={dp.name}
+                            value={dp.name}
+                            dataPlane={dp}
+                        >
                             {toPresentableName(dp)} ({dp.scope})
-                        </MenuItem>
+                        </DataPlaneOption>
                     ))}
                 </Select>
             </FormControl>
@@ -54,6 +80,7 @@ export function DataPlaneSelector({
                 <FormControlLabel
                     control={
                         <Checkbox
+                            slotProps={{ input: { ref: allowPublicRef } }}
                             checked={allowPublicChecked}
                             disabled={allowPublicDisabled}
                             onChange={(e) =>
