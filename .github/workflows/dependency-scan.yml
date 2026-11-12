@@ -1,0 +1,99 @@
+name: Dependency Scan
+permissions:
+    contents: read
+
+# Every run scans the whole of package-lock.json. The Vulnerability Management
+# Policy bars deploying to production with an unresolved HIGH or CRITICAL
+# finding. Merges to main deploy, so a pull request fails on any such finding,
+# including one in dependencies it doesn't touch, and the deploy in main.yml
+# calls this workflow and waits on it. A finding is resolved by a fix or by an
+# approved exception recorded in .trivyignore.yaml. The nightly run of main
+# catches vulnerabilities published while nothing is merging.
+on:
+    pull_request:
+        branches: [main]
+    schedule:
+        - cron: '0 10 * * *'
+    workflow_dispatch: {}
+    workflow_call: {}
+
+concurrency:
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: true
+
+jobs:
+    dependency-scan:
+        name: Dependency Scan
+        runs-on: ubuntu-24.04
+        steps:
+            - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+
+            # Trivy is downloaded outside the checkout, checked against its release
+            # checksum and run by path, rather than installed through mise. mise takes
+            # its version, tasks and environment from config files in the checkout,
+            # and a pull request can add higher-precedence ones (.mise.toml,
+            # mise.local.toml and others) that no review covers. To upgrade, take the
+            # Linux-64bit line from the release's trivy_<version>_checksums.txt, and
+            # bump the local pin in mise.toml to match.
+            - name: Install Trivy
+              env:
+                  VERSION: 0.76.0
+                  SHA256: e24b1c51293c1b15e4ba8d45bbc7891ba053f90278ec2698f3562c993e145fe7
+              run: |
+                  set -euo pipefail
+                  tarball="trivy_${VERSION}_Linux-64bit.tar.gz"
+                  curl -fsSL --retry 3 -o "${RUNNER_TEMP}/${tarball}" \
+                    "https://github.com/aquasecurity/trivy/releases/download/v${VERSION}/${tarball}"
+                  echo "${SHA256}  ${RUNNER_TEMP}/${tarball}" | sha256sum --check --strict
+                  mkdir -p "${RUNNER_TEMP}/trivy"
+                  tar -xzf "${RUNNER_TEMP}/${tarball}" -C "${RUNNER_TEMP}/trivy" trivy
+
+            # Severity, exit code and the ignore list come from trivy.yaml. Trivy
+            # leaves devDependencies out of npm scans, so this covers the
+            # dependencies that ship in the bundle.
+            - name: Scan
+              run: '"${RUNNER_TEMP}/trivy/trivy" fs package-lock.json'
+
+    # A failed scan of main, whether nightly, manual or ahead of a deploy, opens
+    # an issue for the team that owns this code, or comments on the one already
+    # open, so the finding is tracked rather than living only in one person's
+    # email. The next passing scan closes it. Pull requests report through
+    # their own check instead.
+    report:
+        name: Report
+        needs: dependency-scan
+        if: >-
+            always() && github.event_name != 'pull_request' && github.ref == 'refs/heads/main' &&
+            contains(fromJSON('["success", "failure"]'), needs.dependency-scan.result)
+        runs-on: ubuntu-24.04
+        permissions:
+            issues: write
+        steps:
+            - name: Open, update or close the tracking issue
+              env:
+                  GH_TOKEN: ${{ github.token }}
+                  GH_REPO: ${{ github.repository }}
+                  RESULT: ${{ needs.dependency-scan.result }}
+                  RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+                  # GitHub assigns issues only to users, not teams, and this job's
+                  # token cannot list team members, so @estuary/control-plane is
+                  # assigned by name. Keep this in step with the team's membership.
+                  ASSIGNEES: GregorShear,jshearer,adrian-estuary
+              run: |
+                  set -euo pipefail
+
+                  title="Dependency Scan failed on main"
+                  issue=$(gh issue list --state open --search "in:title \"${title}\"" --json number,title \
+                    --jq "map(select(.title == \"${title}\")) | first | .number // empty")
+
+                  if [ "$RESULT" = failure ]; then
+                    body="The Dependency Scan of main failed: ${RUN_URL}"$'\n\n'"The Scan step's log names each package, CVE and fixed version. A failure in an earlier step means the scan itself did not run. Deploys are blocked until the scan passes."
+                    if [ -n "$issue" ]; then
+                      gh issue comment "$issue" --body "$body"
+                    else
+                      gh issue create --title "$title" --assignee "$ASSIGNEES" \
+                        --body "@estuary/control-plane ${body}"
+                    fi
+                  elif [ -n "$issue" ]; then
+                    gh issue close "$issue" --comment "The Dependency Scan of main passed: ${RUN_URL}"
+                  fi
