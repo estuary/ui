@@ -90,16 +90,11 @@ export function useBindings(
 
     // Captures have no upstream frontier to be behind. Passing '' leans
     // on the checks in `useMaterializationBacklog` to skip it.
-    const {
-        backlog,
-        error: backlogError,
-        loading: backlogLoading,
-        timeLag,
-        timeLagLoading,
-    } = useMaterializationBacklog(
-        entityType === 'materialization' ? entityName : '',
-        boundCollections
-    );
+    const { backlog, backlogError, backlogLoading, timeLag, timeLagLoading } =
+        useMaterializationBacklog(
+            entityType === 'materialization' ? entityName : '',
+            boundCollections
+        );
 
     const bindings = useMemo(
         () => attachBacklogReadings(specRows, backlog, timeLag),
