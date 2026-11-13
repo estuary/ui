@@ -143,6 +143,11 @@ export function UrqlConfigProvider({ children }: BaseComponentProps) {
                         RefreshTokenInfo: (_data) => null,
                         StorageMapping: (_data) => null,
                         DataPlane: (_data) => null,
+                        // A link's config is a value of the link, which
+                        // normalizes by its `id`.
+                        AWSPrivateLink: (_data) => null,
+                        AzurePrivateLink: (_data) => null,
+                        GCPPrivateServiceConnect: (_data) => null,
                         PublicDataPlane: (data) => data.name as string,
                         CatalogStats: (_data) => null,
                         CatalogStatsSummary: (_data) => null,
@@ -222,6 +227,12 @@ export function UrqlConfigProvider({ children }: BaseComponentProps) {
                             },
                             updateStorageMapping(_result, _args, cache) {
                                 invalidateQuery(cache, 'storageMappings');
+                            },
+                            addDataPlanePrivateLink(_result, _args, cache) {
+                                invalidateQuery(cache, 'dataPlanes');
+                            },
+                            removeDataPlanePrivateLink(_result, _args, cache) {
+                                invalidateQuery(cache, 'dataPlanes');
                             },
                         },
                     },
