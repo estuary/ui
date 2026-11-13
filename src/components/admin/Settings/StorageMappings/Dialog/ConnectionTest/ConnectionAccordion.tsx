@@ -87,7 +87,7 @@ export function ConnectionAccordion({
         expanded ? 'Collapse' : 'Expand'
     );
     const { ref: testRef } = useLeaf('Test Connections');
-    const { ref: errorRef } = useLeaf('Error', { click: false });
+    const { ref: errorRef } = useLeaf('Error', {}, { click: false });
 
     const { connections, testConnections, isTesting } = useConnectionTest();
 

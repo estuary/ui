@@ -2,7 +2,7 @@ import { Box, Link, Paper, Tooltip, Typography, useTheme } from '@mui/material';
 
 import { usePostHog } from '@posthog/react';
 import { NavArrowRight } from 'iconoir-react';
-import { useLeaf } from 'react-semantic-tree';
+import { Branch, useLeaf } from 'react-semantic-tree';
 
 import {
     AGENT_SKILLS_URL,
@@ -97,18 +97,20 @@ export function Pill() {
     return (
         <Tooltip
             title={
-                <TooltipContent
-                    onClick={() => {
-                        postHog.capture('AgentSkills:Click', {
-                            source: 'popover',
-                        });
-                        window.open(
-                            AGENT_SKILLS_URL,
-                            '_blank',
-                            'noopener,noreferrer'
-                        );
-                    }}
-                />
+                <Branch>
+                    <TooltipContent
+                        onClick={() => {
+                            postHog.capture('AgentSkills:Click', {
+                                source: 'popover',
+                            });
+                            window.open(
+                                AGENT_SKILLS_URL,
+                                '_blank',
+                                'noopener,noreferrer'
+                            );
+                        }}
+                    />
+                </Branch>
             }
             placement="bottom-start"
             enterDelay={200}
