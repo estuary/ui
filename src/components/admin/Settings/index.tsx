@@ -3,6 +3,7 @@ import { Divider, Grid, Stack } from '@mui/material';
 import { authenticatedRoutes } from 'src/app/routes';
 import { DataPlanes } from 'src/components/admin/Settings/DataPlanes';
 import PrefixAlerts from 'src/components/admin/Settings/PrefixAlerts';
+import { PrivateLinks } from 'src/components/admin/Settings/PrivateLinks';
 import { StorageMappings } from 'src/components/admin/Settings/StorageMappings';
 import AdminTabs from 'src/components/admin/Tabs';
 import TenantSelector from 'src/components/shared/TenantSelector';
@@ -42,6 +43,12 @@ function Settings() {
                 <Divider sx={{ mt: 2, mb: 4 }} />
 
                 <DataPlanes />
+            </Stack>
+
+            <Stack>
+                <Divider sx={{ mt: 2, mb: 4 }} />
+
+                <PrivateLinks />
             </Stack>
         </>
     );
