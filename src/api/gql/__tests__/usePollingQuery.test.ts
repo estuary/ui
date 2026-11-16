@@ -8,9 +8,11 @@ import { usePollingQuery } from 'src/api/gql/usePollingQuery';
 
 vi.mock('urql', () => ({
     useQuery: vi.fn(),
+    useClient: () => ({ readQuery }),
 }));
 
 const mockedUseQuery = vi.mocked(useQuery);
+const readQuery = vi.fn();
 
 const QUERY = {} as never;
 const INTERVAL_MS = 15000;
@@ -85,6 +87,7 @@ function completeFetch(rerender: () => void, settled: QueryState = {}) {
 describe('usePollingQuery', () => {
     beforeEach(() => {
         mockedUseQuery.mockReset();
+        readQuery.mockReset();
         vi.useFakeTimers();
     });
 
@@ -578,5 +581,192 @@ describe('usePollingQuery', () => {
         advance(INTERVAL_MS * 3);
 
         expect(result.current.updatedAt).toBeNull();
+    });
+
+    describe('with keepDataOnError', () => {
+        const VARIABLES = { name: 'acmeCo/' };
+
+        test.each([undefined, null])(
+            'reads the current cache after a failure with %s data',
+            (missing) => {
+                mockQuery({
+                    data: { hello: 'old' },
+                    operationVariables: VARIABLES,
+                });
+                const context = {
+                    url: '/graphql',
+                    requestPolicy: 'network-only' as const,
+                };
+                const { result, rerender } = renderPollingQuery({
+                    keepDataOnError: true,
+                    variables: VARIABLES,
+                    context,
+                } as Partial<UseQueryArgs>);
+                expect(readQuery).not.toHaveBeenCalled();
+
+                readQuery.mockReturnValue({
+                    data: { hello: 'updated by a mutation' },
+                });
+                completeFetch(rerender, {
+                    data: missing,
+                    error: new Error('nope'),
+                });
+                expect(readQuery).toHaveBeenLastCalledWith(QUERY, VARIABLES, {
+                    ...context,
+                    requestPolicy: 'cache-only',
+                });
+                expect(result.current.data).toEqual({
+                    hello: 'updated by a mutation',
+                });
+
+                readQuery.mockReturnValue(null);
+                rerender();
+                expect(result.current.data).toBeUndefined();
+            }
+        );
+
+        test.each([
+            {
+                keepDataOnError: false,
+                pause: false,
+                operationVariables: VARIABLES,
+            },
+            {
+                keepDataOnError: true,
+                pause: true,
+                operationVariables: VARIABLES,
+            },
+            {
+                keepDataOnError: true,
+                pause: false,
+                operationVariables: { name: 'other/' },
+            },
+        ])(
+            'does not read the cache with %j',
+            ({ operationVariables, ...options }) => {
+                mockQuery({ error: new Error('nope'), operationVariables });
+                renderPollingQuery({
+                    ...options,
+                    variables: VARIABLES,
+                } as Partial<UseQueryArgs>);
+                expect(readQuery).not.toHaveBeenCalled();
+            }
+        );
+
+        test('preserves data returned alongside an error', () => {
+            mockQuery({
+                data: { hello: 'partial' },
+                error: new Error('nope'),
+                operationVariables: VARIABLES,
+            });
+            const { result } = renderPollingQuery({
+                keepDataOnError: true,
+                variables: VARIABLES,
+            } as Partial<UseQueryArgs>);
+            expect(result.current.data).toEqual({ hello: 'partial' });
+            expect(result.current.error).toBeDefined();
+            expect(readQuery).not.toHaveBeenCalled();
+        });
+    });
+
+    describe('with an interval function', () => {
+        const pollWhilePending = (data: { pending: boolean } | undefined) =>
+            data?.pending ? INTERVAL_MS : undefined;
+
+        test('is called with the returned data', () => {
+            mockQuery({ data: { pending: true } });
+            const pollingIntervalMs = vi.fn(pollWhilePending);
+
+            renderPollingQuery({ pollingIntervalMs } as Partial<UseQueryArgs>);
+
+            expect(pollingIntervalMs).toHaveBeenLastCalledWith({
+                pending: true,
+            });
+        });
+
+        test('is called with no data while the variables change', () => {
+            mockQuery({
+                data: { pending: true },
+                operationVariables: { name: 'acmeCo/' },
+            });
+            const pollingIntervalMs = vi.fn(pollWhilePending);
+
+            renderPollingQuery({
+                pollingIntervalMs,
+                variables: { name: 'bravoCo/' },
+            } as Partial<UseQueryArgs>);
+
+            expect(pollingIntervalMs).toHaveBeenLastCalledWith(undefined);
+            expect(vi.getTimerCount()).toBe(0);
+        });
+
+        test('polls only while it returns an interval', () => {
+            mockQuery({ data: { pending: false } });
+
+            const { rerender } = renderPollingQuery({
+                pollingIntervalMs: pollWhilePending,
+            } as Partial<UseQueryArgs>);
+
+            advance(INTERVAL_MS);
+            expect(reexecuteQuery).not.toHaveBeenCalled();
+
+            act(() => {
+                queryState.data = { pending: true };
+                rerender();
+            });
+            advance(INTERVAL_MS);
+            expect(reexecuteQuery).toHaveBeenCalledTimes(1);
+
+            act(() => {
+                queryState.data = { pending: false };
+                rerender();
+            });
+            advance(INTERVAL_MS * 3);
+            expect(reexecuteQuery).toHaveBeenCalledTimes(1);
+        });
+
+        // Callers pass an inline arrow, so a rerender must not restart the timer
+        test('keeps its schedule when given a new function each render', () => {
+            mockQuery({ data: { pending: true } });
+
+            const { rerender } = renderHook(() =>
+                usePollingQuery({
+                    query: QUERY,
+                    pollingIntervalMs: (data?: { pending: boolean }) =>
+                        pollWhilePending(data),
+                } as UseQueryArgs)
+            );
+
+            advance(INTERVAL_MS / 2);
+            rerender();
+            advance(INTERVAL_MS / 2);
+            expect(reexecuteQuery).toHaveBeenCalledTimes(1);
+        });
+
+        test('keeps polling through a failed poll with keepDataOnError', () => {
+            mockQuery({
+                data: { pending: true },
+                operationVariables: { name: 'acmeCo/' },
+            });
+
+            const { result, rerender } = renderPollingQuery({
+                keepDataOnError: true,
+                pollingIntervalMs: pollWhilePending,
+                variables: { name: 'acmeCo/' },
+            } as Partial<UseQueryArgs>);
+
+            advance(INTERVAL_MS);
+            expect(reexecuteQuery).toHaveBeenCalledTimes(1);
+
+            readQuery.mockReturnValue({ data: { pending: true } });
+            completeFetch(rerender, {
+                data: undefined,
+                error: new Error('nope'),
+            });
+            expect(result.current.data).toEqual({ pending: true });
+
+            advance(INTERVAL_MS);
+            expect(reexecuteQuery).toHaveBeenCalledTimes(2);
+        });
     });
 });

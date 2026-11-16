@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 import { isEqual } from 'lodash';
 import { DateTime } from 'luxon';
 import { useInterval } from 'react-use';
-import { useQuery } from 'urql';
+import { useClient, useQuery } from 'urql';
 
 import { usePageVisibility } from 'src/hooks/usePageVisibility';
 
@@ -17,7 +17,10 @@ type UsePollingQueryArgs<
     Variables extends AnyVariables = AnyVariables,
     Data = any,
 > = UseQueryArgs<Variables, Data> & {
-    pollingIntervalMs?: number;
+    pollingIntervalMs?:
+        | number
+        | ((data: Data | undefined) => number | undefined);
+    keepDataOnError?: boolean;
 };
 
 /**
@@ -25,11 +28,21 @@ type UsePollingQueryArgs<
  * if `pollingIntervalMs` is falsey. Polling is disabled while the
  * page is not visible. Either way, the query refetches when a hidden
  * tab becomes visible again and the data is stale.
+ *
+ * `pollingIntervalMs` may instead be a function of the data this hook
+ * returns, so a caller can poll only while that data shows work in
+ * progress. A falsey result disables polling the same way.
+ *
+ * With `keepDataOnError`, a fetch that fails without data reads the current
+ * cached result, including changes from mutations. A cache miss stays empty.
+ * This read can clear the query error, but never makes a network request.
+ * The interval function sees the cached data too.
  */
 export function usePollingQuery<
     Data = any,
     Variables extends AnyVariables = AnyVariables,
 >(args: UsePollingQueryArgs<Variables, Data>) {
+    const client = useClient();
     const pageIsVisible = usePageVisibility();
     const pageWasVisible = useRef(pageIsVisible);
 
@@ -39,11 +52,30 @@ export function usePollingQuery<
         requestPolicy,
     });
 
+    const { pause } = args;
+
+    // If the variables changed, that will retrigger a fetch, so return
+    // no data with fetching = true to indicate that and force downstream
+    // consumers to handle the loading state. However, if paused, urql does
+    // not return an operation, so we want to defer to urql's behavior.
+    const varsChanged = !isEqual(operation?.variables, args.variables);
+    const withholdData = !pause && varsChanged;
+
+    const returnedData =
+        args.keepDataOnError && !pause && !withholdData && error && !data
+            ? client.readQuery(args.query, args.variables, {
+                  ...args.context,
+                  requestPolicy: 'cache-only',
+              })?.data
+            : data;
+
     // Treat a polling interval of 0 the same as null, which disables the
     // polling instead of looping indefinitely.
-    const pollingIntervalMs = args.pollingIntervalMs || null;
+    const pollingIntervalMs =
+        (typeof args.pollingIntervalMs === 'function'
+            ? args.pollingIntervalMs(withholdData ? undefined : returnedData)
+            : args.pollingIntervalMs) || null;
 
-    const { pause } = args;
     const canRefetch = !fetching && !pause;
     const wasFetching = useRef(false);
 
@@ -91,14 +123,9 @@ export function usePollingQuery<
         }
     }, intervalMs);
 
-    // If the variables changed, that will retrigger a fetch, so return
-    // no data with fetching = true to indicate that and force downstream
-    // consumers to handle the loading state. However, if paused, urql does
-    // not return an operation, so we want to defer to urql's behavior.
-    const varsChanged = !isEqual(operation?.variables, args.variables);
-    if (!pause && varsChanged) {
+    if (withholdData) {
         return { fetching: true, updatedAt };
     }
 
-    return { data, fetching, error, updatedAt };
+    return { data: returnedData, fetching, error, updatedAt };
 }
