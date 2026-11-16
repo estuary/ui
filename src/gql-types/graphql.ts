@@ -137,7 +137,10 @@ export type Alert = {
    * and the regular `arguments` would be used during resolution in that case.
    */
   resolvedArguments?: Maybe<Scalars['JSON']['output']>;
-  /** The time at which the alert was resolved, or null if it is still active. */
+  /**
+   * The time at which the alert was resolved, or null if it is still active.
+   * Event alerts complete when recorded, with `resolved_at` equal to `fired_at`.
+   */
   resolvedAt?: Maybe<Scalars['DateTime']['output']>;
 };
 
@@ -237,6 +240,7 @@ export type AlertSubscriptionsBy = {
 export type AlertType =
   | 'auto_discover_failed'
   | 'background_publication_failed'
+  | 'bindings_auto_disabled'
   | 'data_movement_stalled'
   | 'free_trial'
   | 'free_trial_ending'
@@ -272,6 +276,26 @@ export type AlertsBy = {
   /** Show alerts for the given catalog namespace prefix. */
   prefix: Scalars['String']['input'];
 };
+
+/** A binding which Flow disabled, and why. */
+export type AutoDisabledBinding = {
+  __typename?: 'AutoDisabledBinding';
+  /** Source collection of the disabled binding. */
+  collection: Scalars['Collection']['output'];
+  /** Description of the change that caused Flow to disable the binding. */
+  detail: Scalars['String']['output'];
+  /** The publication which disabled the binding. */
+  pubId: Scalars['Id']['output'];
+  /** Why Flow disabled the binding. */
+  reason: AutoDisabledReason;
+  /** Resource path of the disabled binding. */
+  resourcePath: Array<Scalars['String']['output']>;
+};
+
+/** Reason that Flow disabled a binding. */
+export type AutoDisabledReason =
+  /** An incompatible schema change triggered the `disableBinding` policy. */
+  | 'INCOMPATIBLE_SCHEMA_CHANGE';
 
 export type AutoDiscoverFailure = {
   __typename?: 'AutoDiscoverFailure';
@@ -775,6 +799,11 @@ export type Controller = {
   /** Present for captures, collections, and materializations. */
   activation?: Maybe<ActivationStatus>;
   alerts?: Maybe<Scalars['JSONObject']['output']>;
+  /**
+   * Auto-disabled bindings that remain disabled.
+   * Only present for materializations.
+   */
+  autoDisabledBindings?: Maybe<Array<AutoDisabledBinding>>;
   /** Only present for captures that use `autoDiscover`. */
   autoDiscover?: Maybe<AutoDiscoverStatus>;
   /**
@@ -1256,6 +1285,15 @@ export type IdFilter = {
   in?: InputMaybe<Array<Scalars['Id']['input']>>;
 };
 
+/** A schema inferred from the documents of a collection. */
+export type InferredSchema = {
+  __typename?: 'InferredSchema';
+  /** The md5 of the inferred schema. */
+  md5: Scalars['String']['output'];
+  /** The inferred JSON schema. */
+  schema: Scalars['JSON']['output'];
+};
+
 /** Status of the inferred schema */
 export type InferredSchemaStatus = {
   __typename?: 'InferredSchemaStatus';
@@ -1437,6 +1475,11 @@ export type LiveSpec = {
    * ancestor prefix layers and controller defaults.
    */
   effectiveAlertConfig: EffectiveAlertConfig;
+  /**
+   * The current inferred schema of this collection. Null if this spec is
+   * not a collection, or if no schema has been inferred for it.
+   */
+  inferredSchema?: Maybe<InferredSchema>;
   isDisabled: Scalars['Boolean']['output'];
   lastBuildId: Scalars['Id']['output'];
   lastPubId: Scalars['Id']['output'];
@@ -2273,7 +2316,10 @@ export type PrefixRef = {
   __typename?: 'PrefixRef';
   /** Capability bundles that cover the user's capability bits at this prefix. */
   capabilities: Array<CapabilityBundle>;
-  /** Fine-grained capabilities the user has at this prefix. */
+  /**
+   * Fine-grained capabilities the user has at this prefix.
+   * @deprecated Use capabilities instead.
+   */
   capabilityBits: Array<CapabilityBit>;
   /** The prefix to which the user is authorized. */
   prefix: Scalars['Prefix']['output'];
@@ -2284,7 +2330,7 @@ export type PrefixRef = {
    * entirely from the `bundles` column rather than the legacy column.
    *
    * Exists solely so the dashboard's read/write/admin prefix-bucket
-   * store keeps working until it migrates to consuming `capabilityBits`
+   * store keeps working until it migrates to consuming `capabilities`
    * directly. Once that migration lands, this field and its derivation
    * can be deleted.
    */
@@ -3179,9 +3225,8 @@ export type StatusSummaryType =
    */
   | 'TASK_DISABLED'
   /**
-   * Something isn't fully working, but the condition is expected to clear
-   * automatically soon. Nothing to worry about as long as the condition
-   * doesn't persist for too long.
+   * Something isn't fully working. The condition may be transient or may
+   * require action from the user.
    */
   | 'WARNING';
 
