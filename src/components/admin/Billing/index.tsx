@@ -22,8 +22,8 @@ import CardWrapper from 'src/components/shared/CardWrapper';
 import TenantSelector from 'src/components/shared/TenantSelector';
 import BillingHistoryTable from 'src/components/tables/Billing';
 import BillingLineItemsTable from 'src/components/tables/BillLineItems';
-import { useBillingAccess } from 'src/hooks/billing/useBillingAccess';
 import { useBillingInvoices } from 'src/hooks/billing/useBillingInvoices';
+import { useCapabilities } from 'src/hooks/useCapabilities';
 import usePageTitle from 'src/hooks/usePageTitle';
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
@@ -79,9 +79,10 @@ function BillingForTenant({
     tenant,
     showAddPayment,
 }: AdminBillingProps & { tenant: string }) {
-    const access = useBillingAccess(tenant);
+    // Billing is authorized against the tenant itself, so only bundles held at the tenant prefix count. A grant on `acme/team/` does not cover `acme/`. The only prefix a tenant sits under is itself, so `useCapabilities` returns just the bundles at the tenant.
+    const { capabilities, fetching, error } = useCapabilities(tenant);
 
-    if (access.error) {
+    if (error) {
         return (
             <AlertBox short severity="error">
                 There was an error loading your billing permissions. Please try
@@ -90,11 +91,11 @@ function BillingForTenant({
         );
     }
 
-    if (access.isLoading) {
+    if (fetching && !capabilities) {
         return null;
     }
 
-    if (!access.canView) {
+    if (!capabilities?.includes('ViewBilling')) {
         return (
             <AlertBox short severity="warning">
                 You don&apos;t have permission to view billing for {tenant}.
@@ -120,7 +121,7 @@ function BillingForTenant({
             }}
         >
             <BillingDetails
-                canEdit={access.canEdit}
+                canEdit={capabilities.includes('EditBilling')}
                 showAddPayment={showAddPayment}
             />
         </ErrorBoundary>

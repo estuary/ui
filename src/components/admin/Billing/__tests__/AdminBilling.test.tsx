@@ -94,18 +94,20 @@ const wrapper = ({ children }: { children: ReactNode }) => (
 const link = (name: string) =>
     screen.getByRole('link', { name }).getAttribute('href');
 
-// Each GraphQL operation the page sent, with its tenant.
+// Each GraphQL operation the page sent, with its tenant, which the capabilities query sends as its only prefix.
 let operations: string[];
 server.events.on('request:start', ({ request }) => {
     void request
         .clone()
         .json()
         .then(({ operationName, variables }) =>
-            operations.push(`${operationName} ${variables.tenant}`)
+            operations.push(
+                `${operationName} ${variables.tenant ?? variables.prefixes[0]}`
+            )
         );
 });
 const billingReads = () =>
-    operations.filter((name) => !name.startsWith('BillingCapabilities '));
+    operations.filter((name) => !name.startsWith('Capabilities '));
 
 // The server returns the row at the requested tenant, if a grant lands there.
 const capabilities = (bundles?: CapabilityBundle[]) => ({
@@ -124,8 +126,10 @@ const capabilities = (bundles?: CapabilityBundle[]) => ({
 
 const grant = (grants: Record<string, CapabilityBundle[]>) =>
     server.use(
-        billingGraphql.query('BillingCapabilities', ({ variables }) =>
-            HttpResponse.json({ data: capabilities(grants[variables.tenant]) })
+        billingGraphql.query('Capabilities', ({ variables }) =>
+            HttpResponse.json({
+                data: capabilities(grants[variables.prefixes[0]]),
+            })
         )
     );
 
@@ -134,7 +138,7 @@ beforeEach(() => {
     operations = [];
     useTenantStore.setState({ selectedTenant: 'acme/' });
     server.use(
-        billingGraphql.query('BillingCapabilities', () =>
+        billingGraphql.query('Capabilities', () =>
             HttpResponse.json({
                 data: capabilities(['ViewBilling', 'EditBilling']),
             })
@@ -290,7 +294,7 @@ test('reads no billing data until access loads', async () => {
         release = resolve;
     });
     server.use(
-        billingGraphql.query('BillingCapabilities', async () => {
+        billingGraphql.query('Capabilities', async () => {
             requested = true;
             await pending;
             return HttpResponse.json({
@@ -322,9 +326,7 @@ test.each([
     },
 ])('reads no billing data with $state', async ({ body, message }) => {
     server.use(
-        billingGraphql.query('BillingCapabilities', () =>
-            HttpResponse.json(body)
-        )
+        billingGraphql.query('Capabilities', () => HttpResponse.json(body))
     );
     render(<AdminBilling />, { wrapper });
 

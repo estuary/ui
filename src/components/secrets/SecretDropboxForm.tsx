@@ -19,9 +19,9 @@ import { Eye, EyeClosed } from 'iconoir-react';
 import { debounce } from 'lodash';
 
 import AlertBox from 'src/components/shared/AlertBox';
-import { useCanEditSecret } from 'src/hooks/secrets/useCanEditSecret';
 import { useGetSecret } from 'src/hooks/secrets/useGetSecret';
 import { useSetSecret } from 'src/hooks/secrets/useSetSecret';
+import { useCapabilities } from 'src/hooks/useCapabilities';
 import { normalizeError } from 'src/utils/errors';
 import { getParentPrefix } from 'src/utils/names';
 
@@ -35,10 +35,11 @@ export function SecretDropboxForm({ secretName }: SecretDropboxFormProps) {
     const setSecret = useSetSecret();
 
     const {
-        canEdit,
+        capabilities,
         fetching: permissionFetching,
         error: permissionError,
-    } = useCanEditSecret(secretName);
+    } = useCapabilities(secretName, { requestPolicy: 'network-only' });
+    const canEdit = capabilities?.includes('EditSecret') ?? false;
 
     const {
         secret,

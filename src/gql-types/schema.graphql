@@ -435,8 +435,10 @@ enum CapabilityBundle {
   Editor
   ManageDataPlane
   ManageServiceAccounts
+  ModifyDataPlanePrivateNetworking
   TeamAdmin
   ViewBilling
+  ViewDataPlanePrivateNetworking
   Viewer
   Writer
 }
