@@ -4,6 +4,7 @@ import type {
     GroupKeyMetadata,
 } from 'src/stores/Binding/slices/FieldSelection';
 import type {
+    BuiltCollection,
     MaterializationBinding,
     MaterializationBuiltBinding,
     MaterializationFields,
@@ -42,10 +43,11 @@ import {
     getFieldSelection,
 } from 'src/utils/fieldSelection-utils';
 import { isPromiseFulfilledResult } from 'src/utils/misc-utils';
+import { getBuiltCollection } from 'src/utils/workflow-utils';
 
 interface FieldSelectionValidationResponse {
     bindingUUID: string;
-    builtBinding: MaterializationBuiltBinding;
+    builtCollection: BuiltCollection;
     fieldStanza:
         | MaterializationFields
         | MaterializationFields_Legacy
@@ -123,6 +125,10 @@ export default function useValidateFieldSelection() {
                 builtBindingIndex > -1
                     ? draftSpecsRow.built_spec?.bindings.at(builtBindingIndex)
                     : undefined;
+            const builtCollection = getBuiltCollection(
+                draftSpecsRow.built_spec,
+                builtBinding
+            );
 
             const draftedBinding: MaterializationBinding | undefined =
                 draftedBindingIndex > -1
@@ -142,24 +148,25 @@ export default function useValidateFieldSelection() {
                     : undefined;
 
             if (
-                !builtBinding ||
+                !builtCollection ||
                 !draftedBinding ||
                 !validatedBinding ||
-                !collections[builtBinding.collection.name] ||
-                !collections[builtBinding.collection.name].spec
+                !collections[builtCollection.name] ||
+                !collections[builtCollection.name].spec
             ) {
                 logRocketEvent(CustomEvents.FIELD_SELECTION, {
                     validationError: true,
                     missingBuiltBinding: !builtBinding,
+                    missingBuiltCollection: !builtCollection,
                     missingDraftedBinding: !draftedBinding,
                     missingValidatedBinding: !validatedBinding,
                     missingCollectionLiveSpec: Boolean(
-                        builtBinding && draftedBinding && validatedBinding
+                        builtCollection && draftedBinding && validatedBinding
                     ),
                 });
 
                 return Promise.reject(
-                    'data not found: collection spec, built spec binding, drafted binding, or validation binding'
+                    'data not found: collection spec, built collection, built spec binding, drafted binding, or validation binding'
                 );
             }
 
@@ -168,8 +175,8 @@ export default function useValidateFieldSelection() {
             try {
                 result = await evaluateFieldSelection({
                     collection: {
-                        name: builtBinding.collection.name,
-                        model: collections[builtBinding.collection.name].spec,
+                        name: builtCollection.name,
+                        model: collections[builtCollection.name].spec,
                     },
                     binding: {
                         live: liveBuiltBinding,
@@ -186,7 +193,7 @@ export default function useValidateFieldSelection() {
 
             return {
                 bindingUUID,
-                builtBinding,
+                builtCollection,
                 fieldStanza: draftedBinding?.fields,
                 result,
             };
@@ -317,7 +324,7 @@ export default function useValidateFieldSelection() {
 
                             const {
                                 bindingUUID,
-                                builtBinding,
+                                builtCollection,
                                 fieldStanza,
                                 result,
                             } = response.value;
@@ -325,19 +332,15 @@ export default function useValidateFieldSelection() {
                             const updatedSelections = getFieldSelection(
                                 result.outcomes,
                                 fieldStanza,
-                                builtBinding?.collection.projections
+                                builtCollection.projections
                             );
 
                             validatedRequests.push({
                                 groupByValue: {
                                     explicit: fieldStanza?.groupBy ?? [],
-                                    implicit:
-                                        builtBinding?.collection.key.map(
-                                            (key) =>
-                                                key.startsWith('/')
-                                                    ? key.slice(1)
-                                                    : key
-                                        ) ?? [],
+                                    implicit: builtCollection.key.map((key) =>
+                                        key.startsWith('/') ? key.slice(1) : key
+                                    ),
                                 },
                                 hasConflicts: result.hasConflicts,
                                 recommended:

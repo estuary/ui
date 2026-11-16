@@ -1,6 +1,10 @@
 import type { FullSourceDictionary } from 'src/stores/Binding/slices/TimeTravel';
 import type { Entity, Schema } from 'src/types';
-import type { MaterializationBuiltBinding } from 'src/types/schemaModels';
+import type {
+    BuiltBinding,
+    BuiltCollection,
+    BuiltSpec,
+} from 'src/types/schemaModels';
 
 import { isEmpty, isEqual } from 'lodash';
 
@@ -91,15 +95,35 @@ export const getFullSourceSetting = (
 };
 
 export const getBuiltBindingIndex = (
-    builtSpec: Schema,
+    builtSpec: BuiltSpec,
     targetCollection: string
 ): number => {
-    const builtBindings: MaterializationBuiltBinding[] =
-        builtSpec.bindings ?? [];
+    const builtBindings = builtSpec.bindings ?? [];
 
     return builtBindings.findIndex(
-        (binding) => binding.collection.name === targetCollection
+        (binding) =>
+            getBuiltCollection(builtSpec, binding)?.name === targetCollection
     );
+};
+
+export const getBuiltCollection = (
+    builtSpec: BuiltSpec | null | undefined,
+    binding: BuiltBinding | null | undefined
+): BuiltCollection | undefined => {
+    if (!builtSpec || !binding) {
+        return undefined;
+    }
+
+    // A nonempty table selects indexed references, even if an inline collection exists.
+    if (builtSpec.linkedCollections?.length) {
+        const index = binding.collectionIndex ?? 0;
+
+        return Number.isInteger(index) && index >= 0
+            ? builtSpec.linkedCollections[index]
+            : undefined;
+    }
+
+    return binding.collection;
 };
 
 export const getBindingIndexByResourcePath = <T extends Schema>(

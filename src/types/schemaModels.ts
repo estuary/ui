@@ -22,7 +22,7 @@ export interface BaseMaterializationFields {
     groupBy?: string[];
 }
 
-interface BuiltCollection {
+export interface BuiltCollection {
     ackTemplate: any;
     key: string[];
     name: string;
@@ -30,6 +30,16 @@ interface BuiltCollection {
     projections: BuiltProjection[];
     uuidPtr: string;
     writeSchema: Schema;
+}
+
+export interface BuiltBinding {
+    collection?: BuiltCollection;
+    collectionIndex?: number;
+}
+
+export interface BuiltSpec {
+    bindings?: BuiltBinding[];
+    linkedCollections?: BuiltCollection[];
 }
 
 export interface BuiltProjection {
@@ -83,8 +93,7 @@ export interface MaterializationBinding {
 }
 
 // The definition of a binding in the built specification for a materialization.
-export interface MaterializationBuiltBinding {
-    collection: BuiltCollection;
+export interface MaterializationBuiltBinding extends BuiltBinding {
     fieldSelection: FieldSelection;
     journalReadSuffix: string;
     partitionSelector: any;
