@@ -5,7 +5,6 @@ import type { BindingMetadata, Schema } from 'src/types';
 import { useCallback } from 'react';
 
 import { cloneDeep } from 'lodash';
-import { useIntl } from 'react-intl';
 
 import { modifyDraftSpec } from 'src/api/draftSpecs';
 import {
@@ -16,10 +15,13 @@ import { useEntityType } from 'src/context/EntityContext';
 import { BASE_ERROR } from 'src/services/supabase';
 import {
     useBinding_backfilledBindings,
-    useBinding_bindings,
+    useBinding_resourceConfigs,
 } from 'src/stores/Binding/hooks';
 import { hasLength } from 'src/utils/misc-utils';
-import { getBackfillCounter, getBindingIndex } from 'src/utils/workflow-utils';
+import {
+    getBackfillCounter,
+    getDraftedBindingIndex,
+} from 'src/utils/workflow-utils';
 
 interface BackfillChangeSummary {
     counterDecremented: string[];
@@ -42,11 +44,10 @@ const evaluateBackfillCounter = (
 };
 
 function useUpdateBackfillCounter() {
-    const intl = useIntl();
     const entityType = useEntityType();
 
     // Binding Store
-    const bindings = useBinding_bindings();
+    const resourceConfigs = useBinding_resourceConfigs();
     const backfilledBindings = useBinding_backfilledBindings();
 
     // Draft Editor Store
@@ -60,31 +61,52 @@ function useUpdateBackfillCounter() {
             bindingMetadata: BindingMetadata[]
         ) => {
             const bindingMetadataExists = hasLength(bindingMetadata);
+            const targets = bindingMetadataExists
+                ? bindingMetadata.map(({ bindingIndex, collection }) => {
+                      const matches = Object.values(resourceConfigs).filter(
+                          ({ meta }) =>
+                              meta.bindingIndex === bindingIndex &&
+                              meta.collectionName === collection
+                      );
 
-            const invalidBindingIndex = bindingMetadataExists
-                ? bindingMetadata.findIndex(
-                      ({ bindingIndex }) => bindingIndex === -1
-                  )
-                : -1;
+                      return {
+                          collection,
+                          bindingIndex:
+                              matches.length === 1
+                                  ? getDraftedBindingIndex(
+                                        matches[0],
+                                        draftSpec.spec
+                                    )
+                                  : -1,
+                      };
+                  })
+                : Object.entries(resourceConfigs)
+                      .filter(([uuid]) =>
+                          increment === 'true'
+                              ? !backfilledBindings.includes(uuid)
+                              : backfilledBindings.includes(uuid)
+                      )
+                      .map(([_uuid, resourceConfig]) => ({
+                          collection: resourceConfig.meta.collectionName,
+                          bindingIndex: getDraftedBindingIndex(
+                              resourceConfig,
+                              draftSpec.spec
+                          ),
+                      }));
+            const invalidBinding = targets.find(
+                ({ bindingIndex }) => bindingIndex === -1
+            );
 
-            if (!mutateDraftSpecs || invalidBindingIndex > -1) {
-                const errorMessageId = bindingMetadataExists
-                    ? 'workflows.collectionSelector.manualBackfill.error.message.singleCollection'
-                    : 'workflows.collectionSelector.manualBackfill.error.message.allBindings';
-
-                const errorMessageValues = bindingMetadataExists
-                    ? {
-                          collection:
-                              bindingMetadata[invalidBindingIndex].collection,
-                      }
-                    : undefined;
+            if (!mutateDraftSpecs || invalidBinding) {
+                const collection =
+                    invalidBinding?.collection ??
+                    bindingMetadata[0]?.collection;
 
                 return Promise.reject({
                     ...BASE_ERROR,
-                    message: intl.formatMessage(
-                        { id: errorMessageId },
-                        errorMessageValues
-                    ),
+                    message: bindingMetadataExists
+                        ? `There was an issue updating the backfill counter for one or more bindings associated with collection, ${collection}.`
+                        : 'There was an issue updating the backfill counter for one or more bindings.',
                 });
             }
 
@@ -99,55 +121,13 @@ function useUpdateBackfillCounter() {
 
             const spec: Schema = cloneDeep(draftSpec.spec);
 
-            if (bindingMetadataExists) {
-                bindingMetadata.forEach(({ bindingIndex, collection }) => {
-                    if (bindingIndex > -1) {
-                        response[targetChangeSummaryProp].push(collection);
-
-                        spec.bindings[bindingIndex].backfill =
-                            evaluateBackfillCounter(
-                                spec.bindings[bindingIndex],
-                                increment
-                            );
-                    }
-                });
-            } else {
-                Object.entries(bindings).forEach(
-                    ([collection, bindingUUIDs]) => {
-                        bindingUUIDs.forEach((bindingUUID, iteratedIndex) => {
-                            const existingBindingIndex = getBindingIndex(
-                                spec.bindings,
-                                collection,
-                                iteratedIndex
-                            );
-
-                            if (existingBindingIndex > -1) {
-                                const backfilled =
-                                    backfilledBindings.includes(bindingUUID);
-
-                                const shouldIncrement =
-                                    !backfilled && increment === 'true';
-
-                                const shouldDecrement =
-                                    backfilled && increment === 'false';
-
-                                if (shouldIncrement || shouldDecrement) {
-                                    response[targetChangeSummaryProp].push(
-                                        collection
-                                    );
-
-                                    spec.bindings[
-                                        existingBindingIndex
-                                    ].backfill = evaluateBackfillCounter(
-                                        spec.bindings[existingBindingIndex],
-                                        increment
-                                    );
-                                }
-                            }
-                        });
-                    }
+            targets.forEach(({ bindingIndex, collection }) => {
+                response[targetChangeSummaryProp].push(collection);
+                spec.bindings[bindingIndex].backfill = evaluateBackfillCounter(
+                    spec.bindings[bindingIndex],
+                    increment
                 );
-            }
+            });
 
             const updateResponse = await modifyDraftSpec(spec, {
                 draft_id: draftId,
@@ -169,11 +149,10 @@ function useUpdateBackfillCounter() {
         },
         [
             backfilledBindings,
-            bindings,
             draftId,
             entityType,
-            intl,
             mutateDraftSpecs,
+            resourceConfigs,
         ]
     );
 

@@ -65,6 +65,7 @@ describe('generating a task draft spec', () => {
         resourceConfig_one = mockResourceConfig('mock/binding/one', 0);
         resourceConfig_two = mockResourceConfig('mock/binding/two', 1);
         resourceConfig_three = mockResourceConfig('mock/binding/three', 2);
+        resourceConfig_three.meta.added = true;
 
         connectorConfig = generateMockConnectorConfig();
         resourceConfigs = {};
@@ -177,7 +178,7 @@ describe('generating a task draft spec', () => {
                 bindings.push(bindings[0]);
             });
 
-            test('when the resource config contains a single instance of a duplicated binding, update one binding instance', () => {
+            test('when only one repeated binding remains, remove its siblings', () => {
                 const response = generateCaptureDraftSpec(
                     existingCapture,
                     connectorConfig,
@@ -205,14 +206,6 @@ describe('generating a task draft spec', () => {
                         resource: { fiz: 'resource' },
                         target: 'mock/binding/two',
                         backfill: 2,
-                    },
-                    {
-                        resource: { delta_updates: false, table: 'table_name' },
-                        target: 'mock/binding/one',
-                    },
-                    {
-                        resource: { delta_updates: false, table: 'table_name' },
-                        target: 'mock/binding/one',
                     },
                 ]);
             });
@@ -442,7 +435,7 @@ describe('generating a task draft spec', () => {
             expect(JSON.stringify(drafted)).toBe(before);
         });
 
-        test('a binding whose stored index is stale is matched by its collection', () => {
+        test('a stale authored index prevents regeneration without changing the draft', () => {
             // Binding two's index points at binding one's position
             const staleTwo = {
                 ...resourceConfig_two,
@@ -450,22 +443,54 @@ describe('generating a task draft spec', () => {
                 data: { fiz: 'updated two' },
             };
 
-            const bindings = (
+            const drafted = plainDraftedCapture(LIVE_PUB_ID);
+            const before = JSON.stringify(drafted);
+            expect(() =>
                 generateCaptureDraftSpec(
-                    plainDraftedCapture(LIVE_PUB_ID),
+                    drafted,
                     plainEndpoint,
                     { [uuidOne]: resourceConfig_one, [uuidTwo]: staleTwo },
                     bothBindings()
-                ).spec as any
-            ).bindings;
+                )
+            ).toThrow('Refresh the editor before saving');
+            expect(JSON.stringify(drafted)).toBe(before);
+        });
 
-            expect(bindings).toHaveLength(2);
-            expect(bindings[0].target).toBe('mock/binding/one');
-            expect(bindings[0].resource).toEqual({ fiz: 'resource' });
-            expect(bindings[1].target).toBe('mock/binding/two');
-            expect(bindings[1].resource).toEqual({ fiz: 'updated two' });
-            // Fields the form doesn't manage are kept from the drafted binding
-            expect(bindings[1].backfill).toBe(2);
+        test('an absent authored entry fails even when live correspondence was cleared, while an explicitly added binding works', () => {
+            const drafted = plainDraftedCapture(LIVE_PUB_ID);
+            const before = JSON.stringify(drafted);
+            const missing = {
+                ...resourceConfig_two,
+                meta: {
+                    ...resourceConfig_two.meta,
+                    bindingIndex: 99,
+                    liveBindingIndex: -1,
+                    added: false,
+                },
+            };
+            const generate = (resource: ResourceConfig) =>
+                generateCaptureDraftSpec(
+                    drafted,
+                    plainEndpoint,
+                    { [uuidTwo]: resource },
+                    { [resource.meta.collectionName]: [uuidTwo] }
+                );
+
+            expect(() => generate(missing)).toThrow(
+                'Refresh the editor before saving'
+            );
+            expect(JSON.stringify(drafted)).toBe(before);
+            expect(
+                (
+                    generate({
+                        ...missing,
+                        meta: { ...missing.meta, added: true },
+                    }).spec as any
+                ).bindings
+            ).toEqual([
+                { target: missing.meta.collectionName, resource: missing.data },
+            ]);
+            expect(JSON.stringify(drafted)).toBe(before);
         });
 
         test('disabling a binding sets `disable`, and enabling removes it', () => {

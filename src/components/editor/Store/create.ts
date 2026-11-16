@@ -24,7 +24,6 @@ const getInitialStateData = <T>(): Pick<
     | 'invalidEditors'
     | 'isEditing'
     | 'isSaving'
-    | 'liveBuiltSpec'
     | 'persistedDraftId'
     | 'pubId'
     | 'queryResponse'
@@ -43,7 +42,6 @@ const getInitialStateData = <T>(): Pick<
         statuses: {},
         isSaving: false,
         isEditing: false,
-        liveBuiltSpec: null,
         serverUpdate: null,
         draftInitializationError: null,
         queryResponse: { draftSpecs: [], isValidating: false, mutate: null },
@@ -63,16 +61,6 @@ const getInitialState = <T>(
                 }),
                 false,
                 'Set draft id'
-            );
-        },
-
-        setLiveBuiltSpec: (value) => {
-            set(
-                produce((state) => {
-                    state.liveBuiltSpec = value;
-                }),
-                false,
-                'Set live built spec'
             );
         },
 
@@ -223,12 +211,12 @@ const getInitialState = <T>(
         resetState: (excludePersistedDraftId) => {
             set(
                 () => {
-                    const { liveBuiltSpec, persistedDraftId, ...rest } =
+                    const { persistedDraftId, ...rest } =
                         getInitialStateData<T>();
 
                     return excludePersistedDraftId
                         ? rest
-                        : { liveBuiltSpec, persistedDraftId, ...rest };
+                        : { persistedDraftId, ...rest };
                 },
                 false,
                 'Resetting Editor State'

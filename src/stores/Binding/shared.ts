@@ -189,13 +189,10 @@ export const initializeCurrentBinding = (
         return;
     }
 
-    // We will just match based on name and that is not perfect but good enough
-    //  since very few use cases of duplication bindings exist.
     let preferredConfig;
     if (maintainPreviousCurrentBinding && state.currentBinding) {
         preferredConfig = allResourceConfigs.find(
-            ([_uuid, datum]) =>
-                datum.meta.collectionName === state.currentBinding?.collection
+            ([uuid]) => uuid === state.currentBinding?.uuid
         );
     }
 

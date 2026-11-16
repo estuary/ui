@@ -1,9 +1,12 @@
+import type { ResourceConfig } from 'src/stores/Binding/types';
+import type { Schema } from 'src/types';
 import type { BuiltCollection, BuiltSpec } from 'src/types/schemaModels';
 
 import { generateMockBinding } from 'src/test/test-utils';
 import {
+    getBindingCorrespondence,
     getBindingIndex,
-    getBuiltBindingIndex,
+    getBindingIndexByResourcePath,
     getBuiltCollection,
 } from 'src/utils/workflow-utils';
 
@@ -127,24 +130,296 @@ describe('getBuiltCollection', () => {
     });
 });
 
-describe('getBuiltBindingIndex', () => {
-    test('reads inline and indirect names, skipping unavailable references', () => {
-        expect(
-            getBuiltBindingIndex(
-                { bindings: [{}, { collection: builtCollection }] },
-                builtCollection.name
-            )
-        ).toBe(1);
-        expect(
-            getBuiltBindingIndex(
-                {
-                    bindings: [{ collectionIndex: 99 }, {}],
-                    linkedCollections: [builtCollection],
+describe('binding correspondence', () => {
+    const binding = (table: string, path = table): Schema => ({
+        source: builtCollection.name,
+        resource: { table, _meta: { path: [path] } },
+    });
+    const built = (tables: string[], indirect = false): Schema => ({
+        ...(indirect ? { linkedCollections: [builtCollection] } : {}),
+        bindings: tables.map((table) => ({
+            ...(indirect ? {} : { collection: builtCollection }),
+            resourceConfig: { table },
+            resourcePath: [table],
+        })),
+    });
+    const config = (bindings: Schema[], bindingIndex = 0): ResourceConfig => ({
+        data: bindings[bindingIndex].resource,
+        errors: [],
+        meta: {
+            bindingIndex,
+            collectionName: builtCollection.name,
+            disable: bindings[bindingIndex].disable,
+            builtBindingIndex: -1,
+            validatedBindingIndex: -1,
+            liveBuiltBindingIndex: -1,
+            liveBindingIndex: -1,
+        },
+    });
+    const absent = {
+        builtBindingIndex: -1,
+        validatedBindingIndex: -1,
+        liveBuiltBindingIndex: -1,
+        liveBindingIndex: -1,
+    };
+
+    test.each([
+        [false, false],
+        [false, true],
+        [true, false],
+        [true, true],
+    ])(
+        'joins independently reordered arrays (draft indirect: %s, live indirect: %s)',
+        (draftIndirect, liveIndirect) => {
+            const draft = {
+                spec: { bindings: [binding('b'), binding('a')] },
+                built_spec: built(['a', 'b'], draftIndirect),
+                validated: {
+                    bindings: [
+                        { resourcePath: ['b'] },
+                        { resourcePath: ['a'] },
+                    ],
                 },
-                builtCollection.name
+            };
+            const live = {
+                spec: { bindings: [binding('a'), binding('b')] },
+                built_spec: built(['b', 'a'], liveIndirect),
+            };
+            const before = JSON.stringify([draft, live]);
+            expect(
+                getBindingCorrespondence(
+                    config(draft.spec.bindings),
+                    draft,
+                    live
+                )
+            ).toEqual({
+                builtBindingIndex: 1,
+                validatedBindingIndex: 0,
+                liveBuiltBindingIndex: 0,
+                liveBindingIndex: 1,
+            });
+            expect(
+                getBindingCorrespondence(
+                    config(draft.spec.bindings, 1),
+                    draft,
+                    live
+                )
+            ).toEqual({
+                builtBindingIndex: 0,
+                validatedBindingIndex: 1,
+                liveBuiltBindingIndex: 1,
+                liveBindingIndex: 0,
+            });
+            expect(JSON.stringify([draft, live])).toBe(before);
+        }
+    );
+
+    test('uses current output paths after a table swap despite stale authored metadata', () => {
+        const draft = {
+            spec: { bindings: [binding('b', 'a'), binding('a', 'b')] },
+            built_spec: built(['a', 'b']),
+            validated: {
+                bindings: [{ resourcePath: ['a'] }, { resourcePath: ['b'] }],
+            },
+        };
+        const live = {
+            spec: { bindings: [binding('a'), binding('b')] },
+            built_spec: built(['a', 'b']),
+        };
+        expect(
+            getBindingCorrespondence(config(draft.spec.bindings), draft, live)
+        ).toEqual({
+            builtBindingIndex: 1,
+            validatedBindingIndex: 1,
+            liveBuiltBindingIndex: 1,
+            liveBindingIndex: 1,
+        });
+    });
+
+    test('preserves live identity after nonidentity configuration changes and supports new bindings without metadata', () => {
+        const draft = {
+            spec: {
+                bindings: [
+                    { ...binding('a'), resource: { table: 'a', delta: true } },
+                ],
+            },
+            built_spec: {
+                bindings: [
+                    {
+                        collection: builtCollection,
+                        resourceConfig: { delta: true, table: 'a' },
+                        resourcePath: ['a'],
+                    },
+                ],
+            },
+            validated: { bindings: [{ resourcePath: ['a'] }] },
+        };
+        const live = {
+            spec: { bindings: [binding('a')] },
+            built_spec: built(['a']),
+        };
+        expect(
+            getBindingCorrespondence(config(draft.spec.bindings), draft, live)
+        ).toEqual({
+            builtBindingIndex: 0,
+            validatedBindingIndex: 0,
+            liveBuiltBindingIndex: 0,
+            liveBindingIndex: 0,
+        });
+        expect(
+            getBindingCorrespondence(config(draft.spec.bindings), draft)
+        ).toEqual({
+            ...absent,
+            builtBindingIndex: 0,
+            validatedBindingIndex: 0,
+        });
+    });
+
+    test.each(['explicit', 'before validation', 'after validation'])(
+        'does not shift the next binding when a preceding binding is disabled %s',
+        (when) => {
+            const draft = {
+                spec: {
+                    bindings: [
+                        { ...binding('a'), disable: when === 'explicit' },
+                        binding('b'),
+                    ],
+                },
+                built_spec: built(['b']),
+                validated: {
+                    bindings:
+                        when === 'after validation'
+                            ? [{ resourcePath: ['a'] }, { resourcePath: ['b'] }]
+                            : [{ resourcePath: ['b'] }],
+                },
+            };
+            expect(
+                getBindingCorrespondence(config(draft.spec.bindings, 1), draft)
+            ).toEqual({
+                ...absent,
+                builtBindingIndex: 0,
+                validatedBindingIndex: when === 'after validation' ? 1 : 0,
+            });
+            expect(
+                getBindingCorrespondence(config(draft.spec.bindings), draft)
+            ).toEqual(absent);
+        }
+    );
+
+    test('rejects ambiguous authored or built configurations instead of choosing the first', () => {
+        const draft = {
+            spec: { bindings: [binding('a'), binding('a', 'old')] },
+            built_spec: built(['a']),
+            validated: { bindings: [{ resourcePath: ['a'] }] },
+        };
+        expect(
+            getBindingCorrespondence(config(draft.spec.bindings), draft)
+        ).toEqual(absent);
+        draft.spec.bindings[1].disable = true;
+        expect(
+            getBindingCorrespondence(config(draft.spec.bindings), draft)
+                .builtBindingIndex
+        ).toBe(0);
+        draft.built_spec = built(['a', 'a']);
+        expect(
+            getBindingCorrespondence(config(draft.spec.bindings), draft)
+        ).toEqual(absent);
+    });
+
+    test('a newly added binding cannot use a provisional index to claim an existing identical resource', () => {
+        const draft = {
+            spec: { bindings: [binding('a')] },
+            built_spec: built(['a']),
+            validated: { bindings: [{ resourcePath: ['a'] }] },
+        };
+        const target = config(draft.spec.bindings);
+        target.meta.added = true;
+        expect(getBindingCorrespondence(target, draft)).toEqual(absent);
+        target.meta.added = false;
+        expect(getBindingCorrespondence(target, draft).builtBindingIndex).toBe(
+            0
+        );
+    });
+
+    test('rejects mismatched resources, collections, invalid references and absent results', () => {
+        const draft = {
+            spec: { bindings: [binding('a'), binding('b')] },
+            built_spec: built(['a', 'b'], true),
+            validated: {
+                bindings: [{ resourcePath: ['a'] }, { resourcePath: ['b'] }],
+            },
+        };
+        const target = config(draft.spec.bindings);
+        expect(
+            getBindingCorrespondence({ ...target, data: { table: 'b' } }, draft)
+        ).toEqual(absent);
+        expect(
+            getBindingCorrespondence(
+                {
+                    ...target,
+                    meta: {
+                        ...target.meta,
+                        collectionName: 'different/collection',
+                    },
+                },
+                draft
             )
-        ).toBe(1);
-        expect(getBuiltBindingIndex({}, builtCollection.name)).toBe(-1);
+        ).toEqual(absent);
+        expect(getBindingCorrespondence(target, undefined)).toEqual(absent);
+        draft.built_spec.bindings[0].collectionIndex = 99;
+        expect(getBindingCorrespondence(target, draft)).toEqual(absent);
+        expect(
+            getBindingCorrespondence(target, { ...draft, built_spec: null })
+        ).toEqual(absent);
+    });
+
+    test('excludes only top-level resource metadata', () => {
+        const draft = {
+            spec: {
+                bindings: [
+                    {
+                        source: builtCollection.name,
+                        resource: {
+                            table: 'a',
+                            nested: { _meta: 1 },
+                            _meta: { path: ['old'] },
+                        },
+                    },
+                ],
+            },
+            built_spec: {
+                bindings: [
+                    {
+                        collection: builtCollection,
+                        resourceConfig: { table: 'a', nested: { _meta: 1 } },
+                        resourcePath: ['a'],
+                    },
+                ],
+            },
+            validated: { bindings: [{ resourcePath: ['a'] }] },
+        };
+        expect(
+            getBindingCorrespondence(config(draft.spec.bindings), draft)
+                .builtBindingIndex
+        ).toBe(0);
+        draft.built_spec.bindings[0].resourceConfig.nested._meta = 2;
+        expect(
+            getBindingCorrespondence(config(draft.spec.bindings), draft)
+        ).toEqual(absent);
+    });
+
+    test('matches paths as exact arrays and rejects duplicate paths', () => {
+        const schema = {
+            bindings: [
+                { resourcePath: ['a.b', 'c'] },
+                { resourcePath: ['a', 'b.c'] },
+            ],
+        };
+        expect(getBindingIndexByResourcePath(['a', 'b.c'], schema)).toBe(1);
+        expect(getBindingIndexByResourcePath(['a.b.c'], schema)).toBe(-1);
+        schema.bindings.push(schema.bindings[0]);
+        expect(getBindingIndexByResourcePath(['a.b', 'c'], schema)).toBe(-1);
+        expect(getBindingIndexByResourcePath([], schema)).toBe(-1);
     });
 });
 

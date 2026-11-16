@@ -95,6 +95,11 @@ export const getStoreWithBackfillSettings = (
                     ? [targetBindingUUID]
                     : existingBindingUUIDs;
 
+                bindingUUIDs.forEach((uuid) => {
+                    state.resourceConfigs[uuid].meta.backfillOverride =
+                        increment === 'true';
+                });
+
                 state.backfilledBindings =
                     increment === 'true'
                         ? union(state.backfilledBindings, bindingUUIDs)

@@ -1,3 +1,4 @@
+import type { CaptureDraftSpec } from 'src/hooks/drafts/useGetDraftSpec';
 import type { FormError } from 'src/stores/FormState/types';
 import type { Schema } from 'src/types';
 import type { Result } from 'src/types/utils';
@@ -23,6 +24,7 @@ import { useSaveDraftSpec } from 'src/hooks/drafts/useSaveDraftSpec';
 import useEntityNameSuffix from 'src/hooks/useEntityNameSuffix';
 import {
     useBinding_bindings,
+    useBinding_prefillBindingDependentState,
     useBinding_resourceConfigs,
 } from 'src/stores/Binding/hooks';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
@@ -52,6 +54,8 @@ export function useSubmitCaptureForm(options?: {
     const updateFormStatus = useFormStateStore_updateStatus();
     const resetEditorState = useEditorStore_resetState();
     const setCatalogName = useEditorStore_setCatalogName();
+    const prefillBindingDependentState =
+        useBinding_prefillBindingDependentState();
 
     const dataPlaneName = useDetailsFormStore(
         (state) => state.details.data.dataPlane?.dataPlaneName
@@ -72,8 +76,13 @@ export function useSubmitCaptureForm(options?: {
             return false;
         }
 
-        const { draftId, catalogName, encryptedEndpointConfig, startedOver } =
-            written;
+        const {
+            draftId,
+            catalogName,
+            encryptedEndpointConfig,
+            startedOver,
+            draftSpec,
+        } = written;
 
         setCatalogName(catalogName);
 
@@ -81,8 +90,13 @@ export function useSubmitCaptureForm(options?: {
             return startDiscover(draftId, catalogName, dataPlaneName?.whole);
         }
 
-        // this breaks when you have published something, stay on the page, and then edit agin
-        void mutateDraftSpec();
+        prefillBindingDependentState(
+            'capture',
+            [],
+            draftSpec.spec.bindings,
+            true
+        );
+        await mutateDraftSpec();
         applyDraft({ draftId, catalogName, encryptedEndpointConfig });
 
         return true;
@@ -92,6 +106,7 @@ export function useSubmitCaptureForm(options?: {
         dataPlaneName?.whole,
         mutateDraftSpec,
         options?.initiateRediscovery,
+        prefillBindingDependentState,
         resetEditorState,
         setCatalogName,
         startDiscover,
@@ -105,6 +120,7 @@ interface WrittenCaptureDraft {
     draftId: string;
     catalogName: string;
     encryptedEndpointConfig: Schema;
+    draftSpec: CaptureDraftSpec;
     // A new draft was started, so the capture needs a discover
     startedOver: boolean;
 }
@@ -176,12 +192,20 @@ function useWriteCaptureDraft(initiateDiscovery?: boolean) {
         }
 
         // Starting over drafts no bindings, as the discover adds them
-        const draftSpec = generateDraftSpec(
-            existingDraftSpec,
-            { image: imagePath, config: encryptedEndpointConfig },
-            startedOver ? {} : resourceConfigs,
-            startedOver ? {} : bindings
-        );
+        let draftSpec;
+        try {
+            draftSpec = generateDraftSpec(
+                existingDraftSpec,
+                { image: imagePath, config: encryptedEndpointConfig },
+                startedOver ? {} : resourceConfigs,
+                startedOver ? {} : bindings
+            );
+        } catch (error) {
+            if (error instanceof Error) {
+                return { error: { title: ERROR_TITLE, error } };
+            }
+            throw error;
+        }
 
         const { error: draftSpecError } = await saveDraftSpec(
             draftId,
@@ -197,6 +221,7 @@ function useWriteCaptureDraft(initiateDiscovery?: boolean) {
                 draftId,
                 catalogName,
                 encryptedEndpointConfig,
+                draftSpec,
                 startedOver,
             },
         };

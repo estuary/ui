@@ -1,7 +1,11 @@
 import type { DurationObjectUnits } from 'luxon';
 import type { TrialCollectionQuery } from 'src/api/liveSpecsExt';
 import type { ConnectorTagData } from 'src/context/ConnectorTag';
-import type { LiveSpecsExt_MaterializeOrTransform } from 'src/hooks/useLiveSpecsExt';
+import type { DraftSpecQuery } from 'src/hooks/useDraftSpecs';
+import type {
+    LiveSpecsExt_MaterializeOrTransform,
+    LiveSpecsExtQueryWithSpec,
+} from 'src/hooks/useLiveSpecsExt';
 import type { ResourceConfigPointers } from 'src/services/ajv';
 import type { StoreWithBackfill } from 'src/stores/Binding/slices/Backfill';
 import type { StoreWithFieldSelection } from 'src/stores/Binding/slices/FieldSelection';
@@ -47,12 +51,13 @@ export interface ResourceConfig extends JsonFormsData {
         // server errors back to the client UI, use the index that matches the array
         // the error came from. All five are kept in sync during hydration and by
         // setRelatedBindingIndices.
-        bindingIndex: number; // client resource config order; the drafted spec's bindings
-        builtBindingIndex: number; // the drafted built spec's bindings; -1 when disabled
+        bindingIndex: number; // the authored draft's bindings, independent of display order
+        builtBindingIndex: number; // the drafted built spec's bindings; -1 when disabled or unresolved
         collectionName: string;
         liveBindingIndex: number; // the live (published) spec's bindings; -1 when not previously bound
-        liveBuiltBindingIndex: number; // the live built spec's bindings; -1 when the validation response has no matching resourcePath
+        liveBuiltBindingIndex: number; // the live built spec's bindings, matched by current resourcePath
         validatedBindingIndex: number; // the validation response's bindings, matched by resourcePath; -1 when disabled
+        backfillOverride?: boolean; // An explicit user choice survives changes to the live baseline.
         added?: boolean;
         disable?: boolean;
         onIncompatibleSchemaChange?: string;
@@ -192,9 +197,14 @@ export interface BindingState
         disableCheckingErrors?: boolean
     ) => void;
     setRelatedBindingIndices: (
-        builtSpec: Schema | null,
-        validationResponse: Schema | null,
-        liveBuiltSpec: Schema | null
+        draft:
+            | Pick<DraftSpecQuery, 'spec' | 'built_spec' | 'validated'>
+            | null
+            | undefined,
+        live:
+            | Pick<LiveSpecsExtQueryWithSpec, 'spec' | 'built_spec'>
+            | null
+            | undefined
     ) => void;
     resetResourceConfigAddedMetadata: () => void;
 

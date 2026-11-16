@@ -4,17 +4,18 @@ import { BindingsEditorConfigSkeleton } from 'src/components/collection/Collecti
 import ResourceConfigForm from 'src/components/collection/ResourceConfigForm';
 import AdvancedOptions from 'src/components/editor/Bindings/AdvancedOptions';
 import Backfill from 'src/components/editor/Bindings/Backfill';
-import { useEditorStore_queryResponse_draftedBindingIndex } from 'src/components/editor/Store/hooks';
+import { useEditorStore_queryResponse_draftSpecs } from 'src/components/editor/Store/hooks';
 import FieldSelectionViewer from 'src/components/fieldSelection/FieldSelectionViewer';
 import TrialOnlyPrefixAlert from 'src/components/materialization/TrialOnlyPrefixAlert';
 import ErrorBoundryWrapper from 'src/components/shared/ErrorBoundryWrapper';
 import { useEntityType } from 'src/context/EntityContext';
 import {
     useBinding_collectionMetadataProperty,
-    useBinding_currentBindingIndex,
     useBinding_hydrated,
+    useBinding_resourceConfig,
     useBinding_resourceConfigOfMetaBindingProperty,
 } from 'src/stores/Binding/hooks';
+import { getDraftedBindingIndex } from 'src/utils/workflow-utils';
 
 interface Props {
     bindingUUID: string;
@@ -34,13 +35,12 @@ function ResourceConfig({
     const entityType = useEntityType();
 
     const hydrated = useBinding_hydrated();
-    const stagedBindingIndex = useBinding_currentBindingIndex();
-
-    const draftedBindingIndex =
-        useEditorStore_queryResponse_draftedBindingIndex(
-            collectionName,
-            stagedBindingIndex
-        );
+    const resourceConfig = useBinding_resourceConfig(bindingUUID);
+    const draftSpecs = useEditorStore_queryResponse_draftSpecs();
+    const draftedBindingIndex = getDraftedBindingIndex(
+        resourceConfig,
+        draftSpecs[0]?.spec
+    );
 
     // If the collection is disabled then it will not come back in the built spec
     //  binding list. This means the user could end up clicking "See Fields" button

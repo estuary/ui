@@ -6,7 +6,6 @@ import type {
 import type { FullSourceDictionary } from 'src/stores/Binding/slices/TimeTravel';
 import type {
     Bindings,
-    ResourceConfig,
     ResourceConfigDictionary,
 } from 'src/stores/Binding/types';
 import type {
@@ -20,7 +19,7 @@ import type {
 
 import { useMemo } from 'react';
 
-import { cloneDeep, isEmpty, omit } from 'lodash';
+import { cloneDeep, isEmpty, isEqual, omit } from 'lodash';
 
 import { isDekafEndpointConfig } from 'src/utils/connector-utils';
 import {
@@ -31,7 +30,6 @@ import {
     setFieldsStanzaRecommended,
 } from 'src/utils/entity-utils';
 import {
-    getBindingIndex,
     getCollectionName,
     getCollectionNameProp,
     getDisableProps,
@@ -134,26 +132,6 @@ function getExpectPubId(
         : NEW_TASK_PUBLICATION_ID;
 }
 
-// Use the binding's index while it still points at its collection, and
-// otherwise find it by name
-function findDraftedBindingIndex(
-    draftedBindings: any[],
-    resourceConfigMeta: ResourceConfig['meta'],
-    iteratedIndex: number
-) {
-    const { bindingIndex, collectionName } = resourceConfigMeta;
-    const indexedBinding = draftedBindings[bindingIndex];
-
-    return indexedBinding &&
-        getCollectionName(indexedBinding) === collectionName
-        ? bindingIndex
-        : getBindingIndex(draftedBindings, collectionName, iteratedIndex);
-}
-
-// A copy of `generateTaskSpec` in `src/utils/workflow-utils`, which it will
-// replace once its callers move to this hook. It matches each binding to its
-// drafted binding by itself, rather than all by index or all by name.
-//
 // TODO (typing): Narrow the return type for this function.
 function generateTaskSpec(
     catalogType: EntityWithCreateWorkflow,
@@ -179,18 +157,41 @@ function generateTaskSpec(
     } else {
         const collectionNameProp = getCollectionNameProp(catalogType);
         const { fullSource = null, sourceCaptureDefinition = null } = options;
+        const generatedBindings: Schema[] = [];
+        const draftedIndices = new Set<number>();
 
         Object.values(bindings).forEach((bindingUUIDs) => {
-            bindingUUIDs.forEach((bindingUUID, iteratedIndex) => {
+            bindingUUIDs.forEach((bindingUUID) => {
                 const { data: resourceConfig, meta } =
                     resourceConfigs[bindingUUID];
 
-                const draftedIndex = findDraftedBindingIndex(
-                    draftSpec.bindings,
-                    meta,
-                    iteratedIndex
-                );
-                const drafted = draftSpec.bindings[draftedIndex];
+                const indexedBinding = draftSpec.bindings[meta.bindingIndex];
+                const previousPath = resourceConfig?._meta?.path;
+                const draftedPath = indexedBinding?.resource?._meta?.path;
+                if (
+                    meta.added !== true &&
+                    ((indexedBinding &&
+                        getCollectionName(indexedBinding) !==
+                            meta.collectionName) ||
+                        (!indexedBinding && existingSpec) ||
+                        (previousPath &&
+                            draftedPath &&
+                            !isEqual(previousPath, draftedPath)) ||
+                        draftedIndices.has(meta.bindingIndex))
+                ) {
+                    throw new Error(
+                        `Binding data for ${meta.collectionName} has changed. Refresh the editor before saving.`
+                    );
+                }
+                const drafted =
+                    meta.added !== true &&
+                    indexedBinding &&
+                    getCollectionName(indexedBinding) === meta.collectionName
+                        ? indexedBinding
+                        : undefined;
+                if (drafted) {
+                    draftedIndices.add(meta.bindingIndex);
+                }
 
                 // A binding that isn't drafted is only added with a resource config
                 if (!drafted && isEmpty(resourceConfig)) {
@@ -204,7 +205,7 @@ function generateTaskSpec(
                     bindingUUID
                 );
 
-                let binding: Schema = drafted
+                const binding: Schema = drafted
                     ? { ...drafted }
                     : {
                           [collectionNameProp]: collection,
@@ -227,11 +228,6 @@ function generateTaskSpec(
                         meta.onIncompatibleSchemaChange
                     );
 
-                    // Remove the fields stanza from the drafted binding if it was reintroduced to the spec.
-                    if (drafted && meta.added) {
-                        binding = omit(binding, 'fields');
-                    }
-
                     // Set the value of the recommended flag of a new binding to that of `fieldsRecommended`.
                     if (meta.liveBuiltBindingIndex === -1) {
                         setFieldsStanzaRecommended(
@@ -241,21 +237,11 @@ function generateTaskSpec(
                     }
                 }
 
-                if (drafted) {
-                    draftSpec.bindings[draftedIndex] = binding;
-                } else {
-                    draftSpec.bindings.push(binding);
-                }
+                generatedBindings.push(binding);
             });
         });
 
-        const boundCollections = Object.keys(bindings);
-
-        draftSpec.bindings = draftSpec.bindings.filter((binding: any) =>
-            boundCollections.includes(
-                getCollectionName(binding[collectionNameProp])
-            )
-        );
+        draftSpec.bindings = generatedBindings;
     }
 
     // Try adding at the end because these settings could be added/changed at any time
