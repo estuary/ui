@@ -153,11 +153,13 @@ export const getBindingCorrespondence = (
     }
 
     const { collectionName } = resourceConfig.meta;
-    const resource = withoutResourceMetadata(resourceConfig.data);
-
-    if (getDraftedBindingIndex(resourceConfig, draft.spec) === -1) {
+    const draftedIndex = getDraftedBindingIndex(resourceConfig, draft.spec);
+    if (draftedIndex === -1) {
         return indices;
     }
+    const resource = withoutResourceMetadata(
+        draft.spec.bindings[draftedIndex].resource
+    );
 
     const builtBindings: Schema[] = draft.built_spec?.bindings ?? [];
     indices.builtBindingIndex = findUniqueIndex(
@@ -200,12 +202,17 @@ export const getDraftedBindingIndex = (
     resourceConfig: Pick<ResourceConfig, 'data' | 'meta'> | undefined,
     spec: Schema | null | undefined
 ): number => {
-    if (!resourceConfig || resourceConfig.meta.added === true) {
+    if (
+        !resourceConfig ||
+        resourceConfig.meta.added === true ||
+        !resourceConfig.meta.draftedResource
+    ) {
         return -1;
     }
 
-    const { bindingIndex, collectionName, disable } = resourceConfig.meta;
-    const resource = withoutResourceMetadata(resourceConfig.data);
+    const { bindingIndex, collectionName, disable, draftedResource } =
+        resourceConfig.meta;
+    const resource = withoutResourceMetadata(draftedResource);
     const authoredIndex = findUniqueIndex(
         spec?.bindings ?? [],
         (binding: Schema) =>

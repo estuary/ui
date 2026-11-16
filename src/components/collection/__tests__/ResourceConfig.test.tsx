@@ -42,12 +42,13 @@ describe('resource configuration authored binding selection', () => {
     test.each([
         ['existing matching resource', 'b', false, 1],
         ['new binding with a colliding provisional index', 'b', true, -1],
-        ['unsaved resource edit', 'changed', false, -1],
+        ['unsaved resource edit', 'changed', false, 1],
     ] as const)('%s', (_name, table, added, expectedIndex) => {
         const config: ResourceConfigState = {
             data: { table },
             errors: [],
             meta: {
+                draftedResource: { table: 'b' },
                 added,
                 bindingIndex: 1,
                 builtBindingIndex: -1,

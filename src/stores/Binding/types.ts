@@ -57,6 +57,7 @@ export interface ResourceConfig extends JsonFormsData {
         liveBindingIndex: number; // the live (published) spec's bindings; -1 when not previously bound
         liveBuiltBindingIndex: number; // the live built spec's bindings, matched by current resourcePath
         validatedBindingIndex: number; // the validation response's bindings, matched by resourcePath; -1 when disabled
+        draftedResource?: Schema; // The loaded resource identifies the draft binding while data is edited.
         backfillOverride?: boolean; // An explicit user choice survives changes to the live baseline.
         added?: boolean;
         disable?: boolean;

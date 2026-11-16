@@ -1260,6 +1260,8 @@ const getInitialState = (
                         builtBindingIndex:
                             targetResourceConfig.meta.builtBindingIndex,
                         collectionName: targetCollection,
+                        draftedResource:
+                            targetResourceConfig.meta.draftedResource,
                         liveBindingIndex:
                             targetResourceConfig.meta.liveBindingIndex,
                         liveBuiltBindingIndex:

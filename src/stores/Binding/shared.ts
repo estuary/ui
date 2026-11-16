@@ -15,7 +15,7 @@ import type {
 import type { Entity, Schema } from 'src/types';
 import type { StoreApi } from 'zustand';
 
-import { difference, intersection, isEmpty, omit } from 'lodash';
+import { cloneDeep, difference, intersection, isEmpty, omit } from 'lodash';
 
 import { getDraftSpecsByDraftId } from 'src/api/draftSpecs';
 import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
@@ -222,6 +222,7 @@ const getResourceConfig = (
             bindingIndex,
             builtBindingIndex: -1,
             collectionName,
+            draftedResource: cloneDeep(resource),
             liveBindingIndex: -1,
             liveBuiltBindingIndex: -1,
             onIncompatibleSchemaChange: binding?.onIncompatibleSchemaChange,

@@ -110,6 +110,7 @@ const resourceConfig = (
     data: binding.resource,
     errors: [],
     meta: {
+        draftedResource: structuredClone(binding.resource),
         collectionName,
         bindingIndex,
         builtBindingIndex: -1,
@@ -184,6 +185,13 @@ describe('field selection writes', () => {
         async (indirect) => {
             const draft = initialize(false, indirect);
             const before = structuredClone(draft.spec);
+            // Even a pending edit equal to the sibling's resource must stay on binding B.
+            useBindingStore
+                .getState()
+                .updateResourceConfig(collectionName, 'b', {
+                    data: { table: 'a' },
+                    errors: [],
+                });
             useBindingStore.setState((state) => ({
                 selections: {
                     ...state.selections,
@@ -219,6 +227,9 @@ describe('field selection writes', () => {
                 }
             );
             expect(draft.spec).toEqual(before);
+            expect(useBindingStore.getState().resourceConfigs.b.data).toEqual({
+                table: 'a',
+            });
             expect(mutate).toHaveBeenCalledOnce();
         }
     );

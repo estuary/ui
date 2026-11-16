@@ -33,6 +33,7 @@ const resourceConfig = (
 ): ResourceConfig => ({
     data: { topic_name: topic, _meta: { path: [topic] } },
     meta: {
+        draftedResource: { topic_name: topic, _meta: { path: [topic] } },
         collectionName: collection,
         bindingIndex,
         builtBindingIndex: -1,
@@ -136,22 +137,37 @@ describe('useUpdateBackfillCounter', () => {
         ).toEqual([3, 8, 10]);
     });
 
-    test('a single binding update leaves its sibling unchanged without requiring a build', async () => {
-        const row = draft();
-        const { result } = renderHook(() => useUpdateBackfillCounter());
+    test.each([false, true])(
+        'pending resource edits allow backfill without a build (bulk: %s)',
+        async (bulk) => {
+            const row = draft();
+            const configs = {
+                one: resourceConfig('one', 0),
+                two: {
+                    ...resourceConfig('two', 1),
+                    data: { topic_name: 'renamed' },
+                },
+            };
+            vi.mocked(useBinding_resourceConfigs).mockReturnValue(configs);
+            vi.mocked(useBinding_backfilledBindings).mockReturnValue(['one']);
+            const { result } = renderHook(() => useUpdateBackfillCounter());
 
-        await result.current.updateBackfillCounter(row, 'true', [
-            { collection, bindingIndex: 1 },
-        ]);
+            await result.current.updateBackfillCounter(
+                row,
+                'true',
+                bulk ? [] : [{ collection, bindingIndex: 1 }]
+            );
 
-        const written = vi.mocked(modifyDraftSpec).mock.calls[0][0];
-        expect(written.bindings[0]).toEqual(row.spec.bindings[0]);
-        expect(written.bindings[1]).toEqual({
-            ...row.spec.bindings[1],
-            backfill: 8,
-        });
-        expect(written.bindings[2]).toEqual(row.spec.bindings[2]);
-    });
+            const written = vi.mocked(modifyDraftSpec).mock.calls[0][0];
+            expect(written.bindings[0]).toEqual(row.spec.bindings[0]);
+            expect(written.bindings[1]).toEqual({
+                ...row.spec.bindings[1],
+                backfill: 8,
+            });
+            expect(written.bindings[2]).toEqual(row.spec.bindings[2]);
+            expect(configs.two.data).toEqual({ topic_name: 'renamed' });
+        }
+    );
 
     test.each(['ambiguous', 'reordered', 'edited'] as const)(
         '%s correspondence rejects the whole bulk write',

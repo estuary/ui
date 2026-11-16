@@ -147,6 +147,7 @@ describe('binding correspondence', () => {
         data: bindings[bindingIndex].resource,
         errors: [],
         meta: {
+            draftedResource: structuredClone(bindings[bindingIndex].resource),
             bindingIndex,
             collectionName: builtCollection.name,
             disable: bindings[bindingIndex].disable,
@@ -351,7 +352,13 @@ describe('binding correspondence', () => {
         };
         const target = config(draft.spec.bindings);
         expect(
-            getBindingCorrespondence({ ...target, data: { table: 'b' } }, draft)
+            getBindingCorrespondence(
+                {
+                    ...target,
+                    meta: { ...target.meta, draftedResource: { table: 'b' } },
+                },
+                draft
+            )
         ).toEqual(absent);
         expect(
             getBindingCorrespondence(

@@ -182,6 +182,62 @@ test('missing and disabled results clear every derived index', () => {
     });
 });
 
+test('resource edits keep the submitted binding until regeneration establishes the new resource', () => {
+    const live = row([binding('a', 4), binding('b', 9)]);
+    const draft = row(
+        live.spec.bindings.map((item) => ({
+            ...item,
+            resource: { table: item.resource.table },
+        }))
+    );
+    state().prefillBindingDependentState(
+        'materialization',
+        live.spec.bindings,
+        draft.spec.bindings
+    );
+    const uuid = uuidFor('b');
+    state().setRelatedBindingIndices(draft, live);
+    state().updateResourceConfig(collection, uuid, {
+        data: { table: 'renamed' },
+        errors: [],
+    });
+    state().setRelatedBindingIndices(draft, live);
+    expect(state().resourceConfigs[uuid].meta).toMatchObject({
+        draftedResource: { table: 'b' },
+        builtBindingIndex: 1,
+        liveBindingIndex: 1,
+        validatedBindingIndex: 1,
+    });
+    state().setBackfilledBindings('reset', 'true', uuid);
+    const generate = renderHook(() => useGenerateDraftSpec('materialization'))
+        .result.current;
+    const regenerated = generate(
+        { spec: draft.spec as any, expect_pub_id: 'pub' },
+        { image: 'materialize-test:dev', config: {} },
+        state().resourceConfigs,
+        state().bindings
+    ).spec as Schema;
+    state().prefillBindingDependentState(
+        'materialization',
+        [],
+        regenerated.bindings,
+        true
+    );
+    const renamed = uuidFor('renamed');
+    expect(state().resourceConfigs[renamed].meta.draftedResource).toEqual({
+        table: 'renamed',
+    });
+    state().setRelatedBindingIndices(row(regenerated.bindings), live);
+    expect(state().resourceConfigs[renamed].meta).toMatchObject({
+        builtBindingIndex: 1,
+        liveBindingIndex: -1,
+        validatedBindingIndex: 1,
+        backfillOverride: true,
+    });
+    expect(state().backfilledBindings).toContain(renamed);
+    expect(regenerated.bindings[0]).toEqual(draft.spec.bindings[0]);
+});
+
 test('reload reconstructs backfill from persisted counters and resource identity', () => {
     const live = [binding('a', 4), binding('b', 9)];
     const saved = [binding('b', 9), binding('a', 5)];
