@@ -232,21 +232,3 @@ export const SET_BILLING_CONTACT = graphql(`
         }
     }
 `);
-
-// The server includes the single-permission ViewBilling and EditBilling bundles
-// whenever the user holds those permissions. `none` includes bundle-only grants,
-// and the `in` filter returns just the row at the tenant itself.
-export const BILLING_CAPABILITIES_QUERY = graphql(`
-    query BillingCapabilities($tenant: String!) {
-        prefixes(
-            by: { minCapability: none }
-            filter: { prefix: { in: [$tenant] } }
-        ) {
-            edges {
-                node {
-                    capabilities
-                }
-            }
-        }
-    }
-`);
