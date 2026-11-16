@@ -1,3 +1,4 @@
+import type { TaskBindingStats } from 'src/api/catalogStats';
 import type {
     BindingCounts,
     BindingRow,
@@ -5,7 +6,6 @@ import type {
     BindingSortKey,
     BindingStatus,
     BindingStatusVariant,
-    BindingTaskStats,
     BindingVolume,
 } from 'src/components/shared/Entity/Details/Overview/Bindings/types';
 import type {
@@ -140,7 +140,7 @@ const getResourcePath = (
  * published, a materialization the *source* document it processed.
  */
 const readIntervalBindings = (
-    taskStats: BindingTaskStats,
+    taskStats: TaskBindingStats,
     entityType: Entity
 ) =>
     entityType === 'materialization'
@@ -170,7 +170,7 @@ const readIntervalBindings = (
  * and reporting that would put a time beside a zero.
  */
 const accumulateBindingStats = (
-    taskStatsByInterval: BindingTaskStats[] | null | undefined,
+    taskStatsByInterval: TaskBindingStats[] | null | undefined,
     entityType: Entity
 ): Map<string, BindingVolume> => {
     const totals = new Map<string, BindingVolume>();
@@ -224,7 +224,7 @@ const accumulateBindingStats = (
  */
 export const buildBindingRows = (
     specBindings: LiveSpecBinding[] | undefined,
-    taskStatsByInterval: BindingTaskStats[] | null | undefined,
+    taskStatsByInterval: TaskBindingStats[] | null | undefined,
     entityType: Entity
 ): BindingRow[] => {
     if (!specBindings || specBindings.length === 0) {

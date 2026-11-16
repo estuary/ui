@@ -1,5 +1,3 @@
-import type { CatalogTaskStatsQuery } from 'src/gql-types/graphql';
-
 export type BindingStatus = 'enabled' | 'disabled';
 
 // What the Status column shows. Three states, not two: a binding can be switched
@@ -40,8 +38,7 @@ export interface BindingRow {
     //
     // Null means no reading — every capture (no upstream frontier to be behind)
     // and any materialization binding absent from the latest one. Zero means
-    // caught up, and is a real answer: a binding with nothing left to read omits
-    // `bytesBehind`, which `parseMaterializationBacklog` resolves to 0.
+    // caught up, and is a real answer.
     bytesBehind: number | null;
     secondsBehind: number | null;
 }
@@ -65,8 +62,3 @@ export interface BindingsFilterState {
     query: string;
     status: BindingStatus | 'all';
 }
-
-// One interval's per-binding breakdown, as `CATALOG_TASK_STATS_QUERY` returns it.
-export type BindingTaskStats = NonNullable<
-    CatalogTaskStatsQuery['catalogStats']['edges'][number]['node']['taskStats']
->;

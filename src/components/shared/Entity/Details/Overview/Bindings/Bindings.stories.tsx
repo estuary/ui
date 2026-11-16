@@ -135,8 +135,8 @@ const buildCaptureRows = (streams: StreamFixture[]): BindingRow[] =>
             {
                 capture: streams.map(([stream, bytes, docs], index) => ({
                     collection: `${PREFIX}/${stream}`,
-                    out: { bytesTotal: String(bytes), docsTotal: String(docs) },
-                    lastPublishedAt: lastPublishedFor(index, bytes),
+                    out: { bytesTotal: BigInt(bytes), docsTotal: BigInt(docs) },
+                    lastPublishedAt: lastPublishedFor(index, bytes) ?? null,
                 })),
                 materialize: [],
             },
@@ -156,11 +156,13 @@ const buildMaterializationRows = (streams: StreamFixture[]): BindingRow[] =>
                 capture: [],
                 materialize: streams.map(([stream, bytes, docs], index) => ({
                     collection: `${PREFIX}/${stream}`,
+                    bytesBehind: BigInt(0),
                     right: {
-                        bytesTotal: String(bytes * 16),
-                        docsTotal: String(docs),
+                        bytesTotal: BigInt(bytes * 16),
+                        docsTotal: BigInt(docs),
                     },
-                    lastSourcePublishedAt: lastPublishedFor(index, bytes),
+                    lastSourcePublishedAt:
+                        lastPublishedFor(index, bytes) ?? null,
                 })),
             },
         ],
@@ -206,7 +208,7 @@ const buildBacklogReadings = (
                 (sum, { bytesBehind }) => sum + bytesBehind,
                 0
             ),
-            ts: new Date().toISOString(),
+            timestamp: Math.floor(Date.now() / 1000),
         },
         timeLag: {
             bindings: timeLagBindings,

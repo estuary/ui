@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import type { CapabilityBit } from 'src/gql-types/graphql';
+import type { CapabilityBundle } from 'src/gql-types/graphql';
 
 import {
     act,
@@ -108,21 +108,21 @@ const billingReads = () =>
     operations.filter((name) => !name.startsWith('BillingCapabilities '));
 
 // The server returns the row at the requested tenant, if a grant lands there.
-const capabilities = (bits?: CapabilityBit[]) => ({
+const capabilities = (bundles?: CapabilityBundle[]) => ({
     prefixes: {
         __typename: 'PrefixRefConnection',
-        edges: bits
+        edges: bundles
             ? [
                   {
                       __typename: 'PrefixRefEdge',
-                      node: { __typename: 'PrefixRef', capabilityBits: bits },
+                      node: { __typename: 'PrefixRef', capabilities: bundles },
                   },
               ]
             : [],
     },
 });
 
-const grant = (grants: Record<string, CapabilityBit[]>) =>
+const grant = (grants: Record<string, CapabilityBundle[]>) =>
     server.use(
         billingGraphql.query('BillingCapabilities', ({ variables }) =>
             HttpResponse.json({ data: capabilities(grants[variables.tenant]) })

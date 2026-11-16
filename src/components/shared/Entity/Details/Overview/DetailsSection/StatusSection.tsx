@@ -1,11 +1,13 @@
-import type { StatusSectionProps } from 'src/components/shared/Entity/Details/Overview/DetailsSection/types';
-
 import { Typography } from '@mui/material';
 
 import AlertBox from 'src/components/shared/AlertBox';
 import { useEntityStatusStore_singleResponse } from 'src/stores/EntityStatus/hooks';
 
-function StatusSection({ entityName }: StatusSectionProps) {
+interface StatusSectionProps {
+    entityName: string;
+}
+
+export function StatusSection({ entityName }: StatusSectionProps) {
     const statusSingleResponse =
         useEntityStatusStore_singleResponse(entityName);
 
@@ -26,5 +28,3 @@ function StatusSection({ entityName }: StatusSectionProps) {
         <Typography component="div">{latestConnectorStatus ?? '-'}</Typography>
     );
 }
-
-export default StatusSection;

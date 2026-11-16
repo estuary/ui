@@ -28,6 +28,7 @@ export const Alerts: Record<string, string> = {
     // and ui/src/components/admin/Settings/PrefixAlerts/Dialog/GlobalSettings/DataMovementSetting.tsx
     'alerts.alertType.humanReadable.auto_discover_failed': `Auto Discover Failed`,
     'alerts.alertType.humanReadable.background_publication_failed': `Background Publication Failed`,
+    'alerts.alertType.humanReadable.bindings_auto_disabled': `Bindings Auto Disabled`,
     'alerts.alertType.humanReadable.shard_failed': `Task Failure`,
     'alerts.alertType.humanReadable.data_movement_stalled': `Data Movement Stalled`,
     'alerts.alertType.humanReadable.free_trial': ``,

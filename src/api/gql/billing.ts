@@ -233,7 +233,9 @@ export const SET_BILLING_CONTACT = graphql(`
     }
 `);
 
-// Billing is checked against the capability bits rather than the legacy read/write/admin level, which misses ViewBilling and EditBilling granted through bundles. `none` keeps grants that carry only bits, and the `in` filter returns just the row at the tenant itself.
+// The server includes the single-permission ViewBilling and EditBilling bundles
+// whenever the user holds those permissions. `none` includes bundle-only grants,
+// and the `in` filter returns just the row at the tenant itself.
 export const BILLING_CAPABILITIES_QUERY = graphql(`
     query BillingCapabilities($tenant: String!) {
         prefixes(
@@ -242,7 +244,7 @@ export const BILLING_CAPABILITIES_QUERY = graphql(`
         ) {
             edges {
                 node {
-                    capabilityBits
+                    capabilities
                 }
             }
         }
