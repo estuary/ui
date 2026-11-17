@@ -1,15 +1,11 @@
 import { Box, Stack, Typography } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 import CardWrapper from 'src/components/shared/CardWrapper';
 import Customer from 'src/images/register/customer.jpeg';
 
 const imgSize = 40;
 
 function CustomerQuote() {
-    const intl = useIntl();
-
     return (
         <CardWrapper>
             <Typography
@@ -17,16 +13,16 @@ function CustomerQuote() {
                     mb: 2,
                 }}
             >
-                {intl.formatMessage({ id: 'login.register.quote.body' })}
+                {
+                    '"Estuary transformed how we operationalize our data for fraud, security, support, and beyond. Instead of unreliable, expensive backfills, we have real-time visibility into platform activity. The proactive support and hands-on approach make all the difference."'
+                }
             </Typography>
             <Stack direction="row" spacing={1} height={imgSize}>
                 <Box>
                     <img
                         style={{ height: imgSize }}
                         src={Customer}
-                        alt={intl.formatMessage({
-                            id: 'login.register.quote.name',
-                        })}
+                        alt="Jonni Lundy"
                     />
                 </Box>
                 <Stack
@@ -34,16 +30,8 @@ function CustomerQuote() {
                         justifyContent: 'space-between',
                     }}
                 >
-                    <Typography>
-                        {intl.formatMessage({
-                            id: 'login.register.quote.name',
-                        })}
-                    </Typography>
-                    <Typography>
-                        {intl.formatMessage({
-                            id: 'login.register.quote.employment',
-                        })}
-                    </Typography>
+                    <Typography>Jonni Lundy</Typography>
+                    <Typography>COO, Resend</Typography>
                 </Stack>
             </Stack>
         </CardWrapper>

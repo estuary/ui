@@ -3,8 +3,6 @@ import type { SelectableTableStore } from 'src/stores/Tables/Store';
 
 import { ButtonGroup, Grid, Stack } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 import DeleteButton from 'src/components/tables/RowActions/Delete/Button';
 import DisableEnableButton from 'src/components/tables/RowActions/DisableEnable/Button';
 import Materialize from 'src/components/tables/RowActions/Materialize';
@@ -22,8 +20,6 @@ function RowSelector({
     showSelectedCount,
     showTransform,
 }: RowSelectorProps) {
-    const intl = useIntl();
-
     const selectedRows = useZustandStore<
         SelectableTableStore,
         SelectableTableStore['selected']
@@ -53,9 +49,7 @@ function RowSelector({
                 {hideActions ? null : (
                     <Grid>
                         <ButtonGroup
-                            aria-label={intl.formatMessage({
-                                id: 'capturesTable.ctaGroup.aria',
-                            })}
+                            aria-label="capture table available actions"
                             disableElevation
                             disabled={!hasSelections}
                         >

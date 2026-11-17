@@ -1,12 +1,8 @@
-import { useIntl } from 'react-intl';
-
 import KeyValueList from 'src/components/shared/KeyValueList';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import { hasLength } from 'src/utils/misc-utils';
 
 function DetailsErrors() {
-    const intl = useIntl();
-
     const customErrors = useDetailsFormStore((state) => state.customErrors);
     const entityName = useDetailsFormStore(
         (state) => state.details.data.entityName
@@ -19,18 +15,14 @@ function DetailsErrors() {
 
     if (!hasLength(entityName)) {
         filteredErrorsList.push({
-            title: intl.formatMessage({
-                id: 'entityCreate.endpointConfig.entityNameMissing',
-            }),
+            title: 'Name missing',
         });
     }
 
     // Check if there is a connector
     if (!hasLength(imageId)) {
         filteredErrorsList.push({
-            title: intl.formatMessage({
-                id: 'entityCreate.endpointConfig.connectorMissing',
-            }),
+            title: 'Connector missing',
         });
     }
 
@@ -44,9 +36,7 @@ function DetailsErrors() {
     return (
         <KeyValueList
             data={filteredErrorsList}
-            sectionTitle={intl.formatMessage({
-                id: 'entityCreate.endpointConfig.detailsHaveErrors',
-            })}
+            sectionTitle="The Details section has errors:"
         />
     );
 }

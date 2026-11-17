@@ -3,7 +3,6 @@ import type { Columns } from 'react-csv-downloader/dist/esm/lib/csv';
 import { Button } from '@mui/material';
 
 import CsvDownload from 'react-csv-downloader';
-import { FormattedMessage } from 'react-intl';
 
 import {
     generateFileName,
@@ -31,7 +30,7 @@ function ExportButton({ columns, disabled, generateExport, fileName }: Props) {
                 variant="outlined"
                 sx={{ whiteSpace: 'nowrap' }}
             >
-                <FormattedMessage id="entityTable.download.cta" />
+                Download CSV
             </Button>
         </CsvDownload>
     );

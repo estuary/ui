@@ -1,4 +1,6 @@
-import type { JsonFormsData, Schema, SupabaseInvokeResponse } from 'src/types';
+import type { PostgrestError } from '@supabase/postgrest-js';
+import type { JsonFormsData, Schema } from 'src/types';
+import type { Result } from 'src/types/utils';
 
 import { isPlainObject } from 'lodash';
 
@@ -6,6 +8,10 @@ import { encryptConfig } from 'src/api/oauth';
 import { createJSONFormDefaults } from 'src/services/ajv';
 
 const sopsKey = 'sops';
+
+// Encrypting always adds a `sops` stanza, even when no fields are secret
+export const isEncryptedConfig = (config: unknown) =>
+    isPlainObject(config) && Object.hasOwn(config as object, sopsKey);
 
 // This is mainly public so we can test easier. If you think
 //  you need to call this directly think about it A LOT and
@@ -66,6 +72,29 @@ export const copyEncryptedEndpointConfig = (
     return response;
 };
 
+// Merge a config's `sops.overlay` onto the plaintext `data` extracted from its
+//  encrypted body. A missing or non-object overlay is a no-op, so configs which
+//  predate the overlay feature are unmodified.
+export const applyOverlay = (data: any, overlay: any): any => {
+    if (!isPlainObject(overlay)) {
+        return data;
+    }
+
+    const result: Record<string, any> = isPlainObject(data) ? { ...data } : {};
+
+    Object.entries(overlay).forEach(([key, value]) => {
+        if (value === null) {
+            delete result[key];
+        } else if (isPlainObject(value)) {
+            result[key] = applyOverlay(result[key], value);
+        } else {
+            result[key] = value;
+        }
+    });
+
+    return result;
+};
+
 export const parseEncryptedEndpointConfig = (
     endpointConfig: { [key: string]: any },
     endpointSchema: Schema,
@@ -75,17 +104,24 @@ export const parseEncryptedEndpointConfig = (
     //      bad data and we just need to be safe.
     if (endpointConfig.sops) {
         const {
-            sops: { encrypted_suffix },
+            sops: { encrypted_suffix, overlay },
             ...encryptedEndpointConfig
         } = endpointConfig;
 
         // Generate template and populate data
         const endpointConfigTemplate = createJSONFormDefaults(endpointSchema);
-        endpointConfigTemplate.data = copyEncryptedEndpointConfig(
+        const data = copyEncryptedEndpointConfig(
             encryptedEndpointConfig,
             encrypted_suffix,
             overrideJsonFormDefaults
         );
+
+        // The `sops.overlay` property holds overrides for "nonsensitive" fields
+        //  not covered by the SOPS MAC. We need to merge these in so the form
+        //  renders the correct values and a save preserves them. The UI doesn't
+        //  check non-sensitivity since that would be a lot of work and isn't
+        //  really necessary, the runtime checks nonsensitivity at decrypt time.
+        endpointConfigTemplate.data = applyOverlay(data, overlay);
 
         return endpointConfigTemplate;
     } else {
@@ -97,55 +133,35 @@ export const parseEncryptedEndpointConfig = (
     }
 };
 
+// Resolves to the config sops-encrypted, or as-is if it already is
 export async function encryptEndpointConfig(
     endpointConfig: { [key: string]: any },
     endpointSchema: Schema,
     serverUpdateRequired: boolean,
     imageConnectorId: string,
-    imageConnectorTagId: string,
-    callFailed: Function,
-    { overrideJsonFormDefaults }: { overrideJsonFormDefaults: boolean }
-): Promise<SupabaseInvokeResponse<any>> {
+    imageConnectorTagId: string
+): Promise<Result<Schema, Error | PostgrestError>> {
     const selectedEndpointConfig =
-        serverUpdateRequired && Object.hasOwn(endpointConfig, sopsKey)
-            ? parseEncryptedEndpointConfig(
-                  endpointConfig,
-                  endpointSchema,
-                  overrideJsonFormDefaults
-              ).data
+        serverUpdateRequired && isEncryptedConfig(endpointConfig)
+            ? parseEncryptedEndpointConfig(endpointConfig, endpointSchema, true)
+                  .data
             : endpointConfig;
 
-    let encryptedEndpointConfig: SupabaseInvokeResponse<any> = {
-        data: null,
-        error: {
-            name: 'Object Not Reassigned',
-            message:
-                'An object initializing the response of a Supabase function was not reassigned.',
-        },
-    };
-
-    if (Object.hasOwn(selectedEndpointConfig, sopsKey)) {
-        encryptedEndpointConfig = { data: endpointConfig, error: null };
-    } else {
-        encryptedEndpointConfig = await encryptConfig(
-            imageConnectorId,
-            imageConnectorTagId,
-            selectedEndpointConfig
-        );
-        if (
-            encryptedEndpointConfig.error ||
-            encryptedEndpointConfig.data.error
-        ) {
-            return callFailed({
-                error: {
-                    title: 'entityCreate.sops.failedTitle',
-                    error:
-                        encryptedEndpointConfig.error ??
-                        encryptedEndpointConfig.data.error,
-                },
-            });
-        }
+    if (isEncryptedConfig(selectedEndpointConfig)) {
+        return { value: endpointConfig };
     }
 
-    return encryptedEndpointConfig;
+    const response = await encryptConfig(
+        imageConnectorId,
+        imageConnectorTagId,
+        selectedEndpointConfig
+    );
+
+    // The encryption call can also fail with an error in its data
+    const error = response.error ?? response.data?.error;
+    if (error) {
+        return { error };
+    }
+
+    return { value: response.data };
 }

@@ -5,7 +5,6 @@ import { useCallback } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 
 import { useSnackbar } from 'notistack';
-import { useIntl } from 'react-intl';
 
 import IncompatibleSchemaChangeForm from 'src/components/incompatibleSchemaChange/Form';
 import useSpecificationIncompatibleSchemaSetting from 'src/hooks/OnIncompatibleSchemaChange/useSpecificationIncompatibleSchemaSetting';
@@ -15,7 +14,6 @@ import { FormStatus } from 'src/stores/FormState/types';
 import { snackbarSettings } from 'src/utils/notification-utils';
 
 export default function Form() {
-    const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
 
     const [onIncompatibleSchemaChange, setIncompatibleSchemaChange] =
@@ -44,12 +42,10 @@ export default function Form() {
                     setFormState({ status: FormStatus.UPDATED });
                 })
                 .catch((error) => {
-                    enqueueSnackbar(
-                        intl.formatMessage({
-                            id: 'specPropEditor.update.error',
-                        }),
-                        { ...snackbarSettings, variant: 'error' }
-                    );
+                    enqueueSnackbar('Changes to draft not saved.', {
+                        ...snackbarSettings,
+                        variant: 'error',
+                    });
 
                     setIncompatibleSchemaChange(currentSetting);
                     setFormState({ status: FormStatus.FAILED });
@@ -60,7 +56,6 @@ export default function Form() {
         [
             currentSetting,
             enqueueSnackbar,
-            intl,
             setFormState,
             setIncompatibleSchemaChange,
             updateOnIncompatibleSchemaChange,

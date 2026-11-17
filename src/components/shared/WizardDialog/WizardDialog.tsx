@@ -7,8 +7,6 @@ import { useCallback, useMemo, useState } from 'react';
 
 import { Collapse, Dialog } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 import DialogTitleWithClose from 'src/components/shared/Dialog/TitleWithClose';
 import { WizardContext } from 'src/components/shared/WizardDialog/context';
 import { WizardActions } from 'src/components/shared/WizardDialog/WizardActions';
@@ -25,7 +23,6 @@ export function WizardDialog({
     maxWidth = 'sm',
     showActions = true,
 }: WizardDialogProps) {
-    const intl = useIntl();
     const initialStep = 0;
 
     const [currentStep, setCurrentStep] = useState(initialStep);
@@ -64,7 +61,7 @@ export function WizardDialog({
                 setError(
                     error instanceof Error
                         ? error.message
-                        : intl.formatMessage({ id: 'wizardDialog.error.step' })
+                        : 'An error occurred during this step'
                 );
                 return false;
             } finally {
@@ -80,7 +77,7 @@ export function WizardDialog({
         }
 
         return true;
-    }, [currentStep, intl, isLastStep, onClose, steps]);
+    }, [currentStep, isLastStep, onClose, steps]);
 
     const retreat = useCallback(() => {
         if (!isFirstStep) {

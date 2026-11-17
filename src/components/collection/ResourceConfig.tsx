@@ -1,7 +1,5 @@
 import { Box, Typography } from '@mui/material';
 
-import { FormattedMessage } from 'react-intl';
-
 import { BindingsEditorConfigSkeleton } from 'src/components/collection/CollectionSkeletons';
 import ResourceConfigForm from 'src/components/collection/ResourceConfigForm';
 import AdvancedOptions from 'src/components/editor/Bindings/AdvancedOptions';
@@ -78,7 +76,7 @@ function ResourceConfig({
                 sx={{ mb: 2 }}
                 variant="formSectionHeader"
             >
-                <FormattedMessage id="materializationCreate.resourceConfig.heading" />
+                Resource Configuration
             </Typography>
 
             <Box sx={{ width: '100%' }}>

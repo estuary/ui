@@ -7,8 +7,6 @@ import { useMemo, useState } from 'react';
 
 import { Button, Grid, TextField } from '@mui/material';
 
-import { FormattedMessage, useIntl } from 'react-intl';
-
 import { createRoleGrant } from 'src/api/roleGrants';
 import PrefixedName from 'src/components/inputs/PrefixedName';
 import AutocompletedField from 'src/components/shared/toolbar/AutocompletedField';
@@ -34,8 +32,6 @@ const namePattern = new RegExp(
 const capabilityOptions: Capability[] = ['read', 'admin', 'write'];
 
 function GenerateGrant({ serverError, setServerError, setOpen }: Props) {
-    const intl = useIntl();
-
     // Access Grant Select Table Store
     const hydrate = useZustandStore<
         SelectableTableStore,
@@ -95,19 +91,9 @@ function GenerateGrant({ serverError, setServerError, setOpen }: Props) {
                         }
 
                         showNotification({
-                            description: intl.formatMessage(
-                                {
-                                    id: 'admin.prefix.issueGrant.notification.success.message',
-                                },
-                                {
-                                    objectRole: processedObject,
-                                    subjectRole: processedSubject,
-                                }
-                            ),
+                            description: `${processedObject} has been shared with ${processedSubject}`,
                             severity: 'success',
-                            title: intl.formatMessage({
-                                id: 'admin.prefix.issueGrant.notification.success.title',
-                            }),
+                            title: 'Grant Created Successfully',
                         });
 
                         hydrate();
@@ -146,9 +132,7 @@ function GenerateGrant({ serverError, setServerError, setOpen }: Props) {
                     allowEndSlash
                     defaultPrefix
                     required
-                    label={intl.formatMessage({
-                        id: 'admin.prefix.issueGrant.label.sharedPrefix',
-                    })}
+                    label="Shared Prefix"
                     onChange={onChange}
                     validateOnLoad
                 />
@@ -157,9 +141,7 @@ function GenerateGrant({ serverError, setServerError, setOpen }: Props) {
                 <TextField
                     variant="outlined"
                     size="small"
-                    label={intl.formatMessage({
-                        id: 'admin.prefix.issueGrant.label.sharedWith',
-                    })}
+                    label="Shared With"
                     error={subjectMissing || subjectInvalid}
                     onChange={handlers.evaluateSubjectRole}
                     sx={{ flexGrow: 1 }}
@@ -174,9 +156,7 @@ function GenerateGrant({ serverError, setServerError, setOpen }: Props) {
             </Grid>
             <Grid size={{ xs: 4, md: 2 }}>
                 <AutocompletedField
-                    label={intl.formatMessage({
-                        id: 'admin.users.prefixInvitation.label.capability',
-                    })}
+                    label="Capability"
                     options={capabilityOptions}
                     defaultValue={capabilityOptions[0]}
                     changeHandler={handlers.setGrantCapability}
@@ -189,7 +169,7 @@ function GenerateGrant({ serverError, setServerError, setOpen }: Props) {
                     onClick={handlers.generateRoleGrant}
                     sx={{ flexGrow: 1 }}
                 >
-                    <FormattedMessage id="admin.prefix.issueGrant.cta.generateGrant" />
+                    Grant Access
                 </Button>
             </Grid>
         </Grid>

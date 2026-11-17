@@ -11,7 +11,11 @@ import useSWR from 'swr';
 import { singleCallSettings } from 'src/context/SWR';
 import { useUserStore } from 'src/context/User/useUserContextStore';
 import { loadDocuments } from 'src/hooks/journals/shared';
-import { FETCH_DEFAULT_ERROR, logRocketEvent } from 'src/services/shared';
+import {
+    FETCH_DEFAULT_ERROR,
+    logRocketConsole,
+    logRocketEvent,
+} from 'src/services/shared';
 import useJournalStore from 'src/stores/JournalData/Store';
 import {
     MAX_DOCUMENT_SIZE,
@@ -70,9 +74,10 @@ const useJournalsForCollection = (collectionName: string | undefined) => {
                     return {
                         journals: result.unwrap().journals ?? [],
                     };
-                } catch {
+                } catch (error: unknown) {
                     // The gateway client throws on transport-level failures it
                     // cannot parse into a ResponseError, e.g. a network error.
+                    logRocketConsole('journals:list:error', error);
                     return Promise.reject({ message: FETCH_DEFAULT_ERROR });
                 }
             } else {
@@ -102,7 +107,7 @@ const useJournalsForCollection = (collectionName: string | undefined) => {
 
                 if (
                     session &&
-                    shouldRefreshToken(`${error}`) &&
+                    shouldRefreshToken(error?.message) &&
                     collectionName
                 ) {
                     await refreshAuthToken(

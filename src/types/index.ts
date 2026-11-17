@@ -45,31 +45,6 @@ export interface MuiTabProps<T> {
     value: T;
 }
 
-export interface AppliedDirective<T> {
-    created_at: Date;
-    detail: null;
-    directives?: {
-        type: string;
-        uses_remaining: number | null;
-    };
-    id: string;
-    updated_at: Date;
-    job_status: JobStatus;
-    logs_token: string;
-    directive_id: string;
-    user_id: string;
-    user_claims: T | null;
-}
-
-export interface JoinedAppliedDirective extends AppliedDirective<any> {
-    // FILTERING HACK
-    ['directives.token']: string;
-    ['applied_directives']: AppliedDirective<any>;
-    ['spec->>type']: undefined;
-    ['applied_directives.user_id']: undefined;
-    ['directives.spec->>type']: undefined;
-}
-
 interface StorageMapping {
     stores: StorageMappingStore[];
     data_planes: string[];
@@ -79,7 +54,7 @@ export interface StorageMappingDictionary {
     [prefix: string]: StorageMapping;
 }
 
-export interface StorageMappingStore {
+interface StorageMappingStore {
     provider: string;
     bucket: string;
     prefix: string;
@@ -95,7 +70,7 @@ export interface StorageMappingsQuery {
 }
 
 // TODO (marketplace) we may expand these in the future
-export type TenantPaymentProviders = 'external' | 'stripe';
+type TenantPaymentProviders = 'external' | 'stripe';
 
 export interface TenantPaymentDetails {
     gcm_account_id: string | null;
@@ -131,35 +106,6 @@ export interface CatalogStats {
     flow_document: any;
 }
 
-interface BaseCatalogStats {
-    catalog_name: string;
-    grain: string;
-    ts: string;
-}
-
-export interface CatalogStats_Details extends BaseCatalogStats {
-    bytes_read?: number;
-    docs_read?: number;
-    bytes_written?: number;
-    docs_written?: number;
-}
-
-export interface CatalogStats_Dashboard extends BaseCatalogStats {
-    bytes_written_by_me?: number;
-    bytes_read_by_me?: number;
-}
-
-export interface Directive {
-    created_at: Date;
-    detail: null;
-    id: string;
-    updated_at: Date;
-    catalog_prefix: string;
-    single_use: boolean;
-    spec: JobStatus;
-    token: string;
-}
-
 export interface UserGrantsTenantGuard {
     id: string;
     // FILTERING TYPES HACK
@@ -187,7 +133,7 @@ export interface Grant_UserExt extends BaseGrant {
     user_id: string;
 }
 
-export interface LiveSpecsExtBareMinimum {
+interface LiveSpecsExtBareMinimum {
     catalog_name: string;
     id: string;
     spec_type: Entity;
@@ -307,7 +253,7 @@ export interface OpsLogFlowDocument {
     fields?: Schema;
 }
 
-export interface Meta {
+interface Meta {
     uuid: string;
 }
 

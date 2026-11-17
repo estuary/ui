@@ -1,4 +1,4 @@
-import type { AlertColor, SxProps } from '@mui/material';
+import type { AlertColor, SxProps, Theme } from '@mui/material';
 import type { ReactNode } from 'react';
 import type { BaseComponentProps } from 'src/types';
 
@@ -37,7 +37,7 @@ export interface CardWrapperProps extends BaseComponentProps {
     message?: string | ReactNode;
     tooltipMessageId?: string;
     height?: string | number;
-    sx?: SxProps;
+    sx?: SxProps<Theme>;
 
     // Only for the special cards for alert summary on dashboard page (as of Q4 2025)
     opaqueLightMode?: boolean;

@@ -6,8 +6,6 @@ import { useCallback } from 'react';
 
 import { Button } from '@mui/material';
 
-import { FormattedMessage } from 'react-intl';
-
 import { modifyDraftSpec } from 'src/api/draftSpecs';
 import {
     useEditorStore_currentCatalog,
@@ -156,7 +154,7 @@ function UpdateDraftButton({ toggle }: AddCollectionDialogCTAProps) {
             disabled={selected.size < 1 || catalogUpdating}
             onClick={updateDerivationSpec}
         >
-            <FormattedMessage id="cta.continue" />
+            Continue
         </Button>
     );
 }

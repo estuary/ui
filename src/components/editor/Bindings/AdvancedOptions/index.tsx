@@ -2,8 +2,6 @@ import type { AdvancedOptionsProps } from 'src/components/editor/Bindings/Advanc
 
 import { Stack, Typography } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 import Backfill from 'src/components/editor/Bindings/Backfill';
 import OnIncompatibleSchemaChange from 'src/components/editor/Bindings/OnIncompatibleSchemaChange';
 import TimeTravel from 'src/components/editor/Bindings/TimeTravel';
@@ -18,8 +16,6 @@ export default function AdvancedOptions({
     collectionName,
     collectionEnabled,
 }: AdvancedOptionsProps) {
-    const intl = useIntl();
-
     const entityType = useEntityType();
 
     const fullSourceErrorExists = useBindingStore((state) => {
@@ -47,9 +43,7 @@ export default function AdvancedOptions({
             }
             header={
                 <Typography component="span" variant="formSectionHeader">
-                    {intl.formatMessage({
-                        id: 'workflows.advancedSettings.title',
-                    })}
+                    Advanced Options
                 </Typography>
             }
             hideBorder

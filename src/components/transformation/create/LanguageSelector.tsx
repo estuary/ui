@@ -1,7 +1,5 @@
 import { Divider, FormControlLabel, Radio, RadioGroup } from '@mui/material';
 
-import { FormattedMessage, useIntl } from 'react-intl';
-
 import SingleStep from 'src/components/transformation/create/SingleStep';
 import StepWrapper from 'src/components/transformation/create/Wrapper';
 import {
@@ -10,16 +8,12 @@ import {
 } from 'src/stores/TransformationCreate/hooks';
 
 function LanguageSelector() {
-    const intl = useIntl();
-
     const language = useTransformationCreate_language();
     const setLanguage = useTransformationCreate_setLanguage();
 
     return (
         <StepWrapper>
-            <SingleStep>
-                <FormattedMessage id="newTransform.language.title" />
-            </SingleStep>
+            <SingleStep>Language</SingleStep>
 
             <Divider />
 
@@ -32,17 +26,13 @@ function LanguageSelector() {
                 <FormControlLabel
                     value="sql"
                     control={<Radio size="small" />}
-                    label={intl.formatMessage({
-                        id: 'newTransform.language.sql',
-                    })}
+                    label="SQL"
                 />
 
                 <FormControlLabel
                     value="typescript"
                     control={<Radio size="small" />}
-                    label={intl.formatMessage({
-                        id: 'newTransform.language.ts',
-                    })}
+                    label="Typescript"
                 />
             </RadioGroup>
         </StepWrapper>

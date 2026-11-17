@@ -1,14 +1,13 @@
 import { useEffect } from 'react';
 
 import { useSnackbar } from 'notistack';
-import { useIntl } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 
 import { authenticatedRoutes, unauthenticatedRoutes } from 'src/app/routes';
 import FullPageSpinner from 'src/components/fullPage/Spinner';
-import { supabaseClient } from 'src/context/GlobalProviders';
 import useMarketplaceLocalStorage from 'src/hooks/useMarketplaceLocalStorage';
 import { logRocketConsole } from 'src/services/shared';
+import { supabaseClient } from 'src/services/supabaseClient';
 
 // Expanding Marketplace Providers
 // Once we add more providers the idea is to do something like this
@@ -21,7 +20,7 @@ import { logRocketConsole } from 'src/services/shared';
 
 function MarketplaceCallback() {
     const navigate = useNavigate();
-    const intl = useIntl();
+
     const { enqueueSnackbar } = useSnackbar();
 
     const { 1: setMarketplaceVerify } = useMarketplaceLocalStorage();
@@ -31,9 +30,7 @@ function MarketplaceCallback() {
             .signOut()
             .then(() => {
                 enqueueSnackbar(
-                    intl.formatMessage({
-                        id: 'login.marketPlace.loggedOut',
-                    }),
+                    'To apply marketplace subscription, please login below.',
                     {
                         anchorOrigin: {
                             vertical: 'top',
@@ -61,7 +58,7 @@ function MarketplaceCallback() {
                     }
                 );
             });
-    }, [enqueueSnackbar, intl, navigate, setMarketplaceVerify]);
+    }, [enqueueSnackbar, navigate, setMarketplaceVerify]);
 
     return <FullPageSpinner />;
 }

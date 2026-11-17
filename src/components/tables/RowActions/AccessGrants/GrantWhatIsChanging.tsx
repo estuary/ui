@@ -2,15 +2,11 @@ import type { GrantWhatIsChangingProps } from 'src/components/tables/RowActions/
 
 import { Stack } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 function GrantWhatIsChanging({
     identifier,
     capability,
     grantScope,
 }: GrantWhatIsChangingProps) {
-    const intl = useIntl();
-
     return (
         <Stack
             useFlexGap
@@ -25,17 +21,9 @@ function GrantWhatIsChanging({
             }}
         >
             <span>{identifier}</span>
-            <span>
-                {intl.formatMessage({
-                    id: 'accessGrants.actions.extra.confirmation.whatIsChanging.removing',
-                })}
-            </span>
+            <span>removing</span>
             <span>{capability}</span>
-            <span>
-                {intl.formatMessage({
-                    id: 'accessGrants.actions.extra.confirmation.whatIsChanging.access',
-                })}
-            </span>
+            <span>access for</span>
             <span>{grantScope}</span>
         </Stack>
     );

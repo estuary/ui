@@ -106,7 +106,12 @@ function BindingsEditor({ itemType, readOnly = false }: Props) {
                         <Stack spacing={2}>
                             {schemaUpdateErrored ? (
                                 <AlertBox severity="warning" short>
-                                    <FormattedMessage id="workflows.collectionSelector.schemaEdit.alert.message.schemaUpdateError" />
+                                    An error was encountered fetching your
+                                    updated collection schema to display. This
+                                    does not mean that there was a problem
+                                    updating the server. Open the CLI popper and
+                                    click the Synchronize Schema button to try
+                                    again.
                                 </AlertBox>
                             ) : null}
 
@@ -116,9 +121,7 @@ function BindingsEditor({ itemType, readOnly = false }: Props) {
                                     severity={
                                         collectionInitializationAlert.severity
                                     }
-                                    title={
-                                        <FormattedMessage id="workflows.collectionSelector.error.title.editorInitialization" />
-                                    }
+                                    title={<>Editor initialization failed</>}
                                 >
                                     <FormattedMessage
                                         id={
@@ -140,9 +143,9 @@ function BindingsEditor({ itemType, readOnly = false }: Props) {
                                         variant="formSectionHeader"
                                         sx={{ mr: 1 }}
                                     >
-                                        <FormattedMessage id="workflows.collectionSelector.header.collectionSchema" />
+                                        Collection Schema
                                         <ExternalLink link="https://docs.estuary.dev/concepts/collections/#schemas">
-                                            <FormattedMessage id="terms.documentation" />
+                                            Docs
                                         </ExternalLink>
                                     </Typography>
 
@@ -154,7 +157,7 @@ function BindingsEditor({ itemType, readOnly = false }: Props) {
                                 </Box>
                             ) : (
                                 <Typography variant="h6" sx={{ mr: 1 }}>
-                                    <FormattedMessage id="workflows.collectionSelector.header.collectionSchema" />
+                                    Collection Schema
                                 </Typography>
                             )}
 
@@ -183,26 +186,13 @@ function BindingsEditor({ itemType, readOnly = false }: Props) {
                         <AlertBox
                             severity="warning"
                             short
-                            title={
-                                <FormattedMessage id="workflows.collectionSelector.error.title.missingCollectionSchema" />
-                            }
+                            title={<>No collection schema to display</>}
                         >
                             <Typography>
-                                <FormattedMessage
-                                    id="workflows.collectionSelector.error.message.missingCollectionSchema"
-                                    values={{
-                                        itemType,
-                                        entityType,
-                                    }}
-                                />
+                                {`This is normally caused by the ${itemType} being disabled during ${entityType} creation.`}
                             </Typography>
                             <Typography>
-                                <FormattedMessage
-                                    id="workflows.collectionSelector.error.fix.missingCollectionSchema"
-                                    values={{
-                                        itemType,
-                                    }}
-                                />
+                                {`To see the schema, refresh the ${itemType} using the button to the left.`}
                             </Typography>
                         </AlertBox>
                     )}

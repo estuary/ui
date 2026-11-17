@@ -6,13 +6,13 @@ import { useShallow } from 'zustand/react/shallow';
 
 import { usePostHog } from '@posthog/react';
 
-import { supabaseClient } from 'src/context/GlobalProviders';
 import { useUserStore } from 'src/context/User/useUserContextStore';
 import {
     getUserDetails,
     logRocketConsole,
     logRocketEvent,
 } from 'src/services/shared';
+import { supabaseClient } from 'src/services/supabaseClient';
 import { CustomEvents } from 'src/services/types';
 
 const UserStoreProvider = ({ children }: BaseComponentProps) => {

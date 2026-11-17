@@ -2,14 +2,10 @@ import type { BindingUUIDProp } from 'src/components/fieldSelection/types';
 
 import { Typography } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 import AlertBox from 'src/components/shared/AlertBox';
 import useLiveGroupByKey from 'src/hooks/fieldSelection/useLiveGroupByKey';
 
 const KeyChangeAlert = ({ bindingUUID }: BindingUUIDProp) => {
-    const intl = useIntl();
-
     const { backfillRequired } = useLiveGroupByKey(bindingUUID);
 
     if (!backfillRequired) {
@@ -19,9 +15,8 @@ const KeyChangeAlert = ({ bindingUUID }: BindingUUIDProp) => {
     return (
         <AlertBox severity="warning" short>
             <Typography>
-                {intl.formatMessage({
-                    id: 'fieldSelection.groupBy.alert.backfillRequired',
-                })}
+                Editing the group-by key may result in a backfill of this
+                binding.
             </Typography>
         </AlertBox>
     );

@@ -3,7 +3,6 @@ import type { DataPlaneNode } from 'src/api/gql/dataPlanes';
 import { Box, IconButton, Stack, Tooltip, Typography } from '@mui/material';
 
 import { Star, StarSolid, Xmark } from 'iconoir-react';
-import { useIntl } from 'react-intl';
 
 import { toPresentableName } from 'src/utils/dataPlane-utils';
 
@@ -18,7 +17,6 @@ export function DataPlaneRow({
     handleSetDefault?: () => void;
     handleRemove: () => void;
 }) {
-    const intl = useIntl();
     return (
         <Stack direction="row" spacing={1} alignItems="center">
             <Box
@@ -47,18 +45,11 @@ export function DataPlaneRow({
                                 variant="caption"
                                 color="text.secondary"
                             >
-                                {intl.formatMessage({
-                                    id: 'storageMappings.dialog.dataPlanes.default',
-                                })}
+                                Default
                             </Typography>
                         </>
                     ) : (
-                        <Tooltip
-                            title={intl.formatMessage({
-                                id: 'storageMappings.dialog.dataPlanes.setAsDefault',
-                            })}
-                            enterDelay={500}
-                        >
+                        <Tooltip title="Set as default" enterDelay={500}>
                             <Box
                                 component="span"
                                 className="star-outline"

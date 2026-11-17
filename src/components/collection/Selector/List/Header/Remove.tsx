@@ -1,7 +1,6 @@
 import { Box, IconButton, Tooltip } from '@mui/material';
 
 import { Xmark } from 'iconoir-react';
-import { useIntl } from 'react-intl';
 
 interface Props {
     itemType: string;
@@ -14,18 +13,8 @@ function CollectionSelectorHeaderRemove({
     itemType,
     onClick,
 }: Props) {
-    const intl = useIntl();
     return (
-        <Tooltip
-            title={intl.formatMessage(
-                {
-                    id: 'entityCreate.bindingsConfig.list.removeAll',
-                },
-                {
-                    itemType,
-                }
-            )}
-        >
+        <Tooltip title={`Remove ${itemType} in the list below`}>
             <Box>
                 <IconButton
                     disabled={disabled}

@@ -8,8 +8,6 @@ import { useState } from 'react';
 
 import { Button, Dialog } from '@mui/material';
 
-import { FormattedMessage } from 'react-intl';
-
 import GrantWhatIsChanging from 'src/components/tables/RowActions/AccessGrants/GrantWhatIsChanging';
 import RevokeGrant from 'src/components/tables/RowActions/AccessGrants/RevokeGrant';
 import ProgressDialog from 'src/components/tables/RowActions/ProgressDialog';
@@ -106,7 +104,7 @@ function DeleteButton({ selectTableStoreName }: AccessGrantDeleteButtonProps) {
                 disabled={!selectionsExist}
                 onClick={handlers.showConfirmationDialog}
             >
-                <FormattedMessage id="cta.remove" />
+                Remove
             </Button>
 
             <Dialog open={showProgress} maxWidth="md">

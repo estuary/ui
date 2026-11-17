@@ -1,7 +1,5 @@
 import type { BackfillModeSelectorProps } from 'src/components/editor/Bindings/Backfill/types';
 
-import { useIntl } from 'react-intl';
-
 import SelectorOption from 'src/components/incompatibleSchemaChange/SelectorOption';
 import AutocompletedField from 'src/components/shared/toolbar/AutocompletedField';
 import useBackfillModeOptions from 'src/hooks/bindings/useBackfillModeOptions';
@@ -10,7 +8,6 @@ import { useBindingStore } from 'src/stores/Binding/Store';
 import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
 
 function BackfillModeSelector({ disabled }: BackfillModeSelectorProps) {
-    const intl = useIntl();
     const backfillCount = useBinding_backfilledBindings_count();
     const formActive = useFormStateStore_isActive();
 
@@ -25,9 +22,7 @@ function BackfillModeSelector({ disabled }: BackfillModeSelectorProps) {
 
     return (
         <AutocompletedField
-            label={intl.formatMessage({
-                id: 'workflows.dataFlowBackfill.label',
-            })}
+            label="Backfill Mode"
             options={options}
             defaultValue={currentOption}
             changeHandler={(_event, option: any) => {

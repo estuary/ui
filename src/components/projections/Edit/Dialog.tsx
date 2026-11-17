@@ -15,8 +15,6 @@ import {
     Typography,
 } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 import FieldEditor from 'src/components/projections/Edit/FieldEditor';
 import { TITLE_ID } from 'src/components/projections/Edit/shared';
 import Error from 'src/components/shared/Error';
@@ -32,8 +30,6 @@ function EditProjectionDialog({
     pointer,
     setOpen,
 }: BaseDialogProps & BaseProjectionProps) {
-    const intl = useIntl();
-
     const { setSingleProjection } = useUpdateDraftedProjection();
 
     const currentCollection = useBinding_currentCollection();
@@ -54,11 +50,7 @@ function EditProjectionDialog({
             open={open}
             style={{ minWidth: 500 }}
         >
-            <DialogTitle>
-                {intl.formatMessage({
-                    id: 'projection.dialog.add.header',
-                })}
-            </DialogTitle>
+            <DialogTitle>Alternate Name</DialogTitle>
 
             <DialogContent>
                 {serverError ? (
@@ -68,18 +60,10 @@ function EditProjectionDialog({
                 ) : null}
 
                 <Typography sx={{ mb: 3 }}>
-                    {intl.formatMessage(
-                        {
-                            id: 'projection.dialog.add.message',
-                        },
-                        {
-                            collection: (
-                                <span style={{ fontWeight: 500 }}>
-                                    {currentCollection}
-                                </span>
-                            ),
-                        }
-                    )}
+                    Add a projection to rename a field in all associated
+                    materializations. After adding a projection, backfill the
+                    materialization to ensure it is populated with historical
+                    data.
                 </Typography>
 
                 <FieldEditor
@@ -101,7 +85,7 @@ function EditProjectionDialog({
                     }}
                     variant="text"
                 >
-                    {intl.formatMessage({ id: 'cta.cancel' })}
+                    Cancel
                 </Button>
 
                 <Button
@@ -188,9 +172,7 @@ function EditProjectionDialog({
                     }}
                     variant="outlined"
                 >
-                    {intl.formatMessage({
-                        id: 'cta.evolve',
-                    })}
+                    Apply
                 </Button>
             </DialogActions>
         </Dialog>

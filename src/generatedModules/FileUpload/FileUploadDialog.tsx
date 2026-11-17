@@ -12,7 +12,6 @@ import {
 } from '@mui/material';
 
 import { CloudUpload } from 'iconoir-react';
-import { useIntl } from 'react-intl';
 
 import AlertBox from 'src/components/shared/AlertBox';
 import { logRocketEvent } from 'src/services/shared';
@@ -33,8 +32,6 @@ export const FileUploadDialog = ({
     open,
     title,
 }: FileUploadDialogProps) => {
-    const intl = useIntl();
-
     const fileReaderRef = useRef<FileReader | null>(null);
 
     const [fileError, setFileError] = useState<string | null>(null);
@@ -63,28 +60,21 @@ export const FileUploadDialog = ({
         onClose();
     }, [onClose, isReading]);
 
-    const validateAndSetFile = useCallback(
-        (file: File) => {
-            let fileError: string | null = null;
-            let fileContent: File | null = file;
+    const validateAndSetFile = useCallback((file: File) => {
+        let fileError: string | null = null;
+        let fileContent: File | null = file;
 
-            if (file.size === 0) {
-                fileContent = null;
-                fileError = intl.formatMessage({
-                    id: 'fileUpload.dropzone.error.tooSmall',
-                });
-            } else if (file.size > MAX_FILE_SIZE_BYTES) {
-                fileContent = null;
-                fileError = intl.formatMessage({
-                    id: 'fileUpload.dropzone.error.tooLarge',
-                });
-            }
+        if (file.size === 0) {
+            fileContent = null;
+            fileError = 'File appears to be empty.';
+        } else if (file.size > MAX_FILE_SIZE_BYTES) {
+            fileContent = null;
+            fileError = 'File exceeds the 5 MB size limit.';
+        }
 
-            setFileError(fileError);
-            setSelectedFile(fileContent);
-        },
-        [intl]
-    );
+        setFileError(fileError);
+        setSelectedFile(fileContent);
+    }, []);
 
     const handleFileSelect = useCallback(
         (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -132,11 +122,7 @@ export const FileUploadDialog = ({
 
                     handleClose();
                 } else {
-                    setFileError(
-                        intl.formatMessage({
-                            id: 'fileUpload.dropzone.error.readFailed',
-                        })
-                    );
+                    setFileError('File read failed. Please try again.');
 
                     setIsReading(false);
 
@@ -150,7 +136,7 @@ export const FileUploadDialog = ({
         }
 
         fileReaderRef.current.readAsText(selectedFile);
-    }, [handleClose, intl, onFileRead, selectedFile]);
+    }, [handleClose, onFileRead, selectedFile]);
 
     return (
         <Dialog
@@ -201,9 +187,7 @@ export const FileUploadDialog = ({
                     >
                         <input
                             type="file"
-                            title={intl.formatMessage({
-                                id: 'fileUpload.input.title',
-                            })}
+                            title="Upload file"
                             style={{
                                 cursor: 'pointer',
                                 height: '100%',
@@ -248,15 +232,10 @@ export const FileUploadDialog = ({
                             ) : (
                                 <Stack spacing={1}>
                                     <Typography>
-                                        {intl.formatMessage({
-                                            id: 'fileUpload.dropzone.instruction',
-                                        })}
+                                        Drag and drop a file here, or click to
+                                        browse
                                     </Typography>
-                                    <Typography>
-                                        {intl.formatMessage({
-                                            id: 'fileUpload.dropzone.maxSize',
-                                        })}
-                                    </Typography>
+                                    <Typography>Max file size: 5 MB</Typography>
                                 </Stack>
                             )}
                         </Stack>
@@ -271,7 +250,7 @@ export const FileUploadDialog = ({
                     variant="outlined"
                     size="small"
                 >
-                    {intl.formatMessage({ id: 'cta.cancel' })}
+                    Cancel
                 </Button>
                 <Button
                     disabled={!selectedFile || isReading}
@@ -279,7 +258,7 @@ export const FileUploadDialog = ({
                     variant="contained"
                     size="small"
                 >
-                    {intl.formatMessage({ id: 'cta.save' })}
+                    Save
                 </Button>
             </DialogActions>
         </Dialog>

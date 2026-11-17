@@ -5,7 +5,6 @@ import useConstant from 'use-constant';
 
 import { Box, Button, Stack, Typography } from '@mui/material';
 
-import { useIntl } from 'react-intl';
 import { Navigate } from 'react-router';
 
 import FullPageWrapper from 'src/app/FullPageWrapper';
@@ -19,7 +18,6 @@ import { BASE_ERROR } from 'src/services/supabase';
 import { CustomEvents } from 'src/services/types';
 
 function MarketplaceVerification() {
-    const intl = useIntl();
     const verifyMarketplace = useMarketplaceVerify();
 
     const { 0: marketplaceVerify, 2: removeMarketplaceVerify } =
@@ -81,18 +79,17 @@ function MarketplaceVerification() {
                 ) : null}
 
                 <Typography variant="h5" align="center">
-                    {intl.formatMessage({ id: 'tenant.marketplace.header' })}
+                    Apply marketplace subscription
                 </Typography>
 
                 <Typography>
-                    {intl.formatMessage({ id: 'tenant.marketplace.message' })}
+                    Select the tenant that you want the marketplace subscription
+                    applied to.
                 </Typography>
 
                 <Box>
                     <PrefixedName
-                        label={intl.formatMessage({
-                            id: 'common.tenant',
-                        })}
+                        label="Prefix"
                         onChange={updatePrefix}
                         prefixOnly
                         hideErrorMessage
@@ -116,7 +113,7 @@ function MarketplaceVerification() {
                         onClick={() => startVerification(prefix)}
                         sx={{ mt: 2 }}
                     >
-                        {intl.formatMessage({ id: 'cta.continue' })}
+                        Continue
                     </Button>
                 </Box>
             </Stack>

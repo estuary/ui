@@ -2,8 +2,6 @@ import type { BaseButtonProps } from 'src/components/fieldSelection/types';
 
 import { Button } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 import { useBindingStore } from 'src/stores/Binding/Store';
 import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
 import { hasLength } from 'src/utils/misc-utils';
@@ -13,8 +11,6 @@ const ExcludeAllButton = ({
     loading,
     selections,
 }: BaseButtonProps) => {
-    const intl = useIntl();
-
     const setMultiSelection = useBindingStore(
         (state) => state.setMultiSelection
     );
@@ -40,7 +36,7 @@ const ExcludeAllButton = ({
             style={{ textWrap: 'nowrap' }}
             variant="outlined"
         >
-            {intl.formatMessage({ id: 'fieldSelection.table.cta.excludeAll' })}
+            Exclude All
         </Button>
     );
 };

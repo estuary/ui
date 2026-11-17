@@ -21,7 +21,7 @@ import {
 } from 'src/utils/misc-utils';
 import { checkIfPublishIsDone } from 'src/utils/publication-utils';
 
-export function useQueryPoller(
+function useQueryPoller(
     key: string,
     checkIfDone: (response: any, attempts: number) => [boolean | null, any]
 ) {

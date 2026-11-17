@@ -26,7 +26,7 @@ interface RowsProps {
     showEntityStatus: boolean;
 }
 
-export interface RowProps {
+interface RowProps {
     stats?: StatsResponse;
     statsFailed?: boolean;
     row: CaptureQueryWithStats;

@@ -7,7 +7,7 @@ import { useIntl } from 'react-intl';
 import AlertBox from 'src/components/shared/AlertBox';
 import { useEntityType } from 'src/context/EntityContext';
 
-export function TrialOnlyPrefixAlert({
+function TrialOnlyPrefixAlert({
     message,
     triggered,
 }: Omit<TrialOnlyPrefixAlertProps, 'messageId'> & { message: string }) {

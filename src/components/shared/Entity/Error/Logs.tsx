@@ -5,7 +5,6 @@ import { useState } from 'react';
 import { Button, Collapse, Stack, useTheme } from '@mui/material';
 
 import { NavArrowDown } from 'iconoir-react';
-import { useIntl } from 'react-intl';
 
 import Logs from 'src/components/logs';
 import ErrorBoundryWrapper from 'src/components/shared/ErrorBoundryWrapper';
@@ -17,8 +16,6 @@ function ErrorLogs({
     height,
     logProps,
 }: ErrorLogsProps) {
-    const intl = useIntl();
-
     const theme = useTheme();
 
     const heightVal = height ?? 250;
@@ -48,11 +45,7 @@ function ErrorLogs({
                         />
                     }
                 >
-                    {intl.formatMessage({
-                        id: showLogs
-                            ? 'entityCreate.errors.collapseTitleOpen'
-                            : 'entityCreate.errors.collapseTitle',
-                    })}
+                    {showLogs ? 'Hide logs' : 'View logs'}
                 </Button>
                 <Collapse in={showLogs} unmountOnExit>
                     <ErrorBoundryWrapper>

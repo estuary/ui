@@ -19,7 +19,6 @@ import {
     TableRow,
 } from '@mui/material';
 
-import { useIntl } from 'react-intl';
 import { gql, useQuery } from 'urql';
 
 import AlertBox from 'src/components/shared/AlertBox';
@@ -101,8 +100,6 @@ function AlertHistoryTable({
     disableFooter,
     tablePrefix,
 }: AlertHistoryTableProps) {
-    const intl = useIntl();
-
     const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);
 
     const { tableSettings } = useDisplayTableColumns();
@@ -245,24 +242,14 @@ function AlertHistoryTable({
                     }}
                     severity="info"
                 >
-                    {intl.formatMessage(
-                        {
-                            id: 'alerts.table.reduced',
-                        },
-                        {
-                            count: MAX_ACTIVE_ALERTS,
-                            total: totalActiveAlertsCount,
-                        }
-                    )}
+                    {`Showing ${MAX_ACTIVE_ALERTS} of ${totalActiveAlertsCount} total alerts.`}
                 </AlertBox>
             ) : null}
             <TableContainer component={Box}>
                 <Table
                     size="small"
                     sx={{ minWidth: 350, borderCollapse: 'separate' }}
-                    aria-label={intl.formatMessage({
-                        id: 'alerts.table.label',
-                    })}
+                    aria-label="List of all alerts for tenant"
                 >
                     <EntityTableHeader
                         columns={columnsToShow}
@@ -300,28 +287,9 @@ function AlertHistoryTable({
                                     rowsPerPageOptions={[PAGE_SIZE]}
                                     showFirstButton={currentPage !== 0}
                                     onPageChange={loadMore}
-                                    labelDisplayedRows={({ from, to }) => {
-                                        return (
-                                            <>
-                                                {intl.formatMessage(
-                                                    {
-                                                        id: 'alerts.table.pagination.displayedRows',
-                                                    },
-                                                    {
-                                                        from,
-                                                        to,
-                                                        status: intl.formatMessage(
-                                                            {
-                                                                id: active
-                                                                    ? 'alerts.table.pagination.displayedRows.active'
-                                                                    : 'alerts.table.pagination.displayedRows.resolved',
-                                                            }
-                                                        ),
-                                                    }
-                                                )}
-                                            </>
-                                        );
-                                    }}
+                                    labelDisplayedRows={({ from, to }) =>
+                                        `${active ? 'active' : 'resolved'} alerts | ${from} to ${to}`
+                                    }
                                     slotProps={{
                                         actions: {
                                             previousButton: {

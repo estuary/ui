@@ -2,8 +2,6 @@ import type { SupportedProvider } from 'src/types/authProviders';
 
 import { Box, Divider, Stack } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 import MagicLink from 'src/components/login/MagicLink';
 import LoginProviders from 'src/components/login/Providers';
 import useLoginStateHandler from 'src/hooks/login/useLoginStateHandler';
@@ -21,8 +19,6 @@ interface Props {
 }
 
 const BasicLogin = ({ showRegistration }: Props) => {
-    const intl = useIntl();
-
     const provider = useGlobalSearchParams<SupportedProvider | null>(
         GlobalSearchParams.PROVIDER
     );
@@ -53,9 +49,7 @@ const BasicLogin = ({ showRegistration }: Props) => {
 
                 {!isRegister && loginSettings.showEmail ? (
                     <>
-                        <Divider flexItem>
-                            {intl.formatMessage({ id: 'login.separator' })}
-                        </Divider>
+                        <Divider flexItem>or</Divider>
 
                         <Box>
                             <MagicLink grantToken={grantToken} />

@@ -1,7 +1,5 @@
 import { Typography } from '@mui/material';
 
-import { FormattedMessage, useIntl } from 'react-intl';
-
 import SingleLineCode from 'src/components/content/SingleLineCode';
 import {
     useEditorStore_id,
@@ -9,38 +7,28 @@ import {
 } from 'src/components/editor/Store/hooks';
 
 function DiscoveredSchemaCommands() {
-    const intl = useIntl();
-
     const draftId = useEditorStore_id();
     const persistedDraftId = useEditorStore_persistedDraftId();
 
-    const pullDraftCommand = intl.formatMessage(
-        {
-            id: 'workflows.collectionSelector.schemaEdit.discoveredCollection.command1',
-        },
-        {
-            draftId: persistedDraftId ?? draftId,
-        }
-    );
+    const pullDraftCommand = `flowctl draft select --id ${persistedDraftId ?? draftId ?? ''} && flowctl draft develop`;
 
-    const pushLocalEditsCommand = intl.formatMessage({
-        id: 'workflows.collectionSelector.schemaEdit.discoveredCollection.command2',
-    });
+    const pushLocalEditsCommand =
+        'flowctl draft author --source <flow_catalog_file_location>';
 
     return (
         <>
             <Typography sx={{ mb: 3 }}>
-                <FormattedMessage id="workflows.collectionSelector.schemaEdit.description" />
+                Use the commands below to edit the schema for this collection.
+                Once executed, click the Synchronize Schema button below to pull
+                the changes on the server into the UI.
             </Typography>
 
-            <Typography sx={{ mb: 1 }}>
-                <FormattedMessage id="workflows.collectionSelector.schemaEdit.message1" />
-            </Typography>
+            <Typography sx={{ mb: 1 }}>Pull down the draft to edit</Typography>
 
             <SingleLineCode value={pullDraftCommand} />
 
             <Typography sx={{ mt: 3, mb: 1 }}>
-                <FormattedMessage id="workflows.collectionSelector.schemaEdit.message2" />
+                Push your changes up to the server
             </Typography>
 
             <SingleLineCode value={pushLocalEditsCommand} />

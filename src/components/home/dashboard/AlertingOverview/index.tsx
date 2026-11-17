@@ -12,7 +12,6 @@ import { useMemo } from 'react';
 
 import { Grid } from '@mui/material';
 
-import { useIntl } from 'react-intl';
 import { gql, useQuery } from 'urql';
 
 import AlertSummary from 'src/components/home/dashboard/AlertingOverview/AlertSummary';
@@ -43,8 +42,6 @@ const alertingOverviewQuery = gql<
 export default function AlertingOverview({
     entityType,
 }: AlertingOverviewProps) {
-    const intl = useIntl();
-
     const selectedTenant = useTenantStore((state) => state.selectedTenant);
 
     const [{ fetching, data, error }] = useQuery({
@@ -72,19 +69,17 @@ export default function AlertingOverview({
             <CardWrapper
                 disableMinWidth
                 opaqueLightMode
-                message={intl.formatMessage({
-                    id: fetching
-                        ? 'alerts.overview.title.fetching'
+                message={
+                    fetching
+                        ? 'Fetching active alerts...'
                         : flattenedGroupedAlerts.length > 0
-                          ? 'alerts.overview.title.active'
-                          : 'alerts.overview.title.activeEmpty',
-                })}
+                          ? 'Active Alerts Summary'
+                          : 'No Active Alerts'
+                }
             >
                 {error ? (
                     <AlertBox short severity="error">
-                        {intl.formatMessage({
-                            id: 'alert.active.fetchError.title',
-                        })}
+                        Unable to fetch active alerts
                     </AlertBox>
                 ) : flattenedGroupedAlerts.length > 0 ? (
                     <AlertSummary

@@ -59,7 +59,7 @@ export default function LegacyCard({
 
                                 {docsUrl ? (
                                     <ExternalLink link={docsUrl}>
-                                        <FormattedMessage id="terms.documentation" />
+                                        Docs
                                     </ExternalLink>
                                 ) : null}
                             </Stack>
@@ -77,7 +77,7 @@ export default function LegacyCard({
                                         textAlign: 'center',
                                     }}
                                 >
-                                    <FormattedMessage id="common.recommended" />
+                                    Recommended
                                 </Box>
                             ) : null}
                         </Stack>

@@ -184,7 +184,7 @@ const getInitialState = (
         );
     },
 
-    evaluateDiscoveredBindings: (draftSpecResponse) => {
+    evaluateDiscoveredBindings: (discoveredBindings) => {
         set(
             produce((state: BindingState) => {
                 // Preserve which collections were marked for backfill so we can
@@ -217,19 +217,17 @@ const getInitialState = (
                 // Go through the discovered bindings BEFORE sorting so that
                 //  we know the original indices of all the bindings.
                 state.resourceConfigs = {};
-                draftSpecResponse.data[0].spec.bindings.forEach(
-                    (binding: any, index: number) => {
-                        const { UUID, collection } = initializeAndGenerateUUID(
-                            state,
-                            binding,
-                            index
-                        );
+                discoveredBindings.forEach((binding: any, index: number) => {
+                    const { UUID, collection } = initializeAndGenerateUUID(
+                        state,
+                        binding,
+                        index
+                    );
 
-                        if (previouslyBackfilledCollections.has(collection)) {
-                            state.backfilledBindings.push(UUID);
-                        }
+                    if (previouslyBackfilledCollections.has(collection)) {
+                        state.backfilledBindings.push(UUID);
                     }
-                );
+                });
 
                 // Now that we have gone through the initialized everything we are safe to sort
                 state.resourceConfigs = sortResourceConfigs(

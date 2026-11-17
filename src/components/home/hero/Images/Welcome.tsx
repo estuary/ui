@@ -1,12 +1,9 @@
 import { useTheme } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 import darkWelcome from 'src/images/welcome_dark.png';
 import lightWelcome from 'src/images/welcome_light.png';
 
 function WelcomeImage() {
-    const intl = useIntl();
     const theme = useTheme();
 
     return (
@@ -16,7 +13,7 @@ function WelcomeImage() {
                 marginBottom: 16,
             }}
             width="75%"
-            alt={intl.formatMessage({ id: 'welcome.image.alt' })}
+            alt="A diagram showing the Estuary logo at the center, connected by pipelines to multiple endpoint systems. Source systems on the left feed data into Estuary and destination systems on the right receive data from Estuary."
         />
     );
 }

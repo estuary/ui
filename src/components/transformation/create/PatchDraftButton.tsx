@@ -5,7 +5,6 @@ import { useCallback } from 'react';
 import { Button } from '@mui/material';
 
 import { isEmpty } from 'lodash';
-import { FormattedMessage } from 'react-intl';
 
 import { modifyDraftSpec } from 'src/api/draftSpecs';
 import {
@@ -136,7 +135,7 @@ function PatchDraftButton() {
 
     return (
         <Button disabled={emptySQLExists} onClick={updateDerivationSpec}>
-            <FormattedMessage id="cta.next" />
+            Next
         </Button>
     );
 }

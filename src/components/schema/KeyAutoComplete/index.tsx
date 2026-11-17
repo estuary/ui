@@ -14,7 +14,6 @@ import {
 
 import { arrayMove } from '@dnd-kit/sortable';
 import { filter, orderBy } from 'lodash';
-import { useIntl } from 'react-intl';
 
 import {
     useBindingsEditorStore_skimProjectionResponse,
@@ -37,8 +36,6 @@ const getValue = (option: BuiltProjection_ValidKey) => {
 };
 
 function KeyAutoComplete({ disabled, onChange, value }: KeyAutoCompleteProps) {
-    const intl = useIntl();
-
     // We want a local copy so that the display is updated right away when the user
     //  is done dragging. Otherwise, the item being dragged kind flies around when
     //  put in a new location
@@ -137,12 +134,10 @@ function KeyAutoComplete({ disabled, onChange, value }: KeyAutoCompleteProps) {
                     setInputValue(newInputValue);
                 }}
                 renderGroup={({ key, group, children }) => {
-                    const readableGroup = intl.formatMessage({
-                        id:
-                            group === 'MUST'
-                                ? 'keyAutoComplete.keys.group.must'
-                                : 'keyAutoComplete.keys.group.may',
-                    });
+                    const readableGroup =
+                        group === 'MUST'
+                            ? 'Fields that always exist'
+                            : 'Fields that sometimes exist';
 
                     return {
                         key,
@@ -158,16 +153,14 @@ function KeyAutoComplete({ disabled, onChange, value }: KeyAutoCompleteProps) {
                                 skimProjectionResponseEmpty || disableInput
                             }
                             error={showEditErrorState}
-                            helperText={intl.formatMessage({
-                                id: skimProjectionResponseEmpty
-                                    ? 'keyAutoComplete.noOptions.message'
+                            helperText={
+                                skimProjectionResponseEmpty
+                                    ? 'Without a valid schema we cannot provide options for the key. Please fix schema.'
                                     : noUsableKeys
-                                      ? 'keyAutoComplete.noUsableKeys.message'
-                                      : 'schemaEditor.key.helper',
-                            })}
-                            label={intl.formatMessage({
-                                id: 'schemaEditor.key.label',
-                            })}
+                                      ? 'No fields in the schema are valid keys. Please update schema.'
+                                      : 'Ordered JSON Pointers that define how a composite key may be extracted from a collection document.'
+                            }
+                            label="Key"
                             variant="standard"
                         />
                     );

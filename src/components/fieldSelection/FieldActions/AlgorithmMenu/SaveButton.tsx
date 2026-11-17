@@ -2,8 +2,6 @@ import type { MenuActionProps } from 'src/components/fieldSelection/types';
 
 import { Button } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
@@ -16,8 +14,6 @@ export default function SaveButton({
     handleClick,
     selectionAlgorithm,
 }: MenuActionProps) {
-    const intl = useIntl();
-
     const formActive = useFormStateStore_isActive();
 
     const fieldsRecommended = useSourceCaptureStore(
@@ -48,7 +44,7 @@ export default function SaveButton({
             size="small"
             variant="outlined"
         >
-            {intl.formatMessage({ id: 'cta.evolve' })}
+            Apply
         </Button>
     );
 }

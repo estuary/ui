@@ -9,10 +9,7 @@ interface Props {
     notificationTitle?: string;
 }
 
-export function LoginNotifications({
-    notificationMessage,
-    notificationTitle,
-}: Props) {
+function LoginNotifications({ notificationMessage, notificationTitle }: Props) {
     if (notificationMessage) {
         return (
             <Snackbar

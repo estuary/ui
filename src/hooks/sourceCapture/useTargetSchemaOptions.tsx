@@ -14,12 +14,8 @@ import { filteredTargetNamingOptions } from 'src/stores/SourceCapture/shared';
 function useTargetSchemaOptions(): AutoCompleteOptionForTargetSchema[] {
     const intl = useIntl();
 
-    const publicTablePrefix = intl.formatMessage({
-        id: `defaults.public`,
-    });
-    const tablePrefix = intl.formatMessage({
-        id: `defaults.schema`,
-    });
+    const publicTablePrefix = 'public';
+    const tablePrefix = 'anvils';
 
     return useMemo(
         () =>
@@ -33,28 +29,16 @@ function useTargetSchemaOptions(): AutoCompleteOptionForTargetSchema[] {
                                     id: `schemaMode.options.prefixNonDefaultSchema.description`,
                                 },
                                 {
-                                    defaultSchema: (
-                                        <code>
-                                            {intl.formatMessage({
-                                                id: 'schemaMode.options.prefixNonDefaultSchema.ignored1',
-                                            })}
-                                        </code>
-                                    ),
-                                    defaultSchema2: (
-                                        <code>
-                                            {intl.formatMessage({
-                                                id: 'schemaMode.options.prefixNonDefaultSchema.ignored2',
-                                            })}
-                                        </code>
-                                    ),
+                                    defaultSchema: <code>public</code>,
+                                    defaultSchema2: <code>dbo</code>,
                                     highlight: (
                                         <Typography
                                             component="span"
                                             sx={{ fontWeight: 500 }}
                                         >
-                                            {intl.formatMessage({
-                                                id: `schemaMode.options.prefixNonDefaultSchema.description.highlight`,
-                                            })}
+                                            {
+                                                "only if it's not the default schema"
+                                            }
                                         </Typography>
                                     ),
                                 }

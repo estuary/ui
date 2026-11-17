@@ -14,9 +14,7 @@ import type {
 
 // These are settings that were added just for Collection Selector but might be useful elsewhere in the future (Q2 2025)
 
-export interface ColumnPropsBase
-    extends TableColumns,
-        CollectionSelectorColumnProps {}
+interface ColumnPropsBase extends TableColumns, CollectionSelectorColumnProps {}
 
 export type ColumnProps =
     | (ColumnPropsBase & {
@@ -30,12 +28,6 @@ export type ColumnProps =
           renderInlineHeader?: (index: number) => ReactNode;
           renderHeader?: never;
       });
-
-export interface StandAloneTableTitleProps {
-    titleIntlKey: string;
-    docsUrl?: string;
-    messageIntlKey?: string;
-}
 
 export interface EntityTableHeaderProps extends CollectionSelectorHeaderProps {
     columns: ColumnProps[];

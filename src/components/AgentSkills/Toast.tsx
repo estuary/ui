@@ -2,7 +2,6 @@ import type { MouseEvent } from 'react';
 
 import {
     Box,
-    Chip,
     IconButton,
     keyframes,
     Link,
@@ -12,7 +11,6 @@ import {
 
 import { usePostHog } from '@posthog/react';
 import { NavArrowRight, Xmark } from 'iconoir-react';
-import { useIntl } from 'react-intl';
 
 import {
     AGENT_SKILLS_URL,
@@ -23,28 +21,20 @@ import {
     useAgentSkillsStore,
 } from 'src/components/AgentSkills/shared';
 import { SparkleIcon } from 'src/components/AgentSkills/SparkleIcon';
-import { toastIndex } from 'src/context/Theme';
 
 const toastIn = keyframes`
     0%   { opacity: 0; transform: translateY(16px) scale(0.98); }
     100% { opacity: 1; transform: translateY(0)    scale(1);    }
 `;
 
-interface ToastProps {
-    docsPanelOpen?: boolean;
-}
-
-export function Toast({ docsPanelOpen }: ToastProps) {
+export function Toast() {
     const theme = useTheme();
     const mode = theme.palette.mode;
-    const intl = useIntl();
     const postHog = usePostHog();
     const toastDismissed = useAgentSkillsStore((s) => s.toastDismissed);
     const dismissToast = useAgentSkillsStore((s) => s.dismissToast);
 
-    // If the docs panel is open just hide the toast. That way it cannot cover up
-    //  the cookie consent banner in the docs.
-    if (toastDismissed || docsPanelOpen) {
+    if (toastDismissed) {
         return null;
     }
 
@@ -71,7 +61,7 @@ export function Toast({ docsPanelOpen }: ToastProps) {
                 'display': 'block',
                 'animation': `${toastIn} 750ms cubic-bezier(.2,.9,.25,1) 1s both`,
                 'transition': 'transform 200ms ease, box-shadow 200ms ease',
-                'zIndex': toastIndex,
+                'zIndex': theme.zIndex.drawer,
                 '&:hover': {
                     transform: 'translateY(-2px)',
                     boxShadow:
@@ -127,21 +117,22 @@ export function Toast({ docsPanelOpen }: ToastProps) {
                             mb: 0.5,
                         }}
                     >
-                        <Chip
-                            label={intl.formatMessage({
-                                id: 'agentSkills.badge',
-                            })}
-                            size="small"
+                        <Box
+                            component="span"
                             sx={{
                                 fontSize: 10,
                                 fontWeight: 700,
                                 textTransform: 'uppercase',
                                 color: LINK_COLOR,
-                                bgcolor: '#eaf0ff',
-                                height: 'auto',
+                                background: '#eaf0ff',
+                                px: '7px',
                                 py: '2px',
+                                borderRadius: '999px',
+                                lineHeight: 1.4,
                             }}
-                        />
+                        >
+                            New
+                        </Box>
                         <Typography
                             component="span"
                             sx={{
@@ -150,9 +141,7 @@ export function Toast({ docsPanelOpen }: ToastProps) {
                                 fontWeight: 500,
                             }}
                         >
-                            {intl.formatMessage({
-                                id: 'agentSkills.eyebrow',
-                            })}
+                            For Claude, Cursor, Codex and more
                         </Typography>
                     </Box>
 
@@ -166,7 +155,7 @@ export function Toast({ docsPanelOpen }: ToastProps) {
                             mb: 0.5,
                         }}
                     >
-                        {intl.formatMessage({ id: 'agentSkills.title' })}
+                        Meet Estuary Agent Skills
                     </Typography>
 
                     <Typography
@@ -177,7 +166,9 @@ export function Toast({ docsPanelOpen }: ToastProps) {
                             mb: '10px',
                         }}
                     >
-                        {intl.formatMessage({ id: 'agentSkills.description' })}
+                        Give any AI agent the skills to build connectors, debug
+                        pipelines, and check stats on Estuary, from wherever you
+                        work.
                     </Typography>
 
                     <Link
@@ -195,7 +186,7 @@ export function Toast({ docsPanelOpen }: ToastProps) {
                             gap: 0.25,
                         }}
                     >
-                        {intl.formatMessage({ id: 'agentSkills.cta' })}
+                        Read the docs
                         <NavArrowRight
                             className="cta-arrow"
                             width={17}
@@ -216,9 +207,7 @@ export function Toast({ docsPanelOpen }: ToastProps) {
                         });
                         dismissToast();
                     }}
-                    aria-label={intl.formatMessage({
-                        id: 'agentSkills.dismiss',
-                    })}
+                    aria-label="Dismiss"
                     sx={{
                         'width': 20,
                         'height': 20,

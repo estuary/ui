@@ -1,7 +1,5 @@
 import { Button, Stack, Typography } from '@mui/material';
 
-import { FormattedMessage } from 'react-intl';
-
 import ErrorDialog from 'src/components/shared/ErrorDialog/index';
 
 const ARIA_NAME = 'OauthWindowOpenerMissing';
@@ -12,26 +10,25 @@ function OauthWindowOpenerMissing() {
             body={
                 <Stack spacing={2}>
                     <Typography>
-                        <FormattedMessage id="oauth.windowOpener.error.message1" />
+                        We are unable to communicate with the window that opened
+                        the OAuth pop up. The window may have been closed.
                     </Typography>
                     <Typography>
-                        <FormattedMessage id="oauth.windowOpener.error.message2" />
+                        Please close this dialog and try again.
                     </Typography>
                 </Stack>
             }
-            bodyTitle={<FormattedMessage id="oauth.windowOpener.error.title" />}
+            bodyTitle={<>Cannot reach parent window</>}
             cta={
                 <Button
                     onClick={() => {
                         window.close();
                     }}
                 >
-                    <FormattedMessage id="cta.close" />
+                    Close
                 </Button>
             }
-            dialogTitle={
-                <FormattedMessage id="oauth.windowOpener.error.dialog.title" />
-            }
+            dialogTitle={<>OAuth Failed</>}
             name={ARIA_NAME}
         />
     );

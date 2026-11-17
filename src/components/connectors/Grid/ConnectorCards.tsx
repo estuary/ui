@@ -115,7 +115,6 @@ export default function ConnectorCards({
         navigateToCreate(entityType, {
             imagePath,
             advanceToForm: true,
-            expressWorkflow: condensed,
         });
     };
 

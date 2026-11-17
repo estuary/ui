@@ -4,7 +4,6 @@ import type { BindingMetadata, Schema } from 'src/types';
 import { useCallback } from 'react';
 
 import { cloneDeep } from 'lodash';
-import { useIntl } from 'react-intl';
 
 import { modifyDraftSpec } from 'src/api/draftSpecs';
 import {
@@ -20,7 +19,6 @@ import { addOrRemoveOnIncompatibleSchemaChange } from 'src/utils/entity-utils';
 import { hasLength } from 'src/utils/misc-utils';
 
 function useBindingIncompatibleSchemaSetting() {
-    const intl = useIntl();
     const entityType = useEntityType();
 
     // Draft Editor Store
@@ -59,15 +57,7 @@ function useBindingIncompatibleSchemaSetting() {
             if (invalidBindingIndex > -1) {
                 return Promise.reject({
                     ...BASE_ERROR,
-                    message: intl.formatMessage(
-                        {
-                            id: 'incompatibleSchemaChange.error.bindingSettingUpdateFailed',
-                        },
-                        {
-                            collection:
-                                bindingMetadata[invalidBindingIndex].collection,
-                        }
-                    ),
+                    message: `There was an issue updating the incompatible schema change action for one or more bindings associated with collection, ${bindingMetadata[invalidBindingIndex].collection}.`,
                 });
             }
 
@@ -94,7 +84,7 @@ function useBindingIncompatibleSchemaSetting() {
 
             return mutateDraftSpecs();
         },
-        [draftId, draftSpecs, entityType, intl, mutateDraftSpecs]
+        [draftId, draftSpecs, entityType, mutateDraftSpecs]
     );
 
     return { updateOnIncompatibleSchemaChange };

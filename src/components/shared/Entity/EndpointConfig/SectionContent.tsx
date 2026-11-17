@@ -7,7 +7,6 @@ import { Box, useTheme } from '@mui/material';
 import { useShallow } from 'zustand/react/shallow';
 
 import { isEqual } from 'lodash';
-import { useIntl } from 'react-intl';
 import { useMount, useUnmount } from 'react-use';
 
 import AlertBox from 'src/components/shared/AlertBox';
@@ -28,7 +27,7 @@ import { useSidePanelDocsStore } from 'src/stores/SidePanelDocs/Store';
 
 const SectionContent = ({ readOnly = false }: SectionContentProps) => {
     // General hooks
-    const intl = useIntl();
+
     const theme = useTheme();
 
     const connectorTag = useConnectorTag();
@@ -111,9 +110,7 @@ const SectionContent = ({ readOnly = false }: SectionContentProps) => {
             {readOnly ? (
                 <Box sx={{ mb: 3 }}>
                     <AlertBox severity="info" short>
-                        {intl.formatMessage({
-                            id: 'entityEdit.alert.endpointConfigDisabled',
-                        })}
+                        Editing of the endpoint configuration form disabled.
                     </AlertBox>
                 </Box>
             ) : null}
@@ -121,9 +118,8 @@ const SectionContent = ({ readOnly = false }: SectionContentProps) => {
             {endpointCanBeEmpty ? (
                 <Box sx={{ mb: 3 }}>
                     <AlertBox severity="info" short>
-                        {intl.formatMessage({
-                            id: 'workflows.alert.endpointConfigEmpty',
-                        })}
+                        This endpoint requires configuration of the external
+                        system only.
                     </AlertBox>
                 </Box>
             ) : null}

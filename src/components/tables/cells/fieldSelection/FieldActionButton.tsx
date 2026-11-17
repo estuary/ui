@@ -12,7 +12,7 @@ import {
 import useOnFieldActionClick from 'src/hooks/fieldSelection/useOnFieldActionClick';
 import { useFormStateStore_isIdle } from 'src/stores/FormState/hooks';
 
-export function FieldActionButton({
+function FieldActionButton({
     bindingUUID,
     disabled,
     field,

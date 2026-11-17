@@ -2,27 +2,20 @@ import type { HydrationErrorProps } from 'src/components/collection/DataPreview/
 
 import { Typography } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 import AlertBox from 'src/components/shared/AlertBox';
 import Error from 'src/components/shared/Error';
 
 function HydrationError({ readError }: HydrationErrorProps) {
-    const intl = useIntl();
-
     if (readError?.message === 'SUSPENDED') {
         return (
             <AlertBox
                 severity="info"
                 short
-                title={intl.formatMessage({
-                    id: 'detailsPanel.dataPreview.suspended.title',
-                })}
+                title="No data found in collection."
             >
                 <Typography>
-                    {intl.formatMessage({
-                        id: 'detailsPanel.dataPreview.suspended.message',
-                    })}
+                    If you are using the Estuary trial storage mapping, data
+                    expires after 20 days.
                 </Typography>
             </AlertBox>
         );

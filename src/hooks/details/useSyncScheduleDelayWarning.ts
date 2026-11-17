@@ -1,15 +1,12 @@
 import { useMemo } from 'react';
 
 import { Duration } from 'luxon';
-import { useIntl } from 'react-intl';
 
 import { useEditorStore_currentCatalog } from 'src/components/editor/Store/hooks';
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 
 export function useSyncScheduleDelayWarning() {
-    const intl = useIntl();
-
     const currentCatalog = useEditorStore_currentCatalog({
         localScope: true,
     });
@@ -33,9 +30,7 @@ export function useSyncScheduleDelayWarning() {
                 logRocketEvent(CustomEvents.SYNC_SCHEDULE, {
                     zeroSeconds: true,
                 });
-                return intl.formatMessage({
-                    id: 'detailsPanel.graph.syncDelay.default',
-                });
+                return 'Reporting can be delayed due to update delay for this materialization';
             }
 
             // The pattern we have is pretty close to ISO 8601 so
@@ -50,25 +45,17 @@ export function useSyncScheduleDelayWarning() {
                     invalid: true,
                     frequency: syncFrequency,
                 });
-                return intl.formatMessage({
-                    id: 'detailsPanel.graph.syncDelay.default',
-                });
+                return 'Reporting can be delayed due to update delay for this materialization';
             }
 
             // Add duration to itself to double the time
             const reportingDelay = syncDuration.plus(syncDuration).toHuman();
-            return intl.formatMessage(
-                { id: 'detailsPanel.graph.syncDelay' },
-                {
-                    reportingDelay,
-                }
-            );
+            return `Reporting can be delayed by up to ${reportingDelay} for this materialization`;
         }
 
         return undefined;
     }, [
         currentCatalog?.spec?.endpoint?.connector?.config?.syncSchedule
             ?.syncFrequency,
-        intl,
     ]);
 }

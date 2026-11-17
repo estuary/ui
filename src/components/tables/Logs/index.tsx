@@ -14,8 +14,6 @@ import {
 
 import { useShallow } from 'zustand/react/shallow';
 
-import { useIntl } from 'react-intl';
-
 import EntityTableHeader from 'src/components/tables/EntityTable/TableHeader';
 import LogsTableBody from 'src/components/tables/Logs/Body';
 import HydrationWarning from 'src/components/tables/Logs/HydrationWarning';
@@ -27,7 +25,6 @@ import { useJournalDataLogsStore } from 'src/stores/JournalData/Logs/Store';
 const TABLE_HEIGHT = 600;
 
 function LogsTable() {
-    const intl = useIntl();
     const columns = useLogColumns();
 
     const [hydrated, setAllowFetchingMore, [scrollToIndex, scrollToPosition]] =
@@ -72,9 +69,7 @@ function LogsTable() {
                 }}
             >
                 <Table
-                    aria-label={intl.formatMessage({
-                        id: 'ops.logsTable.label',
-                    })}
+                    aria-label="Task Logs"
                     component={Box}
                     size="small"
                     stickyHeader

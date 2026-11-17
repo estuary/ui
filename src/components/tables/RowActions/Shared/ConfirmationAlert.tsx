@@ -4,7 +4,7 @@ import { Typography } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
-export function ConfirmationAlert({
+function ConfirmationAlert({
     message,
 }: Omit<ConfirmationAlertProps, 'messageId'> & { message: string }) {
     return <Typography component="div">{message}</Typography>;

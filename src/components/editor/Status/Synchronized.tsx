@@ -1,7 +1,6 @@
 import { Typography } from '@mui/material';
 
 import { DatabaseCheck } from 'iconoir-react';
-import { FormattedMessage } from 'react-intl';
 
 interface Props {
     iconSize: number;
@@ -10,9 +9,7 @@ interface Props {
 function Synchronized({ iconSize }: Props) {
     return (
         <>
-            <Typography>
-                <FormattedMessage id="common.synchronized" />
-            </Typography>
+            <Typography>Synchronized</Typography>
 
             <DatabaseCheck style={{ fontSize: iconSize }} />
         </>

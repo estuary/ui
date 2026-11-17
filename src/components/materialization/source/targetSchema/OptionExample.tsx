@@ -53,16 +53,12 @@ function OptionExample({ example, baseTableMessageID }: OptionExampleProps) {
                 }}
             >
                 <Typography component="span" sx={labelStyling}>
-                    {intl.formatMessage({
-                        id: 'destinationLayout.example.table.label',
-                    })}
+                    Table:
                 </Typography>
                 <code>{example.table}</code>
                 <Typography component="span">|</Typography>
                 <Typography component="span" sx={labelStyling}>
-                    {intl.formatMessage({
-                        id: 'destinationLayout.example.schema.label',
-                    })}
+                    Schema:
                 </Typography>
                 <code>{example.schema}</code>
             </Stack>

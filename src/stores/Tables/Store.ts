@@ -28,7 +28,7 @@ import {
 } from 'src/stores/extensions/Hydration';
 import { devtoolsOptions } from 'src/utils/store-utils';
 
-export interface StatsSchema {
+interface StatsSchema {
     [k: string]:
         | {
               bytes_written_by_me?: number;
@@ -100,7 +100,7 @@ export interface SelectableTableStore extends StoreWithHydration {
     resetActionSettings: () => void;
 }
 
-export const initialCreateStates = {
+const initialCreateStates = {
     rows: () => {
         return new Map();
     },
@@ -110,7 +110,7 @@ export const initialCreateStates = {
     successfulTransformations: 0,
 };
 
-export const getInitialStateData = (): Pick<
+const getInitialStateData = (): Pick<
     SelectableTableStore,
     | 'actionSettings'
     | 'disabledRows'
@@ -138,7 +138,7 @@ export const getInitialStateData = (): Pick<
     };
 };
 
-export const getInitialState = (
+const getInitialState = (
     set: NamedSet<SelectableTableStore>,
     get: StoreApi<SelectableTableStore>['getState']
 ): SelectableTableStore => {

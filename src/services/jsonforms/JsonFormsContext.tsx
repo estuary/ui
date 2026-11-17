@@ -56,7 +56,7 @@ import {
 // All these functions are customized just so we can end up with the custom function
 //  mapCustomStateToCombinatorRendererProps calling into out own getDiscriminatorIndex
 // based on : packages/core/src/util/renderer.ts @ mapStateToCombinatorRendererProps
-export const mapCustomStateToCombinatorRendererProps = (
+const mapCustomStateToCombinatorRendererProps = (
     state: any, // JsonFormsState,
     ownProps: OwnPropsOfControl,
     keyword: CombinatorKeyword
@@ -114,7 +114,7 @@ export const withCustomJsonFormsOneOfDiscriminatorProps = (
 // Custom Layout for CollapsibleGroup
 // Used to allow groups that are optional to remove all of their own properties via
 //  a passed in `handleChange`
-export interface CustomLayoutProps extends LayoutProps {
+interface CustomLayoutProps extends LayoutProps {
     childrenHaveValue?: boolean;
     clearSettings: (path: string, value: any) => void;
 }

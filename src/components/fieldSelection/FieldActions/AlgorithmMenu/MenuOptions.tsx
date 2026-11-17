@@ -3,16 +3,12 @@ import type { SelectionAlgorithm } from 'src/stores/Binding/slices/FieldSelectio
 
 import { RadioGroup } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 import RadioMenuItem from 'src/components/shared/RadioMenuItem';
 
 export default function MenuOptions({
     selectionAlgorithm,
     setSelectionAlgorithm,
 }: MenuOptionsProps) {
-    const intl = useIntl();
-
     return (
         <RadioGroup
             onChange={(event) =>
@@ -22,42 +18,26 @@ export default function MenuOptions({
             style={{ maxWidth: 320, textWrap: 'wrap' }}
         >
             <RadioMenuItem
-                description={intl.formatMessage({
-                    id: 'fieldSelection.massActionMenu.depthZero.description',
-                })}
-                label={intl.formatMessage({
-                    id: 'fieldSelection.massActionMenu.depthZero.label',
-                })}
+                description="Select only required fields"
+                label="Required Only"
                 value="depthZero"
             />
 
             <RadioMenuItem
-                description={intl.formatMessage({
-                    id: 'fieldSelection.massActionMenu.depthOne.description',
-                })}
-                label={intl.formatMessage({
-                    id: 'fieldSelection.massActionMenu.depthOne.label',
-                })}
+                description="Select all top-level fields"
+                label="Depth 1"
                 value="depthOne"
             />
 
             <RadioMenuItem
-                description={intl.formatMessage({
-                    id: 'fieldSelection.massActionMenu.depthTwo.description',
-                })}
-                label={intl.formatMessage({
-                    id: 'fieldSelection.massActionMenu.depthTwo.label',
-                })}
+                description="Select fields at levels one and two"
+                label="Depth 2"
                 value="depthTwo"
             />
 
             <RadioMenuItem
-                description={intl.formatMessage({
-                    id: 'fieldSelection.massActionMenu.depthUnlimited.description',
-                })}
-                label={intl.formatMessage({
-                    id: 'fieldSelection.massActionMenu.depthUnlimited.label',
-                })}
+                description="Select all fields"
+                label="Unlimited Depth"
                 value="depthUnlimited"
             />
         </RadioGroup>

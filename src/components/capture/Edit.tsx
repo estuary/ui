@@ -66,16 +66,10 @@ function CaptureEdit() {
                                 secondaryButtonProps={{
                                     logEvent: CustomEvents.CAPTURE_TEST,
                                 }}
-                                GenerateButton={
-                                    <CaptureGenerateButton
-                                        entityType={entityType}
-                                    />
-                                }
+                                GenerateButton={<CaptureGenerateButton />}
                             />
                         }
-                        RediscoverButton={
-                            <RediscoverButton entityType={entityType} />
-                        }
+                        RediscoverButton={<RediscoverButton />}
                     />
                 </MutateDraftSpecProvider>
             </WorkflowHydrator>

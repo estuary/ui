@@ -43,7 +43,7 @@ export interface CaptureControllerStatus extends EntityControllerStatus {
     auto_discover?: AutoDiscoverStatus | null;
 }
 
-export interface CollectionControllerStatus extends EntityControllerStatus {
+interface CollectionControllerStatus extends EntityControllerStatus {
     inferred_schema?: InferredSchemaStatus | null;
 }
 
@@ -60,7 +60,7 @@ interface DiscoverChange {
     target: string;
 }
 
-export type Entity = 'capture' | 'materialization' | 'collection';
+type Entity = 'capture' | 'materialization' | 'collection';
 
 export interface EntityControllerStatus extends PublicationControllerStatus {
     activation?: ActivationStatus;
@@ -119,8 +119,7 @@ export interface JobStatus {
     type: string;
 }
 
-export interface MaterializationControllerStatus
-    extends EntityControllerStatus {
+interface MaterializationControllerStatus extends EntityControllerStatus {
     source_capture?: SourceCaptureStatus | null;
 }
 

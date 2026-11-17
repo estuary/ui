@@ -1,7 +1,6 @@
 import { Button, Typography, useTheme } from '@mui/material';
 
 import { DatabaseXmark } from 'iconoir-react';
-import { FormattedMessage } from 'react-intl';
 
 interface Props {
     iconSize: number;
@@ -14,7 +13,7 @@ function ServerDiff({ iconSize, onMerge }: Props) {
     return (
         <>
             <Typography>
-                <FormattedMessage id="monacoEditor.serverDiff" />
+                Your version is out of sync with the server.
             </Typography>
 
             <DatabaseXmark
@@ -22,7 +21,7 @@ function ServerDiff({ iconSize, onMerge }: Props) {
             />
 
             <Button onClick={() => onMerge()} disabled>
-                <FormattedMessage id="monacoEditor.serverDiffCTA" />
+                See changes
             </Button>
         </>
     );

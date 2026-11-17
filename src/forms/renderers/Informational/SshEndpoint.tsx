@@ -1,14 +1,10 @@
 import { Box } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 import AlertBox from 'src/components/shared/AlertBox';
 import CopyCidrBlocks from 'src/components/shared/CopyCidrBlocks';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 
 function SshEndpointInfo() {
-    const intl = useIntl();
-
     const dataPlaneCidrBlocks = useDetailsFormStore(
         (state) => state.details.data.dataPlane?.cidrBlocks
     );
@@ -22,9 +18,7 @@ function SshEndpointInfo() {
             <AlertBox
                 severity="info"
                 short
-                title={intl.formatMessage({
-                    id: 'informational.sshEndpoint.title',
-                })}
+                title="All Estuary traffic comes from a group of IPs that can be whitelisted:"
             >
                 <CopyCidrBlocks cidrBlocks={dataPlaneCidrBlocks} />
             </AlertBox>

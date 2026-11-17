@@ -2,7 +2,6 @@ import { useCallback, useMemo } from 'react';
 
 import { usePostHog } from '@posthog/react';
 import { useSnackbar } from 'notistack';
-import { useIntl } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 
 import { getLiveSpecIdByPublication } from 'src/api/publicationSpecsExt';
@@ -25,14 +24,13 @@ import { useWorkflowStore } from 'src/stores/Workflow/Store';
 import { getPathWithParams, hasLength } from 'src/utils/misc-utils';
 import { snackbarSettings } from 'src/utils/notification-utils';
 
-type RouteHandler = (customRoute?: string, external?: boolean) => void;
+type RouteHandler = (customRoute?: string) => void;
 
 function useEntityWorkflowHelpers() {
     const postHog = usePostHog();
     const { enqueueSnackbar } = useSnackbar();
     const navigate = useNavigate();
     const entityType = useEntityType();
-    const intl = useIntl();
 
     // Calls _most_ store resets needed
     const baseEntityStoreReset = useBaseEntityStoreReset();
@@ -85,7 +83,7 @@ function useEntityWorkflowHelpers() {
     const { generatePath } = useDetailsNavigator(entityDetailsBaseURL);
 
     const exit: RouteHandler = useCallback(
-        (customRoute?: string, external?: boolean) => {
+        (customRoute?: string) => {
             logRocketConsole('EntityWorkflow:exit');
             resetState();
 
@@ -97,12 +95,6 @@ function useEntityWorkflowHelpers() {
             }
 
             logRocketConsole('EntityWorkflow:exit:navigate');
-            if (external && hasLength(route)) {
-                window.location.href = route;
-
-                return;
-            }
-
             navigate(route, { replace: true });
         },
         [catalogName, generatePath, navigate, resetState]
@@ -110,13 +102,13 @@ function useEntityWorkflowHelpers() {
 
     // Form Event Handlers
     const closeLogs: RouteHandler = useCallback(
-        (customRoute?: string, external?: boolean) => {
+        (customRoute?: string) => {
             logRocketConsole('EntityWorkflow:closeLogs');
             setFormState({ showLogs: false });
 
             if (exitWhenLogsClose) {
                 logRocketConsole('EntityWorkflow:closeLogs:exit');
-                exit(customRoute, external);
+                exit(customRoute);
             }
         },
         [exit, setFormState, exitWhenLogsClose]
@@ -133,9 +125,7 @@ function useEntityWorkflowHelpers() {
 
         if (!liveSpecId) {
             enqueueSnackbar(
-                intl.formatMessage({
-                    id: 'entityCreate.errors.cannotFetchLiveSpec',
-                }),
+                'Unable to fetch the proper details to materialize. Try again.',
                 { ...snackbarSettings, variant: 'error' }
             );
             logRocketEvent('Capture_Materialize', { status: 'failure' });
@@ -150,7 +140,7 @@ function useEntityWorkflowHelpers() {
                 )
             );
         }
-    }, [catalogName, enqueueSnackbar, exit, intl, postHog, pubId]);
+    }, [catalogName, enqueueSnackbar, exit, postHog, pubId]);
 
     return { callFailed, closeLogs, exit, materializeCollections, resetState };
 }

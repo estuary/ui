@@ -1,7 +1,5 @@
 import { Grid, ListItem, Skeleton, Stack, Tooltip } from '@mui/material';
 
-import { FormattedMessage, useIntl } from 'react-intl';
-
 import {
     useBindingsEditorStore_skimProjectionResponse_Keys,
     useBindingsEditorStore_skimProjectionResponseDoneProcessing,
@@ -18,7 +16,6 @@ interface Props {
 }
 
 function ReadOnly({ value }: Props) {
-    const intl = useIntl();
     const valueEmpty = !value || !hasLength(value);
 
     const skimProjectionResponseEmpty =
@@ -51,14 +48,9 @@ function ReadOnly({ value }: Props) {
             <SchemaKeyHeader />
 
             {valueEmpty ? (
-                <AlertBox
-                    short
-                    severity="warning"
-                    title={
-                        <FormattedMessage id="keyAutoComplete.keys.missing.title" />
-                    }
-                >
-                    <FormattedMessage id="keyAutoComplete.keys.missing.message" />
+                <AlertBox short severity="warning" title={<>Key is empty</>}>
+                    All collections require a key. Please provide a key to
+                    continue.
                 </AlertBox>
             ) : (
                 <Stack
@@ -96,9 +88,7 @@ function ReadOnly({ value }: Props) {
                         return (
                             <Tooltip
                                 key={`read-only-keys-${key}`}
-                                title={intl.formatMessage({
-                                    id: 'keyAutoComplete.keys.invalid.message.readOnly',
-                                })}
+                                title="Field is not a valid key. Please update the schema."
                             >
                                 {Tag}
                             </Tooltip>
@@ -109,11 +99,13 @@ function ReadOnly({ value }: Props) {
 
             {skimProjectionResponseEmpty ? (
                 <AlertBox short severity="warning">
-                    <FormattedMessage id="keyAutoComplete.noOptions.message" />
+                    Without a valid schema we cannot provide options for the
+                    key. Please fix schema.
                 </AlertBox>
             ) : noUsableKeys ? (
                 <AlertBox short severity="warning">
-                    <FormattedMessage id="keyAutoComplete.noUsableKeys.message" />
+                    No fields in the schema are valid keys. Please update
+                    schema.
                 </AlertBox>
             ) : null}
         </Grid>

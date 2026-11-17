@@ -27,10 +27,15 @@ type Props = {
 };
 
 const sendMessage = (body: any) => {
-    window.opener.postMessage({
-        ...body,
-        type: OAUTH_RESPONSE,
-    });
+    // The opener is the dashboard itself, so address the message to our own
+    // origin rather than relying on postMessage's default target.
+    window.opener.postMessage(
+        {
+            ...body,
+            type: OAUTH_RESPONSE,
+        },
+        window.location.origin
+    );
 };
 
 const OAuthPopup = (props: Props) => {

@@ -3,7 +3,6 @@ import type { TrialCollectionQuery } from 'src/api/liveSpecsExt';
 import type { ConnectorTagData } from 'src/context/ConnectorTag';
 import type { LiveSpecsExt_MaterializeOrTransform } from 'src/hooks/useLiveSpecsExt';
 import type { ResourceConfigPointers } from 'src/services/ajv';
-import type { CallSupabaseResponse } from 'src/services/supabase';
 import type { StoreWithBackfill } from 'src/stores/Binding/slices/Backfill';
 import type { StoreWithFieldSelection } from 'src/stores/Binding/slices/FieldSelection';
 import type { StoreWithTimeTravel } from 'src/stores/Binding/slices/TimeTravel';
@@ -43,12 +42,17 @@ export interface Bindings {
 export interface ResourceConfig extends JsonFormsData {
     // errors: any[];
     meta: {
-        bindingIndex: number;
-        builtBindingIndex: number;
+        // The *Index fields locate this binding in five different bindings arrays.
+        // -1 means the binding is not present in that array. When cross-referencing
+        // server errors back to the client UI, use the index that matches the array
+        // the error came from. All five are kept in sync during hydration and by
+        // setRelatedBindingIndices.
+        bindingIndex: number; // client resource config order; the drafted spec's bindings
+        builtBindingIndex: number; // the drafted built spec's bindings; -1 when disabled
         collectionName: string;
-        liveBindingIndex: number;
-        liveBuiltBindingIndex: number;
-        validatedBindingIndex: number;
+        liveBindingIndex: number; // the live (published) spec's bindings; -1 when not previously bound
+        liveBuiltBindingIndex: number; // the live built spec's bindings; -1 when the validation response has no matching resourcePath
+        validatedBindingIndex: number; // the validation response's bindings, matched by resourcePath; -1 when disabled
         added?: boolean;
         disable?: boolean;
         onIncompatibleSchemaChange?: string;
@@ -204,7 +208,7 @@ export interface BindingState
     // The analog of resource config store action, `evaluateDiscoveredBindings`,
     // which encapsulates the functionality of `setDiscoveredCollections`
     // and `resetConfigAndCollections`.
-    evaluateDiscoveredBindings: (response: CallSupabaseResponse<any>) => void;
+    evaluateDiscoveredBindings: (discoveredBindings: Schema[]) => void;
 
     // The analog of resource config store action, `resetResourceConfigAndCollections`.
     removeDiscoveredBindings: () => void;

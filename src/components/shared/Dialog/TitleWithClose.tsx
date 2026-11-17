@@ -4,9 +4,8 @@ import type { BaseComponentProps } from 'src/types';
 import { DialogTitle, IconButton } from '@mui/material';
 
 import { Xmark } from 'iconoir-react';
-import { useIntl } from 'react-intl';
 
-export interface DialogTitleProps extends BaseComponentProps {
+interface DialogTitleProps extends BaseComponentProps {
     id: string;
     onClose: () => void;
     disabled?: boolean;
@@ -19,13 +18,11 @@ function DialogTitleWithClose({
     disabled,
     ...other
 }: DialogTitleProps) {
-    const intl = useIntl();
-
     return (
         <DialogTitle {...other}>
             {children}
             <IconButton
-                aria-label={intl.formatMessage({ id: 'cta.close' })}
+                aria-label="Close"
                 disabled={disabled}
                 onClick={onClose}
                 sx={{

@@ -5,8 +5,6 @@ import { useState } from 'react';
 
 import { Button } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 import EditProjectionDialog from 'src/components/projections/Edit/Dialog';
 
 function EditProjectionButton({
@@ -14,8 +12,6 @@ function EditProjectionButton({
     field,
     pointer,
 }: BaseButtonProps & BaseProjectionProps) {
-    const intl = useIntl();
-
     const [open, setOpen] = useState(false);
 
     const openDialog = (event: React.MouseEvent<HTMLElement>) => {
@@ -32,7 +28,7 @@ function EditProjectionButton({
                 size="small"
                 variant="outlined"
             >
-                {intl.formatMessage({ id: 'cta.rename' })}
+                Rename
             </Button>
 
             <EditProjectionDialog

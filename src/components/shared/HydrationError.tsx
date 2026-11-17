@@ -2,22 +2,17 @@ import type { BaseComponentProps } from 'src/types';
 
 import { Typography } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 import MessageWithLink from 'src/components/content/MessageWithLink';
 import AlertBox from 'src/components/shared/AlertBox';
 
 function HydrationError({ children }: BaseComponentProps) {
-    const intl = useIntl();
-
     return (
         <AlertBox
             severity="error"
             title={
                 <Typography component="span">
-                    {intl.formatMessage({
-                        id: 'workflows.error.initFormSection',
-                    })}
+                    An issue was encountered initializing this section of the
+                    form.
                 </Typography>
             }
             short

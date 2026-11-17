@@ -1,7 +1,5 @@
 import { Box, Stack, Typography } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 import TimeTravelForm from 'src/components/editor/Bindings/TimeTravel/Form';
 
 interface Props {
@@ -10,23 +8,20 @@ interface Props {
 }
 
 function TimeTravel({ bindingUUID, collectionName }: Props) {
-    const intl = useIntl();
     return (
         <Box sx={{ mt: 3, mb: 5 }}>
             <Stack>
                 <Stack spacing={1} sx={{ mb: 2 }}>
                     <Stack direction="row">
                         <Typography style={{ fontWeight: 500 }}>
-                            {intl.formatMessage({
-                                id: 'notBeforeNotAfter.header',
-                            })}
+                            Time Travel
                         </Typography>
                     </Stack>
 
                     <Typography>
-                        {intl.formatMessage({
-                            id: 'notBeforeNotAfter.message',
-                        })}
+                        Include only data from before or after a specific time
+                        period. This should only be used when first setting up
+                        your destination or it will not have an effect.
                     </Typography>
                 </Stack>
 

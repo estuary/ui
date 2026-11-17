@@ -1,46 +1,43 @@
-import { HelpCircle } from 'iconoir-react';
-import { FormattedMessage, useIntl } from 'react-intl';
+import { Menu } from '@mui/material';
 
-import IconMenu from 'src/components/menus/IconMenu';
 import ExternalLinkMenuItem from 'src/components/shared/ExternalLinkMenuItem';
 
-function HelpMenu() {
-    const intl = useIntl();
-
-    return (
-        <IconMenu
-            ariaLabel={intl.formatMessage({ id: 'helpMenu.ariaLabel' })}
-            icon={<HelpCircle />}
-            identifier="help-menu"
-            tooltip={intl.formatMessage({ id: 'helpMenu.tooltip' })}
-        >
-            <ExternalLinkMenuItem
-                link={intl.formatMessage({ id: 'helpMenu.docs.link' })}
-            >
-                <FormattedMessage id="helpMenu.docs" />
-            </ExternalLinkMenuItem>
-            <ExternalLinkMenuItem
-                link={intl.formatMessage({ id: 'helpMenu.status.link' })}
-            >
-                <FormattedMessage id="helpMenu.status" />
-            </ExternalLinkMenuItem>
-            <ExternalLinkMenuItem
-                link={intl.formatMessage({ id: 'helpMenu.slack.link' })}
-            >
-                <FormattedMessage id="helpMenu.slack" />
-            </ExternalLinkMenuItem>
-            <ExternalLinkMenuItem
-                link={intl.formatMessage({ id: 'helpMenu.support.link' })}
-            >
-                <FormattedMessage id="helpMenu.support" />
-            </ExternalLinkMenuItem>
-            <ExternalLinkMenuItem
-                link={intl.formatMessage({ id: 'helpMenu.contact.link' })}
-            >
-                <FormattedMessage id="helpMenu.contact" />
-            </ExternalLinkMenuItem>
-        </IconMenu>
-    );
+interface HelpMenuProps {
+    anchorEl: HTMLElement | null;
+    onClose: () => void;
 }
 
-export default HelpMenu;
+export function HelpMenu({ anchorEl, onClose }: HelpMenuProps) {
+    return (
+        <Menu
+            anchorEl={anchorEl}
+            open={Boolean(anchorEl)}
+            onClose={onClose}
+            onClick={onClose}
+            anchorOrigin={{
+                horizontal: 'left',
+                vertical: 'top',
+            }}
+            transformOrigin={{
+                horizontal: 'left',
+                vertical: 'bottom',
+            }}
+        >
+            <ExternalLinkMenuItem link="https://docs.estuary.dev/">
+                Docs
+            </ExternalLinkMenuItem>
+            <ExternalLinkMenuItem link="https://status.estuary.dev/">
+                Status
+            </ExternalLinkMenuItem>
+            <ExternalLinkMenuItem link="https://join.slack.com/t/estuary-dev/shared_invite/zt-86nal6yr-VPbv~YfZE9Q~6Zl~gmZdFQ">
+                Estuary Slack
+            </ExternalLinkMenuItem>
+            <ExternalLinkMenuItem link="mailto:support@estuary.dev">
+                Email Support
+            </ExternalLinkMenuItem>
+            <ExternalLinkMenuItem link="https://estuary.dev/contact-us">
+                Contact Us
+            </ExternalLinkMenuItem>
+        </Menu>
+    );
+}

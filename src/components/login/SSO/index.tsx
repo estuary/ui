@@ -11,16 +11,12 @@ import {
     Typography,
 } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 import MessageWithLink from 'src/components/content/MessageWithLink';
 import { useSSOSignIn } from 'src/components/login/SSO/useSSOSignIn';
 import AlertBox from 'src/components/shared/AlertBox';
 import { hasLength } from 'src/utils/misc-utils';
 
 export const SSOForm = ({ grantToken }: DefaultLoginProps) => {
-    const intl = useIntl();
-
     const { loading, submitError, signInSSO } = useSSOSignIn(grantToken);
 
     const [showErrors, setShowErrors] = useState(false);
@@ -52,14 +48,15 @@ export const SSOForm = ({ grantToken }: DefaultLoginProps) => {
     return (
         <Stack direction="column" spacing={3} style={{ width: '100%' }}>
             <Typography>
-                {intl.formatMessage({ id: 'login.sso.header' })}
+                Enter your company email to access Estuary via Single Sign-On.
             </Typography>
             {submitError ? (
                 <Box>
                     <AlertBox severity="error" short>
                         <Typography>{submitError}</Typography>
                         <Typography>
-                            {intl.formatMessage({ id: 'error.tryAgain' })}
+                            Try again and if the issue persists please contact
+                            support.
                         </Typography>
                     </AlertBox>
                 </Box>
@@ -81,12 +78,8 @@ export const SSOForm = ({ grantToken }: DefaultLoginProps) => {
                         disabled={loading}
                         error={showErrors}
                         fullWidth
-                        helperText={intl.formatMessage({
-                            id: 'login.companyEmail.description',
-                        })}
-                        label={intl.formatMessage({
-                            id: 'login.companyEmail.label',
-                        })}
+                        helperText="Please enter your company email"
+                        label="Company Email"
                         name="email"
                         required
                         slotProps={{
@@ -104,7 +97,7 @@ export const SSOForm = ({ grantToken }: DefaultLoginProps) => {
                         type="submit"
                         sx={{ mt: 3 }}
                     >
-                        {intl.formatMessage({ id: 'cta.login.sso' })}
+                        Sign in with SSO
                     </Button>
                 </form>
             </Box>

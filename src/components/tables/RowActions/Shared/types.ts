@@ -22,7 +22,7 @@ export enum ProgressStates {
     FAILED = 100,
 }
 
-export interface BaseProgressProps {
+interface BaseProgressProps {
     error: any | null;
     state: ProgressStates;
     runningIntlKey: string;

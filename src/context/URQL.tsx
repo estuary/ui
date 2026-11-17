@@ -1,16 +1,24 @@
 import type { Cache } from '@urql/exchange-graphcache';
-import type { QueryRoot } from 'src/gql-types/graphql';
+import type {
+    DeleteBillingPaymentMethodMutation,
+    QueryRoot,
+    SetBillingContactMutation,
+    SetBillingPaymentMethodMutation,
+} from 'src/gql-types/graphql';
 import type { BaseComponentProps } from 'src/types';
 
-import { useMemo, useRef } from 'react';
+import { useMemo } from 'react';
 
-import { authExchange } from '@urql/exchange-auth';
 import { cacheExchange } from '@urql/exchange-graphcache';
 import { requestPolicyExchange } from '@urql/exchange-request-policy';
-import { Client, fetchExchange, Provider } from 'urql';
+import { Client, composeExchanges, fetchExchange, Provider } from 'urql';
 
-import { useUserStore } from 'src/context/User/useUserContextStore';
-import { getAuthHeader } from 'src/utils/misc-utils';
+import {
+    TENANT_BILLING_CONTACT_QUERY,
+    TENANT_BILLING_PAYMENT_METHODS_QUERY,
+} from 'src/api/gql/billing';
+import { authedFetch, preserveKeyOrderExchange } from 'src/services/gql';
+import { getGqlUrl } from 'src/utils/env-utils';
 
 function invalidateQuery(
     cache: Cache,
@@ -22,17 +30,67 @@ function invalidateQuery(
         .forEach((f) => cache.invalidate('Query', f.fieldName, f.arguments));
 }
 
-function UrqlConfigProvider({ children }: BaseComponentProps) {
-    const accessToken = useUserStore((state) => state.session?.access_token);
+function updateBillingPaymentMethods(
+    cache: Cache,
+    tenant: string,
+    billing: SetBillingPaymentMethodMutation['setBillingPaymentMethod']
+) {
+    cache.updateQuery(
+        {
+            query: TENANT_BILLING_PAYMENT_METHODS_QUERY,
+            variables: { tenant },
+        },
+        (data) =>
+            data?.tenant
+                ? {
+                      ...data,
+                      tenant: {
+                          ...data.tenant,
+                          billing: {
+                              ...data.tenant.billing,
+                              primaryPaymentMethod:
+                                  billing.primaryPaymentMethod,
+                              paymentMethods: billing.paymentMethods,
+                          },
+                      },
+                  }
+                : data
+    );
+}
 
-    // Ref so the auth exchange always reads the latest token
-    // without recreating the client (which would drop the cache).
-    const accessTokenRef = useRef(accessToken);
-    accessTokenRef.current = accessToken;
+function updateBillingContact(
+    cache: Cache,
+    tenant: string,
+    payload: SetBillingContactMutation['setBillingContact']
+) {
+    const { contact } = payload;
+    cache.updateQuery(
+        { query: TENANT_BILLING_CONTACT_QUERY, variables: { tenant } },
+        (data) =>
+            data?.tenant
+                ? {
+                      ...data,
+                      tenant: {
+                          ...data.tenant,
+                          billing: { ...data.tenant.billing, contact },
+                      },
+                  }
+                : data
+    );
+}
 
+// fetchExchange that sends variables with their original key order
+// to avoid breaking the MAC of a sops-encrypted config.
+const customFetchExchange = composeExchanges([
+    preserveKeyOrderExchange, // must come first
+    fetchExchange,
+]);
+
+export function UrqlConfigProvider({ children }: BaseComponentProps) {
     const gqlClient = useMemo(() => {
         return new Client({
-            url: import.meta.env.VITE_GQL_URL,
+            url: getGqlUrl(),
+            fetch: authedFetch,
             preferGetMethod: false,
             exchanges: [
                 // WARNING - order is important on exchanges
@@ -52,25 +110,97 @@ function UrqlConfigProvider({ children }: BaseComponentProps) {
                     //         alerts: relayPagination(),
                     //     },
                     // },
+                    resolvers: {
+                        Query: {
+                            // A failed billing read caches `tenant: null`
+                            // without its error. Treat it as uncached, so
+                            // returning to the tenant reads it again instead
+                            // of showing empty billing data.
+                            tenant: (_parent, args, cache) =>
+                                cache.resolve('Query', 'tenant', args) ??
+                                undefined,
+                        },
+                    },
+                    // Migration: replace these null keys with real keys — `id`
+                    // where the schema has one, otherwise a natural key
+                    // (catalogPrefix, token, catalogName, ...). A null key
+                    // embeds the object in its parent query result, so
+                    // mutation results never merge into other cached queries.
+                    // Keep null only for value objects with no identity
+                    // (EffectiveAlertConfig, FieldProvenance). Queries and
+                    // mutations must select the key fields.
                     keys: {
-                        // TODO (gql caching)  - see GRAPHQL.md
                         Alert: (_data) => null,
+                        AlertConfig: (_data) => null,
                         AlertSubscription: (_data) => null,
                         AlertTypeInfo: (_data) => null,
-                        InviteLink: (data) => null,
+                        EffectiveAlertConfig: (_data) => null,
+                        FieldProvenance: (_data) => null,
+                        InviteLink: (_data) => null,
                         LiveSpecRef: (_data) => null,
                         PrefixRef: (_data) => null,
+                        Secret: (_data) => null,
                         RefreshTokenInfo: (_data) => null,
-                        StorageMapping: (data) => null,
-                        DataPlane: (data) => null,
+                        StorageMapping: (_data) => null,
+                        DataPlane: (_data) => null,
+                        PublicDataPlane: (data) => data.name as string,
+                        CatalogStats: (_data) => null,
+                        CatalogStatsSummary: (_data) => null,
+                        DocsAndBytes: (_data) => null,
+                        CatalogTaskStats: (_data) => null,
+                        CaptureBindingStats: (_data) => null,
+                        MaterializeBindingStats: (_data) => null,
+                        Tenant: (_data) => null,
+                        TenantBilling: (_data) => null,
+                        Invoice: (_data) => null,
+                        PaymentMethodBillingDetails: (_data) => null,
+                        CardPaymentMethodDetails: (_data) => null,
+                        UsBankAccountPaymentMethodDetails: (_data) => null,
+                        BillingPaymentMethodPayload: (_data) => null,
+                        CreateBillingSetupIntentPayload: (_data) => null,
+                        BillingContact: (_data) => null,
+                        BillingAddress: (_data) => null,
+                        SetBillingContactPayload: (_data) => null,
                     },
+                    // Normalization only merges update results into entities
+                    // already in the cache. Creates and deletes need updaters
+                    // here: a new entity does not join cached lists and a
+                    // deleted one is not evicted on its own.
                     updates: {
                         Mutation: {
+                            setBillingPaymentMethod(result, args, cache) {
+                                updateBillingPaymentMethods(
+                                    cache,
+                                    args.tenant as string,
+                                    (result as SetBillingPaymentMethodMutation)
+                                        .setBillingPaymentMethod
+                                );
+                            },
+                            deleteBillingPaymentMethod(result, args, cache) {
+                                updateBillingPaymentMethods(
+                                    cache,
+                                    args.tenant as string,
+                                    (
+                                        result as DeleteBillingPaymentMethodMutation
+                                    ).deleteBillingPaymentMethod
+                                );
+                            },
+                            setBillingContact(result, args, cache) {
+                                updateBillingContact(
+                                    cache,
+                                    args.tenant as string,
+                                    (result as SetBillingContactMutation)
+                                        .setBillingContact
+                                );
+                            },
                             createInviteLink(_result, _args, cache) {
                                 invalidateQuery(cache, 'inviteLinks');
                             },
                             deleteInviteLink(_result, _args, cache) {
                                 invalidateQuery(cache, 'inviteLinks');
+                            },
+                            updateAlertConfig(_result, _args, cache) {
+                                invalidateQuery(cache, 'alertConfigs');
                             },
                             createAlertSubscription(_result, _args, cache) {
                                 invalidateQuery(cache, 'alertSubscriptions');
@@ -87,42 +217,20 @@ function UrqlConfigProvider({ children }: BaseComponentProps) {
                             revokeRefreshToken(_result, _args, cache) {
                                 invalidateQuery(cache, 'refreshTokens');
                             },
+                            createStorageMapping(_result, _args, cache) {
+                                invalidateQuery(cache, 'storageMappings');
+                            },
+                            updateStorageMapping(_result, _args, cache) {
+                                invalidateQuery(cache, 'storageMappings');
+                            },
                         },
                     },
                 }),
-                authExchange(async (utils) => {
-                    return {
-                        addAuthToOperation(operation) {
-                            const token = accessTokenRef.current;
-
-                            if (token) {
-                                return utils.appendHeaders(
-                                    operation,
-                                    getAuthHeader(token)
-                                );
-                            }
-                            return operation;
-                        },
-                        didAuthError() {
-                            // Always false — Supabase handles token refresh.
-                            // Returning true would trigger refreshAuth (a no-op),
-                            // causing URQL to retry with the same stale token.
-                            return false;
-                        },
-                        async refreshAuth() {
-                            // No-op — Supabase's onAuthStateChange updates the
-                            // store and the ref picks up the new token automatically.
-                        },
-                    };
-                }),
-                fetchExchange,
+                customFetchExchange,
             ],
         });
-        // Client created once — auth exchange reads token from ref, not closure.
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+        // No deps so client is created only once (recreating would drop the cache).
     }, []);
 
     return <Provider value={gqlClient}>{children}</Provider>;
 }
-
-export default UrqlConfigProvider;

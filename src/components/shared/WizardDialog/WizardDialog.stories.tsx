@@ -10,12 +10,7 @@ import { WizardDialog } from 'src/components/shared/WizardDialog';
 
 // Only the messages WizardDialog's internals need
 const messages: Record<string, string> = {
-    'cta.back': 'Back',
-    'cta.next': 'Next',
-    'cta.save': 'Save',
-    'cta.close': 'Close',
     'alert.error': 'Error',
-    'wizardDialog.error.step': 'An error occurred during this step',
 };
 
 // ── Helpers ─────────────────────────────────────────────────────────

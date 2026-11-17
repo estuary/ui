@@ -59,9 +59,7 @@ function SkimProjectionErrors() {
                 <AlertBox
                     short
                     severity="error"
-                    title={intl.formatMessage({
-                        id: 'schemaEditor.error.title',
-                    })}
+                    title="Schema Processing Issues"
                 >
                     {total > maxToDisplay ? (
                         <Typography>

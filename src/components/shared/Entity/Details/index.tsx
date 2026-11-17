@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import useConstant from 'use-constant';
 
-import { Box, Divider, Stack } from '@mui/material';
+import { Box, Stack } from '@mui/material';
 
 import { useUnmount } from 'react-use';
 
@@ -60,15 +60,17 @@ function EntityDetails() {
                             catalogName={catalogName}
                             lastChecked={lastChecked}
                         >
-                            <Stack spacing={2} sx={{ m: 1 }}>
+                            <Stack spacing={2} sx={{ mb: 1 }}>
                                 <DetailsToolBar />
-                                <Divider />
                                 <DetailTabs />
-                            </Stack>
 
-                            <Box sx={{ m: 1 }}>
-                                <RenderTab />
-                            </Box>
+                                {/* Boxed: the ops tab renders two children,
+                                    which would otherwise each take the Stack's
+                                    spacing. */}
+                                <Box>
+                                    <RenderTab />
+                                </Box>
+                            </Stack>
                         </EntityRelationshipsHydrator>
                     </EntityStatusHydrator>
                 </ShardHydrator>

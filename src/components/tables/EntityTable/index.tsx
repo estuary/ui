@@ -30,6 +30,9 @@ import { selectableTableStoreSelectors } from 'src/stores/Tables/Store';
 import { TableStatuses } from 'src/types';
 import { getPagination, getStartingPage } from 'src/utils/table-utils';
 
+/**
+ * @deprecated Use the `@mui/material` table components instead.
+ */
 function EntityTable({
     columns,
     noExistingDataContentIds,
@@ -245,13 +248,7 @@ function EntityTable({
         <Box data-public>
             {hideHeaderAndFooter ||
             (!showToolbar && hideFilter && !ExportComponent) ? null : (
-                <Box sx={{ mx: 2 }}>
-                    <Stack direction="row" spacing={1}>
-                        {showToolbar ? (
-                            <Title header={header} marginBottom={2} />
-                        ) : null}
-                    </Stack>
-
+                <Box>
                     <Toolbar
                         disableGutters
                         sx={{
@@ -297,7 +294,7 @@ function EntityTable({
                 </Box>
             )}
 
-            <Box sx={hideHeaderAndFooter ? {} : { mb: 2, mx: 2 }}>
+            <Box sx={hideHeaderAndFooter ? {} : { mb: 2 }}>
                 <TableContainer component={Box}>
                     <Table
                         size="small"

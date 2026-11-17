@@ -4,8 +4,6 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { Box, Stack } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 import MessageWithButton from 'src/components/content/MessageWithButton';
 import AlertBox from 'src/components/shared/AlertBox';
 import CardWrapper from 'src/components/shared/CardWrapper';
@@ -18,8 +16,6 @@ interface Props {
 }
 
 function NotificationSettings({ taskName }: Props) {
-    const intl = useIntl();
-
     const { createAlertSubscription, getNotificationSubscription } =
         useInitializeTaskNotification(taskName);
 
@@ -58,11 +54,7 @@ function NotificationSettings({ taskName }: Props) {
     );
 
     return (
-        <CardWrapper
-            message={intl.formatMessage({
-                id: 'details.settings.notifications.header',
-            })}
-        >
+        <CardWrapper message="Notification Settings">
             <Stack spacing={1} sx={{ mb: alertsExist ? 2 : undefined }}>
                 {subscriptionError ? (
                     <Error error={subscriptionError} condensed hideTitle />

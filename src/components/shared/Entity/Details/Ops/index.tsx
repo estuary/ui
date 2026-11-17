@@ -1,7 +1,5 @@
 import { Box, Stack } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 import AlertBox from 'src/components/shared/AlertBox';
 import CardWrapper from 'src/components/shared/CardWrapper';
 import HydrationErrorAlert from 'src/components/shared/Entity/Details/Ops/HydrationErrorAlert';
@@ -18,8 +16,6 @@ import { useJournalDataLogsStore } from 'src/stores/JournalData/Logs/Store';
 // TODO: Display the logs table in a loading state until the initial journal
 //   data can be fetched.
 function Ops() {
-    const intl = useIntl();
-
     const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);
     const taskTypes = useDetailsEntityTaskTypes();
 
@@ -32,17 +28,13 @@ function Ops() {
     if (!shouldShowLogs) {
         return (
             <AlertBox short severity="warning">
-                {intl.formatMessage({ id: 'ops.shouldNotShowLogs' })}
+                This kind of entity does not support logs
             </AlertBox>
         );
     }
 
     return (
-        <CardWrapper
-            message={intl.formatMessage({
-                id: 'ops.logsTable.label',
-            })}
-        >
+        <CardWrapper message="Task Logs">
             <JournalHydrator
                 catalogName={catalogName}
                 isCollection={taskTypes.length === 0}

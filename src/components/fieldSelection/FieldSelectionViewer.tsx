@@ -6,7 +6,6 @@ import { useEffect, useMemo } from 'react';
 import { Box, Stack, Typography } from '@mui/material';
 
 import { useSnackbar } from 'notistack';
-import { FormattedMessage, useIntl } from 'react-intl';
 
 import MessageWithLink from 'src/components/content/MessageWithLink';
 import { useEditorStore_queryResponse_draftSpecs } from 'src/components/editor/Store/hooks';
@@ -28,7 +27,6 @@ function FieldSelectionViewer({
     refreshRequired,
     refresh,
 }: FieldSelectionViewerProps) {
-    const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
 
     const { applyFieldSelection } = useFieldSelection(
@@ -105,9 +103,7 @@ function FieldSelectionViewer({
                     });
 
                     enqueueSnackbar(
-                        intl.formatMessage({
-                            id: 'fieldSelection.error.validationFailed',
-                        }),
+                        'Field selection validation failed. If this issue persists, please contact support.',
                         { ...snackbarSettings, variant: 'error' }
                     );
 
@@ -123,7 +119,6 @@ function FieldSelectionViewer({
         collectionName,
         draftSpec,
         enqueueSnackbar,
-        intl,
         setFormState,
         setValidationFailure,
     ]);
@@ -137,7 +132,7 @@ function FieldSelectionViewer({
                             sx={{ mr: 0.5 }}
                             variant="formSectionHeader"
                         >
-                            <FormattedMessage id="fieldSelection.header" />
+                            Field Selection
                         </Typography>
 
                         <RefreshButton

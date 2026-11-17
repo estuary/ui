@@ -5,18 +5,11 @@ import { useMemo } from 'react';
 import { Button, Stack, Typography } from '@mui/material';
 
 import { FormProvider, useForm } from 'react-hook-form';
-import { IntlProvider } from 'react-intl';
 
 import { useCouldMatchRoot } from 'src/components/shared/LeavesAutocomplete';
 import { RHFLeavesAutocomplete } from 'src/components/shared/RHFFields/RHFLeavesAutocomplete';
 import { RHFSelect } from 'src/components/shared/RHFFields/RHFSelect';
 import { RHFTextField } from 'src/components/shared/RHFFields/RHFTextField';
-
-const messages: Record<string, string> = {
-    'leavesAutocomplete.mustStartWith.single': 'Must start with `{root}`',
-    'leavesAutocomplete.mustStartWith.multiple':
-        'Must start with one of: {roots}',
-};
 
 interface DemoFormValues {
     prefix: string;
@@ -166,9 +159,5 @@ export default meta;
 type Story = StoryObj;
 
 export const AllFields: Story = {
-    render: () => (
-        <IntlProvider locale="en" messages={messages}>
-            <DemoForm />
-        </IntlProvider>
-    ),
+    render: () => <DemoForm />,
 };

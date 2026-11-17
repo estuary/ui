@@ -1,7 +1,5 @@
 import { Skeleton } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 import DiscoveredSchemaCommands from 'src/components/editor/Bindings/SchemaEdit/Commands/DiscoveredSchema';
 import ExistingSchemaCommands from 'src/components/editor/Bindings/SchemaEdit/Commands/ExistingSchema';
 import EditCommandsWrapper from 'src/components/editor/Bindings/SchemaEdit/Commands/Wrapper';
@@ -14,8 +12,6 @@ import useDisableSchemaEditing from 'src/hooks/useDisableSchemaEditing';
 import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
 
 function SchemaEditCLIButton() {
-    const intl = useIntl();
-
     // Bindings Editor Store
     const collectionData = useBindingsEditorStore_collectionData();
     const editModeEnabled = useBindingsEditorStore_editModeEnabled();
@@ -43,9 +39,7 @@ function SchemaEditCLIButton() {
                 </EditCommandsWrapper>
             }
         >
-            {intl.formatMessage({
-                id: 'workflows.collectionSelector.cta.schemaEdit',
-            })}
+            CLI
         </ButtonWithPopper>
     ) : (
         <Skeleton variant="rectangular" width={75} />

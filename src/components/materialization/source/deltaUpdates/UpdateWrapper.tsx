@@ -3,7 +3,6 @@ import { useCallback } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 
 import { useSnackbar } from 'notistack';
-import { useIntl } from 'react-intl';
 
 import DeltaUpdatesForm from 'src/components/materialization/source/deltaUpdates/Form';
 import useSourceSetting from 'src/hooks/sourceCapture/useSourceSetting';
@@ -13,7 +12,6 @@ import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
 import { snackbarSettings } from 'src/utils/notification-utils';
 
 export default function DeltaUpdatesUpdateWrapper() {
-    const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
 
     const setFormState = useFormStateStore_setFormState();
@@ -41,12 +39,10 @@ export default function DeltaUpdatesUpdateWrapper() {
                     setFormState({ status: FormStatus.UPDATED });
                 })
                 .catch(() => {
-                    enqueueSnackbar(
-                        intl.formatMessage({
-                            id: 'specPropEditor.update.error',
-                        }),
-                        { ...snackbarSettings, variant: 'error' }
-                    );
+                    enqueueSnackbar('Changes to draft not saved.', {
+                        ...snackbarSettings,
+                        variant: 'error',
+                    });
 
                     setDeltaUpdates(currentSetting);
                     setFormState({ status: FormStatus.FAILED });
@@ -56,7 +52,6 @@ export default function DeltaUpdatesUpdateWrapper() {
         [
             currentSetting,
             enqueueSnackbar,
-            intl,
             setDeltaUpdates,
             setFormState,
             setSaving,

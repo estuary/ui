@@ -2,8 +2,6 @@ import type { ProviderButtonProps } from 'src/components/login/Providers/types';
 
 import { Button, useTheme } from '@mui/material';
 
-import { FormattedMessage } from 'react-intl';
-
 import { defaulticonSize } from 'src/components/login/Providers/buttons/shared';
 import { sample_grey } from 'src/context/Theme';
 
@@ -32,9 +30,7 @@ const GithubButton = ({ login, isRegister, ...props }: ProviderButtonProps) => {
             }
             variant="outlined"
         >
-            <FormattedMessage
-                id={isRegister ? 'cta.register.github' : 'cta.login.github'}
-            />
+            {isRegister ? 'Register with GitHub' : 'Sign in with GitHub'}
         </Button>
     );
 };

@@ -8,13 +8,9 @@ function useExportColumns() {
     const intl = useIntl();
 
     return useMemo(() => {
-        const docs = intl.formatMessage({
-            id: 'data.docs',
-        });
+        const docs = 'Docs';
 
-        const bytes = intl.formatMessage({
-            id: 'data.data',
-        });
+        const bytes = 'Data';
 
         return {
             [ColumnNames.CatalogName]: {
@@ -26,42 +22,22 @@ function useExportColumns() {
 
             [ColumnNames.DataRead]: {
                 id: ColumnNames.DataRead,
-                displayName: intl.formatMessage(
-                    {
-                        id: 'data.read',
-                    },
-                    { type: bytes }
-                ),
+                displayName: `${bytes} Read`,
             },
 
             [ColumnNames.DataWritten]: {
                 id: ColumnNames.DataWritten,
-                displayName: intl.formatMessage(
-                    {
-                        id: 'data.written',
-                    },
-                    { type: bytes }
-                ),
+                displayName: `${bytes} Written`,
             },
 
             [ColumnNames.DocsRead]: {
                 id: ColumnNames.DocsRead,
-                displayName: intl.formatMessage(
-                    {
-                        id: 'data.read',
-                    },
-                    { type: docs }
-                ),
+                displayName: `${docs} Read`,
             },
 
             [ColumnNames.DocsWritten]: {
                 id: ColumnNames.DocsWritten,
-                displayName: intl.formatMessage(
-                    {
-                        id: 'data.written',
-                    },
-                    { type: docs }
-                ),
+                displayName: `${docs} Written`,
             },
         };
     }, [intl]);

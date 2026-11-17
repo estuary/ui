@@ -2,8 +2,6 @@ import type { TaskEndpointProps } from 'src/components/shared/Endpoints/types';
 
 import { Box } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 import CardWrapper from 'src/components/shared/CardWrapper';
 import { EndpointLink } from 'src/components/shared/Endpoints/EndpointLink';
 import Error from 'src/components/shared/Error';
@@ -16,7 +14,6 @@ import { useShardEndpoints } from 'src/hooks/shards/useShardEndpoints';
 //  exists and has other lists we should work on getting this redesigned to
 //  make the experience better and consistent.
 export function TaskEndpoints({ reactorAddress, taskName }: TaskEndpointProps) {
-    const intl = useIntl();
     const entityType = useEntityType();
 
     const { endpoints, gatewayHostname } = useShardEndpoints(
@@ -26,9 +23,7 @@ export function TaskEndpoints({ reactorAddress, taskName }: TaskEndpointProps) {
     );
 
     return endpoints.length > 0 ? (
-        <CardWrapper
-            message={intl.formatMessage({ id: 'taskEndpoint.list.title' })}
-        >
+        <CardWrapper message="Endpoints">
             {typeof reactorAddress === 'string' &&
             typeof gatewayHostname !== 'string' ? (
                 <Error

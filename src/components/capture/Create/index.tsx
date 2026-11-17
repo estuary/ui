@@ -81,7 +81,6 @@ function CaptureCreate() {
                             }}
                             GenerateButton={
                                 <CaptureGenerateButton
-                                    entityType={entityType}
                                     createWorkflowMetadata={{
                                         initiateDiscovery,
                                         setInitiateDiscovery,
@@ -90,9 +89,7 @@ function CaptureCreate() {
                             }
                         />
                     }
-                    RediscoverButton={
-                        <RediscoverButton entityType={entityType} />
-                    }
+                    RediscoverButton={<RediscoverButton />}
                 />
             </MutateDraftSpecProvider>
         </WorkflowHydrator>

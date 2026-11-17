@@ -1,7 +1,6 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # local stuff
-/.vscode
 /.claude
 
 # dependencies
@@ -46,9 +45,12 @@ gha-creds-*.json
 /playwright-tests/results/
 /playwright-tests/tmp/
 /playwright-tests/tests/.auth/
+/test-results/
 
 *storybook.log
 storybook-static
 
 .playwright-mcp/
 .mcp.json
+AGENTS.md
+.superpowers/

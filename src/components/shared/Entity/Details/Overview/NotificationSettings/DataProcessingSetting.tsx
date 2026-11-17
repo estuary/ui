@@ -15,8 +15,6 @@ import {
     useTheme,
 } from '@mui/material';
 
-import { FormattedMessage, useIntl } from 'react-intl';
-
 import {
     createDataProcessingNotification,
     deleteDataProcessingNotification,
@@ -70,7 +68,6 @@ function DataProcessingSetting({
     setUpdateSettingsError,
     hideBorder,
 }: Props) {
-    const intl = useIntl();
     const theme = useTheme();
 
     const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);
@@ -166,11 +163,12 @@ function DataProcessingSetting({
                 <>
                     <Stack spacing={1}>
                         <Typography sx={cardHeaderSx}>
-                            <FormattedMessage id="details.settings.notifications.dataProcessing.header" />
+                            Data Processing
                         </Typography>
 
                         <Typography>
-                            <FormattedMessage id="details.settings.notifications.dataProcessing.noDataProcessedInInterval.message" />
+                            Data has not been processed in a given window of
+                            time.
                         </Typography>
                     </Stack>
 
@@ -186,9 +184,7 @@ function DataProcessingSetting({
                         }: AutocompleteRenderInputParams) => (
                             <TextField
                                 {...params}
-                                label={intl.formatMessage({
-                                    id: 'details.settings.notifications.dataProcessing.noDataProcessedInInterval.label',
-                                })}
+                                label="Interval"
                                 error={errored}
                                 size="small"
                                 variant="outlined"

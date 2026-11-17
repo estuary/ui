@@ -66,9 +66,7 @@ function Message({ error, linkOptions }: Props) {
         <Stack spacing={2}>
             <Instructions message={message} linkOptions={linkOptions} />
             <Stack direction="row" spacing={1}>
-                <Typography sx={{ fontWeight: 'bold' }}>
-                    {intl.formatMessage({ id: 'error.messageLabel' })}
-                </Typography>
+                <Typography sx={{ fontWeight: 'bold' }}>Message:</Typography>
 
                 <Typography>{message}</Typography>
             </Stack>

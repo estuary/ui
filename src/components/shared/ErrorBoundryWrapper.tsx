@@ -13,7 +13,6 @@ import {
 
 import { NavArrowDown } from 'iconoir-react';
 import { ErrorBoundary } from 'react-error-boundary';
-import { useIntl } from 'react-intl';
 
 import AlertBox from 'src/components/shared/AlertBox';
 import { logRocketEvent } from 'src/services/shared';
@@ -29,7 +28,6 @@ const logErrorToLogRocket = (error: Error) => {
 };
 
 function ErrorFallback({ error }: { error: Error }): JSX.Element {
-    const intl = useIntl();
     const theme = useTheme();
 
     const [expanded, setExpanded] = useState(false);
@@ -39,26 +37,18 @@ function ErrorFallback({ error }: { error: Error }): JSX.Element {
     };
 
     return (
-        <AlertBox
-            short
-            severity="error"
-            title={intl.formatMessage({ id: 'errorBoundry.title' })}
-        >
+        <AlertBox short severity="error" title="Error">
             <Typography>
-                {intl.formatMessage({ id: 'errorBoundry.message1' })}
+                {'There was an unexpected application error. '}
             </Typography>
-            <Typography>
-                {intl.formatMessage({ id: 'errorBoundry.message2' })}
-            </Typography>
+            <Typography>Expand to see details.</Typography>
 
             <Divider />
 
             <IconButton
                 onClick={handleExpandClick}
                 aria-expanded={expanded}
-                aria-label={intl.formatMessage({
-                    id: expanded ? 'aria.closeExpand' : 'aria.openExpand',
-                })}
+                aria-label={expanded ? 'show less' : 'show more'}
                 // TODO (show more): The concept of "show more/show less" buttons are duplicated and this specific styling is for sure
                 sx={{
                     marginRight: 0,

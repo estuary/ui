@@ -1,12 +1,8 @@
 import { TableCell, TableHead, TableRow } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 import { getTableComponents } from 'src/utils/table-utils';
 
 export default function TableHeader() {
-    const intl = useIntl();
-
     const { tdComponent, trComponent, theaderComponent } =
         getTableComponents(true);
 
@@ -20,15 +16,9 @@ export default function TableHeader() {
                         maxWidth: 'min-content',
                     }}
                 >
-                    {intl.formatMessage({
-                        id: 'entityName.label',
-                    })}
+                    Name
                 </TableCell>
-                <TableCell component={tdComponent}>
-                    {intl.formatMessage({
-                        id: 'alerts.overview.recentAlerts',
-                    })}
-                </TableCell>
+                <TableCell component={tdComponent}>Recent Alerts</TableCell>
             </TableRow>
         </TableHead>
     );

@@ -3,7 +3,6 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { JsonForms } from '@jsonforms/react';
 
 import { useSnackbar } from 'notistack';
-import { useIntl } from 'react-intl';
 
 import useTimeTravel from 'src/components/editor/Bindings/TimeTravel/useTimeTravel';
 import { custom_generateDefaultUISchema } from 'src/services/jsonforms';
@@ -18,7 +17,6 @@ interface Props {
 }
 
 function TimeTravelForm({ bindingUUID, collectionName }: Props) {
-    const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
     const { updateTimeTravel, fullSource } = useTimeTravel(
         bindingUUID,
@@ -46,23 +44,16 @@ function TimeTravelForm({ bindingUUID, collectionName }: Props) {
             properties: {
                 notAfter: {
                     order: 0,
-                    description: intl.formatMessage({
-                        id: 'notAfter.input.description',
-                    }),
-                    title: intl.formatMessage({
-                        id: 'notAfter.input.label',
-                    }),
+                    description:
+                        'only include data from before this time (UTC)',
+                    title: 'Not After',
                     format: 'date-time',
                     type: 'string',
                 },
                 notBefore: {
                     order: 1,
-                    description: intl.formatMessage({
-                        id: 'notBefore.input.description',
-                    }),
-                    title: intl.formatMessage({
-                        id: 'notBefore.input.label',
-                    }),
+                    description: 'only include data from after this time (UTC)',
+                    title: 'Not Before',
                     format: 'date-time',
                     type: 'string',
                 },
@@ -70,7 +61,7 @@ function TimeTravelForm({ bindingUUID, collectionName }: Props) {
         };
 
         return [schemaVal, custom_generateDefaultUISchema(schemaVal)];
-    }, [intl]);
+    }, []);
 
     return (
         <JsonForms
@@ -85,12 +76,9 @@ function TimeTravelForm({ bindingUUID, collectionName }: Props) {
                     .then(() => {})
                     .catch((err) => {
                         enqueueSnackbar(
-                            intl.formatMessage({
-                                id:
-                                    err === 'no binding'
-                                        ? 'updateBinding.error.noBinding'
-                                        : 'notBeforeNotAfter.update.error',
-                            }),
+                            err === 'no binding'
+                                ? 'Unable to update the proper binding. Contact Support.'
+                                : 'Changes to draft not saved.',
                             { ...snackbarSettings, variant: 'error' }
                         );
                     })

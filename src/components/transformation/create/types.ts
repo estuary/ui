@@ -1,8 +1,6 @@
 import type { ButtonProps } from '@mui/material';
 
-export type DraftCreationCallback = (
-    draftId: string | undefined | null
-) => void;
+type DraftCreationCallback = (draftId: string | undefined | null) => void;
 
 export interface TransformationCreateProps {
     draftCreationCallback: DraftCreationCallback;

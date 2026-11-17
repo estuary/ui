@@ -7,7 +7,6 @@ import type { BindingMetadata } from 'src/types';
 import { useCallback, useMemo } from 'react';
 
 import { useSnackbar } from 'notistack';
-import { useIntl } from 'react-intl';
 
 import { useEditorStore_queryResponse_draftSpecs_schemaProp } from 'src/components/editor/Store/hooks';
 import IncompatibleSchemaChangeForm from 'src/components/incompatibleSchemaChange/Form';
@@ -22,7 +21,6 @@ import { FormStatus } from 'src/stores/FormState/types';
 import { snackbarSettings } from 'src/utils/notification-utils';
 
 function Form({ bindingIndex = -1 }: OnIncompatibleSchemaChangeProps) {
-    const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
 
     const currentCollection = useBinding_currentCollection();
@@ -68,12 +66,9 @@ function Form({ bindingIndex = -1 }: OnIncompatibleSchemaChangeProps) {
                 })
                 .catch((err) => {
                     enqueueSnackbar(
-                        intl.formatMessage({
-                            id:
-                                err === 'no binding'
-                                    ? 'updateBinding.error.noBinding'
-                                    : 'specPropEditor.update.error',
-                        }),
+                        err === 'no binding'
+                            ? 'Unable to update the proper binding. Contact Support.'
+                            : 'Changes to draft not saved.',
                         { ...snackbarSettings, variant: 'error' }
                     );
 
@@ -89,7 +84,6 @@ function Form({ bindingIndex = -1 }: OnIncompatibleSchemaChangeProps) {
             currentBindingUUID,
             currentSetting,
             enqueueSnackbar,
-            intl,
             setFormState,
             setIncompatibleSchemaChange,
             updateOnIncompatibleSchemaChange,

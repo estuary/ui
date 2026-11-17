@@ -5,8 +5,6 @@ import type { ExternalLinkOptions } from 'src/components/shared/ExternalLink';
 
 import { AlertTitle, Box } from '@mui/material';
 
-import { FormattedMessage } from 'react-intl';
-
 import AlertBox from 'src/components/shared/AlertBox';
 import Message from 'src/components/shared/Error/Message';
 
@@ -49,13 +47,7 @@ function Error({
                 severity={severity ?? 'error'}
                 short={Boolean(condensed)}
                 hideIcon={hideIcon}
-                title={
-                    !hideTitle ? (
-                        <AlertTitle>
-                            <FormattedMessage id="error.title" />
-                        </AlertTitle>
-                    ) : null
-                }
+                title={!hideTitle ? <AlertTitle>Error</AlertTitle> : null}
             >
                 <Message error={error} linkOptions={linkOptions} />
                 {cta ? (

@@ -18,7 +18,6 @@ import {
 import { useTheme } from '@mui/material/styles';
 
 import { usePostHog } from '@posthog/react';
-import { useIntl } from 'react-intl';
 import { useMutation } from 'urql';
 
 import { CREATE_INVITE_LINK } from 'src/api/gql/inviteLinks';
@@ -78,7 +77,6 @@ const RadioOption = ({
 };
 
 export function GenerateInvitation({ setError }: InviteErrorProps) {
-    const intl = useIntl();
     const postHog = usePostHog();
     const { palette } = useTheme();
 
@@ -106,7 +104,7 @@ export function GenerateInvitation({ setError }: InviteErrorProps) {
 
     const limitedAccessScope = accessScope === 'limited';
 
-    const elipsis = intl.formatMessage({ id: 'common.pathShort.prefix' });
+    const elipsis = '.../';
 
     const clampedPrefix =
         prefix.length > MAX_PREFIX_LENGTH + elipsis.length + 1 // extra length for elipsis and slash
@@ -141,9 +139,7 @@ export function GenerateInvitation({ setError }: InviteErrorProps) {
                             prefixOnly
                             defaultPrefix
                             disabled={objectRoles?.length === 1}
-                            label={intl.formatMessage({
-                                id: 'terms.tenant',
-                            })}
+                            label="Tenant"
                             onChange={(value) =>
                                 prefixHandlers.setPrefix(value)
                             }
@@ -151,9 +147,7 @@ export function GenerateInvitation({ setError }: InviteErrorProps) {
                     </Box>
                     <Box sx={{ minWidth: 150 }}>
                         <AutocompletedField
-                            label={intl.formatMessage({
-                                id: 'admin.users.prefixInvitation.label.capability',
-                            })}
+                            label="Capability"
                             required
                             options={capabilityOptions}
                             defaultValue={capabilityOptions[0]}
@@ -187,9 +181,7 @@ export function GenerateInvitation({ setError }: InviteErrorProps) {
                                         flexShrink: 0,
                                     }}
                                 >
-                                    {intl.formatMessage({
-                                        id: 'admin.users.prefixInvitation.label.scope.full',
-                                    })}
+                                    Grant access to all of
                                 </Typography>
                                 <TechnicalEmphasis noWrap>
                                     {prefix}
@@ -216,9 +208,7 @@ export function GenerateInvitation({ setError }: InviteErrorProps) {
                                 alignItems="center"
                             >
                                 <Typography noWrap component="span">
-                                    {intl.formatMessage({
-                                        id: 'admin.users.prefixInvitation.label.scope.limited',
-                                    })}
+                                    Restrict to
                                 </Typography>
                                 <Box
                                     sx={{
@@ -290,9 +280,7 @@ export function GenerateInvitation({ setError }: InviteErrorProps) {
                             }}
                         />
                     }
-                    label={intl.formatMessage({
-                        id: 'admin.users.prefixInvitation.label.reusable',
-                    })}
+                    label="Reusable invite"
                     slotProps={{
                         typography: { fontSize: 12 },
                     }}
@@ -306,9 +294,7 @@ export function GenerateInvitation({ setError }: InviteErrorProps) {
                     }
                     onClick={createInvite}
                 >
-                    {intl.formatMessage({
-                        id: 'admin.users.prefixInvitation.cta.generateLink',
-                    })}
+                    Create Invite Link
                 </Button>
             </Stack>
             <Divider />

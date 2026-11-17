@@ -4,8 +4,6 @@ import type { EntityWithCreateWorkflow } from 'src/types';
 import { useCallback, useMemo } from 'react';
 import { StringParam, useQueryParams } from 'use-query-params';
 
-import { useIntl } from 'react-intl';
-
 import { DATA_PLANE_SCOPE } from 'src/forms/renderers/DataPlanes';
 import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
@@ -27,8 +25,6 @@ export default function useDataPlaneField(
         [GlobalSearchParams.DATA_PLANE_ID]: StringParam,
     });
     const dataPlaneIdInURL = query[GlobalSearchParams.DATA_PLANE_ID];
-
-    const intl = useIntl();
 
     const entityName = useDetailsFormStore(
         (state) => state.details.data.entityName
@@ -60,35 +56,29 @@ export default function useDataPlaneField(
             // and the create workflow does not have a fallback data-plane option to use in that scenario.
             dataPlanesOneOf.push({
                 const: DATA_PLANE_OPTION_TEMPLATE,
-                title: intl.formatMessage({
-                    id: 'workflows.dataPlane.label.noOptionsFound',
-                }),
+                title: 'No options found',
             });
         }
 
         return {
             [DATA_PLANE_SCOPE]: {
-                description: intl.formatMessage({
-                    id: 'workflows.dataPlane.description',
-                }),
+                description: 'Choose the data plane you would like to use.',
                 oneOf: dataPlanesOneOf,
                 type: 'object',
             },
         };
-    }, [intl, options]);
+    }, [options]);
 
     const dataPlaneUISchema = useMemo(
         () => ({
-            label: intl.formatMessage({
-                id: 'workflows.dataPlane.label',
-            }),
+            label: 'Data Plane',
             scope: `#/properties/${DATA_PLANE_SCOPE}`,
             type: 'Control',
             options: {
                 readOnly: objectRoles.length > 1 && entityName.length === 0,
             },
         }),
-        [entityName.length, intl, objectRoles.length]
+        [entityName.length, objectRoles.length]
     );
 
     const setDataPlane = useCallback(

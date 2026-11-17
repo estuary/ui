@@ -4,8 +4,6 @@ import { useEffect, useState } from 'react';
 
 import { Typography } from '@mui/material';
 
-import { FormattedMessage } from 'react-intl';
-
 import MessageWithLink from 'src/components/content/MessageWithLink';
 import { useEditorStore_draftInitializationError } from 'src/components/editor/Store/hooks';
 import FullPageSpinner from 'src/components/fullPage/Spinner';
@@ -40,7 +38,7 @@ function DraftInitializer({ children }: BaseComponentProps) {
         return (
             <>
                 <Typography variant="h5" align="center" sx={{ mb: 2 }}>
-                    <FormattedMessage id="workflows.initTask.alert.title.initFailed" />
+                    Form Initialization Error
                 </Typography>
 
                 <Typography component="div" align="center">

@@ -104,11 +104,7 @@ const CollapsibleGroupRenderer = ({
                             my: 1,
                         }}
                     >
-                        <Tooltip
-                            title={intl.formatMessage({
-                                id: 'jsonForms.clearGroup.message',
-                            })}
-                        >
+                        <Tooltip title="Remove this group and all children.">
                             <Button
                                 disabled={
                                     !Boolean(

@@ -40,15 +40,7 @@ export function EndpointLink({ endpoint, hostName }: EndpointLinkProps) {
     } else {
         linky = (
             <Typography>
-                {intl.formatMessage(
-                    {
-                        id: 'taskEndpoint.otherProtocol.message',
-                    },
-                    {
-                        protocol: endpoint.protocol,
-                        hostname: fullHostName,
-                    }
-                )}
+                {`${endpoint.protocol ?? ''} hostname: ${fullHostName}`}
             </Typography>
         );
     }

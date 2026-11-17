@@ -1,91 +1,167 @@
-import { useMemo } from 'react';
+import type { DataPlaneScopes } from 'src/stores/DetailsForm/types';
+import type { TableColumns } from 'src/types';
+import type { CombinedError } from 'urql';
 
-import { getDataPlanesForTable } from 'src/api/dataPlanes';
-import Rows from 'src/components/tables/DataPlanes/Rows';
+import { useEffect, useState } from 'react';
+
 import {
-    columns,
-    selectableTableStoreName,
-} from 'src/components/tables/DataPlanes/shared';
+    Box,
+    Table,
+    TableContainer,
+    TableFooter,
+    TablePagination,
+    TableRow,
+    Toolbar,
+} from '@mui/material';
+
+import Rows from 'src/components/tables/DataPlanes/Rows';
 import ToggleDataPlaneScope from 'src/components/tables/DataPlanes/ToggleDataPlaneScope';
-import EntityTable from 'src/components/tables/EntityTable';
-import { useDataPlaneScope } from 'src/context/DataPlaneScopeContext';
+import EntityTableBody from 'src/components/tables/EntityTable/TableBody';
+import EntityTableHeader from 'src/components/tables/EntityTable/TableHeader';
+import { useDataPlanesQuery } from 'src/hooks/dataPlanes/useDataPlanes';
+import { useCursorPagination } from 'src/hooks/useCursorPagination';
 import { DATA_PLANE_SETTINGS } from 'src/settings/dataPlanes';
-import { TablePrefixes, useTableState } from 'src/stores/Tables/hooks';
-import TableHydrator from 'src/stores/Tables/Hydrator';
 import { useTenantStore } from 'src/stores/Tenant';
+import { TableStatuses } from 'src/types';
+
+const columns: TableColumns[] = [
+    { field: null, headerIntlKey: null, collapseHeader: true },
+    { field: null, headerIntlKey: 'admin.dataPlanes.column.header.name' },
+    { field: null, headerIntlKey: 'admin.dataPlanes.column.header.region' },
+    { field: null, headerIntlKey: 'data.ipv4' },
+];
+
+const PAGE_SIZE = 10;
+
+function getTableStatus<T>(data: T[], loading: boolean, error?: CombinedError) {
+    if (loading) {
+        return TableStatuses.LOADING;
+    }
+
+    if (error) {
+        return error.networkError
+            ? TableStatuses.NETWORK_FAILED
+            : TableStatuses.TECHNICAL_DIFFICULTIES;
+    }
+
+    return data.length > 0
+        ? TableStatuses.DATA_FETCHED
+        : TableStatuses.NO_EXISTING_DATA;
+}
 
 function DataPlanesTable() {
-    const {
-        pagination,
-        setPagination,
-        rowsPerPage,
-        setRowsPerPage,
-        searchQuery,
-        setSearchQuery,
-        sortDirection,
-        setSortDirection,
-        columnToSort,
-        setColumnToSort,
-    } = useTableState(TablePrefixes.dataPlanes, 'data_plane_name', 'asc');
+    const { currentPage, cursor, goToPage, onPageChange } =
+        useCursorPagination();
 
     const selectedTenant = useTenantStore((state) => state.selectedTenant);
-    const { dataPlaneScope } = useDataPlaneScope();
-
-    const dataPlaneName = useMemo(() => {
-        if (!selectedTenant) {
-            return null;
+    const [dataPlaneScope, setScope] = useState<DataPlaneScopes>('public');
+    const { dataPlanes, fetching, error, pageInfo } = useDataPlanesQuery(
+        selectedTenant,
+        {
+            public: dataPlaneScope === 'public',
+            limit: PAGE_SIZE,
+            cursor,
         }
+    );
 
-        return `${DATA_PLANE_SETTINGS[dataPlaneScope].prefix}${
-            dataPlaneScope === 'private' ? selectedTenant : ''
-        }`;
-    }, [dataPlaneScope, selectedTenant]);
+    const status = getTableStatus(dataPlanes, fetching, error);
+    const settings = DATA_PLANE_SETTINGS[dataPlaneScope].table;
 
-    const query = useMemo(() => {
-        return dataPlaneName
-            ? getDataPlanesForTable(dataPlaneName, pagination, searchQuery, [
-                  {
-                      col: columnToSort,
-                      direction: sortDirection,
-                  },
-              ])
-            : null;
-    }, [columnToSort, dataPlaneName, pagination, searchQuery, sortDirection]);
+    // reset to first page when changing tenant
+    useEffect(() => {
+        goToPage(0);
+        // exclude goToPage from the deps list as the function reference changes everytime
+        // goToPage(0) is called (since it both updates and depends on cursorHistory). Including
+        // it will cause an infinite render loop.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedTenant]);
+
+    const handleDataPlaneScopeChange = (newScope: DataPlaneScopes) => {
+        setScope(newScope);
+        goToPage(0); // reset to first page when changing scope to support cursor pagination
+    };
+
+    const handlePageChange = (event: any, newPage: number) => {
+        onPageChange(event, newPage, pageInfo?.endCursor);
+    };
+
+    const labelDisplayedRows = ({ from }: { from: number }) => {
+        return dataPlanes.length > 0
+            ? `${from} – ${from + dataPlanes.length - 1}`
+            : '';
+    };
 
     return (
-        <TableHydrator
-            disableQueryParamHack
-            query={query}
-            selectableTableStoreName={selectableTableStoreName}
-        >
-            <EntityTable
-                noExistingDataContentIds={
-                    DATA_PLANE_SETTINGS[dataPlaneScope].table
-                        .noExistingDataContentIds
-                }
-                columns={columns}
-                renderTableRows={(data) => <Rows data={data} />}
-                rowsPerPage={rowsPerPage}
-                setRowsPerPage={setRowsPerPage}
-                pagination={pagination}
-                setPagination={setPagination}
-                searchQuery={searchQuery}
-                setSearchQuery={setSearchQuery}
-                sortDirection={sortDirection}
-                setSortDirection={setSortDirection}
-                columnToSort={columnToSort}
-                setColumnToSort={setColumnToSort}
-                header={null}
-                filterLabel={
-                    DATA_PLANE_SETTINGS[dataPlaneScope].table.filterIntlKey
-                }
-                selectableTableStoreName={selectableTableStoreName}
-                tableAriaLabelKey="admin.dataPlanes.table.aria.label"
-                showToolbar
-                hideFilter
-                toolbar={<ToggleDataPlaneScope />}
-            />
-        </TableHydrator>
+        <Box data-public>
+            <Toolbar
+                sx={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                }}
+                disableGutters
+            >
+                <ToggleDataPlaneScope
+                    scope={dataPlaneScope}
+                    onChange={handleDataPlaneScopeChange}
+                />
+            </Toolbar>
+
+            <TableContainer
+                component={Box}
+                sx={{
+                    mb: 2,
+                }}
+            >
+                <Table
+                    sx={{
+                        minWidth: 350,
+                    }}
+                    size="small"
+                    aria-label="Data Planes Table"
+                >
+                    <EntityTableHeader columns={columns} />
+
+                    <EntityTableBody
+                        rows={
+                            dataPlanes.length > 0 ? (
+                                <Rows data={dataPlanes} />
+                            ) : null
+                        }
+                        columns={columns}
+                        loading={fetching}
+                        tableState={{ status }}
+                        noExistingDataContentIds={
+                            settings.noExistingDataContentIds
+                        }
+                    />
+
+                    <TableFooter>
+                        <TableRow>
+                            <TablePagination
+                                count={-1}
+                                page={currentPage}
+                                rowsPerPage={PAGE_SIZE}
+                                rowsPerPageOptions={[PAGE_SIZE]}
+                                onPageChange={handlePageChange}
+                                labelDisplayedRows={labelDisplayedRows}
+                                slotProps={{
+                                    actions: {
+                                        previousButton: {
+                                            disabled:
+                                                !pageInfo?.hasPreviousPage,
+                                        },
+                                        nextButton: {
+                                            disabled: !pageInfo?.hasNextPage,
+                                        },
+                                    },
+                                }}
+                            />
+                        </TableRow>
+                    </TableFooter>
+                </Table>
+            </TableContainer>
+        </Box>
     );
 }
 

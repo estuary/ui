@@ -13,24 +13,30 @@ import {
     semiTransparentBackground_teal_nesting,
 } from 'src/context/Theme';
 
+// Plain-string nouns for an entity's bindings, as [singular, plural]. Shared so that every
+// chip in the backfill section names bindings the same way.
+export const BINDING_TERMS: Record<Entity, [string, string]> = {
+    capture: ['collection', 'collections'],
+    collection: ['collection', 'collections'],
+    materialization: ['destination table', 'destination tables'],
+};
+
 export const ENTITY_SETTINGS: { [k in Entity]: EntitySetting } = {
     capture: {
         Icon: CloudUpload,
         background: semiTransparentBackground_teal,
         backgroundNesting: semiTransparentBackground_teal_nesting,
-        bindingTermId: 'terms.bindings.plural',
         pluralId: 'terms.sources.plural',
         routes: {
             connectorSelect: authenticatedRoutes.captures.create.fullPath,
-            createNewExpress:
-                authenticatedRoutes.express.captureCreate.new.fullPath,
             createNew: authenticatedRoutes.captures.create.new.fullPath,
             details: authenticatedRoutes.captures.details.overview.fullPath,
             viewAll: authenticatedRoutes.captures.fullPath,
         },
         details: {
             relatedEntitiesContentIds: {
-                collections: 'data.writes_to',
+                // Shown in the Bindings section instead.
+                collections: undefined,
                 readBy: undefined,
                 writtenBy: undefined,
             },
@@ -65,11 +71,9 @@ export const ENTITY_SETTINGS: { [k in Entity]: EntitySetting } = {
         Icon: DatabaseScript,
         background: semiTransparentBackground_blue,
         backgroundNesting: semiTransparentBackground_blue_nesting,
-        bindingTermId: 'terms.collections.plural',
         pluralId: 'terms.collections.plural',
         routes: {
             connectorSelect: authenticatedRoutes.collections.create.fullPath,
-            createNewExpress: '',
             createNew: authenticatedRoutes.collections.create.new.fullPath,
             details: authenticatedRoutes.collections.details.overview.fullPath,
             viewAll: authenticatedRoutes.collections.fullPath,
@@ -108,12 +112,10 @@ export const ENTITY_SETTINGS: { [k in Entity]: EntitySetting } = {
         Icon: CloudDownload,
         background: semiTransparentBackground_purple,
         backgroundNesting: semiTransparentBackground_purple_nesting,
-        bindingTermId: 'terms.collections.plural',
         pluralId: 'terms.destinations.plural',
         routes: {
             connectorSelect:
                 authenticatedRoutes.materializations.create.fullPath,
-            createNewExpress: '',
             createNew: authenticatedRoutes.materializations.create.new.fullPath,
             details:
                 authenticatedRoutes.materializations.details.overview.fullPath,
@@ -121,7 +123,8 @@ export const ENTITY_SETTINGS: { [k in Entity]: EntitySetting } = {
         },
         details: {
             relatedEntitiesContentIds: {
-                collections: 'data.reads_from',
+                // Shown in the Bindings section instead.
+                collections: undefined,
                 readBy: undefined,
                 writtenBy: undefined,
             },

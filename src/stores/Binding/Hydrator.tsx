@@ -20,7 +20,7 @@ import {
 } from 'src/stores/Binding/hooks';
 import { PrefillSourceCaptureGate } from 'src/stores/Binding/PrefillSourceCaptureGate';
 
-export const BindingHydrator = ({ children }: BaseComponentProps) => {
+const BindingHydrator = ({ children }: BaseComponentProps) => {
     // We want to manually control this in a REF to not fire extra effect calls
     const rehydrating = useRef(false);
 

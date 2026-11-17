@@ -14,7 +14,7 @@ import { getMarketplaceSettings } from 'src/utils/env-utils';
 
 const { verifyURL } = getMarketplaceSettings();
 
-export const fetcher = (tenant: string, session: Session | null) => {
+const fetcher = (tenant: string, session: Session | null) => {
     return client<MarketPlaceVerifyResponse>(
         verifyURL,
         { data: { tenant, token: session?.provider_token } },

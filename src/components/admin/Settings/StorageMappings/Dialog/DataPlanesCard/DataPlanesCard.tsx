@@ -5,7 +5,6 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Collapse, Stack } from '@mui/material';
 
 import { Flipped, Flipper } from 'react-flip-toolkit';
-import { useIntl } from 'react-intl';
 
 import { DataPlaneRow } from 'src/components/admin/Settings/StorageMappings/Dialog/DataPlanesCard/DataPlaneRow';
 import { DataPlaneSelector } from 'src/components/admin/Settings/StorageMappings/Dialog/DataPlanesCard/DataPlaneSelector';
@@ -35,8 +34,13 @@ export function DataPlanesCard({
     onSelectDefault,
     onToggleAllowPublic,
 }: DataPlanesCardProps) {
-    const intl = useIntl();
-    const { dataPlanes: allDps } = useDataPlanes();
+    const { dataPlanes } = useDataPlanes();
+
+    // users shouldn't add storage mappings to closed data planes
+    const openDataPlanes = useMemo(
+        () => dataPlanes.filter((dp) => !dp.closed),
+        [dataPlanes]
+    );
 
     const [selectorIsOpen, setSelectorIsOpen] = useState(false);
 
@@ -48,9 +52,11 @@ export function DataPlanesCard({
 
     const [unselectedDps, hasMoreOptions] = useMemo(() => {
         const selectedNames = names(selectedDps);
-        const unselected = allDps.filter((dp) => !selectedNames.has(dp.name));
+        const unselected = openDataPlanes.filter(
+            (dp) => !selectedNames.has(dp.name)
+        );
         return [unselected, unselected.length > 0];
-    }, [allDps, selectedDps]);
+    }, [openDataPlanes, selectedDps]);
 
     const effectiveAllowPublic =
         allowPublicChecked ||
@@ -132,12 +138,8 @@ export function DataPlanesCard({
     return (
         <>
             <CardTitle
-                title={intl.formatMessage({
-                    id: 'storageMappings.dialog.dataPlanes.title',
-                })}
-                action={intl.formatMessage({
-                    id: 'storageMappings.dialog.dataPlanes.addAction',
-                })}
+                title="Data Planes"
+                action="Add data plane"
                 onAction={() => setSelectorIsOpen(true)}
                 actionDisabled={effectiveSelectorIsOpen || !hasMoreOptions}
             />
@@ -178,7 +180,9 @@ export function DataPlanesCard({
             <Collapse in={effectiveSelectorIsOpen}>
                 <DataPlaneSelector
                     options={availableOptions}
-                    allowPublicVisible={allDps.some((dp) => dp.isPublic)}
+                    allowPublicVisible={openDataPlanes.some(
+                        (dp) => dp.isPublic
+                    )}
                     allowPublicChecked={effectiveAllowPublic}
                     allowPublicDisabled={
                         selectedDps.some((dp) => dp.isPublic) ||

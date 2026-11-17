@@ -9,8 +9,6 @@ export const DATA_PLANE_SETTINGS: {
     public: {
         prefix: `${DATA_PLANE_PREFIX}public/`,
         table: {
-            filterIntlKey: 'admin.dataPlanes.table.filterLabel',
-            headerIntlKey: 'admin.dataPlanes.header',
             noExistingDataContentIds: {
                 header: `admin.dataPlanes.public.table.noContent.header`,
                 message: `admin.dataPlanes.public.table.noContent.message`,
@@ -21,8 +19,6 @@ export const DATA_PLANE_SETTINGS: {
     private: {
         prefix: `${DATA_PLANE_PREFIX}private/`,
         table: {
-            filterIntlKey: 'admin.dataPlanes.table.filterLabel',
-            headerIntlKey: 'admin.dataPlanes.header',
             noExistingDataContentIds: {
                 header: `admin.dataPlanes.private.table.noContent.header`,
                 message: `admin.dataPlanes.private.table.noContent.message`,

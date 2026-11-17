@@ -1,7 +1,5 @@
 import { Typography } from '@mui/material';
 
-import { FormattedMessage } from 'react-intl';
-
 import EditOff from 'src/icons/EditOff';
 
 interface Props {
@@ -11,9 +9,7 @@ interface Props {
 function ReadOnly({ iconSize }: Props) {
     return (
         <>
-            <Typography>
-                <FormattedMessage id="common.readOnly" />
-            </Typography>
+            <Typography>Read-Only</Typography>
 
             <EditOff style={{ fontSize: iconSize }} />
         </>

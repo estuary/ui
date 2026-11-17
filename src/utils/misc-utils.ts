@@ -221,6 +221,24 @@ export const basicSort_string = (
     return b.localeCompare(a);
 };
 
+export const basicSort_stringLength = (
+    a: any,
+    b: any,
+    sortDirection: SortDirection
+) => {
+    const sortResult = compareInitialCharacterType(a, b);
+
+    if (typeof sortResult === 'number') {
+        return sortResult;
+    }
+
+    if (sortDirection === 'asc') {
+        return a.length - b.length;
+    }
+
+    return b.length - a.length;
+};
+
 export const sortByAlertType = (
     a: { isSystemAlert: boolean; value: string },
     b: { isSystemAlert: boolean; value: string },

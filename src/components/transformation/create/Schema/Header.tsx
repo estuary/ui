@@ -3,7 +3,6 @@ import { useEffect } from 'react';
 import { Typography, useTheme } from '@mui/material';
 
 import { WarningCircle } from 'iconoir-react';
-import { useIntl } from 'react-intl';
 
 import { useEditorStore_currentCatalog } from 'src/components/editor/Store/hooks';
 import {
@@ -12,7 +11,6 @@ import {
 } from 'src/stores/TransformationCreate/hooks';
 
 function DerivationSchemaHeader() {
-    const intl = useIntl();
     const theme = useTheme();
 
     // Draft Editor Store
@@ -47,7 +45,7 @@ function DerivationSchemaHeader() {
             ) : null}
 
             <Typography component="span" variant="subtitle1">
-                {intl.formatMessage({ id: 'newTransform.schema.header' })}
+                Schema
             </Typography>
         </>
     );

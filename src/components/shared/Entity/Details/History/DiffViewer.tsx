@@ -3,10 +3,17 @@ import type { MutableRefObject } from 'react';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 
-import { Box, Grid, Typography, useTheme } from '@mui/material';
+import {
+    Box,
+    Grid,
+    IconButton,
+    Tooltip,
+    Typography,
+    useTheme,
+} from '@mui/material';
 
 import { DiffEditor } from '@monaco-editor/react';
-import { useIntl } from 'react-intl';
+import { ArrowDown, ArrowUp } from 'iconoir-react';
 
 import {
     formatDate,
@@ -24,7 +31,44 @@ import { useHistoryDiffQueries } from 'src/hooks/useHistoryDiffQueries';
 import { logRocketConsole } from 'src/services/shared';
 import { BASE_ERROR } from 'src/services/supabase';
 
-// Go to next diff action has an issue -> https://github.com/Microsoft/monaco-editor/issues/2556
+function DiffNavigation({
+    disabled,
+    onNavigate,
+}: {
+    disabled: boolean;
+    onNavigate: (direction: 'previous' | 'next') => void;
+}) {
+    return (
+        <Grid>
+            {(['previous', 'next'] as const).map((direction) => {
+                const label =
+                    direction === 'previous'
+                        ? 'Previous change'
+                        : 'Next change';
+
+                return (
+                    <Tooltip key={direction} title={label}>
+                        <span>
+                            <IconButton
+                                aria-label={label}
+                                size="small"
+                                disabled={disabled}
+                                onClick={() => onNavigate(direction)}
+                            >
+                                {direction === 'previous' ? (
+                                    <ArrowUp />
+                                ) : (
+                                    <ArrowDown />
+                                )}
+                            </IconButton>
+                        </span>
+                    </Tooltip>
+                );
+            })}
+        </Grid>
+    );
+}
+
 function DiffViewer() {
     // Data Fetching
     const {
@@ -35,11 +79,12 @@ function DiffViewer() {
     } = useHistoryDiffQueries();
 
     // Hooks
-    const intl = useIntl();
     const theme = useTheme();
 
     // Editor State management
     const [editorReady, setEditorReady] = useState(false);
+    const [hasChanges, setHasChanges] = useState(false);
+    const diffSubscriptions = useRef<monacoEditor.IDisposable[]>([]);
     const diffEditorRef =
         useRef<monacoEditor.editor.IStandaloneDiffEditor | null>(null);
     const originalModel = useRef<monacoEditor.editor.ITextModel | null>(null);
@@ -63,6 +108,23 @@ function DiffViewer() {
             modified: modifiedModel.current,
         });
 
+        // Navigation is available only after the current models' diff is computed.
+        diffSubscriptions.current.forEach((subscription) =>
+            subscription.dispose()
+        );
+        setHasChanges(false);
+        diffSubscriptions.current = [
+            originalModel.current.onDidChangeContent(() =>
+                setHasChanges(false)
+            ),
+            modifiedModel.current.onDidChangeContent(() =>
+                setHasChanges(false)
+            ),
+            editor.onDidUpdateDiff(() => {
+                setHasChanges((editor.getLineChanges()?.length ?? 0) > 0);
+            }),
+        ];
+
         // We keep this in state so that the useEffect down below will rerun when these are ready
         //  this is mainly here for when a users uses the browser back button.
         setEditorReady(true);
@@ -71,6 +133,9 @@ function DiffViewer() {
     // Cleanup effect - dispose in the correct order
     useEffect(() => {
         return () => {
+            diffSubscriptions.current.forEach((subscription) =>
+                subscription.dispose()
+            );
             const cleanUpEditorRef = (editorRef: MutableRefObject<any>) => {
                 if (editorRef?.current) {
                     try {
@@ -116,36 +181,44 @@ function DiffViewer() {
         [findModifiedPublication, findOriginalPublication, pubHistory]
     );
 
-    // Keep the diff editor up to date
+    const originalSpec = pubSpecs.publications
+        ? getSpecAsString(
+              pubSpecs.publications.find(findOriginalPublication)?.spec ?? null
+          )
+        : undefined;
+    const modifiedSpec = pubSpecs.publications
+        ? getSpecAsString(
+              pubSpecs.publications.find(findModifiedPublication)?.spec ?? null
+          )
+        : undefined;
+
+    // setValue resets selection and recomputes the diff, so only update changed text.
     useEffect(() => {
-        if (!editorReady || !pubSpecs.publications) {
+        if (!editorReady) {
             return;
         }
 
-        // Update the model with the latest
-        originalModel.current?.setValue(
-            getSpecAsString(
-                pubSpecs.publications.find(findOriginalPublication)?.spec ??
-                    null
-            )
-        );
-        modifiedModel.current?.setValue(
-            getSpecAsString(
-                pubSpecs.publications.find(findModifiedPublication)?.spec ??
-                    null
-            )
-        );
-    }, [
-        editorReady,
-        findModifiedPublication,
-        findOriginalPublication,
-        pubSpecs.publications,
-    ]);
+        if (
+            originalSpec !== undefined &&
+            originalModel.current &&
+            originalModel.current.getValue() !== originalSpec
+        ) {
+            originalModel.current.setValue(originalSpec);
+        }
+        if (
+            modifiedSpec !== undefined &&
+            modifiedModel.current &&
+            modifiedModel.current.getValue() !== modifiedSpec
+        ) {
+            modifiedModel.current.setValue(modifiedSpec);
+        }
+    }, [editorReady, originalSpec, modifiedSpec]);
 
     return (
         <>
             <Grid
                 container
+                alignItems="center"
                 sx={{
                     ...editorToolBarSx,
                 }}
@@ -166,7 +239,7 @@ function DiffViewer() {
                         </Typography>
                     </Box>
                 </Grid>
-                <Grid size={{ xs: 6 }}>
+                <Grid size="grow">
                     <Box
                         sx={{
                             borderLeft: `${historyCompareBorder} ${
@@ -182,6 +255,12 @@ function DiffViewer() {
                         </Typography>
                     </Box>
                 </Grid>
+                <DiffNavigation
+                    disabled={!editorReady || !hasChanges || !!pubSpecs.error}
+                    onNavigate={(direction) =>
+                        diffEditorRef.current?.goToDiff(direction)
+                    }
+                />
             </Grid>
             {pubSpecs.error ? (
                 <Error
@@ -189,9 +268,7 @@ function DiffViewer() {
                     error={
                         pubSpecs.error ?? {
                             ...BASE_ERROR,
-                            message: intl.formatMessage({
-                                id: 'details.history.diffFailed',
-                            }),
+                            message: `Unable to get specs to compare.`,
                         }
                     }
                 />

@@ -27,9 +27,7 @@ function SSOButton({ isRegister }: LoginProps) {
                 <OpenNewWindow />
             </Typography>
         );
-        href = intl.formatMessage({
-            id: 'login.sso.register.message.help.docPath',
-        });
+        href = 'https://estuary.dev/contact-us';
         startIcon = undefined;
         labelMessageId = 'login.sso.register.message.help';
         target = '_blank';

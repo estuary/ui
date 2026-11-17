@@ -14,7 +14,7 @@ export enum EditorStoreNames {
     MATERIALIZATION = 'materialization_editor_store',
 }
 
-export enum EndpointConfigStoreNames {
+enum EndpointConfigStoreNames {
     GENERAL = 'general-endpoint-config',
 }
 
@@ -26,10 +26,6 @@ export enum FormStateStoreNames {
     MATERIALIZATION_EDIT = 'Materialization-Edit-Form-State',
 }
 
-export enum OnboardingStoreNames {
-    GENERAL = 'Onboarding',
-}
-
 export enum SchemaEvolutionStoreNames {
     GENERAL = 'general-schema-evolution',
 }
@@ -39,12 +35,10 @@ export enum SelectTableStoreNames {
     ACCESS_GRANTS_PREFIXES = 'AccessGrants-Prefixes',
     CAPTURE = 'Captures-Table',
     COLLECTION = 'Collections-Table',
-    DATA_PLANE = 'Data-Plane-Table',
     ENTITY_SELECTOR = 'Entity-Selector-Table',
     CONNECTOR = 'Connectors-Table',
     MATERIALIZATION = 'Materializations-Table',
     PREFIX_ALERTS = 'Prefix-Alert-Table',
-    STORAGE_MAPPINGS = 'Storage-Mappings-Table',
 }
 
 export enum ShardDetailStoreNames {
@@ -56,7 +50,6 @@ export enum ShardDetailStoreNames {
 export enum GlobalStoreNames {
     ENTITIES = 'Entities',
     SIDE_PANEL_DOCS = 'Side-Panel-Docs',
-    QUEUED_TASKS = 'queuedTasks', // Not currently being used
     TOP_BAR = 'Top-Bar',
 }
 
@@ -76,7 +69,6 @@ export type StoreName =
     | FormStateStoreNames
     | GlobalStoreNames
     | JournalDataStoreNames
-    | OnboardingStoreNames
     | SchemaEvolutionStoreNames
     | SelectTableStoreNames
     | ShardDetailStoreNames

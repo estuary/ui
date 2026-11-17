@@ -1,7 +1,6 @@
 import { useCallback } from 'react';
 
 import { useSnackbar } from 'notistack';
-import { useIntl } from 'react-intl';
 
 import useSourceSetting from 'src/hooks/sourceCapture/useSourceSetting';
 import { useFormStateStore_setFormState } from 'src/stores/FormState/hooks';
@@ -10,7 +9,6 @@ import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
 import { snackbarSettings } from 'src/utils/notification-utils';
 
 function useSourceCapture() {
-    const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
 
     const setFormState = useFormStateStore_setFormState();
@@ -35,12 +33,10 @@ function useSourceCapture() {
                     setFormState({ status: FormStatus.UPDATED });
                 })
                 .catch(() => {
-                    enqueueSnackbar(
-                        intl.formatMessage({
-                            id: 'specPropEditor.update.error',
-                        }),
-                        { ...snackbarSettings, variant: 'error' }
-                    );
+                    enqueueSnackbar('Changes to draft not saved.', {
+                        ...snackbarSettings,
+                        variant: 'error',
+                    });
                     setSourceCapture(currentSetting);
                     setFormState({ status: FormStatus.FAILED });
                 })
@@ -49,7 +45,6 @@ function useSourceCapture() {
         [
             currentSetting,
             enqueueSnackbar,
-            intl,
             setFormState,
             setSaving,
             setSourceCapture,

@@ -8,7 +8,7 @@ import { devtoolsOptions } from 'src/utils/store-utils';
 
 // TODO: Remove the action, getAuthToken, from the store. Store actions
 //   should be limited to simple functions that set or manipulate state.
-export interface JournalState {
+interface JournalState {
     collectionBrokerAddress: string;
     collectionBrokerToken: string;
     getAuthToken: (

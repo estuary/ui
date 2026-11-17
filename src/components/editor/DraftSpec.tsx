@@ -2,7 +2,7 @@ import MonacoEditor from 'src/components/editor/MonacoEditor';
 import { MonacoEditorSkeleton } from 'src/components/editor/MonacoEditor/EditorSkeletons';
 import useDraftSpecEditor from 'src/hooks/useDraftSpecEditor';
 
-export interface Props {
+interface Props {
     disabled?: boolean;
     localZustandScope?: boolean;
     editorHeight?: number;

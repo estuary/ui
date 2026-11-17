@@ -3,14 +3,12 @@ import type { ConnectorRequestCardProps } from 'src/components/connectors/Grid/c
 import { Stack, Typography, useTheme } from '@mui/material';
 
 import { PlusSquare } from 'iconoir-react';
-import { FormattedMessage, useIntl } from 'react-intl';
 
 import Card from 'src/components/connectors/Grid/cards/Card';
 import LegacyCard from 'src/components/connectors/Grid/cards/LegacyCard';
 import Title from 'src/components/connectors/Grid/cards/Title';
 
 function ConnectorRequestCard({ condensed }: ConnectorRequestCardProps) {
-    const intl = useIntl();
     const theme = useTheme();
 
     const ConnectorCard = condensed ? Card : LegacyCard;
@@ -20,13 +18,13 @@ function ConnectorRequestCard({ condensed }: ConnectorRequestCardProps) {
             key="connector-request-tile"
             Detail={
                 <Typography component="p" align="left">
-                    <FormattedMessage id="connectors.main.message2.alt" />
+                    {
+                        'To request a connector for a new system, click "Contact Estuary" and submit the form.'
+                    }
                 </Typography>
             }
             externalLink={{
-                href: intl.formatMessage({
-                    id: 'connectors.main.message2.docPath',
-                }),
+                href: 'https://github.com/estuary/connectors/issues/new?assignees=&labels=new+connector&template=request-new-connector-form.yaml&title=Request+a+connector+to+%5Bcapture+from+%7C+materialize+to%5D+%5Byour+favorite+system%5D',
                 target: '_blank',
                 rel: 'noopener',
             }}
@@ -47,13 +45,7 @@ function ConnectorRequestCard({ condensed }: ConnectorRequestCardProps) {
                     />
                 </Stack>
             }
-            Title={
-                <Title
-                    content={intl.formatMessage({
-                        id: 'connectorTable.data.connectorRequest',
-                    })}
-                />
-            }
+            Title={<Title content="New Connector" />}
         />
     );
 }

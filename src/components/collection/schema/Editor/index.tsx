@@ -8,7 +8,6 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { Grid, Stack, Typography } from '@mui/material';
 
-import { FormattedMessage } from 'react-intl';
 import { useUpdateEffect } from 'react-use';
 
 import CollectionSchemaEditorSkeleton from 'src/components/collection/schema/Editor/Skeleton';
@@ -30,7 +29,7 @@ import useDraftSpecEditor from 'src/hooks/useDraftSpecEditor';
 import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
 import { getProperSchemaScope } from 'src/utils/schema-utils';
 
-export interface Props {
+interface Props {
     entityName?: string;
     localZustandScope?: boolean;
 }
@@ -147,7 +146,7 @@ function CollectionSchemaEditor({ entityName, localZustandScope }: Props) {
                             }}
                         >
                             <Typography variant="subtitle1" component="div">
-                                <FormattedMessage id="entityName.label" />
+                                Name
                             </Typography>
 
                             <Typography sx={{ ml: 1.5 }}>

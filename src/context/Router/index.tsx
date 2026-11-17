@@ -4,6 +4,7 @@ import { ErrorBoundary } from 'react-error-boundary';
 import {
     createBrowserRouter,
     createRoutesFromElements,
+    Navigate,
     Route,
     RouterProvider,
     Routes,
@@ -38,7 +39,9 @@ import BasicLogin from 'src/pages/login/Basic';
 import EnterpriseLogin from 'src/pages/login/Enterprise';
 import MarketplaceCallback from 'src/pages/marketplace/Callback';
 import MarketplaceVerification from 'src/pages/marketplace/Verification';
+import { OAuthConsent } from 'src/pages/OAuthConsent';
 import { SSORequired } from 'src/pages/SSORequired';
+import { Terms } from 'src/pages/Terms';
 import { isProduction } from 'src/utils/env-utils';
 
 // Capture
@@ -52,12 +55,6 @@ const CaptureDetailsRoute = lazy(
     () => import('src/context/Router/CaptureDetails')
 );
 const CaptureEditRoute = lazy(() => import('src/context/Router/CaptureEdit'));
-// const ExpressCaptureCreateRoute = lazy(
-//     () => import('src/context/Router/ExpressCaptureCreate')
-// );
-// const ExpressCaptureCreateNewRoute = lazy(
-//     () => import('src/context/Router/ExpressCaptureCreateNew')
-// );
 
 // Collection
 const DerivationCreateComponent = lazy(
@@ -85,6 +82,18 @@ const MaterializationDetailsRoute = lazy(
 );
 const MaterializationEditRoute = lazy(
     () => import('src/context/Router/MaterializationEdit')
+);
+
+const LegalConsentRoute = lazy(() =>
+    import('src/pages/LegalConsent').then((module) => ({
+        default: module.LegalConsent,
+    }))
+);
+
+const SecretDropboxRoute = lazy(() =>
+    import('src/pages/SecretDropbox').then((module) => ({
+        default: module.SecretDropbox,
+    }))
 );
 
 const router = createBrowserRouter(
@@ -153,6 +162,17 @@ const router = createBrowserRouter(
                 element={<MarketplaceCallback />}
             />
 
+            <Route
+                path={unauthenticatedRoutes.terms.path}
+                element={<Terms />}
+            />
+            <Route
+                path="/terms.html"
+                element={
+                    <Navigate to={unauthenticatedRoutes.terms.path} replace />
+                }
+            />
+
             {/*Logout goes directly to login to make sure it isn't wrapped in RequireAuth and won't try to log the user back in*/}
             <Route
                 path={unauthenticatedRoutes.logout.path}
@@ -162,31 +182,6 @@ const router = createBrowserRouter(
                 path={unauthenticatedRoutes.register.path}
                 element={<BasicLogin showRegistration />}
             />
-
-            {/* <Route
-                path={authenticatedRoutes.express.captureCreate.fullPath}
-                element={
-                    <ErrorBoundary FallbackComponent={ErrorImporting}>
-                        <Suspense fallback={null}>
-                            <AuthenticatedOnlyContext hideSpinner>
-                                <ExpressCaptureCreateRoute />
-                            </AuthenticatedOnlyContext>
-                        </Suspense>
-                    </ErrorBoundary>
-                }
-            />
-            <Route
-                path={authenticatedRoutes.express.captureCreate.new.fullPath}
-                element={
-                    <ErrorBoundary FallbackComponent={ErrorImporting}>
-                        <Suspense fallback={null}>
-                            <AuthenticatedOnlyContext hideSpinner>
-                                <ExpressCaptureCreateNewRoute />
-                            </AuthenticatedOnlyContext>
-                        </Suspense>
-                    </ErrorBoundary>
-                }
-            /> */}
 
             {/* This is not in the route below so that it does not include the applayout*/}
             <Route
@@ -234,8 +229,31 @@ const router = createBrowserRouter(
                     />
 
                     <Route
+                        path={authenticatedRoutes.legalConsent.fullPath}
+                        element={
+                            <Suspense fallback={null}>
+                                <LegalConsentRoute />
+                            </Suspense>
+                        }
+                    />
+
+                    <Route
+                        path={authenticatedRoutes.oauthConsent.path}
+                        element={<OAuthConsent />}
+                    />
+
+                    <Route
                         path={authenticatedRoutes.marketplace.verify.fullPath}
                         element={<MarketplaceVerification />}
+                    />
+
+                    <Route
+                        path={authenticatedRoutes.secrets.dropbox.fullPath}
+                        element={
+                            <Suspense fallback={null}>
+                                <SecretDropboxRoute />
+                            </Suspense>
+                        }
                     />
 
                     <Route path={authenticatedRoutes.beta.path}>

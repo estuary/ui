@@ -7,9 +7,9 @@ import { useSnackbar } from 'notistack';
 import { useIntl } from 'react-intl';
 
 import { unauthenticatedRoutes } from 'src/app/routes';
-import { supabaseClient } from 'src/context/GlobalProviders';
 import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
 import useLoginRedirectPath from 'src/hooks/searchParams/useLoginRedirectPath';
+import { supabaseClient } from 'src/services/supabaseClient';
 import { getPathWithParams } from 'src/utils/misc-utils';
 
 // TODO (routes) This is hardcoded because unauthenticated routes... (same as MagicLink)

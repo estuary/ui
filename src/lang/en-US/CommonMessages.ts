@@ -3,11 +3,9 @@ export const CommonMessages: Record<string, string> = {
     // Misc
     'company': `Estuary`,
     'productName': `Estuary`,
-    'expressFlowIntegration': `Powered by Estuary`,
     'spec': `data flow specification`,
 
     'common.browserTitle': `Estuary`,
-    'common.loading': `Loading...`,
     'common.running': `Running...`,
     'common.deleting': `Deleting...`,
     'common.deleted': `Deleted`,
@@ -36,9 +34,7 @@ export const CommonMessages: Record<string, string> = {
     'common.noUnDo': `This action cannot be undone.`,
     'common.version': `version`,
     'common.tenant': `Prefix`,
-    'common.tenant.creationForm': `Organization`,
     'common.recommended': `Recommended`,
-    'common.copied': `Copied`,
     'common.synchronizing': `Synchronizing`,
     'common.synchronized': `Synchronized`,
     'common.outOfSync': `Out of Sync`,
@@ -61,8 +57,6 @@ export const CommonMessages: Record<string, string> = {
     'common.timestamp.local.label': `Local`,
 
     // Aria
-    'aria.openExpand': `show more`,
-    'aria.closeExpand': `show less`,
 
     // Terms
     'terms.connectors': `Connectors`,
@@ -88,26 +82,16 @@ export const CommonMessages: Record<string, string> = {
     // Not 100% sure on this approach yet. Like keeping all this together.
     //  However, when translating it can lead to extra translations. Also, this
     //  is just how react-intl handles it and we might end up rolling our own.
-    'terms.bindings.plural': `{count, plural, one {binding} other {bindings}}`,
     'terms.collections.plural': `{count, plural, one {collection} other {collections}}`,
     'terms.destinations.plural': `{count, plural, one {materialization} other {materializations}}`,
     'terms.sources.plural': `{count, plural, one {capture} other {captures}}`,
 
     // Common fields
-    'entityPrefix.label': `Prefix`,
-    'entityPrefix.description': `Prefix for the entity name.`,
-    'entityName.label': `Name`,
-    'connector.label': `Connector`,
+
     'connector.description': `The external system you're connecting to.`,
-    'description.label': `Details`,
     'description.description': `Describe your changes or why you're changing things.`,
 
-    // Filter options
-    'sortDirection.ascending': `A to Z`,
-    'sortDirection.descending': `Z to A`,
-
     // Common sections
-    'connectionConfig.header': `Connection Config`,
 
     'common.pathShort.prefix': '.../',
 
@@ -118,7 +102,6 @@ export const CommonMessages: Record<string, string> = {
     'alert.info': 'Important',
 
     // Used in directives
-    'directives.returning': `Welcome back. You still need to provide some information before using the application.`,
     'directives.grant.skipped.title': `Access Grant Token Skipped`,
     'directives.grant.skipped.message': `The access grant link you submitted was not applied as you already have the requested access.`,
 
@@ -139,7 +122,7 @@ export const CommonMessages: Record<string, string> = {
     // Confirmation Dialog
     'confirm.title': `Are you sure?`,
     'confirm.loseData': `You have unsaved work. If you continue, you will lose your changes.`,
-    'confirm.oauth': `You are in the process of OAuth. If you continue, you will lose your changes.`,
+
     'confirm.doNotShowAgain': `Do not show again`,
 
     // TODO (entity-status): Reassess once a decision is made regarding the language
@@ -149,12 +132,7 @@ export const CommonMessages: Record<string, string> = {
     'status.error.low': `Low`,
     'status.error.medium': `Medium`,
 
-    // Leaves autocomplete validation
-    'leavesAutocomplete.mustStartWith.single': `Must start with "{root}"`,
-    'leavesAutocomplete.mustStartWith.multiple': `Must start with one of: {roots}`,
-
     'defaults.tenant': `acmeCo`,
     'defaults.schema': `anvils`,
     'defaults.table': `orders`,
-    'defaults.public': `public`,
 };

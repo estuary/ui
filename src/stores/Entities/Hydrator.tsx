@@ -2,7 +2,6 @@ import type { BaseComponentProps } from 'src/types';
 
 import { useShallow } from 'zustand/react/shallow';
 
-import { FormattedMessage } from 'react-intl';
 import { useMount } from 'react-use';
 
 import FullPageError from 'src/components/fullPage/Error';
@@ -35,7 +34,9 @@ export const EntitiesHydrator = ({ children }: BaseComponentProps) => {
             <FullPageError
                 error={hydrationErrors}
                 message={
-                    <FormattedMessage id="entitiesHydrator.error.failedToFetch" />
+                    <>
+                        There was an issue while checking if you have any roles.
+                    </>
                 }
             />
         );

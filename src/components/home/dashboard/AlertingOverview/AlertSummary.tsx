@@ -10,8 +10,6 @@ import {
     TableRow,
 } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 import { authenticatedRoutes } from 'src/app/routes';
 import TableHeader from 'src/components/home/dashboard/AlertingOverview/TableHeader';
 import ChipList from 'src/components/shared/ChipList';
@@ -26,8 +24,6 @@ export default function AlertSummary({
     fetching,
     flattenedGroupedAlerts,
 }: AlertSummaryProps) {
-    const intl = useIntl();
-
     const { tbodyComponent, tdComponent, trComponent } =
         getTableComponents(true);
 
@@ -50,9 +46,7 @@ export default function AlertSummary({
                     minWidth: 300,
                     borderCollapse: 'separate',
                 }}
-                aria-label={intl.formatMessage({
-                    id: 'alerts.overview.label',
-                })}
+                aria-label="List of most recent alerts grouped by name"
             >
                 <TableHeader />
 

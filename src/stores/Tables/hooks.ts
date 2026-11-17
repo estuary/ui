@@ -11,7 +11,7 @@ import {
 
 import { getPagination } from 'src/utils/table-utils';
 
-export enum TableFilterKeys {
+enum TableFilterKeys {
     pagination = 'p',
     rowsPerPage = 'r',
     searchQuery = 's',
@@ -25,11 +25,9 @@ export enum TablePrefixes {
     alertHistoryForTenant = 'tah',
     alertHistoryForEntity = 'eah',
     alertsForEntity = 'aah',
-    billing = 'bil',
     captures = 'cap',
     collections = 'col',
     connectors = 'con',
-    dataPlanes = 'dpt',
     entitySelector = 'esl',
     fieldSelection = 'fs',
     materializations = 'mat',

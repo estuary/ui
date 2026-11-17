@@ -6,7 +6,6 @@ import { useCallback } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 
 import { useSnackbar } from 'notistack';
-import { useIntl } from 'react-intl';
 
 import TargetSchemaForm from 'src/components/materialization/source/targetSchema/Form';
 import useSourceSetting from 'src/hooks/sourceCapture/useSourceSetting';
@@ -17,7 +16,6 @@ import { snackbarSettings } from 'src/utils/notification-utils';
 
 // TODO (target naming:post migration:remove)
 export default function TargetSchemaUpdateWrapper() {
-    const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
 
     const setFormState = useFormStateStore_setFormState();
@@ -45,12 +43,10 @@ export default function TargetSchemaUpdateWrapper() {
                     setFormState({ status: FormStatus.UPDATED });
                 })
                 .catch((error) => {
-                    enqueueSnackbar(
-                        intl.formatMessage({
-                            id: 'specPropEditor.update.error',
-                        }),
-                        { ...snackbarSettings, variant: 'error' }
-                    );
+                    enqueueSnackbar('Changes to draft not saved.', {
+                        ...snackbarSettings,
+                        variant: 'error',
+                    });
 
                     setTargetSchema(currentSetting);
                     setFormState({ status: FormStatus.FAILED });
@@ -62,7 +58,6 @@ export default function TargetSchemaUpdateWrapper() {
         [
             currentSetting,
             enqueueSnackbar,
-            intl,
             setFormState,
             setSaving,
             setTargetSchema,

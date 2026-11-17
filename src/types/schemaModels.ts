@@ -48,7 +48,7 @@ export interface CollectionSchemaAnnotations extends Schema {
     redact?: RedactDef;
 }
 
-export interface CollectionSchemaProperties {
+interface CollectionSchemaProperties {
     [key: string]: CollectionSchemaAnnotations;
 }
 
@@ -110,7 +110,7 @@ export interface Projections {
     [field: string]: string | ProjectionDef;
 }
 
-export interface RedactDef {
+interface RedactDef {
     strategy: RedactionStrategy_Schema;
 }
 

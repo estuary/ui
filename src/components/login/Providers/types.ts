@@ -2,7 +2,7 @@ import type { ButtonProps } from '@mui/material';
 import type { Schema } from 'src/types';
 import type { SupportedProvider } from 'src/types/authProviders';
 
-export type LoginFunction = (
+type LoginFunction = (
     provider: SupportedProvider,
     scopes: string,
     params?: Schema

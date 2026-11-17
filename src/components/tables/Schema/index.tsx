@@ -5,8 +5,6 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { Box, Table, TableContainer } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 import {
     useBindingsEditorStore_skimProjectionResponse,
     useBindingsEditorStore_skimProjectionResponseDoneProcessing,
@@ -28,8 +26,6 @@ import { hasLength } from 'src/utils/misc-utils';
 import { evaluateColumnsToShow } from 'src/utils/table-utils';
 
 function SchemaPropertiesTable({ filter }: SchemaPropertiesTableProps) {
-    const intl = useIntl();
-
     const workflow = useEntityWorkflow();
     const isCaptureWorkflow =
         workflow === 'capture_create' || workflow === 'capture_edit';
@@ -117,9 +113,7 @@ function SchemaPropertiesTable({ filter }: SchemaPropertiesTableProps) {
                 <Table
                     size="small"
                     sx={{ minWidth: 350, borderCollapse: 'separate' }}
-                    aria-label={intl.formatMessage({
-                        id: 'entityTable.title',
-                    })}
+                    aria-label="Entity Table"
                 >
                     <EntityTableHeader
                         columns={columnsToShow}

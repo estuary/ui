@@ -1,7 +1,5 @@
 import type { ExpandListChipProps } from 'src/styledComponents/types';
 
-import { useIntl } from 'react-intl';
-
 import { OutlinedChip } from 'src/styledComponents/chips/OutlinedChip';
 
 export const ExpandListChip = ({
@@ -9,8 +7,6 @@ export const ExpandListChip = ({
     hiddenCount,
     showEntireList,
 }: ExpandListChipProps) => {
-    const intl = useIntl();
-
     if (hiddenCount < 1) {
         return null;
     }
@@ -18,15 +14,10 @@ export const ExpandListChip = ({
     return (
         <OutlinedChip
             component={component}
-            label={intl.formatMessage(
-                { id: 'entityTable.moreEntities' },
-                {
-                    count: hiddenCount,
-                }
-            )}
+            label={`${hiddenCount} more`}
             onClick={showEntireList}
             size="small"
-            title={intl.formatMessage({ id: 'cta.showAll' })}
+            title="Show All"
             variant="outlined"
         />
     );

@@ -18,7 +18,6 @@ import {
     gridClasses,
     iconButtonClasses,
     ThemeProvider as MUIThemeProvider,
-    radioClasses,
     tableCellClasses,
     tableHeadClasses,
     tableRowClasses,
@@ -33,6 +32,18 @@ import { useLocalStorage } from 'react-use';
 import CheckSquare from 'src/icons/CheckSquare';
 import { DEFAULT_TOOLBAR_HEIGHT } from 'src/utils/editor-utils';
 import { LocalStorageKeys } from 'src/utils/localStorage-utils';
+
+// This file holds the app's global styling: color palettes, z-indexes,
+// spacing, typography, and MUI component defaults. Component-scoped
+// styling lives with its component and composes theme tokens rather than
+// raw values.
+//
+// The exported style consts in this file (colors, backgrounds, outlines,
+// sx objects) are a closed set — do not add new ones. Add new global
+// tokens by augmenting the theme (see the `declare module` blocks below).
+// When you touch code that consumes a loose const, migrate it: to a theme
+// key if the value is global, or into the consuming component if it has a
+// single consumer.
 
 // The code block commented out directly below is how the typography variants can be extended
 // or existing variants disabled.
@@ -55,6 +66,11 @@ import { LocalStorageKeys } from 'src/utils/localStorage-utils';
 //     }
 // }
 
+// To add a global design token: declare the key on the relevant interface below,
+// set the value in createTheme(), and consume it via `theme.*` in sx
+// callbacks. Store px values as strings ('12px') — in sx.borderRadius a
+// number is multiplied by theme.shape.borderRadius, while a string is
+// used literally.
 declare module '@mui/material/styles' {
     interface PaletteColor {
         alpha_05?: string;
@@ -91,15 +107,8 @@ declare module '@mui/material/Typography' {
     }
 }
 
-// Navigation Width
-export enum NavWidths {
-    MOBILE = 0,
-    RAIL = 48,
-    FULL = 200,
-}
-
 // Colors
-export const sample_blue = {
+const sample_blue = {
     100: '#DCE6FE',
     200: '#BACDFD',
     300: '#96B0F9',
@@ -133,10 +142,10 @@ export type SemanticColor =
     | '#4FD6FF';
 
 export const successMain: SemanticColor = '#40B763';
-export const successDark: SemanticColor = '#2A7942';
+const successDark: SemanticColor = '#2A7942';
 export const warningMain: SemanticColor = '#F5D75E';
 export const errorMain: SemanticColor = '#CA3B55';
-export const infoMain: SemanticColor = '#4FD6FF';
+const infoMain: SemanticColor = '#4FD6FF';
 
 const rgbTranslations = {
     dark: {
@@ -200,10 +209,18 @@ const sm = 650;
 const xs = 0;
 
 // Color Palettes
-// TODO: Balance the light mode color palette.
+// TODO: Balance the light mode color palette. Some light/dark token pairs
+//  are intentionally incomplete while this is in progress — check both modes
+//  when building new UI. Dark mode stacks opacity so nested surfaces darken
+//  as they nest; light mode has no equivalent and typically shows nesting
+//  with outlines.
 const lightMode: PaletteOptions = {
     background: {
-        default: sample_grey[100],
+        // One step down the ramp, so light mode has the same three surfaces
+        // dark mode does: canvas, then panel, then card. It used to start at
+        // 100, which left the panel on white and the cards with nowhere
+        // lighter to go — see `paperBackground`.
+        default: sample_grey[200],
     },
     contrastThreshold,
     error: {
@@ -325,6 +342,9 @@ const darkMode: PaletteOptions = {
     },
 };
 
+// Every z-index in this file is a multiple of zIndexIncrement. When you add
+// one, derive it from zIndexIncrement and comment what it must stack above
+// or below.
 // TODO (zindex) We should make a helper or something to help manage zindex.
 //  It doesn't come up often but happens enough it would be nice to handle better.
 export const zIndexIncrement = 5;
@@ -336,16 +356,13 @@ const buttonHoverIndex = zIndexIncrement * 4;
 const chipDeleteIndex = buttonHoverIndex + zIndexIncrement;
 
 // To make the sortable chip list work
-export const chipDraggableIndex = buttonHoverIndex + zIndexIncrement;
+const chipDraggableIndex = buttonHoverIndex + zIndexIncrement;
 
 // JSONForms accordion is hardcoded to 20 so making this "1 higher"
 const accordionButton = zIndexIncrement * 5;
 
 // Need to make the sticky header be on top
-export const headerLinkIndex = zIndexIncrement * 30;
-
-// Want to make sure it is near the top but right under the screen disable overlay
-export const toastIndex = zIndexIncrement * 35;
+const headerLinkIndex = zIndexIncrement * 30;
 
 // Popper component z index must be greater than 100, the z index of the reflex splitter component.
 export const popperIndex = zIndexIncrement * 500;
@@ -445,25 +462,6 @@ export const hiddenButAccessibleInput: SxProps<Theme> = {
     pointerEvents: 'none',
 };
 
-export const hiddenButAccessibleRadio: SxProps<Theme> = {
-    [`& .${radioClasses.root}, & .${radioClasses.root} input`]: {
-        position: 'fixed',
-        opacity: 0,
-        pointerEvents: 'none',
-    },
-};
-
-export const defaultBoxShadow =
-    'rgb(50 50 93 / 7%) 0px 3px 6px -1px, rgb(0 0 0 / 10%) 0px -2px 4px -1px, rgb(0 0 0 / 10%) 0px 2px 4px -1px';
-
-export const opaqueLightModeBorder = {
-    light: `1px solid rgba(255, 255, 255, 0.8)`,
-    dark: undefined,
-};
-
-// TODO need to consolidate lots of duplicated "rgba(247, 249, 252, 0.05)" values in the theme, but not today...
-export const stripePaymentFormFieldBackgroundDark = 'rgba(247, 249, 252, 0.05)';
-
 export const opaqueLightModeBackground = {
     light: 'rgba(255, 255, 255, 0.70)',
     dark: 'rgba(247, 249, 252, 0.05)',
@@ -475,8 +473,12 @@ export const opaqueLightModeBackground = {
 //      OR
 // We just look into waiting for css variable support - https://mui.com/material-ui/customization/css-theme-variables/overview/
 
+/**
+ * The surface a page, dialog or menu sits on — one step up the grey ramp from
+ * the canvas behind it, and one step below the white cards that sit on top.
+ */
 export const paperBackground = {
-    light: 'white',
+    light: sample_grey[100],
     dark: sample_grey[800],
 };
 
@@ -559,7 +561,7 @@ export const alternativeReflexContainerBackground = {
     dark: 'rgba(247, 249, 252, 0.05)',
 };
 
-export const alternativeDataGridHeader = {
+const alternativeDataGridHeader = {
     light: 'white',
     dark: 'transparent',
 };
@@ -719,7 +721,7 @@ export const linkButtonSx: SxProps<Theme> = {
 };
 
 // Light is an RGB translation of #E1E9F4; Light is an RGB translation of #F7F9FC.
-export const connectorCardLogoBackground = {
+const connectorCardLogoBackground = {
     light: 'rgba(225, 233, 244, 0.30)',
     dark: 'rgba(247, 249, 252, 0.08)',
 };
@@ -820,7 +822,7 @@ export const getStickyTableCell = (headerParent?: boolean): SxProps<Theme> => {
     };
 };
 
-export const wrappingTableCell = {
+const wrappingTableCell = {
     wordWrap: 'break-word',
     // WARNING - the min width work as you might expect. The max width does NOT
     //  It looks and feels good but the cell will for sure grow larger than just 300px
@@ -914,7 +916,7 @@ export const historyCompareBorder = `3px solid `;
 
 // If you have custom `sx` on your chip you'll need to import this
 //  and spread it into your custom styling. Or just style with `style`
-export const chipOutlinedStyling: SxProps<Theme> = {
+const chipOutlinedStyling: SxProps<Theme> = {
     [`&.${chipClasses.outlined}`]: {
         [`&.${chipClasses.colorPrimary}`]: {
             color: (theme) => theme.palette.text.primary,
@@ -1047,6 +1049,13 @@ const themeSettings = createTheme({
                 },
             },
         },
+        MuiToggleButton: {
+            styleOverrides: {
+                root: {
+                    textTransform: 'none',
+                },
+            },
+        },
         MuiTabs: {
             ...baseBackground,
             defaultProps: {
@@ -1156,6 +1165,14 @@ const ThemeProvider = ({ children }: BaseComponentProps) => {
                                     : 'white',
                             boxShadow: 'none',
                             color: palette.text?.primary,
+                        },
+                    },
+                },
+                MuiDrawer: {
+                    // Docs side panel is the only drawer component right now
+                    styleOverrides: {
+                        paper: {
+                            background: palette.background?.default,
                         },
                     },
                 },

@@ -24,7 +24,7 @@ interface SelectorParams {
     localScope?: boolean;
 }
 
-export const useStoreName = (
+const useStoreName = (
     entityType: Entity,
     localScope?: boolean
 ): EditorStoreNames => {
@@ -472,7 +472,7 @@ export const useEditorStore_queryResponse = (
     >(useStoreName(entityType, localScope), (state) => state.queryResponse);
 };
 
-export const useEditorStore_setQueryResponse = (
+const useEditorStore_setQueryResponse = (
     params?: SelectorParams | undefined
 ) => {
     const localScope = params?.localScope;

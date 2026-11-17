@@ -1,0 +1,19 @@
+{
+  "requireAuthToken_sops": "ENC[AES256_GCM,data:y58KZzqM9yAXoFnTES8Y7g==,iv:woO/V2on0y9XBGBVw3cAJBUByWMAIfs9dvc6taoz3wc=,tag:AAbdeG/VSu3O+z1zTHsESA==,type:str]",
+  "paths": [
+    "/webhook-data"
+  ],
+  "allowedCorsOrigins": [],
+  "sops": {
+    "age": [
+      {
+        "enc": "-----BEGIN AGE ENCRYPTED FILE-----\nYWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBQa1NLekVRNmhtY0NZRWZW\nRnFLSlpGTUZNWlg3bjI1TElvYmRXYURBWG5JCjRBWG93akl4ODgra3RGM0JRbWlS\nZSthS25iUi9oVTV4OXN3MXk3cFd5T2sKLS0tIG9SU0N0bnhsSDF1OStONXNDZmhH\nVS9LQmM3SVJuekloRlBmdEdyS2VSUVUKsOk1GpmFZI0zrykiDchh+30P98qpsReb\ne9CvzgS8BxXWPSPc/N2xZoDD4q1etQmIYSslrok1Hz+n64WnZvu10A==\n-----END AGE ENCRYPTED FILE-----\n",
+        "recipient": "age1z2qskpk8ww2rx5frxzykryufkfm9sj03v56m3qu54y0lgndytp3sdg24vs"
+      }
+    ],
+    "encrypted_suffix": "_sops",
+    "lastmodified": "2026-11-06T16:16:42Z",
+    "mac": "ENC[AES256_GCM,data:NvWEAJNrrh64+UeaSTX0pWJWZYF0wNLxYIQJagdxZZWJ1JSNHaIvnSG0j9+WeHd4m6slKFSWttX881Ud8NYrZfIt4Dt219YmSzniEx+vwOFa2grHcejVaWX+9TIUlXBe4lTJBN13lofwNTtaR9a9tbA15odekPoBbkDeOuW68pY=,iv:j2SBPBdfox4lvqPDtZnCmvt2q0gFeiyjV8tbc2cfvY4=,tag:ZYOHtncZ/B62zwwAmxb++A==,type:str]",
+    "version": "3.13.3"
+  }
+}

@@ -11,7 +11,7 @@ interface LocalZustandProviderProps {
     createStore: (key: StoreName) => unknown;
 }
 
-export const LocalZustandContext = createReactContext<any | null>(null);
+const LocalZustandContext = createReactContext<any | null>(null);
 
 export const LocalZustandProvider = ({
     children,

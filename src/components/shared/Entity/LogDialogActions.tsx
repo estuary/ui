@@ -4,8 +4,6 @@ import { useMemo } from 'react';
 
 import { Box, Button, Stack } from '@mui/material';
 
-import { FormattedMessage } from 'react-intl';
-
 import { TaskEndpoint } from 'src/components/shared/Endpoints/TaskEndpoint';
 import Status from 'src/components/shared/Entity/Status';
 import { useEntityType } from 'src/context/EntityContext';
@@ -15,7 +13,7 @@ import { FormStatus } from 'src/stores/FormState/types';
 import { useTransformationCreate_catalogName } from 'src/stores/TransformationCreate/hooks';
 import { hasLength } from 'src/utils/misc-utils';
 
-function LogDialogActions({ close, closeCtaKey }: LogDialogActionsProps) {
+function LogDialogActions({ close }: LogDialogActionsProps) {
     const entityType = useEntityType();
 
     const formStatus = useFormStateStore_status();
@@ -65,9 +63,7 @@ function LogDialogActions({ close, closeCtaKey }: LogDialogActionsProps) {
             {endpoints}
 
             <Stack direction="row" spacing={2}>
-                <Button onClick={close}>
-                    <FormattedMessage id={closeCtaKey ?? 'cta.close'} />
-                </Button>
+                <Button onClick={close}>Close</Button>
             </Stack>
         </>
     );

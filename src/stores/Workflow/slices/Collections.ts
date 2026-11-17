@@ -62,7 +62,7 @@ export interface StoreWithCollections {
     // removeCollections: (collection: string) => void;
 }
 
-export const getInitialCollectionData = (): Pick<
+const getInitialCollectionData = (): Pick<
     StoreWithCollections,
     'collections' | 'collectionsError' | 'collectionsInited'
 > => ({

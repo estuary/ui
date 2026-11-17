@@ -3,8 +3,6 @@ import type { EntityWithCreateWorkflow } from 'src/types';
 
 import { useMemo } from 'react';
 
-import { useIntl } from 'react-intl';
-
 import useConnectorField from 'src/components/shared/Entity/DetailsForm/useConnectorField';
 import useDataPlaneField from 'src/components/shared/Entity/DetailsForm/useDataPlaneField';
 import { useEvaluateStorageMapping } from 'src/components/shared/Entity/DetailsForm/useEvaluateStorageMapping';
@@ -16,7 +14,6 @@ import { useWorkflowStore } from 'src/stores/Workflow/Store';
 import { stripPathing } from 'src/utils/misc-utils';
 
 export default function useFormFields(entityType: EntityWithCreateWorkflow) {
-    const intl = useIntl();
     const isEdit = useEntityWorkflow_Editing();
 
     const setDetails = useDetailsFormStore((state) => state.setDetails);
@@ -52,9 +49,7 @@ export default function useFormFields(entityType: EntityWithCreateWorkflow) {
 
     const uiSchema = useMemo(() => {
         const catalogNameUISchema = {
-            label: intl.formatMessage({
-                id: 'entityName.label',
-            }),
+            label: 'Name',
             scope: `#/properties/${CATALOG_NAME_SCOPE}`,
             type: 'Control',
         };
@@ -72,7 +67,7 @@ export default function useFormFields(entityType: EntityWithCreateWorkflow) {
             ],
             type: 'VerticalLayout',
         };
-    }, [connectorUISchema, dataPlaneUISchema, intl]);
+    }, [connectorUISchema, dataPlaneUISchema]);
 
     const updateDetails = (details: Details) => {
         const tenant = stripPathing(details.data.entityName, true);

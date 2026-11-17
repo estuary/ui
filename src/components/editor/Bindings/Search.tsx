@@ -3,8 +3,6 @@ import type { ReactNode } from 'react';
 import { useEffect, useState } from 'react';
 import useConstant from 'use-constant';
 
-import { useIntl } from 'react-intl';
-
 import CollectionSelector from 'src/components/collection/Selector';
 import UpdateResourceConfigButton from 'src/components/editor/Bindings/UpdateResourceConfigButton';
 import {
@@ -25,17 +23,8 @@ function BindingSearch({
     readOnly = false,
     RediscoverButton,
 }: Props) {
-    const intl = useIntl();
-    const discoveredBindingsLabel = useConstant(() =>
-        intl.formatMessage({
-            id: 'workflows.collectionSelector.label.discoveredCollections',
-        })
-    );
-    const existingCollectionsLabel = useConstant(() =>
-        intl.formatMessage({
-            id: 'workflows.collectionSelector.label.existingCollections',
-        })
-    );
+    const discoveredBindingsLabel = useConstant(() => 'Discovered Collections');
+    const existingCollectionsLabel = useConstant(() => 'Existing Collections');
 
     const [collectionValues, setCollectionValues] = useState<string[]>([]);
 

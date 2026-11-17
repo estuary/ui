@@ -10,8 +10,8 @@ import {
     useState,
 } from 'react';
 
-import { supabaseClient } from 'src/context/GlobalProviders';
 import { DEFAULT_POLLING_INTERVAL, RPCS } from 'src/services/supabase';
+import { supabaseClient } from 'src/services/supabaseClient';
 import {
     hasLength,
     incrementInterval,

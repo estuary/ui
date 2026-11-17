@@ -2,8 +2,6 @@ import type { BaseComponentProps } from 'src/types';
 
 import { useEffect } from 'react';
 
-import { FormattedMessage } from 'react-intl';
-
 import FullPageError from 'src/components/fullPage/Error';
 import { useUserInfoSummaryStore } from 'src/context/UserInfoSummary/useUserInfoSummaryStore';
 import useUserInfoSummary from 'src/hooks/useUserInfoSummary';
@@ -36,7 +34,10 @@ const UserInfoSummaryStoreProvider = ({ children }: BaseComponentProps) => {
             <FullPageError
                 error={error}
                 message={
-                    <FormattedMessage id="fullPage.userInfoSummary.error" />
+                    <>
+                        We had an issue while checking if your account has
+                        access.
+                    </>
                 }
             />
         );

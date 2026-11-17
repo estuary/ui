@@ -7,7 +7,7 @@ import type {
     usePublicationSpecsExt_History,
 } from 'src/hooks/usePublicationSpecsExt';
 
-export type UseHistoryDiffFindFunction = (
+type UseHistoryDiffFindFunction = (
     publication: PublicationSpecsExt_Spec | PublicationSpecsExt_PubIds
 ) => boolean;
 

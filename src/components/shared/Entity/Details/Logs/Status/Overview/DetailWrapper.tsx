@@ -6,7 +6,7 @@ import { useIntl } from 'react-intl';
 
 import { diminishedTextColor } from 'src/context/Theme';
 
-export function DetailWrapper({
+function DetailWrapper({
     children,
     header,
     Hydrating,

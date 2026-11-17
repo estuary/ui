@@ -1,7 +1,5 @@
 import { Divider, Grid, Typography } from '@mui/material';
 
-import { FormattedMessage } from 'react-intl';
-
 import { authenticatedRoutes } from 'src/app/routes';
 import AccessToken from 'src/components/admin/Api/AccessToken';
 import { RefreshToken } from 'src/components/admin/Api/RefreshToken';
@@ -17,14 +15,15 @@ function AdminApi() {
         <>
             <AdminTabs />
 
-            <Grid container spacing={{ xs: 3, md: 2 }} sx={{ p: 2 }}>
+            <Grid container spacing={{ xs: 3, md: 2 }} sx={{ py: 2 }}>
                 <Grid size={{ xs: 12, md: 9 }}>
                     <Typography variant="h6" sx={{ mb: 0.5 }}>
-                        <FormattedMessage id="admin.cli_api.header" />
+                        Programmatic Access to Estuary
                     </Typography>
 
                     <Typography>
-                        <FormattedMessage id="admin.cli_api.message" />
+                        Use Refresh and Access tokens to connect to Estuary
+                        programmatically.
                     </Typography>
                 </Grid>
             </Grid>

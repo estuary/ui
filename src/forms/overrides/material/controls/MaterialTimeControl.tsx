@@ -41,7 +41,7 @@ import { hasLength } from 'src/utils/misc-utils';
 // This is pretty customized
 //  Look at MaterialDateTimeControl for extra notes
 //  as this is based on that but made to support Date Picker
-export const CustomMaterialTimeControl = (props: ControlProps) => {
+const CustomMaterialTimeControl = (props: ControlProps) => {
     const { data, id, visible, enabled, path, handleChange, label } = props;
 
     const { state, buttonRef, events } = useDatePickerState(

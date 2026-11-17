@@ -15,7 +15,6 @@ import {
 import { HelpCircle } from 'iconoir-react';
 import { isEmpty } from 'lodash';
 import { Duration } from 'luxon';
-import { FormattedMessage, useIntl } from 'react-intl';
 
 import useCaptureInterval from 'src/hooks/captureInterval/useCaptureInterval';
 import { useBindingStore } from 'src/stores/Binding/Store';
@@ -28,10 +27,7 @@ import { hasLength } from 'src/utils/misc-utils';
 import { CAPTURE_INTERVAL_RE } from 'src/validation';
 
 function CaptureInterval({ readOnly }: CaptureIntervalProps) {
-    const intl = useIntl();
-    const label = intl.formatMessage({
-        id: 'captureInterval.input.label',
-    });
+    const label = 'Interval';
 
     const { updateStoredInterval } = useCaptureInterval();
 
@@ -65,20 +61,20 @@ function CaptureInterval({ readOnly }: CaptureIntervalProps) {
         <Stack spacing={1}>
             <Stack direction="row" spacing={1} style={{ alignItems: 'center' }}>
                 <Typography variant="formSectionHeader">
-                    <FormattedMessage id="captureInterval.header" />
+                    Polling Interval
                 </Typography>
 
                 <Tooltip
                     placement="right-start"
-                    title={intl.formatMessage({
-                        id: 'captureInterval.tooltip',
-                    })}
+                    title="If the interval is five minutes, and an invocation of the capture finishes after two minutes, then the next invocation will be started after three additional minutes."
                 >
                     <HelpCircle style={{ fontSize: 11 }} />
                 </Tooltip>
             </Stack>
             <Typography>
-                <FormattedMessage id="captureInterval.message" />
+                Controls how often the Capture will check for new data.
+                Intervals are relative to the start of an invocation and not its
+                completion.
             </Typography>
             <Autocomplete
                 disabled={readOnly ?? loading}
@@ -125,21 +121,16 @@ function CaptureInterval({ readOnly }: CaptureIntervalProps) {
                 value={input}
             />
             <FormHelperText style={{ marginLeft: 0 }}>
-                {intl.formatMessage(
-                    { id: 'captureInterval.input.description' },
-                    {
-                        value: Duration.fromObject(defaultInterval).toHuman({
-                            listStyle: 'long',
-                            unitDisplay: 'short',
-                        }),
-                    }
-                )}
+                {`The default polling interval is ${Duration.fromObject(
+                    defaultInterval
+                ).toHuman({
+                    listStyle: 'long',
+                    unitDisplay: 'short',
+                })}.`}
             </FormHelperText>
             {errorsExist ? (
                 <FormHelperText error={errorsExist} style={{ marginLeft: 0 }}>
-                    {intl.formatMessage({
-                        id: 'captureInterval.error.intervalFormat',
-                    })}
+                    Intervals must be formatted as [0-9]+(s|m|h).
                 </FormHelperText>
             ) : null}
         </Stack>

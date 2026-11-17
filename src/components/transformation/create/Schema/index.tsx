@@ -1,7 +1,5 @@
 import { Stack, Typography } from '@mui/material';
 
-import { FormattedMessage } from 'react-intl';
-
 import SchemaEditToggle from 'src/components/editor/Bindings/SchemaEdit/Toggle';
 import { useEditorStore_id } from 'src/components/editor/Store/hooks';
 import WrapperWithHeader from 'src/components/shared/Entity/WrapperWithHeader';
@@ -33,7 +31,7 @@ function DerivationSchema() {
                     }}
                 >
                     <Typography sx={{ mr: 2 }}>
-                        <FormattedMessage id="newTransform.schema.description" />
+                        Edit the templated derivation schema below.
                     </Typography>
 
                     <Stack direction="row" spacing={1}>

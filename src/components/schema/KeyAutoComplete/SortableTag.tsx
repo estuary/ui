@@ -5,7 +5,6 @@ import { Box, chipClasses, IconButton, Tooltip, useTheme } from '@mui/material';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { MoreVert } from 'iconoir-react';
-import { useIntl } from 'react-intl';
 
 import { truncateTextSx } from 'src/context/Theme';
 import { OutlinedChip } from 'src/styledComponents/chips/OutlinedChip';
@@ -17,7 +16,6 @@ interface Props {
 }
 
 function SortableTag({ tagProps, label, validOption }: Props) {
-    const intl = useIntl();
     const theme = useTheme();
 
     const {
@@ -74,11 +72,7 @@ function SortableTag({ tagProps, label, validOption }: Props) {
                     variant="outlined"
                 />
             ) : (
-                <Tooltip
-                    title={intl.formatMessage({
-                        id: 'keyAutoComplete.keys.invalid.message',
-                    })}
-                >
+                <Tooltip title="Field is not a valid key. Please remove or update the schema.">
                     <Box>
                         <OutlinedChip
                             {...tagProps}

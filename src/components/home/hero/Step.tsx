@@ -9,7 +9,7 @@ interface Props extends BaseComponentProps {
     title: string;
 }
 
-export function HeroStep({ children, stepNumber, title }: Props) {
+function HeroStep({ children, stepNumber, title }: Props) {
     return (
         <>
             <Stack

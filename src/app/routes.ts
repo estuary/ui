@@ -141,17 +141,10 @@ const dataPlaneAuth = {
     path: '/data-plane-auth-req',
 };
 
-const express = {
-    captureCreate: {
-        title: 'routeTitle.captureCreate',
-        path: `express/captureCreate`,
-        fullPath: '/express/captureCreate',
-        new: {
-            title: 'routeTitle.captureCreate',
-            path: `new`,
-            fullPath: '/express/captureCreate/new',
-        },
-    },
+// Consent for external applications requesting access to Estuary.
+const oauthConsent = {
+    title: 'Authorize application access',
+    path: '/oauth/consent',
 };
 
 const home = {
@@ -235,6 +228,14 @@ const pageNotFound = {
     path: '*',
 };
 
+const secrets = {
+    path: 'secrets',
+    dropbox: {
+        path: 'dropbox',
+        fullPath: '/secrets/dropbox',
+    },
+};
+
 const user = {
     title: 'routeTitle.user',
     path: 'user',
@@ -263,10 +264,15 @@ export const authenticatedRoutes = {
     captures,
     collections,
     dataPlaneAuth,
-    express,
     home,
+    oauthConsent,
+    legalConsent: {
+        path: 'legal-consent',
+        fullPath: '/legal-consent',
+    },
     materializations,
     marketplace: marketplace.authenticated,
+    secrets,
     user,
     pageNotFound,
     beta,
@@ -308,4 +314,7 @@ export const unauthenticatedRoutes = {
         path: '/magicLink',
     },
     marketplace: marketplace.unauthenticated,
+    terms: {
+        path: '/terms',
+    },
 };

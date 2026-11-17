@@ -2,8 +2,6 @@ import { useState } from 'react';
 
 import { Box, Divider, Stack } from '@mui/material';
 
-import { FormattedMessage } from 'react-intl';
-
 import { authenticatedRoutes } from 'src/app/routes';
 import BindingSelectorTable from 'src/components/collection/Selector/Table';
 import { ConfigHeader } from 'src/components/derivation/Create/ConfigHeader';
@@ -33,9 +31,7 @@ function DerivationCreateConfig() {
         <Stack spacing={3}>
             <ConfigHeader entityNameError={entityNameError} />
             <StepWrapper>
-                <SingleStep>
-                    <FormattedMessage id="newTransform.collection.label" />
-                </SingleStep>
+                <SingleStep>Derived Collection Name</SingleStep>
 
                 <Divider />
 
@@ -56,9 +52,7 @@ function DerivationCreateConfig() {
             </StepWrapper>
             <LanguageSelector />
             <StepWrapper>
-                <SingleStep>
-                    <FormattedMessage id="newTransform.baseConfig.sourceCollections.label" />
-                </SingleStep>
+                <SingleStep>Source Collections</SingleStep>
 
                 <Divider />
 

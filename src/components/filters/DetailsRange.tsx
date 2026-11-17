@@ -7,11 +7,11 @@ import { Button, Menu, MenuItem, Stack, Typography } from '@mui/material';
 import { useShallow } from 'zustand/react/shallow';
 
 import { Calendar } from 'iconoir-react';
-import { FormattedMessage, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 import { DataGrains } from 'src/components/graphs/types';
 import { cardHeaderSx, linkButtonSx } from 'src/context/Theme';
-import { LUXON_GRAIN_SETTINGS } from 'src/services/luxon';
+import { getRangeLabelDescriptor } from 'src/services/luxon';
 import { useDetailsUsageStore } from 'src/stores/DetailsUsage/useDetailsUsageStore';
 
 // TODO (details range) - we should probably not add many more predefined ranges and
@@ -22,8 +22,7 @@ function DetailsRange() {
     const [range, setRange] = useDetailsUsageStore(
         useShallow((store) => [store.range, store.setRange])
     );
-    const { relativeUnit, selectedLabelKey } =
-        LUXON_GRAIN_SETTINGS[range.grain];
+    const selectedLabel = getRangeLabelDescriptor(range);
 
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
@@ -44,7 +43,7 @@ function DetailsRange() {
     return (
         <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
             <Typography id="hourly-filter-selector__label" sx={cardHeaderSx}>
-                <FormattedMessage id="detailsPanel.recentUsage.title.prefix" />
+                Usage over the past
             </Typography>
 
             <Button
@@ -62,12 +61,8 @@ function DetailsRange() {
                 sx={{ ...linkButtonSx }}
             >
                 {intl.formatMessage(
-                    {
-                        id:
-                            selectedLabelKey ??
-                            `detailsPanel.recentUsage.filter.label.${relativeUnit}`,
-                    },
-                    { range: range.amount }
+                    { id: selectedLabel.id },
+                    selectedLabel.values
                 )}
             </Button>
 
@@ -89,12 +84,7 @@ function DetailsRange() {
                         })
                     }
                 >
-                    {intl.formatMessage(
-                        { id: 'detailsPanel.recentUsage.filter.label.hours' },
-                        {
-                            range: 6,
-                        }
-                    )}
+                    6 hours
                 </MenuItem>
                 <MenuItem
                     onClick={() =>
@@ -104,12 +94,7 @@ function DetailsRange() {
                         })
                     }
                 >
-                    {intl.formatMessage(
-                        { id: 'detailsPanel.recentUsage.filter.label.hours' },
-                        {
-                            range: 12,
-                        }
-                    )}
+                    12 hours
                 </MenuItem>
                 <MenuItem
                     onClick={() =>
@@ -119,12 +104,7 @@ function DetailsRange() {
                         })
                     }
                 >
-                    {intl.formatMessage(
-                        { id: 'detailsPanel.recentUsage.filter.label.hours' },
-                        {
-                            range: 24,
-                        }
-                    )}
+                    24 hours
                 </MenuItem>
                 <MenuItem
                     onClick={() =>
@@ -134,12 +114,7 @@ function DetailsRange() {
                         })
                     }
                 >
-                    {intl.formatMessage(
-                        { id: 'detailsPanel.recentUsage.filter.label.hours' },
-                        {
-                            range: 48,
-                        }
-                    )}
+                    48 hours
                 </MenuItem>
                 <MenuItem
                     onClick={() =>
@@ -149,14 +124,7 @@ function DetailsRange() {
                         })
                     }
                 >
-                    {intl.formatMessage(
-                        {
-                            id: 'detailsPanel.recentUsage.filter.label.days',
-                        },
-                        {
-                            range: 30,
-                        }
-                    )}
+                    30 days
                 </MenuItem>
                 <MenuItem
                     onClick={() =>
@@ -166,9 +134,7 @@ function DetailsRange() {
                         })
                     }
                 >
-                    {intl.formatMessage({
-                        id: 'detailsPanel.recentUsage.filter.label.year',
-                    })}
+                    Year
                 </MenuItem>
             </Menu>
         </Stack>

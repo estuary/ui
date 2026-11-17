@@ -2,8 +2,6 @@ import type { ServerErrorProps } from 'src/components/shared/Entity/Details/Aler
 
 import { Box, boxClasses, useTheme } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 import ServerErrorDetail from 'src/components/shared/Alerts/ServerErrorDetails';
 import ServerErrorDialog from 'src/components/shared/Entity/Details/Alerts/Details/ServerErrorDialog';
 import { BUTTON_TRANSITION_TIME } from 'src/components/shared/Entity/Details/Alerts/Details/shared';
@@ -20,7 +18,7 @@ function ServerError(props: ServerErrorProps) {
         detail: { dataVal },
         short,
     } = props;
-    const intl = useIntl();
+
     const theme = useTheme();
 
     const height = short ? shortHeight : defaultHeight;
@@ -32,12 +30,7 @@ function ServerError(props: ServerErrorProps) {
 
     const previewContent = !dataValIsLong
         ? dataVal
-        : `${previewLines.splice(0, previewLinesLength).join('\n')}\n${intl.formatMessage(
-              { id: 'alerts.details.preview' },
-              {
-                  lineCount: previewLineCount - previewLinesLength,
-              }
-          )}`;
+        : `${previewLines.splice(0, previewLinesLength).join('\n')}\n...${previewLineCount - previewLinesLength} lines hidden`;
 
     return (
         <Box

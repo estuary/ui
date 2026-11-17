@@ -3,7 +3,6 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Skeleton } from '@mui/material';
 
 import { noop } from 'lodash';
-import { useIntl } from 'react-intl';
 
 import AutocompletedField from 'src/components/shared/toolbar/AutocompletedField';
 import useGlobalSearchParams, {
@@ -18,8 +17,6 @@ interface Props {
 }
 
 function TenantSelector({ updateStoreState }: Props) {
-    const intl = useIntl();
-
     const tenantNames = useEntitiesStore_tenantsWithAdmin();
     const tenantNamesHaveLength = useMemo(
         () => hasLength(tenantNames),
@@ -80,9 +77,7 @@ function TenantSelector({ updateStoreState }: Props) {
 
     return selectedTenant && tenantNamesHaveLength ? (
         <AutocompletedField
-            label={intl.formatMessage({
-                id: 'common.tenant',
-            })}
+            label="Prefix"
             options={tenantNames}
             changeHandler={noop}
             autocompleteSx={{ flexGrow: 1 }}

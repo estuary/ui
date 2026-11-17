@@ -19,9 +19,7 @@ function DisableEnableConfirmation({
                     { id: 'entityTable.disableEnable.confirm' },
                     {
                         count,
-                        setting: intl.formatMessage({
-                            id: enabling ? 'common.enabled' : 'common.disabled',
-                        }),
+                        setting: enabling ? 'Enabled' : 'Disabled',
                     }
                 )}
             </Typography>

@@ -13,12 +13,7 @@ interface Props {
 
 const INDICATOR_SIZE = 16;
 
-export function StatusIndicatorAndLabel({
-    shard,
-    smallMargin,
-    label,
-    note,
-}: Props) {
+function StatusIndicatorAndLabel({ shard, smallMargin, label, note }: Props) {
     const { id, color, disabled } = shard;
 
     const INDICATOR_MARGIN = smallMargin ? 4 : 12;

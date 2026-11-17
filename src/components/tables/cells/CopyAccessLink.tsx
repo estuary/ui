@@ -1,7 +1,5 @@
 import { TableCell, Tooltip } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 import { unauthenticatedRoutes } from 'src/app/routes';
 import CopyToClipboardButton from 'src/components/shared/buttons/CopyToClipboardButton';
 import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
@@ -16,8 +14,6 @@ const LOGIN_LINK_URL = `${window.location.origin}${unauthenticatedRoutes.login.p
 const SSO_LOGIN_LINK_URL = `${window.location.origin}${unauthenticatedRoutes.sso.login.fullPath}`;
 
 export function CopyAccessLink({ token, ssoProviderId }: Props) {
-    const intl = useIntl();
-
     const params: Record<string, string> = {
         [GlobalSearchParams.GRANT_TOKEN]: token,
     };
@@ -36,9 +32,7 @@ export function CopyAccessLink({ token, ssoProviderId }: Props) {
             <Tooltip title={accessLink}>
                 <span>
                     <CopyToClipboardButton writeValue={accessLink}>
-                        {intl.formatMessage({
-                            id: 'cta.inviteLink',
-                        })}
+                        Invite Link
                     </CopyToClipboardButton>
                 </span>
             </Tooltip>

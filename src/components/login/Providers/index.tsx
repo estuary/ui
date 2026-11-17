@@ -2,8 +2,6 @@ import type { LoginProvidersProps } from 'src/components/login/Providers/types';
 
 import { Divider, Stack } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 import SSOButton from 'src/components/login/Providers/buttons/SSO';
 import LoginButton from 'src/components/login/Providers/LoginButton';
 import useLoginHandler from 'src/components/login/Providers/useLoginHandler';
@@ -16,7 +14,6 @@ function LoginProviders({
     isRegister,
     providers = ['google', 'github', 'azure'],
 }: LoginProvidersProps) {
-    const intl = useIntl();
     const { login } = useLoginHandler(grantToken, isRegister);
 
     return (
@@ -39,11 +36,9 @@ function LoginProviders({
             {loginSettings.showSSO ? (
                 <>
                     <Divider flexItem style={{ marginTop: 32 }}>
-                        {intl.formatMessage({
-                            id: isRegister
-                                ? 'login.sso.separator'
-                                : 'login.separator',
-                        })}
+                        {isRegister
+                            ? 'Or to register with Single Sign-On'
+                            : 'or'}
                     </Divider>
 
                     <SSOButton isRegister={isRegister} />

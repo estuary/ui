@@ -2,8 +2,6 @@ import type { EntityWithCreateWorkflow } from 'src/types';
 
 import { useMemo } from 'react';
 
-import { useIntl } from 'react-intl';
-
 import { CONNECTOR_IMAGE_SCOPE } from 'src/forms/renderers/Connectors';
 import { useWorkflowStore } from 'src/stores/Workflow/Store';
 import { buildConnectorImageFromTag } from 'src/utils/connector-utils';
@@ -11,8 +9,6 @@ import { buildConnectorImageFromTag } from 'src/utils/connector-utils';
 export default function useConnectorField(
     entityType: EntityWithCreateWorkflow
 ) {
-    const intl = useIntl();
-
     const connectorTag = useWorkflowStore((state) => state.connectorMetadata);
 
     const connectorsOneOf = useMemo(() => {
@@ -32,19 +28,15 @@ export default function useConnectorField(
 
     const connectorSchema = useMemo(
         () => ({
-            description: intl.formatMessage({
-                id: 'connector.description',
-            }),
+            description: "The external system you're connecting to.",
             oneOf: connectorsOneOf,
             type: 'object',
         }),
-        [connectorsOneOf, intl]
+        [connectorsOneOf]
     );
 
     const connectorUISchema = {
-        label: intl.formatMessage({
-            id: 'entityCreate.connector.label',
-        }),
+        label: 'Connector Search',
         scope: `#/properties/${CONNECTOR_IMAGE_SCOPE}`,
         type: 'Control',
         options: {

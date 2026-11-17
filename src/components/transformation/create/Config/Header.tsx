@@ -1,7 +1,6 @@
 import { Typography, useTheme } from '@mui/material';
 
 import { WarningCircle } from 'iconoir-react';
-import { FormattedMessage } from 'react-intl';
 
 import { useEditorStore_invalidEditors } from 'src/components/editor/Store/hooks';
 import {
@@ -35,7 +34,7 @@ function DerivationCatalogHeader() {
             ) : null}
 
             <Typography component="span" variant="subtitle1">
-                <FormattedMessage id="newTransform.config.header" />
+                Database
             </Typography>
         </>
     );

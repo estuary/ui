@@ -5,7 +5,7 @@ import {
     Entity,
     StartSessionWithUserResponse,
 } from './types';
-import { expect, Page, request, TestType } from '@playwright/test';
+import { expect, Page, Request, request, TestType } from '@playwright/test';
 
 import path = require('path');
 import fs = require('fs');
@@ -124,7 +124,6 @@ export const startSessionWithUser = async (
         console.log('startingSession:login:settings:defaulting');
         authSettings = {
             email,
-            legalDone: false,
             tenant: null,
         };
 
@@ -134,7 +133,6 @@ export const startSessionWithUser = async (
     console.log('startingSession:end');
     return {
         email: authSettings?.email ?? email,
-        legalDone: authSettings?.legalDone ?? false,
         tenant: authSettings?.tenant ?? null,
         filePath,
         name,
@@ -150,29 +148,11 @@ export const inituser = async (
 ): Promise<AuthProps> => {
     let newTenant;
 
-    const { name, email, filePath, legalDone, tenant } =
-        await startSessionWithUser(page, test, originalName);
-
-    console.log(`legal:checking`, { legalDone });
-    if (!legalDone) {
-        console.log(`legal:started:${name}`);
-
-        // Agree to Legal
-        const legalStuffResponse = await expect
-            .soft(page.getByText('Legal Stuff'))
-            .toBeVisible();
-
-        await page
-            .getByText('I accept the Privacy Policy and Terms of Service')
-            .click();
-        await page.getByRole('button', { name: 'Continue' }).click();
-
-        updateSavedAuth(filePath, {
-            legalDone: true,
-        });
-
-        console.log(`legal:done:${name}`);
-    }
+    const { name, email, filePath, tenant } = await startSessionWithUser(
+        page,
+        test,
+        originalName
+    );
 
     console.log(`tenant:checking`, { tenant });
     if (!tenant) {
@@ -184,16 +164,31 @@ export const inituser = async (
         await expect(page.getByText(`Where did you hear about`)).toBeVisible();
 
         // Create Tenant
-        await page.getByRole('textbox', { name: 'Organization' }).click();
-        await page.getByLabel('Organization').type(`${name}${tenantSuffix}`);
+        await page.getByLabel('Organization Name').fill(newTenant);
+
+        // Choose an available data plane.
+        await page.getByRole('combobox', { name: 'Data plane' }).click();
+        await page
+            .getByRole('option')
+            .filter({ hasNotText: 'Select a data plane' })
+            .first()
+            .click();
 
         // Tell how we heard
-        await page.getByText('Other').click();
+        await page
+            .getByRole('combobox', {
+                name: 'Where did you hear about Estuary?',
+            })
+            .click();
+        await page.getByRole('option', { name: 'Other' }).click();
+
+        // Agree to Legal
+        await page
+            .getByRole('checkbox', { name: /I have read and accept the/ })
+            .check();
 
         // Finish
-        await page
-            .getByRole('button', { name: 'Complete Registration' })
-            .click();
+        await page.getByRole('button', { name: 'Continue' }).click();
 
         updateSavedAuth(filePath, {
             tenant: newTenant,
@@ -213,7 +208,6 @@ export const inituser = async (
     return {
         email,
         filePath,
-        legalDone: true,
         name,
         saved: true,
         tenant: tenant ?? newTenant ?? 'ERROR_WITH_TENANT',
@@ -247,13 +241,11 @@ export const getLinkForEntity = (entity: Entity) => {
 };
 
 export const goToEntityPage = async (page: Page, entity: Entity) => {
-    await page.getByLabel(getLinkForEntity(entity)).click();
+    await page
+        .getByRole('link', { name: getLinkForEntity(entity), exact: true })
+        .click();
 };
 
-// TODO (FIX THIS)
-// This stupid thing won't work for some reason I cannot figure out.
-//  The link is there, I can see it, Playwright test-gen can see it, but
-//  the test cannot see the link.
 export const openDetailsFromTable = async (
     page: Page,
     name: string,
@@ -269,28 +261,146 @@ export const openDetailsFromTable = async (
     await page.waitForURL(`**/${entity}`);
 
     // Open the details
-    await page.getByRole('link', { name }).click();
+    await page.getByRole('link', { name: `View details of ${name}` }).click();
+    await page.waitForURL('**/details/**');
 };
 
 export const defaultPageSetup = async (page: Page, test: any, name: string) => {
     await page.route('*js.stripe*', async () => {});
     await page.route('*lr.com', async () => {});
     await defaultLocalStorage(page);
+
+    const restored = await restoreSession(page, test, name);
+    if (restored) {
+        return restored;
+    }
+
     const response = await inituser(page, test, name);
+    await saveSession(page, test, name);
+
     return response;
 };
 
-export const saveAndPublish = async (page: Page) => {
-    // Save, wait, assert, close, view details
-    await page.getByRole('button', { name: 'Save and publish' }).click();
-
-    // Dumb but it works. This was randomly messing up so just adding some buffer
-    await page.waitForTimeout(5000);
-
+// Saves the page's browser state as the user's latest sign in
+export const saveSession = async (page: Page, test: any, name: string) => {
     await page
-        .getByRole('listitem')
-        .locator('div')
-        .filter({ hasText: 'Success' });
+        .context()
+        .storageState({ path: getSessionStatePath(test, name) });
+};
 
-    await page.getByRole('button', { name: 'Close' }).click();
+const APP_ORIGIN = 'http://localhost:3000';
+
+// The browser state of a user's last sign in, so later tests can skip the
+// emailed OTP while that session is still valid
+const getSessionStatePath = (test: any, name: string) =>
+    `${test.info().project.testDir}/.auth/${name}.state.json`;
+
+// Signs `page` in with the user's saved browser state. Resolves to null when
+// there's no saved state, or its session is no longer valid.
+const restoreSession = async (
+    page: Page,
+    test: any,
+    name: string
+): Promise<AuthProps | null> => {
+    const statePath = getSessionStatePath(test, name);
+    const authPath = `${test.info().project.testDir}/.auth/${name}.json`;
+    if (!fs.existsSync(statePath) || !fs.existsSync(authPath)) {
+        return null;
+    }
+
+    const authSettings: AuthFile = JSON.parse(
+        fs.readFileSync(authPath).toString()
+    );
+    if (!authSettings.tenant) {
+        return null;
+    }
+
+    const state = JSON.parse(fs.readFileSync(statePath).toString());
+    const localStorageItems =
+        state.origins?.find((origin: any) => origin.origin === APP_ORIGIN)
+            ?.localStorage ?? [];
+
+    await page.context().addCookies(state.cookies ?? []);
+
+    // Only the page's first load is restored, so signing out sticks
+    await page.context().addInitScript((items) => {
+        if (window.sessionStorage.getItem('pw-session-restored')) {
+            return;
+        }
+        window.sessionStorage.setItem('pw-session-restored', 'true');
+        items.forEach(({ name: key, value }: any) =>
+            window.localStorage.setItem(key, value)
+        );
+    }, localStorageItems);
+
+    await page.goto(`${APP_ORIGIN}/welcome`);
+
+    const welcome = page.getByText('Welcome to Estuary!');
+    const signIn = page.getByText('Get started with Estuary');
+    await expect(welcome.or(signIn)).toBeVisible();
+
+    if (!(await welcome.isVisible())) {
+        console.log('restoreSession:expired', { name });
+        return null;
+    }
+
+    console.log('restoreSession:restored', { name });
+    return {
+        email: authSettings.email,
+        filePath: authPath,
+        name,
+        saved: true,
+        tenant: authSettings.tenant,
+    };
+};
+
+// Closing the logs before the workflow sees the job succeed leaves it on the
+// form, so wait for its success alert first
+export const closeLogsOnSuccess = async (page: Page) => {
+    const logs = page.getByRole('dialog');
+
+    await expect(logs.getByRole('alert').getByText('Success')).toBeVisible({
+        timeout: 120000,
+    });
+    await logs.getByRole('button', { name: 'Close' }).click();
+};
+
+// Publishes from the workflow and closes the logs once it succeeds, which
+// opens the published task's details
+export const publishAndOpenDetails = async (page: Page) => {
+    await page.getByRole('button', { name: 'Save and publish' }).click();
+    await closeLogsOnSuccess(page);
+    await page.waitForURL('**/details/**');
+};
+
+// Records the page's requests that match, from now on
+export const recordRequests = (
+    page: Page,
+    matches: (request: Request) => boolean
+) => {
+    const recorded: Request[] = [];
+    page.on('request', (pageRequest) => {
+        if (matches(pageRequest)) {
+            recorded.push(pageRequest);
+        }
+    });
+
+    return recorded;
+};
+
+// An endpoint config sent to the encryption service
+export const isEncryptRequest = (pageRequest: Request) =>
+    pageRequest.url().includes('/functions/v1/oauth') &&
+    (pageRequest.postData() ?? '').includes('encrypt-config');
+
+// A new draft being created, through GraphQL or PostgREST
+export const isCreateDraftRequest = (pageRequest: Request) => {
+    const url = new URL(pageRequest.url());
+
+    return (
+        (url.pathname.endsWith('/graphql') &&
+            (pageRequest.postData() ?? '').includes('CreateDraft')) ||
+        (pageRequest.method() === 'POST' &&
+            url.pathname.endsWith('/rest/v1/drafts'))
+    );
 };

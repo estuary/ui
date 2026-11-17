@@ -1,7 +1,6 @@
 import { Button, Grid } from '@mui/material';
 
 import { Plus } from 'iconoir-react';
-import { FormattedMessage } from 'react-intl';
 import { NavLink } from 'react-router-dom';
 
 import { authenticatedRoutes } from 'src/app/routes';
@@ -28,7 +27,7 @@ function HeroDetail() {
                         startIcon={<Plus style={{ fontSize: 14 }} />}
                         sx={{ minWidth: 160 }}
                     >
-                        <FormattedMessage id="home.hero.companyDetails.cta" />
+                        New capture
                     </Button>
                 </NavLink>
             </Grid>

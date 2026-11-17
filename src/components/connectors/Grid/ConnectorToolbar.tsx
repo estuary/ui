@@ -11,7 +11,6 @@ import { Grid, Toolbar } from '@mui/material';
 
 import { usePostHog } from '@posthog/react';
 import { debounce } from 'lodash';
-import { useIntl } from 'react-intl';
 import { useUnmount } from 'react-use';
 
 import AutocompletedField from 'src/components/shared/toolbar/AutocompletedField';
@@ -26,21 +25,21 @@ function ConnectorToolbar({
     setSearchQuery,
 }: ConnectorToolbarProps) {
     const postHog = usePostHog();
-    const intl = useIntl();
+
     const isFiltering = useRef(false);
 
     const protocolOptions: ProtocolOption[] = useConstant(() => [
         {
             protocol: null,
-            message: intl.formatMessage({ id: 'common.optionsAll' }),
+            message: 'All',
         },
         {
             protocol: 'capture',
-            message: intl.formatMessage({ id: 'terms.capture' }),
+            message: 'Capture',
         },
         {
             protocol: 'materialization',
-            message: intl.formatMessage({ id: 'terms.materialization' }),
+            message: 'Materialization',
         },
     ]);
 
@@ -92,9 +91,7 @@ function ConnectorToolbar({
             >
                 <Grid size={{ xs: 12, md: hideProtocol ? 12 : 6 }}>
                     <SearchField
-                        label={intl.formatMessage({
-                            id: 'connectorTable.filterLabel',
-                        })}
+                        label="Search connectors"
                         changeHandler={handlers.filterTiles}
                         autoFocus={true}
                     />
@@ -103,15 +100,11 @@ function ConnectorToolbar({
                 {hideProtocol ? null : (
                     <Grid size={{ xs: 4, md: 2 }}>
                         <AutocompletedField
-                            label={intl.formatMessage({
-                                id: 'connectorTable.data.protocol',
-                            })}
+                            label="Protocol"
                             options={protocolOptions.map(
                                 ({ message }) => message
                             )}
-                            defaultValue={intl.formatMessage({
-                                id: 'common.optionsAll',
-                            })}
+                            defaultValue="All"
                             changeHandler={handlers.setProtocol}
                         />
                     </Grid>

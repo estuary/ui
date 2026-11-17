@@ -2,8 +2,6 @@ import type { ProviderButtonProps } from 'src/components/login/Providers/types';
 
 import { Button } from '@mui/material';
 
-import { FormattedMessage } from 'react-intl';
-
 import { defaulticonSize } from 'src/components/login/Providers/buttons/shared';
 import useLoginHints from 'src/hooks/searchParams/useLoginHints';
 
@@ -100,9 +98,7 @@ const GoogleButton = ({ login, isRegister, ...props }: ProviderButtonProps) => {
             }
             variant="outlined"
         >
-            <FormattedMessage
-                id={isRegister ? 'cta.register.google' : 'cta.login.google'}
-            />
+            {isRegister ? 'Register with Google' : 'Sign in with Google'}
         </Button>
     );
 };

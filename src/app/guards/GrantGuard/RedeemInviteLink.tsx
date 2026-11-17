@@ -62,9 +62,7 @@ export function RedeemInviteLink({ grantToken }: Props) {
             <FullPageWrapper>
                 <Stack spacing={2}>
                     <Typography variant="h5" align="center">
-                        {intl.formatMessage({
-                            id: 'tenant.grantDirective.error.header',
-                        })}
+                        Unable to Provision Access
                     </Typography>
 
                     <Error error={redeemError} condensed />
@@ -80,9 +78,7 @@ export function RedeemInviteLink({ grantToken }: Props) {
             <FullPageWrapper>
                 <Stack spacing={2}>
                     <Typography variant="h5" align="center">
-                        {intl.formatMessage({
-                            id: 'tenant.grantDirective.success.header',
-                        })}
+                        Access Granted
                     </Typography>
 
                     <Typography>
@@ -120,9 +116,7 @@ export function RedeemInviteLink({ grantToken }: Props) {
                             onClick={handleContinue}
                             sx={{ mt: 2 }}
                         >
-                            {intl.formatMessage({
-                                id: 'tenant.grantDirective.success.cta',
-                            })}
+                            Go to Dashboard
                         </Button>
                     </Box>
                 </Stack>

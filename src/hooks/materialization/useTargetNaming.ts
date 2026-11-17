@@ -5,7 +5,6 @@ import { useCallback, useState } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 
 import { useSnackbar } from 'notistack';
-import { useIntl } from 'react-intl';
 
 import { useWriteRootTargetNaming } from 'src/hooks/materialization/useWriteRootTargetNaming';
 import { useBinding_sourceCaptureFlags } from 'src/stores/Binding/hooks';
@@ -15,7 +14,6 @@ import { useTargetNamingStore } from 'src/stores/TargetNaming/Store';
 import { snackbarSettings } from 'src/utils/notification-utils';
 
 function useTargetNaming() {
-    const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
 
     const setFormState = useFormStateStore_setFormState();
@@ -89,12 +87,10 @@ function useTargetNaming() {
                     setFormState({ status: FormStatus.UPDATED });
                 })
                 .catch((error) => {
-                    enqueueSnackbar(
-                        intl.formatMessage({
-                            id: 'specPropEditor.update.error',
-                        }),
-                        { ...snackbarSettings, variant: 'error' }
-                    );
+                    enqueueSnackbar('Changes to draft not saved.', {
+                        ...snackbarSettings,
+                        variant: 'error',
+                    });
                     setFormState({ status: FormStatus.FAILED });
                     return Promise.reject(error);
                 })
@@ -102,7 +98,6 @@ function useTargetNaming() {
         },
         [
             enqueueSnackbar,
-            intl,
             setFormState,
             setSaving,
             setStrategy,

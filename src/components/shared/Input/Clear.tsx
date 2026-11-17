@@ -1,16 +1,12 @@
 import { Close } from '@mui/icons-material';
 import { IconButton, InputAdornment } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 interface Props {
     onClear: (emptyValue: string) => void;
     show?: boolean;
 }
 
 function ClearInput({ onClear, show }: Props) {
-    const intl = useIntl();
-
     return (
         <InputAdornment
             position="end"
@@ -21,9 +17,7 @@ function ClearInput({ onClear, show }: Props) {
             }}
         >
             <IconButton
-                aria-label={intl.formatMessage({
-                    id: 'jsonForms.clearInput',
-                })}
+                aria-label="Clear input field"
                 onClick={() => onClear('')}
                 size="large"
             >

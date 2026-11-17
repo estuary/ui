@@ -19,7 +19,7 @@ interface Props {
     message: string;
 }
 
-export function CatalogEditor({ message }: Props) {
+function CatalogEditor({ message }: Props) {
     const draftId = useEditorStore_id();
 
     const formStatus = useFormStateStore_status();

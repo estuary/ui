@@ -13,7 +13,7 @@ import {
 // in the event additional resources are not available initially.
 export const MAX_FIELD_SELECTION_VALIDATION_ATTEMPTS = 1;
 
-export const updateShardDisabled = (draftSpec: any, enabling: boolean) => {
+const updateShardDisabled = (draftSpec: any, enabling: boolean) => {
     draftSpec.shards ??= {};
     draftSpec.shards.disable = !enabling;
 };
@@ -56,7 +56,7 @@ export const getSourceCapturePropKey = (draftSpec: any) => {
     return 'source';
 };
 
-export const getSourceCapture = (
+const getSourceCapture = (
     sourceCapture: SourceCaptureDef | string | null | undefined
 ): SourceCaptureDef | null => {
     if (!sourceCapture) {

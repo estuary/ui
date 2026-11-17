@@ -9,7 +9,6 @@ import {
 } from '@mui/material';
 
 import { SidebarCollapse } from 'iconoir-react';
-import { FormattedMessage } from 'react-intl';
 
 import { useShowSidePanelDocs } from 'src/context/SidePanelDocs';
 import { logRocketEvent } from 'src/services/shared';
@@ -38,7 +37,7 @@ function SidePanelDocsOpenButton() {
                 <Tooltip
                     arrow
                     placement="bottom-end"
-                    title={<FormattedMessage id="docs.cta.expand.tooltip" />}
+                    title={<>Expand Connector Help</>}
                 >
                     <Button
                         size="small"
@@ -57,7 +56,7 @@ function SidePanelDocsOpenButton() {
                             />
                         }
                     >
-                        <FormattedMessage id="docs.cta.expand" />
+                        Help
                     </Button>
                 </Tooltip>
             </Box>

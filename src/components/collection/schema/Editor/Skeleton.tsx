@@ -1,19 +1,17 @@
 import { Skeleton, Stack, Typography } from '@mui/material';
 
-import { FormattedMessage } from 'react-intl';
-
 function CollectionSchemaEditorSkeleton() {
     return (
         <>
             <Stack>
                 <Typography variant="subtitle1" component="div">
-                    <FormattedMessage id="entityName.label" />
+                    Name
                 </Typography>
                 <Skeleton width={150} height={50} sx={{ mb: 1, mt: 0 }} />
             </Stack>
 
             <Typography variant="subtitle1" component="div">
-                <FormattedMessage id="schemaEditor.key.label" />
+                Key
             </Typography>
             <Stack direction="row" spacing={2}>
                 <Skeleton
@@ -38,7 +36,7 @@ function CollectionSchemaEditorSkeleton() {
 
             <Stack>
                 <Typography variant="subtitle1" component="span">
-                    <FormattedMessage id="schemaEditor.fields.label" />
+                    Schema
                 </Typography>
                 <Skeleton variant="rectangular" height={30} sx={{ mb: 1 }} />
                 <Skeleton

@@ -86,11 +86,11 @@ interface SelectOutputReason {
 }
 
 // Skim Projections (Will probably pull these into a "flow" type file eventually)
-export interface BasicSchemaModel {
+interface BasicSchemaModel {
     schema: any;
 }
 
-export interface SplitSchemaModel {
+interface SplitSchemaModel {
     writeSchema: any;
     readSchema: any;
 }

@@ -7,7 +7,6 @@ import {
 } from '@mui/material';
 
 import { Xmark } from 'iconoir-react';
-import { FormattedMessage } from 'react-intl';
 
 import SidePanelIframe from 'src/components/sidePanelDocs/Iframe';
 import { useShowSidePanelDocs } from 'src/context/SidePanelDocs';
@@ -32,12 +31,11 @@ function DocsSidePanel({ show }: Props) {
                     width: '100%',
                     boxSizing: 'border-box',
                     position: 'absolute',
+                    borderLeft: 'none',
                 },
             }}
             open={show}
         >
-            <Toolbar />
-
             <Toolbar
                 sx={{
                     display: 'flex',
@@ -46,7 +44,7 @@ function DocsSidePanel({ show }: Props) {
                 }}
             >
                 <Typography variant="h5" component="span">
-                    <FormattedMessage id="entityCreate.docs.header" />
+                    Connector Help
                 </Typography>
 
                 <IconButton

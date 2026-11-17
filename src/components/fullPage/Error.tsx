@@ -3,15 +3,15 @@ import type { ErrorDetails } from 'src/components/shared/Error/types';
 
 import { useMemo } from 'react';
 
-import { Divider, Stack, Typography } from '@mui/material';
+import { Button, Divider, Stack, Typography } from '@mui/material';
 
-import { FormattedMessage } from 'react-intl';
 import { useMount } from 'react-use';
 
 import FullPageWrapper from 'src/app/FullPageWrapper';
 import MessageWithLink from 'src/components/content/MessageWithLink';
 import Error from 'src/components/shared/Error';
 import { logRocketEvent } from 'src/services/shared';
+import { supabaseClient } from 'src/services/supabaseClient';
 import { CustomEvents } from 'src/services/types';
 
 interface Props {
@@ -46,16 +46,37 @@ function FullPageError({
         <FullPageWrapper>
             <Stack spacing={2}>
                 <Typography variant="h5">
-                    {title ? (
-                        title
-                    ) : (
-                        <FormattedMessage id="common.failedFetch" />
-                    )}
+                    {title ? title : 'Unable to reach server'}
                 </Typography>
                 {messageContent}
                 <Typography variant="subtitle1">
                     <MessageWithLink messageID="fullPage.instructions" />
                 </Typography>
+
+                <Stack
+                    direction="row"
+                    spacing={1}
+                    justifyContent="space-between"
+                >
+                    <Button
+                        variant="contained"
+                        onClick={() => {
+                            window.location.reload();
+                        }}
+                    >
+                        Reload
+                    </Button>
+
+                    <Button
+                        variant="outlined"
+                        onClick={() => {
+                            void supabaseClient.auth.signOut();
+                        }}
+                    >
+                        Logout
+                    </Button>
+                </Stack>
+
                 <Divider />
                 <Error error={error} condensed />
             </Stack>

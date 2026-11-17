@@ -14,8 +14,6 @@ import {
     Typography,
 } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 import { useInviteLinks } from 'src/api/gql/inviteLinks';
 import { Row } from 'src/components/tables/AccessGrants/AccessLinks/Row';
 import EntityTableBody from 'src/components/tables/EntityTable/TableBody';
@@ -55,8 +53,6 @@ const columns: TableColumns[] = [
 ];
 
 export function AccessLinksTable({ setError }: InviteErrorProps) {
-    const intl = useIntl();
-
     const { currentPage, cursor, goToPage, onPageChange } =
         useCursorPagination();
 
@@ -107,17 +103,13 @@ export function AccessLinksTable({ setError }: InviteErrorProps) {
     return (
         <Box>
             <Typography variant="subtitle1" sx={{ mb: 1 }}>
-                {intl.formatMessage({
-                    id: 'accessGrants.table.accessLinks.title',
-                })}
+                Active Invite Links
             </Typography>
             <TableContainer>
                 <Table
                     size="small"
                     sx={{ minWidth: 350, borderCollapse: 'separate' }}
-                    aria-label={intl.formatMessage({
-                        id: 'accessGrants.table.accessLinks.title',
-                    })}
+                    aria-label="Active Invite Links"
                 >
                     <EntityTableHeader columns={columns} />
 

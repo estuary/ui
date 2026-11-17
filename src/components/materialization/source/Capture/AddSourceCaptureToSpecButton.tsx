@@ -8,8 +8,6 @@ import { Button } from '@mui/material';
 import { useStore } from 'zustand';
 import { useShallow } from 'zustand/react/shallow';
 
-import { useIntl } from 'react-intl';
-
 import { TargetNamingFormContent } from 'src/components/materialization/targetNaming/FormContent';
 import { useConfirmationModalContext } from 'src/context/Confirmation';
 import invariableStores from 'src/context/Zustand/invariableStores';
@@ -24,7 +22,6 @@ import { useBindingStore } from 'src/stores/Binding/Store';
 import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
 
 function AddSourceCaptureToSpecButton({ toggle }: AddCollectionDialogCTAProps) {
-    const intl = useIntl();
     const [updating, setUpdating] = useState(false);
 
     const selected = useStore(
@@ -193,7 +190,7 @@ function AddSourceCaptureToSpecButton({ toggle }: AddCollectionDialogCTAProps) {
             onClick={handleContinue}
             disabled={updating}
         >
-            {intl.formatMessage({ id: 'cta.continue' })}
+            Continue
         </Button>
     );
 }

@@ -1,11 +1,10 @@
 import type { ReactNode } from 'react';
 import type { DraftSpecQuery } from 'src/hooks/useDraftSpecs';
+import type { MessagePrefixes } from 'src/types';
 
 import { useEffect, useMemo } from 'react';
 
 import { Stack, Typography, useTheme } from '@mui/material';
-
-import { useIntl } from 'react-intl';
 
 import AutoDiscoverySettings from 'src/components/capture/AutoDiscoverySettings';
 import CaptureInterval from 'src/components/capture/Interval';
@@ -38,7 +37,16 @@ interface Props {
     RediscoverButton?: ReactNode;
 }
 
-const height = 550;
+const HEIGHT = 550;
+const ITEM_TYPE = 'Collections';
+
+const INSTRUCTION_MESSAGES: Record<MessagePrefixes, string> = {
+    captureCreate: `The collections bound to your capture. To update the configuration, please update the fields under the Config tab. To update the schema, click Edit under the Collection tab.`,
+    captureEdit: `The collections bound to your existing capture. To update the configuration, please update the fields under the Config tab. To update the schema, click Edit under the Collection tab.`,
+    materializationCreate: `Choose one or more collections to materialize.`,
+    materializationEdit: `The collections bound to your materialization. Update configuration under the Endpoint Config tab.`,
+    newTransform: '',
+};
 
 function BindingsMultiEditor({
     draftSpecs = [],
@@ -50,7 +58,6 @@ function BindingsMultiEditor({
     useValidateFieldSelection();
     useTargetNamingHydrator();
 
-    const intl = useIntl();
     const theme = useTheme();
 
     const localStore = useMemo(
@@ -72,6 +79,7 @@ function BindingsMultiEditor({
 
     // Form State Store
     const messagePrefix = useFormStateStore_messagePrefix();
+    const instructions = INSTRUCTION_MESSAGES[messagePrefix];
 
     const removeDiscoveredCollectionOptions = useMemo(() => {
         if (
@@ -95,14 +103,6 @@ function BindingsMultiEditor({
         }
     }, [removeDiscoveredBindings, removeDiscoveredCollectionOptions]);
 
-    // For captures we want to show the bindings config as "Bindings"
-    //  Other entities we still call them "collections" so we set to undefined
-    //      as the default display is "collections"
-    const itemType =
-        entityType === 'capture'
-            ? intl.formatMessage({ id: 'terms.bindings' })
-            : intl.formatMessage({ id: 'terms.collections' });
-
     return (
         <LocalZustandProvider createStore={localStore}>
             <Stack spacing={5} sx={{ mb: 5 }}>
@@ -118,16 +118,12 @@ function BindingsMultiEditor({
                 <AdvancedOptions />
             </Stack>
 
-            <Typography sx={{ mb: 2 }}>
-                {intl.formatMessage({
-                    id: `${messagePrefix}.collectionSelector.instructions`,
-                })}
-            </Typography>
+            <Typography sx={{ mb: 2 }}>{instructions}</Typography>
 
             <ListAndDetails
                 list={
                     <BindingSelector
-                        itemType={itemType}
+                        itemType={ITEM_TYPE}
                         readOnly={readOnly}
                         RediscoverButton={RediscoverButton}
                     />
@@ -135,7 +131,7 @@ function BindingsMultiEditor({
                 details={
                     <ErrorBoundryWrapper>
                         <BindingsEditor
-                            itemType={itemType}
+                            itemType={ITEM_TYPE}
                             readOnly={readOnly}
                         />
                     </ErrorBoundryWrapper>
@@ -144,7 +140,7 @@ function BindingsMultiEditor({
                     alternativeReflexContainerBackground[theme.palette.mode]
                 }
                 displayBorder={true}
-                height={height}
+                height={HEIGHT}
             />
         </LocalZustandProvider>
     );

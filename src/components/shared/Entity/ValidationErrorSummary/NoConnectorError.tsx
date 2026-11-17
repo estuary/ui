@@ -1,24 +1,16 @@
-import { useIntl } from 'react-intl';
-
 import KeyValueList from 'src/components/shared/KeyValueList';
 
 function NoConnectorError() {
-    const intl = useIntl();
-
     const filteredErrorsList: any[] = [
         {
-            title: intl.formatMessage({
-                id: 'entityCreate.endpointConfig.noConnectorSelected',
-            }),
+            title: 'To start the creation process you must select a Connector. You can change this later.',
         },
     ];
 
     return (
         <KeyValueList
             data={filteredErrorsList}
-            sectionTitle={intl.formatMessage({
-                id: 'entityCreate.endpointConfig.noConnectorSelectedTitle',
-            })}
+            sectionTitle="Please select a Connector to begin"
         />
     );
 }

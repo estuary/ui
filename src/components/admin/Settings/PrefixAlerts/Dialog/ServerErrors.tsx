@@ -9,7 +9,7 @@ import { hasLength } from 'src/utils/misc-utils';
 export default function ServerErrors() {
     const serverErrors = useAlertSubscriptionsStore(
         useShallow((state) =>
-            [state.initializationError].concat(state.saveErrors)
+            state.initializationErrors.concat(state.serverErrors)
         )
     );
 

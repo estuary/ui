@@ -1,13 +1,10 @@
 import type { BaseComponentProps } from 'src/types';
 
-import { useIntl } from 'react-intl';
-
 import AlertBox from 'src/components/shared/AlertBox';
 import { useEntityTypeTranslatedForWorkflows } from 'src/context/EntityContext';
 import useCanEditEntity from 'src/hooks/useCanEditEntity';
 
 function EditCapabilityGuard({ children }: BaseComponentProps) {
-    const intl = useIntl();
     const entityType = useEntityTypeTranslatedForWorkflows();
     const canEditEntity = useCanEditEntity();
 
@@ -16,16 +13,9 @@ function EditCapabilityGuard({ children }: BaseComponentProps) {
             <AlertBox
                 short={false}
                 severity="error"
-                title={intl.formatMessage({
-                    id: 'workflows.guards.edit.title',
-                })}
+                title="Missing edit Access Grants"
             >
-                {intl.formatMessage(
-                    { id: 'workflows.guards.edit.message' },
-                    {
-                        entityType,
-                    }
-                )}
+                {`You do not have edit capabilities for this ${entityType}. Please contact an administrator to request access.`}
             </AlertBox>
         );
     }

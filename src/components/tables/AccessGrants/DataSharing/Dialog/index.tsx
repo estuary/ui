@@ -14,7 +14,6 @@ import {
 } from '@mui/material';
 
 import { Xmark } from 'iconoir-react';
-import { FormattedMessage } from 'react-intl';
 
 import AlertBox from 'src/components/shared/AlertBox';
 import Error from 'src/components/shared/Error';
@@ -55,9 +54,7 @@ function ShareDataDialog({ open, setOpen }: Props) {
                     justifyContent: 'space-between',
                 }}
             >
-                <Typography variant="h6">
-                    <FormattedMessage id="admin.prefix.issueGrant.header" />
-                </Typography>
+                <Typography variant="h6">Share Data</Typography>
 
                 <IconButton onClick={closeDialog}>
                     <Xmark
@@ -75,13 +72,16 @@ function ShareDataDialog({ open, setOpen }: Props) {
                         {serverError.code === '42501' ? (
                             <AlertBox severity="error" short>
                                 <Typography>
-                                    <FormattedMessage id="admin.prefix.issueGrant.error.invalidPrefix" />
+                                    The value entered in the Shared Prefix text
+                                    field is not an extension of an existing
+                                    prefix.
                                 </Typography>
                             </AlertBox>
                         ) : serverError.code === '23505' ? (
                             <AlertBox severity="error" short>
                                 <Typography>
-                                    <FormattedMessage id="admin.prefix.issueGrant.error.duplicatePrefix" />
+                                    The requested access has already been
+                                    provisioned.
                                 </Typography>
                             </AlertBox>
                         ) : (

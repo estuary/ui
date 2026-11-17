@@ -56,7 +56,7 @@ import { CustomMuiInputText } from 'src/forms/overrides/material/controls/MuiInp
 //      This requires that we remove the "Z" (that we inject) before opening the picker
 //      otherwise the picker will try to adjust the timezone again.
 
-export const CustomMaterialDateTimeControl = (props: ControlProps) => {
+const CustomMaterialDateTimeControl = (props: ControlProps) => {
     const { data, id, visible, enabled, path, handleChange, label } = props;
     const { state, buttonRef, events } = useDatePickerState(
         `date-time-picker-${id}`
