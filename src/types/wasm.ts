@@ -47,6 +47,14 @@ interface FieldSelection {
     values?: string[];
 }
 
+// What the resolve_built_collections WASM routine returns: the collections of
+// a built spec and, for each of its bindings, the index of that binding's
+// collection, or null when it does not resolve.
+export interface ResolvedBuiltCollections {
+    collections: { name: string }[];
+    bindings: (number | null)[];
+}
+
 export interface FieldSelectionInput_Skim {
     collection: {
         name: string;

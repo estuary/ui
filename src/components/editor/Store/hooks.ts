@@ -680,11 +680,14 @@ export const useHydrateEditorState = (
             setQueryResponse(response);
 
             if (response.draftSpecs.length > 0) {
-                setRelatedBindingIndices(
-                    response.draftSpecs[0].built_spec,
-                    response.draftSpecs[0].validated,
-                    liveBuiltSpec
-                );
+                // Only materialization field selection reads these indices.
+                if (specType === 'materialization') {
+                    setRelatedBindingIndices(
+                        response.draftSpecs[0].built_spec,
+                        response.draftSpecs[0].validated,
+                        liveBuiltSpec
+                    );
+                }
 
                 // TODO (draft init / workflow)
                 // This is hacky - but will work for now. We need to know about
@@ -702,6 +705,7 @@ export const useHydrateEditorState = (
         liveBuiltSpec,
         setQueryResponse,
         setRelatedBindingIndices,
+        specType,
         response,
         hydrateCollections,
     ]);

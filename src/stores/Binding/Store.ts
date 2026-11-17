@@ -58,6 +58,7 @@ import {
 import { getStoreWithToggleDisableSettings } from 'src/stores/Binding/slices/ToggleDisable';
 import { getStoreWithHydrationSettings } from 'src/stores/extensions/Hydration';
 import { BindingStoreNames } from 'src/stores/names';
+import { getBuiltBindingIndex } from 'src/utils/builtSpec-utils';
 import { hasLength } from 'src/utils/misc-utils';
 import { devtoolsOptions } from 'src/utils/store-utils';
 import { parsePostgresInterval } from 'src/utils/time-utils';
@@ -65,7 +66,6 @@ import {
     getBackfillCounter,
     getBindingIndex,
     getBindingIndexByResourcePath,
-    getBuiltBindingIndex,
     getCollectionName,
 } from 'src/utils/workflow-utils';
 import { POSTGRES_INTERVAL_RE } from 'src/validation';
