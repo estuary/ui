@@ -4,18 +4,17 @@ import type { ResolvedBuiltCollections } from 'src/types/wasm';
 
 import { resolve_built_collections } from '@estuary/flow-web';
 
+import { logRocketEvent } from 'src/services/shared';
+
 // Results are kept for as long as their built spec object is, so that
 // flow-web is called once for each built spec.
 const builtCollections = new WeakMap<Schema, (BuiltCollection | undefined)[]>();
 
-// The collection of each binding of a built materialization, in binding
-// order. A built spec names those collections inline or through a shared
-// table, and flow-web decides which applies.
+// The collection of each binding of a built materialization, in binding order.
+// Expects the camelCase JSON Flow writes to built_spec.
 //
-// The time flow-web takes grows with the size of the spec it is given, and
-// almost all of that size is collections. So it is given only what decides
-// the answer: the `collection` and `collectionIndex` of each binding and the
-// table, with a numbered stand-in in place of every collection.
+// Pass only the collection references and numbered stand-ins to keep full
+// collection specs out of the WASM call.
 export const getBuiltCollections = (
     builtSpec: Schema | null
 ): (BuiltCollection | undefined)[] => {
@@ -32,25 +31,39 @@ export const getBuiltCollections = (
             return { name: String(originals.length - 1) };
         };
 
-        const { collections, bindings }: ResolvedBuiltCollections =
-            resolve_built_collections({
-                specType: 'materialization',
-                builtSpec: {
-                    bindings: builtSpec.bindings?.map((binding: Schema) => ({
-                        collection:
-                            binding.collection && standIn(binding.collection),
-                        collectionIndex: binding.collectionIndex,
-                    })),
-                    linkedCollections:
-                        builtSpec.linkedCollections?.map(standIn),
-                },
-            });
+        try {
+            const { collections, bindings }: ResolvedBuiltCollections =
+                resolve_built_collections({
+                    specType: 'materialization',
+                    builtSpec: {
+                        bindings: builtSpec.bindings?.map(
+                            (binding: Schema) => ({
+                                collection:
+                                    binding.collection &&
+                                    standIn(binding.collection),
+                                collectionIndex: binding.collectionIndex,
+                            })
+                        ),
+                        linkedCollections:
+                            builtSpec.linkedCollections?.map(standIn),
+                    },
+                });
 
-        resolved = bindings.map((index) =>
-            index === null
-                ? undefined
-                : originals[Number(collections[index].name)]
-        );
+            // Flow-web can reorder the table. Each stand-in's name indexes originals.
+            resolved = bindings.map((index) =>
+                index === null
+                    ? undefined
+                    : originals[Number(collections[index].name)]
+            );
+        } catch (error: unknown) {
+            // Leave the bindings unresolved, so field selection asks for a
+            // Refresh rather than the editor failing.
+            logRocketEvent('resolve_built_collections', {
+                failed: true,
+                error: String(error),
+            });
+            resolved = [];
+        }
 
         builtCollections.set(builtSpec, resolved);
     }

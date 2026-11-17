@@ -2,6 +2,7 @@ import type * as FlowWeb from '@estuary/flow-web';
 
 import { resolve_built_collections } from '@estuary/flow-web';
 
+import { logRocketEvent } from 'src/services/shared';
 import {
     getBuiltBindingIndex,
     getBuiltCollections,
@@ -11,6 +12,7 @@ const { resolve_built_collections: actualResolve } =
     await vi.importActual<typeof FlowWeb>('@estuary/flow-web');
 
 vi.mock('@estuary/flow-web', () => ({ resolve_built_collections: vi.fn() }));
+vi.mock('src/services/shared', () => ({ logRocketEvent: vi.fn() }));
 
 const resolve = vi.mocked(resolve_built_collections);
 
@@ -141,6 +143,21 @@ describe('getBuiltCollections with flow-web', () => {
         expect(resolved[2]).toBeUndefined();
         expect(resolved[3]).toBe(byId);
         expect(resolved[4]).toBe(users);
+    });
+
+    test('leaves the bindings of an unreadable spec unresolved, without retrying', () => {
+        // flow-web rejects a non-numeric index; JS rejects non-array bindings.
+        const badIndex = {
+            bindings: [{ collectionIndex: 'one' }],
+            linkedCollections: [users],
+        };
+        const badBindings = { bindings: { collection: users } };
+
+        expect(getBuiltCollections(badIndex)).toEqual([]);
+        expect(getBuiltCollections(badBindings)).toEqual([]);
+        expect(getBuiltBindingIndex(badIndex, users.name)).toBe(-1);
+        expect(resolve).toHaveBeenCalledTimes(1);
+        expect(logRocketEvent).toHaveBeenCalledTimes(2);
     });
 });
 

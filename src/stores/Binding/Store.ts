@@ -1029,7 +1029,7 @@ const getInitialState = (
         );
     },
 
-    setRelatedBindingIndices: (
+    setMaterializationBindingIndices: (
         builtSpec,
         validationResponse,
         liveBuiltSpec
@@ -1125,7 +1125,7 @@ const getInitialState = (
                 );
             }),
             false,
-            'Related Binding Indices Set'
+            'Materialization Binding Indices Set'
         );
     },
 

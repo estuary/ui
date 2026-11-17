@@ -45,8 +45,8 @@ export interface ResourceConfig extends JsonFormsData {
         // The *Index fields locate this binding in five different bindings arrays.
         // -1 means the binding is not present in that array. When cross-referencing
         // server errors back to the client UI, use the index that matches the array
-        // the error came from. All five are kept in sync during hydration and by
-        // setRelatedBindingIndices.
+        // the error came from. Materialization draft hydration sets the built
+        // and validated indices.
         bindingIndex: number; // client resource config order; the drafted spec's bindings
         builtBindingIndex: number; // the drafted built spec's bindings; -1 when disabled
         collectionName: string;
@@ -191,7 +191,7 @@ export interface BindingState
         formData: JsonFormsData,
         disableCheckingErrors?: boolean
     ) => void;
-    setRelatedBindingIndices: (
+    setMaterializationBindingIndices: (
         builtSpec: Schema | null,
         validationResponse: Schema | null,
         liveBuiltSpec: Schema | null
