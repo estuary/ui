@@ -446,6 +446,7 @@ export type CapabilityBundle =
   | 'Admin'
   | 'Assume'
   | 'Billing'
+  | 'CatalogRead'
   | 'CreateSandbox'
   | 'Delegate'
   | 'EditBilling'
