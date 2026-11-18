@@ -33,8 +33,8 @@ export function CopyAccessLink({ token, ssoProviderId }: Props) {
     return (
         <TableCell data-private>
             <Tooltip title="Copy invite link">
-                <span ref={ref}>
-                    <CopyToClipboardButton writeValue={accessLink}>
+                <span>
+                    <CopyToClipboardButton writeValue={accessLink} ref={ref}>
                         Invite Link
                     </CopyToClipboardButton>
                 </span>

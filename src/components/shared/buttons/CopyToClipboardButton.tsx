@@ -1,5 +1,7 @@
 import type { CopyToClipboardButtonProps } from 'src/components/shared/buttons/types';
 
+import { forwardRef } from 'react';
+
 import { Button, IconButton, useTheme } from '@mui/material';
 
 import { getButtonIcon } from 'src/context/Theme';
@@ -10,11 +12,10 @@ import { useCopyToClipboard } from 'src/hooks/useCopyToClipboard';
 //  support for customizing the button make sure it isn't better
 //  to not share the button stuff and put the main fuctionality
 //  into a hook.
-function CopyToClipboardButton({
-    children,
-    label,
-    writeValue,
-}: CopyToClipboardButtonProps) {
+const CopyToClipboardButton = forwardRef<
+    HTMLButtonElement,
+    CopyToClipboardButtonProps
+>(function CopyToClipboardButton({ children, label, writeValue }, ref) {
     const theme = useTheme();
 
     const { isCopied, handleCopy } = useCopyToClipboard(
@@ -25,6 +26,7 @@ function CopyToClipboardButton({
     if (!children) {
         return (
             <IconButton
+                ref={ref}
                 aria-label={label}
                 size="small"
                 color={isCopied ? 'success' : undefined}
@@ -37,6 +39,7 @@ function CopyToClipboardButton({
 
     return (
         <Button
+            ref={ref}
             variant="text"
             size="small"
             endIcon={icon}
@@ -49,6 +52,6 @@ function CopyToClipboardButton({
             {children}
         </Button>
     );
-}
+});
 
 export default CopyToClipboardButton;
