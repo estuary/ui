@@ -1,6 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 
-import { unauthenticatedRoutes } from 'src/app/routes';
+import { authenticatedRoutes, unauthenticatedRoutes } from 'src/app/routes';
 import { initLogRocket } from 'src/services/logrocket';
 import { logRocketEvent } from 'src/services/shared';
 
@@ -65,8 +65,23 @@ const ssoCheckingFetch: typeof fetch = async (input, init) => {
     return response;
 };
 
+// PKCE keeps session tokens out of URLs: Supabase redirects back with a
+//  short-lived, single-use `?code=` that the client exchanges for a session,
+//  instead of putting the access and refresh tokens in the URL fragment.
+//
+// The client looks for a PKCE callback on every page load, on any route: a
+//  `code` query param plus a code verifier in localStorage. The connector OAuth
+//  popup (`/oauth`) also receives a `code` (and sometimes `error_description`)
+//  from third-party providers. If the client tried to handle those, the failure
+//  would sign the user out of every tab. So skip URL detection on that route.
+const detectSessionInUrl =
+    window.location.pathname !== authenticatedRoutes.oauth.path;
+
 export const supabaseClient = createClient(
     supabaseSettings.url,
     supabaseSettings.anonKey,
-    { global: { fetch: ssoCheckingFetch } }
+    {
+        auth: { detectSessionInUrl, flowType: 'pkce' },
+        global: { fetch: ssoCheckingFetch },
+    }
 );
