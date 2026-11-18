@@ -241,13 +241,21 @@ function useWriteMaterializationDraft() {
             existingDraftSpec = existingRes.value;
         }
 
-        const generatedDraftSpec = generateDraftSpec(
-            existingDraftSpec,
-            { ...endpointConfig, config: encryptedEndpointConfig },
-            resourceConfigs,
-            bindings,
-            specOptions
-        );
+        let generatedDraftSpec;
+        try {
+            generatedDraftSpec = generateDraftSpec(
+                existingDraftSpec,
+                { ...endpointConfig, config: encryptedEndpointConfig },
+                resourceConfigs,
+                bindings,
+                specOptions
+            );
+        } catch (error) {
+            if (error instanceof Error) {
+                return { error: { title: ERROR_TITLE, error } };
+            }
+            throw error;
+        }
 
         const { value: draftSpec, error: draftSpecError } = await saveDraftSpec(
             draftId,

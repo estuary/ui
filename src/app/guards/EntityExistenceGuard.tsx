@@ -27,7 +27,7 @@ function EntityExistenceGuard({ children }: BaseComponentProps) {
         }
     }, [liveSpecs, setLiveSpec]);
 
-    if (checkingEntityExistence) {
+    if (checkingEntityExistence && liveSpecs.length === 0) {
         return <FullPageSpinner />;
     } else if (liveSpecs.length === 0) {
         return <EntityNotFound />;

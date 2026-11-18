@@ -3,10 +3,6 @@ import type {
     BindingState,
     ResourceConfig,
 } from 'src/stores/Binding/types';
-import type {
-    MaterializationBuiltBinding,
-    ValidatedBinding,
-} from 'src/types/schemaModels';
 import type { StoreApi } from 'zustand';
 import type { NamedSet } from 'zustand/middleware';
 
@@ -63,9 +59,8 @@ import { devtoolsOptions } from 'src/utils/store-utils';
 import { parsePostgresInterval } from 'src/utils/time-utils';
 import {
     getBackfillCounter,
-    getBindingIndex,
+    getBindingCorrespondence,
     getBindingIndexByResourcePath,
-    getBuiltBindingIndex,
     getCollectionName,
 } from 'src/utils/workflow-utils';
 import { POSTGRES_INTERVAL_RE } from 'src/validation';
@@ -120,11 +115,10 @@ const getInitialState = (
                 // Run through and make sure all collections have a corresponding resource config
                 const modifiedResourceConfigs = state.resourceConfigs;
 
+                let bindingIndex = 0;
                 Object.entries(state.bindings).forEach(
-                    ([collectionName, bindingUUIDs], outerIndex) => {
-                        bindingUUIDs.forEach((bindingUUID, innerIndex) => {
-                            const bindingIndex = outerIndex + innerIndex;
-
+                    ([collectionName, bindingUUIDs]) => {
+                        bindingUUIDs.forEach((bindingUUID) => {
                             // Rehydrating wipe out all configs and start again
                             // Not rehydrating then we should allow the current config to stand
                             //  and only populate the ones that are missing
@@ -137,10 +131,6 @@ const getInitialState = (
                                     bindingUUID
                                 )
                             ) {
-                                state.resourceConfigs[
-                                    bindingUUID
-                                ].meta.bindingIndex = bindingIndex;
-
                                 modifiedResourceConfigs[bindingUUID] =
                                     state.resourceConfigs[bindingUUID];
                             } else {
@@ -160,6 +150,7 @@ const getInitialState = (
                                     },
                                 };
                             }
+                            bindingIndex++;
                         });
                     }
                 );
@@ -187,16 +178,13 @@ const getInitialState = (
     evaluateDiscoveredBindings: (discoveredBindings) => {
         set(
             produce((state: BindingState) => {
-                // Preserve which collections were marked for backfill so we can
-                // re-apply after discover replaces all binding UUIDs.
-                const previouslyBackfilledCollections = new Set(
-                    state.backfilledBindings
-                        .map(
-                            (uuid) =>
-                                state.resourceConfigs[uuid]?.meta.collectionName
-                        )
-                        .filter(Boolean)
-                );
+                const previousBindings = Object.entries(
+                    state.resourceConfigs
+                ).map(([uuid, config]) => ({
+                    resource: config.data,
+                    backfilled: state.backfilledBindings.includes(uuid),
+                    backfillOverride: config.meta.backfillOverride,
+                }));
 
                 // Start clearing everything out to prepare for all the new stuff coming in
                 state.bindings = {};
@@ -218,13 +206,27 @@ const getInitialState = (
                 //  we know the original indices of all the bindings.
                 state.resourceConfigs = {};
                 discoveredBindings.forEach((binding: any, index: number) => {
-                    const { UUID, collection } = initializeAndGenerateUUID(
+                    const { UUID } = initializeAndGenerateUUID(
                         state,
                         binding,
                         index
                     );
 
-                    if (previouslyBackfilledCollections.has(collection)) {
+                    const previousIndex = getBindingIndexByResourcePath(
+                        binding.resource?._meta?.path,
+                        { bindings: previousBindings }
+                    );
+                    const previous = previousBindings[previousIndex];
+                    const uniqueResource =
+                        getBindingIndexByResourcePath(
+                            binding.resource?._meta?.path,
+                            { bindings: discoveredBindings }
+                        ) === index;
+                    if (previous && uniqueResource) {
+                        state.resourceConfigs[UUID].meta.backfillOverride =
+                            previous.backfillOverride;
+                    }
+                    if (previous?.backfilled && uniqueResource) {
                         state.backfilledBindings.push(UUID);
                     }
                 });
@@ -372,10 +374,14 @@ const getInitialState = (
         set(
             produce((state: BindingState) => {
                 const bindings = draftedBindings ?? liveBindings;
+                const previousConfigs = Object.entries(state.resourceConfigs);
+                const previousBackfilled = new Set(state.backfilledBindings);
+                const previousGroupByKeys: Record<string, string[]> = {};
 
                 if (rehydrating) {
                     state.bindings = {};
                     state.resourceConfigs = {};
+                    state.backfilledBindings = [];
                 }
 
                 bindings.forEach((binding, index) => {
@@ -385,28 +391,51 @@ const getInitialState = (
                         index
                     );
 
+                    if (rehydrating) {
+                        const previous = previousConfigs.filter(
+                            ([_uuid, config]) =>
+                                config.meta.collectionName === collection &&
+                                isEqual(config.data, binding.resource)
+                        );
+                        const currentMatches = bindings.filter(
+                            (candidate) =>
+                                getCollectionName(candidate) === collection &&
+                                isEqual(candidate.resource, binding.resource)
+                        );
+                        if (
+                            previous.length === 1 &&
+                            currentMatches.length === 1
+                        ) {
+                            const [previousUUID, previousConfig] = previous[0];
+                            state.resourceConfigs[UUID].meta.backfillOverride =
+                                previousConfig.meta.backfillOverride;
+                            if (previousBackfilled.has(previousUUID)) {
+                                state.backfilledBindings.push(UUID);
+                            }
+                            previousGroupByKeys[UUID] =
+                                state.selections[previousUUID]?.groupBy
+                                    .liveGroupByKey ?? [];
+                            if (state.currentBinding?.uuid === previousUUID) {
+                                state.currentBinding = {
+                                    uuid: UUID,
+                                    collection,
+                                };
+                            }
+                        }
+                    }
+
                     if (entityType === 'materialization') {
                         initializeFullSourceConfig(state, binding, UUID);
                     }
 
-                    if (draftedBindings && !rehydrating) {
+                    if (!rehydrating) {
                         // Prefill backfilled collections
                         const draftedBackfillCounter =
                             getBackfillCounter(binding);
 
-                        const targetBindingIndex = Object.hasOwn(
-                            state.bindings,
-                            collection
-                        )
-                            ? state.bindings[collection].findIndex(
-                                  (uuid) => uuid === UUID
-                              )
-                            : -1;
-
-                        const liveBindingIndex = getBindingIndex(
-                            liveBindings,
-                            collection,
-                            targetBindingIndex
+                        const liveBindingIndex = getBindingIndexByResourcePath(
+                            binding.resource?._meta?.path,
+                            { bindings: liveBindings }
                         );
 
                         const liveBackfillCounter =
@@ -456,8 +485,10 @@ const getInitialState = (
                 const bindingUUIDs = Object.keys(state.resourceConfigs);
 
                 if (state.backfilledBindings.length > 0) {
-                    if (entityType === 'capture') {
-                        // if they have anything marked for backfill make sure the setting is forced on
+                    if (
+                        entityType === 'capture' &&
+                        state.backfillMode === null
+                    ) {
                         state.backfillMode = 'reset';
                     }
 
@@ -480,6 +511,12 @@ const getInitialState = (
                     requestFieldValidation ? 'SERVER_UPDATING' : undefined,
                     sortedResourceConfigs,
                     liveBindings
+                );
+                Object.entries(previousGroupByKeys).forEach(
+                    ([uuid, liveGroupByKey]) => {
+                        state.selections[uuid].groupBy.liveGroupByKey =
+                            liveGroupByKey;
+                    }
                 );
             }),
             false,
@@ -1029,100 +1066,50 @@ const getInitialState = (
         );
     },
 
-    setRelatedBindingIndices: (
-        builtSpec,
-        validationResponse,
-        liveBuiltSpec
-    ) => {
-        if (!builtSpec || !validationResponse) {
-            return;
-        }
-
+    setRelatedBindingIndices: (draft, live) => {
         set(
             produce((state: BindingState) => {
                 Object.entries(state.resourceConfigs).forEach(
-                    ([
-                        uuid,
-                        {
-                            meta: { collectionName, disable },
-                        },
-                    ]) => {
-                        if (disable) {
-                            state.resourceConfigs[uuid].meta.builtBindingIndex =
-                                -1;
+                    ([uuid, config]) => {
+                        const indices = getBindingCorrespondence(
+                            config,
+                            draft,
+                            live
+                        );
+                        Object.assign(config.meta, indices);
 
-                            state.resourceConfigs[
-                                uuid
-                            ].meta.validatedBindingIndex = -1;
-
+                        if (indices.validatedBindingIndex === -1) {
                             return;
                         }
 
-                        let liveBuiltBindingIndex = liveBuiltSpec
-                            ? getBuiltBindingIndex(
-                                  liveBuiltSpec,
-                                  collectionName
-                              )
-                            : -1;
-
-                        const liveBuiltBinding =
-                            liveBuiltBindingIndex > -1
-                                ? liveBuiltSpec?.bindings.at(
-                                      liveBuiltBindingIndex
-                                  )
-                                : undefined;
-
-                        const draftedBuiltBindingIndex = builtSpec
-                            ? getBuiltBindingIndex(builtSpec, collectionName)
-                            : -1;
-
-                        const draftedBuiltBinding:
-                            | MaterializationBuiltBinding
-                            | undefined =
-                            draftedBuiltBindingIndex > -1
-                                ? builtSpec?.bindings.at(
-                                      draftedBuiltBindingIndex
-                                  )
-                                : undefined;
-
-                        let validatedBindingIndex = -1;
-
-                        if (validationResponse) {
-                            // Evaluate whether the validation response contains a binding that matches
-                            // the live and drafted built bindings.
-                            const liveValidatedBindingIndex =
-                                getBindingIndexByResourcePath<ValidatedBinding>(
-                                    liveBuiltBinding?.resourcePath ?? [],
-                                    validationResponse
-                                );
-
-                            const draftedValidatedBindingIndex =
-                                getBindingIndexByResourcePath<ValidatedBinding>(
-                                    draftedBuiltBinding?.resourcePath ?? [],
-                                    validationResponse
-                                );
-
-                            liveBuiltBindingIndex =
-                                liveValidatedBindingIndex > -1
-                                    ? liveBuiltBindingIndex
-                                    : -1;
-
-                            validatedBindingIndex =
-                                liveValidatedBindingIndex > -1
-                                    ? liveValidatedBindingIndex
-                                    : draftedValidatedBindingIndex;
+                        const liveBinding =
+                            live?.spec?.bindings?.[indices.liveBindingIndex];
+                        if (state.selections[uuid]) {
+                            state.selections[uuid].groupBy.liveGroupByKey =
+                                liveBinding?.fields?.groupBy ?? [];
                         }
 
-                        state.resourceConfigs[uuid].meta.builtBindingIndex =
-                            draftedBuiltBindingIndex;
-
-                        state.resourceConfigs[uuid].meta.liveBuiltBindingIndex =
-                            liveBuiltBindingIndex;
-
-                        state.resourceConfigs[uuid].meta.validatedBindingIndex =
-                            validatedBindingIndex;
+                        const draftedBinding =
+                            draft?.spec?.bindings?.[config.meta.bindingIndex];
+                        const backfilled =
+                            config.meta.backfillOverride ??
+                            getBackfillCounter(draftedBinding) !==
+                                (liveBinding
+                                    ? getBackfillCounter(liveBinding)
+                                    : 0);
+                        state.backfilledBindings =
+                            state.backfilledBindings.filter(
+                                (bindingUUID) => bindingUUID !== uuid
+                            );
+                        if (backfilled) {
+                            state.backfilledBindings.push(uuid);
+                        }
                     }
                 );
+                state.backfillAllBindings =
+                    Object.keys(state.resourceConfigs).length > 0 &&
+                    Object.keys(state.resourceConfigs).length ===
+                        state.backfilledBindings.length;
             }),
             false,
             'Related Binding Indices Set'
@@ -1267,10 +1254,14 @@ const getInitialState = (
                     ...value,
                     meta: {
                         added: targetResourceConfig.meta?.added,
+                        backfillOverride:
+                            targetResourceConfig.meta.backfillOverride,
                         bindingIndex: targetResourceConfig.meta.bindingIndex,
                         builtBindingIndex:
                             targetResourceConfig.meta.builtBindingIndex,
                         collectionName: targetCollection,
+                        draftedResource:
+                            targetResourceConfig.meta.draftedResource,
                         liveBindingIndex:
                             targetResourceConfig.meta.liveBindingIndex,
                         liveBuiltBindingIndex:

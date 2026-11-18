@@ -1,8 +1,15 @@
+import type { DraftSpecQuery } from 'src/hooks/useDraftSpecs';
+import type { LiveSpecsExtQueryWithSpec } from 'src/hooks/useLiveSpecsExt';
 import type { FullSourceDictionary } from 'src/stores/Binding/slices/TimeTravel';
+import type { ResourceConfig } from 'src/stores/Binding/types';
 import type { Entity, Schema } from 'src/types';
-import type { MaterializationBuiltBinding } from 'src/types/schemaModels';
+import type {
+    BuiltBinding,
+    BuiltCollection,
+    BuiltSpec,
+} from 'src/types/schemaModels';
 
-import { isEmpty, isEqual } from 'lodash';
+import { isEmpty, isEqual, omit } from 'lodash';
 
 // This is the soft limit we recommend to users
 export const MAX_BINDINGS = 300;
@@ -90,39 +97,152 @@ export const getFullSourceSetting = (
         : collectionName;
 };
 
-export const getBuiltBindingIndex = (
-    builtSpec: Schema,
-    targetCollection: string
-): number => {
-    const builtBindings: MaterializationBuiltBinding[] =
-        builtSpec.bindings ?? [];
+export const getBuiltCollection = (
+    builtSpec: BuiltSpec | null | undefined,
+    binding: BuiltBinding | null | undefined
+): BuiltCollection | undefined => {
+    if (!builtSpec || !binding) {
+        return undefined;
+    }
 
-    return builtBindings.findIndex(
-        (binding) => binding.collection.name === targetCollection
-    );
+    // A nonempty table selects indexed references, even if an inline collection exists.
+    if (builtSpec.linkedCollections?.length) {
+        const index = binding.collectionIndex ?? 0;
+
+        return Number.isInteger(index) && index >= 0
+            ? builtSpec.linkedCollections[index]
+            : undefined;
+    }
+
+    return binding.collection;
 };
 
-export const getBindingIndexByResourcePath = <T extends Schema>(
-    resourcePath: string[],
-    schema: Schema
+export const getBindingIndexByResourcePath = (
+    resourcePath: string[] | undefined,
+    schema: Schema | null | undefined
 ): number => {
-    if (resourcePath.length === 0) {
+    if (!Array.isArray(resourcePath) || resourcePath.length === 0) {
         return -1;
     }
 
-    const bindings: T[] = schema.bindings;
+    return findUniqueIndex(schema?.bindings ?? [], (binding: Schema) =>
+        isEqual(
+            binding.resourcePath ?? binding.resource?._meta?.path,
+            resourcePath
+        )
+    );
+};
 
-    return bindings.findIndex((binding) => {
-        let bindingResourcePath: string[] = [];
+export const getBindingCorrespondence = (
+    resourceConfig: Pick<ResourceConfig, 'data' | 'meta'> | undefined,
+    draft:
+        | Pick<DraftSpecQuery, 'spec' | 'built_spec' | 'validated'>
+        | null
+        | undefined,
+    live?: Pick<LiveSpecsExtQueryWithSpec, 'spec' | 'built_spec'> | null
+) => {
+    const indices = {
+        builtBindingIndex: -1,
+        liveBindingIndex: -1,
+        liveBuiltBindingIndex: -1,
+        validatedBindingIndex: -1,
+    };
 
-        if (binding?.resourcePath) {
-            bindingResourcePath = binding.resourcePath;
-        } else if (binding?.resource?._meta?.path) {
-            bindingResourcePath = binding.resource._meta.path;
+    if (!resourceConfig || resourceConfig.meta.disable || !draft) {
+        return indices;
+    }
+
+    const { collectionName } = resourceConfig.meta;
+    const draftedIndex = getDraftedBindingIndex(resourceConfig, draft.spec);
+    if (draftedIndex === -1) {
+        return indices;
+    }
+    const resource = withoutResourceMetadata(
+        draft.spec.bindings[draftedIndex].resource
+    );
+
+    const builtBindings: Schema[] = draft.built_spec?.bindings ?? [];
+    indices.builtBindingIndex = findUniqueIndex(
+        builtBindings,
+        (binding) =>
+            getBuiltCollection(draft.built_spec, binding)?.name ===
+                collectionName &&
+            Object.hasOwn(binding, 'resourceConfig') &&
+            isEqual(binding.resourceConfig, resource)
+    );
+
+    const resourcePath = builtBindings[indices.builtBindingIndex]?.resourcePath;
+    if (
+        getBindingIndexByResourcePath(resourcePath, draft.built_spec) !==
+        indices.builtBindingIndex
+    ) {
+        indices.builtBindingIndex = -1;
+        return indices;
+    }
+    indices.validatedBindingIndex = getBindingIndexByResourcePath(
+        resourcePath,
+        draft.validated
+    );
+
+    if (indices.validatedBindingIndex > -1) {
+        indices.liveBuiltBindingIndex = getBindingIndexByResourcePath(
+            resourcePath,
+            live?.built_spec
+        );
+        indices.liveBindingIndex = getBindingIndexByResourcePath(
+            resourcePath,
+            live?.spec
+        );
+    }
+
+    return indices;
+};
+
+export const getDraftedBindingIndex = (
+    resourceConfig: Pick<ResourceConfig, 'data' | 'meta'> | undefined,
+    spec: Schema | null | undefined
+): number => {
+    if (
+        !resourceConfig ||
+        resourceConfig.meta.added === true ||
+        !resourceConfig.meta.draftedResource
+    ) {
+        return -1;
+    }
+
+    const { bindingIndex, collectionName, disable, draftedResource } =
+        resourceConfig.meta;
+    const resource = withoutResourceMetadata(draftedResource);
+    const authoredIndex = findUniqueIndex(
+        spec?.bindings ?? [],
+        (binding: Schema) =>
+            !binding.disable === !disable &&
+            getCollectionName(binding) === collectionName &&
+            Object.hasOwn(binding, 'resource') &&
+            isEqual(withoutResourceMetadata(binding.resource), resource)
+    );
+
+    // A different authored index requires rehydration; local edits must not select another binding.
+    return authoredIndex === bindingIndex ? authoredIndex : -1;
+};
+
+const withoutResourceMetadata = (resource: unknown) =>
+    resource && typeof resource === 'object' && !Array.isArray(resource)
+        ? omit(resource, '_meta')
+        : resource;
+
+const findUniqueIndex = <T>(
+    values: T[],
+    matches: (value: T) => boolean
+): number => {
+    let matchedIndex = -1;
+    for (let index = 0; index < values.length; index++) {
+        if (matches(values[index])) {
+            if (matchedIndex !== -1) {
+                return -1;
+            }
+            matchedIndex = index;
         }
-
-        return bindingResourcePath.length > 0
-            ? isEqual(bindingResourcePath, resourcePath)
-            : false;
-    });
+    }
+    return matchedIndex;
 };

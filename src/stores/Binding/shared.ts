@@ -15,7 +15,7 @@ import type {
 import type { Entity, Schema } from 'src/types';
 import type { StoreApi } from 'zustand';
 
-import { difference, intersection, isEmpty, omit } from 'lodash';
+import { cloneDeep, difference, intersection, isEmpty, omit } from 'lodash';
 
 import { getDraftSpecsByDraftId } from 'src/api/draftSpecs';
 import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
@@ -189,13 +189,10 @@ export const initializeCurrentBinding = (
         return;
     }
 
-    // We will just match based on name and that is not perfect but good enough
-    //  since very few use cases of duplication bindings exist.
     let preferredConfig;
     if (maintainPreviousCurrentBinding && state.currentBinding) {
         preferredConfig = allResourceConfigs.find(
-            ([_uuid, datum]) =>
-                datum.meta.collectionName === state.currentBinding?.collection
+            ([uuid]) => uuid === state.currentBinding?.uuid
         );
     }
 
@@ -225,6 +222,7 @@ const getResourceConfig = (
             bindingIndex,
             builtBindingIndex: -1,
             collectionName,
+            draftedResource: cloneDeep(resource),
             liveBindingIndex: -1,
             liveBuiltBindingIndex: -1,
             onIncompatibleSchemaChange: binding?.onIncompatibleSchemaChange,

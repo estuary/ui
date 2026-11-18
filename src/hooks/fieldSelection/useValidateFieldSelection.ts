@@ -4,6 +4,7 @@ import type {
     GroupKeyMetadata,
 } from 'src/stores/Binding/slices/FieldSelection';
 import type {
+    BuiltCollection,
     MaterializationBinding,
     MaterializationBuiltBinding,
     MaterializationFields,
@@ -20,11 +21,9 @@ import { useCallback, useEffect, useMemo } from 'react';
 import { evaluate_field_selection } from '@estuary/flow-web';
 import { differenceBy } from 'lodash';
 
-import {
-    useEditorStore_liveBuiltSpec,
-    useEditorStore_queryResponse_draftSpecs,
-} from 'src/components/editor/Store/hooks';
+import { useEditorStore_queryResponse_draftSpecs } from 'src/components/editor/Store/hooks';
 import { useEntityType } from 'src/context/EntityContext';
+import { useEditorLiveSpec } from 'src/hooks/useLiveSpecsExt';
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 import {
@@ -42,10 +41,14 @@ import {
     getFieldSelection,
 } from 'src/utils/fieldSelection-utils';
 import { isPromiseFulfilledResult } from 'src/utils/misc-utils';
+import {
+    getBindingCorrespondence,
+    getBuiltCollection,
+} from 'src/utils/workflow-utils';
 
 interface FieldSelectionValidationResponse {
     bindingUUID: string;
-    builtBinding: MaterializationBuiltBinding;
+    builtCollection: BuiltCollection;
     fieldStanza:
         | MaterializationFields
         | MaterializationFields_Legacy
@@ -102,7 +105,7 @@ export default function useValidateFieldSelection() {
     );
 
     const draftSpecsRows = useEditorStore_queryResponse_draftSpecs();
-    const liveBuiltSpec = useEditorStore_liveBuiltSpec();
+    const liveSpec = useEditorLiveSpec(entityType);
     const collections = useWorkflowStore((state) => state.collections);
     const formStatus = useFormStateStore_status();
 
@@ -123,6 +126,10 @@ export default function useValidateFieldSelection() {
                 builtBindingIndex > -1
                     ? draftSpecsRow.built_spec?.bindings.at(builtBindingIndex)
                     : undefined;
+            const builtCollection = getBuiltCollection(
+                draftSpecsRow.built_spec,
+                builtBinding
+            );
 
             const draftedBinding: MaterializationBinding | undefined =
                 draftedBindingIndex > -1
@@ -138,28 +145,29 @@ export default function useValidateFieldSelection() {
 
             const liveBuiltBinding: MaterializationBuiltBinding | undefined =
                 liveBuiltBindingIndex > -1
-                    ? liveBuiltSpec?.bindings.at(liveBuiltBindingIndex)
+                    ? liveSpec?.built_spec?.bindings.at(liveBuiltBindingIndex)
                     : undefined;
 
             if (
-                !builtBinding ||
+                !builtCollection ||
                 !draftedBinding ||
                 !validatedBinding ||
-                !collections[builtBinding.collection.name] ||
-                !collections[builtBinding.collection.name].spec
+                !collections[builtCollection.name] ||
+                !collections[builtCollection.name].spec
             ) {
                 logRocketEvent(CustomEvents.FIELD_SELECTION, {
                     validationError: true,
                     missingBuiltBinding: !builtBinding,
+                    missingBuiltCollection: !builtCollection,
                     missingDraftedBinding: !draftedBinding,
                     missingValidatedBinding: !validatedBinding,
                     missingCollectionLiveSpec: Boolean(
-                        builtBinding && draftedBinding && validatedBinding
+                        builtCollection && draftedBinding && validatedBinding
                     ),
                 });
 
                 return Promise.reject(
-                    'data not found: collection spec, built spec binding, drafted binding, or validation binding'
+                    'data not found: collection spec, built collection, built spec binding, drafted binding, or validation binding'
                 );
             }
 
@@ -168,8 +176,8 @@ export default function useValidateFieldSelection() {
             try {
                 result = await evaluateFieldSelection({
                     collection: {
-                        name: builtBinding.collection.name,
-                        model: collections[builtBinding.collection.name].spec,
+                        name: builtCollection.name,
+                        model: collections[builtCollection.name].spec,
                     },
                     binding: {
                         live: liveBuiltBinding,
@@ -186,12 +194,12 @@ export default function useValidateFieldSelection() {
 
             return {
                 bindingUUID,
-                builtBinding,
+                builtCollection,
                 fieldStanza: draftedBinding?.fields,
                 result,
             };
         },
-        [collections, liveBuiltSpec?.bindings]
+        [collections, liveSpec?.built_spec]
     );
 
     const failureDetected = useMemo(
@@ -239,16 +247,19 @@ export default function useValidateFieldSelection() {
 
         const validationRequests = Object.entries(resourceConfigs)
             .filter(([uuid, _config]) => targetBindingUUIDs.includes(uuid))
-            .map(([uuid, { meta }]) => {
+            .map(([uuid, resourceConfig]) => {
+                const { meta } = resourceConfig;
+                const {
+                    builtBindingIndex,
+                    validatedBindingIndex,
+                    liveBuiltBindingIndex,
+                } = getBindingCorrespondence(
+                    resourceConfig,
+                    draftSpecsRow,
+                    liveSpec
+                );
                 const bindingsExists =
-                    meta.builtBindingIndex > -1 &&
-                    meta.validatedBindingIndex > -1;
-
-                // This is counting how many attempts have _happened_ so starts
-                //  at 0 and not 1
-                const validationAttempts =
-                    targetBindingContext[uuid] ??
-                    MAX_FIELD_SELECTION_VALIDATION_ATTEMPTS;
+                    builtBindingIndex > -1 && validatedBindingIndex > -1;
 
                 trackValidationAttempt(uuid);
 
@@ -264,18 +275,14 @@ export default function useValidateFieldSelection() {
                     return validateFieldSelection(
                         uuid,
                         draftSpecsRow,
-                        meta.builtBindingIndex,
+                        builtBindingIndex,
                         meta.bindingIndex,
-                        meta.validatedBindingIndex,
-                        meta.liveBuiltBindingIndex
+                        validatedBindingIndex,
+                        liveBuiltBindingIndex
                     );
                 }
 
-                if (
-                    meta.disable ||
-                    validationAttempts >=
-                        MAX_FIELD_SELECTION_VALIDATION_ATTEMPTS
-                ) {
+                if (meta.disable) {
                     advanceHydrationStatus(
                         'VALIDATION_REQUESTED',
                         uuid,
@@ -283,13 +290,13 @@ export default function useValidateFieldSelection() {
                         undefined,
                         true
                     );
-                } else if (failureDetected) {
+                } else {
                     setValidationFailure([uuid], true);
                 }
 
                 logRocketEvent(CustomEvents.FIELD_SELECTION, {
                     formFailureDetected: failureDetected,
-                    missingServerData: bindingsExists,
+                    missingServerData: !bindingsExists,
                     targetCollection: meta.collectionName,
                     validationSkipped: true,
                 });
@@ -317,7 +324,7 @@ export default function useValidateFieldSelection() {
 
                             const {
                                 bindingUUID,
-                                builtBinding,
+                                builtCollection,
                                 fieldStanza,
                                 result,
                             } = response.value;
@@ -325,19 +332,15 @@ export default function useValidateFieldSelection() {
                             const updatedSelections = getFieldSelection(
                                 result.outcomes,
                                 fieldStanza,
-                                builtBinding?.collection.projections
+                                builtCollection.projections
                             );
 
                             validatedRequests.push({
                                 groupByValue: {
                                     explicit: fieldStanza?.groupBy ?? [],
-                                    implicit:
-                                        builtBinding?.collection.key.map(
-                                            (key) =>
-                                                key.startsWith('/')
-                                                    ? key.slice(1)
-                                                    : key
-                                        ) ?? [],
+                                    implicit: builtCollection.key.map((key) =>
+                                        key.startsWith('/') ? key.slice(1) : key
+                                    ),
                                 },
                                 hasConflicts: result.hasConflicts,
                                 recommended:
@@ -421,6 +424,7 @@ export default function useValidateFieldSelection() {
         failureDetected,
         fieldsRecommended,
         initializeSelections,
+        liveSpec,
         resourceConfigs,
         setValidationFailure,
         targetBindingContext,

@@ -14,11 +14,10 @@ import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'src/hooks/searchParams/useGlobalSearchParams';
 import { useDraftSpecs_forEditor } from 'src/hooks/useDraftSpecs';
+import { useEditorLiveSpec } from 'src/hooks/useLiveSpecsExt';
 import { useBindingStore } from 'src/stores/Binding/Store';
 import { EditorStoreNames } from 'src/stores/names';
 import useCollectionsHydrator from 'src/stores/Workflow/slices/useCollectionsHydrator';
-import { hasLength } from 'src/utils/misc-utils';
-import { getBindingIndex } from 'src/utils/workflow-utils';
 
 interface SelectorParams {
     localScope?: boolean;
@@ -574,27 +573,6 @@ export const useEditorStore_queryResponse_mutate = (
     );
 };
 
-// TODO - look into this -1 response
-export const useEditorStore_queryResponse_draftedBindingIndex = (
-    collection: string | null,
-    targetBindingIndex: number
-) => {
-    const entityType = useEntityType();
-
-    return useGlobalZustandStore<EditorStoreState<DraftSpecQuery>, number>(
-        useStoreName(entityType),
-        useShallow((state) =>
-            collection && hasLength(state.queryResponse.draftSpecs)
-                ? getBindingIndex(
-                      state.queryResponse.draftSpecs[0].spec.bindings,
-                      collection,
-                      targetBindingIndex
-                  )
-                : -1
-        )
-    );
-};
-
 export const useEditorStore_resetState = (
     params?: SelectorParams | undefined
 ) => {
@@ -612,40 +590,6 @@ export const useEditorStore_resetState = (
     >(useStoreName(entityType, localScope), (state) => state.resetState);
 };
 
-export const useEditorStore_liveBuiltSpec = (
-    params?: SelectorParams | undefined
-) => {
-    const localScope = params?.localScope;
-
-    const useZustandStore = localScope
-        ? useLocalZustandStore
-        : useGlobalZustandStore;
-
-    const entityType = useEntityType();
-
-    return useZustandStore<
-        EditorStoreState<DraftSpecQuery>,
-        EditorStoreState<DraftSpecQuery>['liveBuiltSpec']
-    >(useStoreName(entityType, localScope), (state) => state.liveBuiltSpec);
-};
-
-export const useEditorStore_setLiveBuiltSpec = (
-    params?: SelectorParams | undefined
-) => {
-    const localScope = params?.localScope;
-
-    const useZustandStore = localScope
-        ? useLocalZustandStore
-        : useGlobalZustandStore;
-
-    const entityType = useEntityType();
-
-    return useZustandStore<
-        EditorStoreState<DraftSpecQuery>,
-        EditorStoreState<DraftSpecQuery>['setLiveBuiltSpec']
-    >(useStoreName(entityType, localScope), (state) => state.setLiveBuiltSpec);
-};
-
 export const useHydrateEditorState = (
     specType: Entity,
     catalogName?: string,
@@ -656,13 +600,14 @@ export const useHydrateEditorState = (
     const setRelatedBindingIndices = useBindingStore(
         (state) => state.setRelatedBindingIndices
     );
+    const resourceConfigs = useBindingStore((state) => state.resourceConfigs);
 
     const hydrateCollections = useCollectionsHydrator();
 
     const draftId = useEditorStore_id({ localScope });
     const persistedDraftId = useEditorStore_persistedDraftId({ localScope });
     const setQueryResponse = useEditorStore_setQueryResponse({ localScope });
-    const liveBuiltSpec = useEditorStore_liveBuiltSpec({ localScope });
+    const liveSpec = useEditorLiveSpec(specType);
 
     // This fallback chain of draft IDs is required because of how the global editor store
     // differs in keeping record of the draft ID from its local counterpart. Notable component
@@ -680,12 +625,6 @@ export const useHydrateEditorState = (
             setQueryResponse(response);
 
             if (response.draftSpecs.length > 0) {
-                setRelatedBindingIndices(
-                    response.draftSpecs[0].built_spec,
-                    response.draftSpecs[0].validated,
-                    liveBuiltSpec
-                );
-
                 // TODO (draft init / workflow)
                 // This is hacky - but will work for now. We need to know about
                 //  all the collections on the draft so we want to wait for a draftedSpec
@@ -698,11 +637,22 @@ export const useHydrateEditorState = (
                 );
             }
         }
+    }, [setQueryResponse, response, hydrateCollections]);
+
+    useEffect(() => {
+        if (
+            !response.isValidating &&
+            !localScope &&
+            specType !== 'collection'
+        ) {
+            setRelatedBindingIndices(response.draftSpecs[0], liveSpec);
+        }
     }, [
-        liveBuiltSpec,
-        setQueryResponse,
-        setRelatedBindingIndices,
+        liveSpec,
+        localScope,
+        specType,
+        resourceConfigs,
         response,
-        hydrateCollections,
+        setRelatedBindingIndices,
     ]);
 };

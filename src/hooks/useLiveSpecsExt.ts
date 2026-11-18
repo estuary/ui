@@ -1,10 +1,13 @@
 import type { PostgrestError } from '@supabase/postgrest-js';
-import type { Entity } from 'src/types';
+import type { Entity, Schema } from 'src/types';
 
 import { useMemo } from 'react';
 
 import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
 
+import useGlobalSearchParams, {
+    GlobalSearchParams,
+} from 'src/hooks/searchParams/useGlobalSearchParams';
 import { TABLES } from 'src/services/supabase';
 import { supabaseClient } from 'src/services/supabaseClient';
 
@@ -34,6 +37,7 @@ interface Response<T> {
 
 export interface LiveSpecsExtQueryWithSpec extends LiveSpecsExtQuery {
     spec: any;
+    built_spec: Schema | null;
     catalog_name: string;
     detail: string;
 }
@@ -48,6 +52,7 @@ const queryColumns = [
 ];
 const queryColumnsWithSpec = queryColumns.concat([
     'spec',
+    'built_spec',
     'catalog_name',
     'detail',
 ]);
@@ -110,4 +115,13 @@ export function useLiveSpecsExtWithOutSpec(
     specType: Entity
 ): Response<LiveSpecsExtQuery> {
     return useLiveSpecsExt(draftId, specType, false);
+}
+
+export function useEditorLiveSpec(
+    specType: Entity
+): LiveSpecsExtQueryWithSpec | undefined {
+    const liveSpecId = useGlobalSearchParams(GlobalSearchParams.LIVE_SPEC_ID);
+    const { liveSpecs } = useLiveSpecsExtWithSpec(liveSpecId, specType);
+
+    return liveSpecs[0];
 }

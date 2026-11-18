@@ -11,17 +11,18 @@ import {
     useEditorStore_persistedDraftId,
     useEditorStore_queryResponse_mutate,
 } from 'src/components/editor/Store/hooks';
-import { useBinding_currentBindingIndex } from 'src/stores/Binding/hooks';
 import { useBindingStore } from 'src/stores/Binding/Store';
 import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
 import { DEFAULT_RECOMMENDED_FLAG } from 'src/utils/fieldSelection-utils';
 import { hasLength } from 'src/utils/misc-utils';
-import { getBindingIndex } from 'src/utils/workflow-utils';
+import { getBindingCorrespondence } from 'src/utils/workflow-utils';
 
 function useFieldSelection(bindingUUID: string, collectionName: string) {
     const recommendFields = useBindingStore((state) => state.recommendFields);
-    const selections = useBindingStore((state) => state.selections);
-    const stagedBindingIndex = useBinding_currentBindingIndex();
+    const selection = useBindingStore((state) => state.selections[bindingUUID]);
+    const resourceConfig = useBindingStore(
+        (state) => state.resourceConfigs[bindingUUID]
+    );
 
     const draftId = useEditorStore_persistedDraftId();
     const mutateDraftSpecs = useEditorStore_queryResponse_mutate();
@@ -32,19 +33,27 @@ function useFieldSelection(bindingUUID: string, collectionName: string) {
 
     const applyFieldSelection = useCallback(
         async (draftSpec: DraftSpecQuery) => {
-            // TODO (field selection) we should make it so this does not need to be figured out
-            //  every call as it is pretty wasteful. Since we are passing in the spec already maybe
-            //  we just pass in the index along with it? Not sure how to do this and make it feel good.
-            const bindingIndex: number = getBindingIndex(
-                draftSpec.spec.bindings,
-                collectionName,
-                stagedBindingIndex
-            );
+            const { builtBindingIndex, validatedBindingIndex } =
+                getBindingCorrespondence(resourceConfig, draftSpec);
 
-            if (!mutateDraftSpecs || bindingIndex === -1) {
-                return Promise.reject();
+            if (
+                !mutateDraftSpecs ||
+                !resourceConfig ||
+                resourceConfig.meta.collectionName !== collectionName ||
+                resourceConfig.meta.disable ||
+                !selection ||
+                selection.validationFailed ||
+                builtBindingIndex < 0 ||
+                validatedBindingIndex < 0
+            ) {
+                return Promise.reject(
+                    new Error(
+                        'Field selection is unavailable. Refresh the binding before editing fields.'
+                    )
+                );
             }
 
+            const bindingIndex = resourceConfig.meta.bindingIndex;
             const spec: Schema = cloneDeep(draftSpec.spec);
 
             const recommended = Object.hasOwn(recommendFields, bindingUUID)
@@ -57,9 +66,7 @@ function useFieldSelection(bindingUUID: string, collectionName: string) {
                 require: {},
             };
 
-            const groupBy = Object.keys(selections).includes(bindingUUID)
-                ? selections[bindingUUID].groupBy.value.explicit
-                : [];
+            const groupBy = selection.groupBy.value.explicit;
 
             if (groupBy.length > 0) {
                 spec.bindings[bindingIndex].fields.groupBy = groupBy;
@@ -71,7 +78,7 @@ function useFieldSelection(bindingUUID: string, collectionName: string) {
             }
 
             const requiredFields: Pick<FieldSelection, 'field' | 'meta'>[] =
-                Object.entries(selections[bindingUUID].value)
+                Object.entries(selection.value)
                     .filter(
                         ([_field, selection]) => selection.mode === 'require'
                     )
@@ -80,9 +87,7 @@ function useFieldSelection(bindingUUID: string, collectionName: string) {
                         meta: selection.meta,
                     }));
 
-            const excludedFields: string[] = Object.entries(
-                selections[bindingUUID].value
-            )
+            const excludedFields: string[] = Object.entries(selection.value)
                 .filter(([_field, selection]) => selection.mode === 'exclude')
                 .map(([field]) => field);
 
@@ -131,8 +136,8 @@ function useFieldSelection(bindingUUID: string, collectionName: string) {
             fieldsRecommended,
             mutateDraftSpecs,
             recommendFields,
-            selections,
-            stagedBindingIndex,
+            resourceConfig,
+            selection,
         ]
     );
 
