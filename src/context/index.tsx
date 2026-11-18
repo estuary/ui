@@ -6,6 +6,7 @@ import GlobalProviders from 'src/context/GlobalProviders';
 import IconoirProvider from 'src/context/Iconoir';
 import NotificationProvider from 'src/context/Notifications';
 import { PHProvider } from 'src/context/PostHog';
+import { SemanticTreeProvider } from 'src/context/SemanticTree';
 import { SidePanelDocsProvider } from 'src/context/SidePanelDocs';
 import SwrConfigProvider from 'src/context/SWR';
 import { TableSettingsProvider } from 'src/context/TableSettings';
@@ -29,7 +30,9 @@ const AppProviders = ({ children }: BaseComponentProps) => {
                                                 <GlobalProviders>
                                                     <SidePanelDocsProvider>
                                                         <TableSettingsProvider>
-                                                            {children}
+                                                            <SemanticTreeProvider>
+                                                                {children}
+                                                            </SemanticTreeProvider>
                                                         </TableSettingsProvider>
                                                     </SidePanelDocsProvider>
                                                 </GlobalProviders>

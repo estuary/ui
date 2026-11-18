@@ -10,6 +10,7 @@ import {
     RouterProvider,
     Routes,
 } from 'react-router-dom';
+import { Branch } from 'react-semantic-tree';
 
 import { authenticatedRoutes, unauthenticatedRoutes } from 'src/app/routes';
 import AccessGrants from 'src/components/admin/AccessGrants';
@@ -691,10 +692,10 @@ const router = createBrowserRouter(
                     <Route
                         path={authenticatedRoutes.admin.path}
                         element={
-                            <>
+                            <Branch label="Admin">
                                 <AdminTabs />
                                 <Outlet />
-                            </>
+                            </Branch>
                         }
                     >
                         <Route
