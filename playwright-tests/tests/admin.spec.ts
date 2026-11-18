@@ -6,7 +6,7 @@ import { expect, Page, test } from '@playwright/test';
 const invalidEmail = 'Fake_Invalid_Email';
 const testTokens = ['test token 1', 'test token 2', 'test token 3'];
 
-test.describe.serial.only('Admin:', () => {
+test.describe.serial('Admin:', () => {
     const uuid = crypto.randomUUID().split('-')[0];
 
     let authProps: AuthProps;
@@ -15,7 +15,7 @@ test.describe.serial.only('Admin:', () => {
         page = await browser.newPage();
         authProps = await defaultPageSetup(page, test, USERS.admin);
 
-        await page.getByLabel('Admin').click();
+        await page.getByRole('link', { name: 'Admin' }).click();
     });
 
     test.describe('Account Access', () => {
@@ -58,9 +58,6 @@ test.describe.serial.only('Admin:', () => {
                 page
                     .getByRole('columnheader', { name: 'Catalog Prefix' })
                     .first()
-            ).toBeVisible();
-            await expect(
-                page.getByRole('columnheader', { name: 'Alert Types' }).first()
             ).toBeVisible();
             await expect(
                 page

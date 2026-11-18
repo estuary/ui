@@ -264,6 +264,8 @@ test.describe.serial('Materialization PostgreSQL:', () => {
         // Every run binds the same source collection, so give each its own
         //  table rather than collide with an earlier run's
         await table.fill(`events_${uuid}`);
+        // The input debounces its change until blur
+        await table.press('Tab');
     });
 
     test('the collection spec can be viewed', async () => {

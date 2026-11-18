@@ -1,16 +1,11 @@
-import type {
-    CaptureDef,
-    ConnectorConfig,
-    MaterializationDef,
-} from 'deps/flow/flow';
-import type { DraftSpecsExtQuery_ByDraftId } from 'src/api/draftSpecs';
+import type { ConnectorConfig } from 'deps/flow/flow';
 import type { ConnectorTagData } from 'src/context/ConnectorTag';
-import type { LiveSpecsExtQuery } from 'src/hooks/useLiveSpecsExt';
 import type {
     DekafConnectorMetadata,
     StandardConnectorMetadata,
 } from 'src/stores/DetailsForm/types';
 import type { DekafConfig } from 'src/types';
+import type { SpecDef } from 'src/types/schemaModels';
 
 import { FULL_IMAGE_NAME_RE } from 'src/validation';
 
@@ -42,13 +37,6 @@ export const isDekafEndpointConfig = (
     value: ConnectorConfig | DekafConfig
 ): value is DekafConfig => DEKAF_VARIANT_PROPERTY in value;
 
-export const getEndpointConfig = (
-    data: DraftSpecsExtQuery_ByDraftId[] | LiveSpecsExtQuery[]
-) =>
-    Boolean(data[0].spec.endpoint?.dekaf)
-        ? data[0].spec.endpoint.dekaf.config
-        : data[0].spec.endpoint.connector.config;
-
 export const buildConnectorImageFromTag = (
     connectorTag: ConnectorTagData
 ): StandardConnectorMetadata | DekafConnectorMetadata => {
@@ -73,7 +61,7 @@ export const buildConnectorImageFromTag = (
           };
 };
 
-export function getEndpointFromSpec(spec: CaptureDef | MaterializationDef) {
+export function getEndpointFromSpecDef(spec: SpecDef) {
     const { endpoint } = spec;
     if ('connector' in endpoint) return endpoint.connector; // capture or materialization
     if ('dekaf' in endpoint) return endpoint.dekaf; // materialization

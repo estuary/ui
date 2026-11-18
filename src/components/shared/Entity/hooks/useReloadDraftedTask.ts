@@ -8,12 +8,13 @@ import {
     useEditorStore_setId,
     useEditorStore_setPersistedDraftId,
 } from 'src/components/editor/Store/hooks';
+import { useEntityType } from 'src/context/EntityContext';
 import { useGetDraftSpec } from 'src/hooks/drafts/useGetDraftSpec';
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 import { useBinding_evaluateDiscoveredBindings } from 'src/stores/Binding/hooks';
 import { useEndpointConfigStore_setEncryptedEndpointConfig } from 'src/stores/EndpointConfig/hooks';
-import { getEndpointFromSpec } from 'src/utils/connector-utils';
+import { getEndpointFromSpecDef } from 'src/utils/connector-utils';
 
 /**
  * Callback hook that reloads the workflow's task from its draft after the
@@ -22,8 +23,8 @@ import { getEndpointFromSpec } from 'src/utils/connector-utils';
  * Callers report a failure, as each fails its form differently.
  */
 export function useReloadDraftedTask() {
-    const getCaptureDraftSpec = useGetDraftSpec('capture');
-    const getMaterializationDraftSpec = useGetDraftSpec('materialization');
+    const entityType = useEntityType() as EntityWithCreateWorkflow;
+    const getDraftSpec = useGetDraftSpec(entityType);
 
     const evaluateDiscoveredBindings = useBinding_evaluateDiscoveredBindings();
     const setDraftId = useEditorStore_setId();
@@ -34,13 +35,12 @@ export function useReloadDraftedTask() {
     return useCallback(
         async (
             draftId: string,
-            entityType: EntityWithCreateWorkflow,
             catalogName: string
         ): Promise<Result<null, Error | PostgrestError>> => {
-            const { value: draftSpec, error } =
-                entityType === 'capture'
-                    ? await getCaptureDraftSpec(draftId, catalogName)
-                    : await getMaterializationDraftSpec(draftId);
+            const { value: draftSpec, error } = await getDraftSpec(
+                draftId,
+                catalogName
+            );
 
             if (error) {
                 return { error };
@@ -52,7 +52,7 @@ export function useReloadDraftedTask() {
             }
 
             const spec = draftSpec.spec;
-            const endpoint = getEndpointFromSpec(spec);
+            const endpoint = getEndpointFromSpecDef(spec);
             const endpointConfig = endpoint?.config as Schema;
 
             setDraftId(draftId);
@@ -70,8 +70,7 @@ export function useReloadDraftedTask() {
         },
         [
             evaluateDiscoveredBindings,
-            getCaptureDraftSpec,
-            getMaterializationDraftSpec,
+            getDraftSpec,
             setDraftId,
             setEncryptedEndpointConfig,
             setPersistedDraftId,

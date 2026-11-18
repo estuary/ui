@@ -4,8 +4,9 @@ import { useEffect } from 'react';
 
 import { Button } from '@mui/material';
 
-import { useSubmitCaptureForm } from 'src/components/capture/useSubmitCaptureForm';
+import { useWriteCaptureDraft } from 'src/components/capture/useWriteCaptureDraft';
 import { useEditorStore_isSaving } from 'src/components/editor/Store/hooks';
+import { useSubmitWorkflowForm } from 'src/components/shared/Entity/hooks/useSubmitWorkflowForm';
 import { entityHeaderButtonSx } from 'src/context/Theme';
 import { useBinding_rediscoveryRequired } from 'src/stores/Binding/hooks';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
@@ -40,8 +41,10 @@ function CaptureGenerateButton({ createWorkflowMetadata }: Props) {
     const formActive = useFormStateStore_isActive();
     const rediscoveryRequired = useBinding_rediscoveryRequired();
 
-    const submitForm = useSubmitCaptureForm({
-        initiateDiscovery: createWorkflowMetadata?.initiateDiscovery,
+    const writeDraft = useWriteCaptureDraft(
+        createWorkflowMetadata?.initiateDiscovery
+    );
+    const submitForm = useSubmitWorkflowForm(writeDraft, {
         initiateRediscovery: rediscoveryRequired,
     });
 

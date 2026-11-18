@@ -2,13 +2,15 @@ import { Box, IconButton, Tooltip, useTheme } from '@mui/material';
 
 import { RefreshDouble } from 'iconoir-react';
 
-import { useSubmitCaptureForm } from 'src/components/capture/useSubmitCaptureForm';
+import { useWriteCaptureDraft } from 'src/components/capture/useWriteCaptureDraft';
 import { useEditorStore_isSaving } from 'src/components/editor/Store/hooks';
+import { useSubmitWorkflowForm } from 'src/components/shared/Entity/hooks/useSubmitWorkflowForm';
 import { disabledButtonText } from 'src/context/Theme';
 import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
 
 function RediscoverButton() {
-    const submitForm = useSubmitCaptureForm({
+    const writeDraft = useWriteCaptureDraft();
+    const submitForm = useSubmitWorkflowForm(writeDraft, {
         initiateRediscovery: true,
     });
     const isSaving = useEditorStore_isSaving();

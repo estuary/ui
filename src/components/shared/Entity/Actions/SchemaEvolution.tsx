@@ -1,5 +1,4 @@
 import type { FormState } from 'src/stores/FormState/types';
-import type { EntityWithCreateWorkflow } from 'src/types';
 
 import { useCallback } from 'react';
 
@@ -17,7 +16,6 @@ import {
     useEditorStore_queryResponse_mutate,
 } from 'src/components/editor/Store/hooks';
 import { useReloadDraftedTask } from 'src/components/shared/Entity/hooks/useReloadDraftedTask';
-import { useEntityType } from 'src/context/EntityContext';
 import { entityHeaderButtonSx } from 'src/context/Theme';
 import { useEntityWorkflow_Editing } from 'src/context/Workflow';
 import useJobStatusPoller from 'src/hooks/useJobStatusPoller';
@@ -47,7 +45,6 @@ function SchemaEvolution({ onFailure }: Props) {
     const { jobStatusPoller } = useJobStatusPoller();
 
     // Only rendered in the capture and materialization edit workflows
-    const entityType = useEntityType() as EntityWithCreateWorkflow;
     const editingEntity = useEntityWorkflow_Editing();
 
     // Draft Editor Store
@@ -107,7 +104,6 @@ function SchemaEvolution({ onFailure }: Props) {
                 //  them locally and present them
                 const { error: reloadError } = await reloadDraftedTask(
                     payload.draft_id,
-                    entityType,
                     catalogName
                 );
                 if (reloadError) {

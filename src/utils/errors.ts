@@ -18,6 +18,16 @@ export function normalizeError(error: unknown) {
         return new Error(error);
     }
 
+    // e.g. PostgREST errors, which are plain objects
+    if (
+        typeof error === 'object' &&
+        error !== null &&
+        'message' in error &&
+        typeof error.message === 'string'
+    ) {
+        return new Error(error.message);
+    }
+
     return new Error('Unknown error');
 }
 

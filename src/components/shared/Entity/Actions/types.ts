@@ -20,6 +20,5 @@ export interface EntityCreateSaveButtonProps {
     loading: boolean;
     logEvent: CustomEvents;
     onFailure: Function;
-    buttonLabelId?: string;
     dryRun?: boolean;
 }

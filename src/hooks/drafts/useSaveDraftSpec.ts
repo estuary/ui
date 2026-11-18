@@ -1,9 +1,5 @@
-import type {
-    CaptureDraftSpec,
-    MaterializationsDraftSpec,
-} from 'src/hooks/drafts/useGetDraftSpec';
+import type { CaptureDef, MaterializationDef } from 'deps/flow/flow';
 import type { EntityWithCreateWorkflow } from 'src/types';
-import type { Result } from 'src/types/utils';
 
 import { useCallback } from 'react';
 
@@ -11,15 +7,8 @@ import { useMutation } from 'urql';
 
 import { createDraftSpec, modifyDraftSpec } from 'src/api/draftSpecs';
 import { graphql } from 'src/gql-types';
-import { getEndpointFromSpec } from 'src/utils/connector-utils';
-import { isEncryptedConfig } from 'src/utils/sops-utils';
-
-const UNSUPPORTED_CONFIG = new Error(
-    'Only connector or dekaf configurations are supported'
-);
-const UNENCRYPTED_CONFIG_ERROR = new Error(
-    'The endpoint config must be encrypted before it is saved'
-);
+import { useGetDraftSpec } from 'src/hooks/drafts/useGetDraftSpec';
+import { validateEndpointConfig } from 'src/utils/workflow-utils';
 
 const STAGE_DRAFT_SPECS = graphql(`
     mutation StageDraftSpecs($draftId: Id!, $specs: [DraftSpecInput!]!) {
@@ -27,6 +16,10 @@ const STAGE_DRAFT_SPECS = graphql(`
     }
 `);
 
+/**
+ * Callback hook that writes the task's spec into its draft. Resolves to the
+ * error, if any.
+ */
 export function useSaveDraftSpec(
     catalogType: 'capture'
 ): ReturnType<typeof useSaveCaptureDraftSpec>;
@@ -53,56 +46,64 @@ const useSaveCaptureDraftSpec = () => {
         async (
             draftId: string,
             catalogName: string,
-            draftSpec: CaptureDraftSpec
-        ): Promise<Result<CaptureDraftSpec>> => {
-            const endpoint = getEndpointFromSpec(draftSpec.spec);
-            if (!endpoint?.config) {
-                return { error: UNSUPPORTED_CONFIG };
-            }
-            // saving expects an encryted config
-            if (!isEncryptedConfig(endpoint.config)) {
-                return { error: UNENCRYPTED_CONFIG_ERROR };
+            expectPubId: string | null,
+            specDef: CaptureDef
+        ): Promise<Error | null> => {
+            const configError = validateEndpointConfig(specDef);
+            if (configError) {
+                return configError;
             }
 
             // Staging replaces every field, so the drafted precondition is
             // passed back or it's cleared
             const result = await stageDraftSpecs({
                 draftId,
-                specs: {
-                    catalogName,
-                    catalogType: 'capture',
-                    model: draftSpec.spec,
-                    expectPubId: draftSpec.expect_pub_id,
-                },
+                specs: [
+                    {
+                        catalogType: 'capture',
+                        catalogName: catalogName,
+                        expectPubId: expectPubId,
+                        model: specDef,
+                    },
+                ],
             });
 
             if (result.error) {
-                return { error: result.error };
+                return result.error;
             }
             if (!result.data || result.data.stageDraftSpecs.length <= 0) {
-                return { error: new Error('draft spec not saved') };
+                return new Error('draft spec not saved');
             }
 
-            return { value: draftSpec };
+            return null;
         },
         [stageDraftSpecs]
     );
 };
 
+// Updates the drafted materialization in place, so a rename keeps it
 const useSaveMaterializationDraftSpec = () => {
+    const getDraftSpec = useGetDraftSpec('materialization');
+
     return useCallback(
         async (
             draftId: string,
             catalogName: string,
-            draftSpec: MaterializationsDraftSpec,
-            update: boolean
-        ): Promise<Result<MaterializationsDraftSpec>> => {
-            const endpoint = getEndpointFromSpec(draftSpec.spec);
-            if (!endpoint?.config) {
-                return { error: UNSUPPORTED_CONFIG };
+            expectPubId: string | null,
+            specDef: MaterializationDef
+        ): Promise<Error | null> => {
+            const configError = validateEndpointConfig(specDef);
+            if (configError) {
+                return configError;
             }
-            if (!isEncryptedConfig(endpoint.config)) {
-                return { error: UNENCRYPTED_CONFIG_ERROR };
+
+            // need to check if the materialization draft exists as
+            // renames need to happen in place and not stage a new draft
+            // TODO: Remove once stageDraftSpecs can rename a materialization
+            // spec in place, so this can use the same mutation.
+            const existingRes = await getDraftSpec(draftId);
+            if (existingRes.error) {
+                return existingRes.error;
             }
 
             // If there is a draft already with task data then update. We do not match on
@@ -110,9 +111,9 @@ const useSaveMaterializationDraftSpec = () => {
             //      if someone updates their draft on the CLI and adds multiple materializations
             //      there will be an issue. This will need to be handled eventually but by then
             //      we should move the UI to the "shopping cart" approach.
-            const response = update
+            const response = Boolean(existingRes.value)
                 ? await modifyDraftSpec(
-                      draftSpec.spec,
+                      specDef,
                       {
                           draft_id: draftId,
                           spec_type: 'materialization',
@@ -122,20 +123,20 @@ const useSaveMaterializationDraftSpec = () => {
                 : await createDraftSpec(
                       draftId,
                       catalogName,
-                      draftSpec.spec,
+                      specDef,
                       'materialization',
-                      draftSpec.expect_pub_id
+                      expectPubId
                   );
 
             if (response.error) {
-                return { error: response.error };
+                return response.error;
             }
             if (!response.data || response.data.length === 0) {
-                return { error: new Error('draft spec not saved') };
+                return new Error('draft spec not saved');
             }
 
-            return { value: draftSpec };
+            return null;
         },
-        []
+        [getDraftSpec]
     );
 };

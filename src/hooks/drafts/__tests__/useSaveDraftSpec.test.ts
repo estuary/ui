@@ -1,7 +1,4 @@
-import type {
-    CaptureDraftSpec,
-    MaterializationsDraftSpec,
-} from 'src/hooks/drafts/useGetDraftSpec';
+import type { CaptureDef, MaterializationDef } from 'deps/flow/flow';
 import type * as Urql from 'urql';
 
 import { renderHook } from '@testing-library/react';
@@ -10,6 +7,7 @@ import { beforeEach, describe, expect, test, vi } from 'vitest';
 
 import { createDraftSpec, modifyDraftSpec } from 'src/api/draftSpecs';
 import { UrqlConfigProvider } from 'src/context/URQL';
+import { useGetDraftSpec } from 'src/hooks/drafts/useGetDraftSpec';
 import { useSaveDraftSpec } from 'src/hooks/drafts/useSaveDraftSpec';
 import unsortedSopsConfig from 'src/test/fixtures/unsortedSopsConfig.json';
 import { graphql, HttpResponse, server } from 'src/test/server/test-server';
@@ -30,40 +28,34 @@ vi.mock(import('src/api/draftSpecs'), async (importOriginal) => ({
     modifyDraftSpec: vi.fn(),
 }));
 
+vi.mock(import('src/hooks/drafts/useGetDraftSpec'), async (importOriginal) => ({
+    ...(await importOriginal()),
+    useGetDraftSpec: vi.fn(),
+}));
+
 const DRAFT_ID = '1111111111111111';
 const PUB_ID = '2222222222222222';
 const CAPTURE_NAME = 'acmeCo/source-hello-world';
 const MATERIALIZATION_NAME = 'acmeCo/materialize-postgres';
 
-const ENCRYPTED_CONFIG = {
-    password_sops: 'ENC[AES256_GCM,data:foo,tag:bar,type:str]',
-    sops: {},
-};
+const CONFIG = { password_sops: 'ENC[...]', sops: {} };
 
-const captureDraftSpec = (
-    config: object = ENCRYPTED_CONFIG,
-    expectPubId: string | null = PUB_ID
-): CaptureDraftSpec => ({
-    expect_pub_id: expectPubId,
-    spec: {
+const captureSpecDef = (config: object = CONFIG): CaptureDef =>
+    ({
         bindings: [],
-        endpoint: { connector: { image: 'source-hello-world:dev', config } },
-    } as any,
-});
-
-const materializationDraftSpec = (
-    endpoint: object = {
-        connector: {
-            image: 'materialize-postgres:dev',
-            config: ENCRYPTED_CONFIG,
+        endpoint: {
+            connector: { image: 'source-hello-world:dev', config },
         },
+    }) as any;
+
+const materializationSpecDef = (
+    endpoint: object = {
+        connector: { image: 'materialize-postgres:dev', config: CONFIG },
     }
-): MaterializationsDraftSpec => ({
-    expect_pub_id: PUB_ID,
-    spec: { bindings: [], endpoint } as any,
-});
+): MaterializationDef => ({ bindings: [], endpoint }) as any;
 
 const stageDraftSpecs = vi.fn();
+const getDraftSpec = vi.fn();
 
 describe('useSaveDraftSpec', () => {
     beforeEach(() => {
@@ -72,6 +64,10 @@ describe('useSaveDraftSpec', () => {
             data: { stageDraftSpecs: [CAPTURE_NAME] },
         });
         vi.mocked(useMutation).mockReturnValue([{} as never, stageDraftSpecs]);
+
+        getDraftSpec.mockReset();
+        getDraftSpec.mockResolvedValue({ value: null });
+        vi.mocked(useGetDraftSpec).mockReturnValue(getDraftSpec as never);
 
         vi.mocked(createDraftSpec).mockReset();
         vi.mocked(createDraftSpec).mockResolvedValue({
@@ -89,34 +85,24 @@ describe('useSaveDraftSpec', () => {
         const renderSave = () =>
             renderHook(() => useSaveDraftSpec('capture')).result.current;
 
-        test('stages the spec with its drafted precondition', async () => {
-            const draftSpec = captureDraftSpec();
+        test('stages the spec def with its precondition', async () => {
+            const specDef = captureSpecDef();
 
             await expect(
-                renderSave()(DRAFT_ID, CAPTURE_NAME, draftSpec)
-            ).resolves.toEqual({ value: draftSpec });
+                renderSave()(DRAFT_ID, CAPTURE_NAME, PUB_ID, specDef)
+            ).resolves.toBeNull();
 
             expect(stageDraftSpecs).toHaveBeenCalledWith({
                 draftId: DRAFT_ID,
-                specs: {
-                    catalogName: CAPTURE_NAME,
-                    catalogType: 'capture',
-                    model: draftSpec.spec,
-                    expectPubId: PUB_ID,
-                },
+                specs: [
+                    {
+                        catalogName: CAPTURE_NAME,
+                        catalogType: 'capture',
+                        model: specDef,
+                        expectPubId: PUB_ID,
+                    },
+                ],
             });
-        });
-
-        test('passes a null precondition through rather than dropping it', async () => {
-            await renderSave()(
-                DRAFT_ID,
-                CAPTURE_NAME,
-                captureDraftSpec(ENCRYPTED_CONFIG, null)
-            );
-
-            expect(stageDraftSpecs.mock.calls[0][0].specs.expectPubId).toBe(
-                null
-            );
         });
 
         // sops computes the MAC over values in document order, so a config sent
@@ -141,11 +127,10 @@ describe('useSaveDraftSpec', () => {
                 const save = renderHook(() => useSaveDraftSpec('capture'), {
                     wrapper: UrqlConfigProvider,
                 }).result.current;
-                const draftSpec = captureDraftSpec(config);
 
                 await expect(
-                    save(DRAFT_ID, CAPTURE_NAME, draftSpec)
-                ).resolves.toEqual({ value: draftSpec });
+                    save(DRAFT_ID, CAPTURE_NAME, PUB_ID, captureSpecDef(config))
+                ).resolves.toBeNull();
 
                 return body;
             };
@@ -172,10 +157,11 @@ describe('useSaveDraftSpec', () => {
         });
 
         test('rejects an unencrypted config without staging it', async () => {
-            const { error } = await renderSave()(
+            const error = await renderSave()(
                 DRAFT_ID,
                 CAPTURE_NAME,
-                captureDraftSpec({ password: 'plaintext' })
+                PUB_ID,
+                captureSpecDef({ password: 'plaintext' })
             );
 
             expect(error?.message).toMatch(/must be encrypted/);
@@ -183,15 +169,16 @@ describe('useSaveDraftSpec', () => {
         });
 
         test('rejects an endpoint that is not a connector', async () => {
-            const draftSpec = captureDraftSpec();
-            draftSpec.spec.endpoint = {
+            const specDef = captureSpecDef();
+            specDef.endpoint = {
                 local: { command: ['run'], config: {} },
             } as any;
 
-            const { error } = await renderSave()(
+            const error = await renderSave()(
                 DRAFT_ID,
                 CAPTURE_NAME,
-                draftSpec
+                PUB_ID,
+                specDef
             );
 
             expect(error?.message).toMatch(/connector or dekaf/);
@@ -203,8 +190,8 @@ describe('useSaveDraftSpec', () => {
             stageDraftSpecs.mockResolvedValue({ error: stagingError });
 
             await expect(
-                renderSave()(DRAFT_ID, CAPTURE_NAME, captureDraftSpec())
-            ).resolves.toEqual({ error: stagingError });
+                renderSave()(DRAFT_ID, CAPTURE_NAME, PUB_ID, captureSpecDef())
+            ).resolves.toBe(stagingError);
         });
     });
 
@@ -213,60 +200,76 @@ describe('useSaveDraftSpec', () => {
             renderHook(() => useSaveDraftSpec('materialization')).result
                 .current;
 
-        test('modifies the drafted materialization when updating', async () => {
-            const draftSpec = materializationDraftSpec();
+        test('modifies the drafted materialization, matched by type so a rename stays in place', async () => {
+            getDraftSpec.mockResolvedValue({ value: { spec: {} } });
+            const specDef = materializationSpecDef();
 
-            await renderSave()(DRAFT_ID, MATERIALIZATION_NAME, draftSpec, true);
+            await expect(
+                renderSave()(DRAFT_ID, MATERIALIZATION_NAME, PUB_ID, specDef)
+            ).resolves.toBeNull();
 
             expect(modifyDraftSpec).toHaveBeenCalledWith(
-                draftSpec.spec,
+                specDef,
                 { draft_id: DRAFT_ID, spec_type: 'materialization' },
                 MATERIALIZATION_NAME
             );
             expect(createDraftSpec).not.toHaveBeenCalled();
         });
 
-        test('creates the materialization with its precondition when new', async () => {
-            const draftSpec = materializationDraftSpec();
+        test('creates the materialization with its precondition when none is drafted', async () => {
+            const specDef = materializationSpecDef();
 
-            await renderSave()(
-                DRAFT_ID,
-                MATERIALIZATION_NAME,
-                draftSpec,
-                false
-            );
+            await renderSave()(DRAFT_ID, MATERIALIZATION_NAME, PUB_ID, specDef);
 
             expect(createDraftSpec).toHaveBeenCalledWith(
                 DRAFT_ID,
                 MATERIALIZATION_NAME,
-                draftSpec.spec,
+                specDef,
                 'materialization',
                 PUB_ID
             );
             expect(modifyDraftSpec).not.toHaveBeenCalled();
         });
 
-        test('accepts an encrypted Dekaf endpoint', async () => {
-            const draftSpec = materializationDraftSpec({
-                dekaf: { variant: 'generic', config: ENCRYPTED_CONFIG },
+        test('accepts a Dekaf endpoint', async () => {
+            const specDef = materializationSpecDef({
+                dekaf: { variant: 'generic', config: CONFIG },
             });
 
             await expect(
-                renderSave()(DRAFT_ID, MATERIALIZATION_NAME, draftSpec, false)
-            ).resolves.toEqual({ value: draftSpec });
+                renderSave()(DRAFT_ID, MATERIALIZATION_NAME, PUB_ID, specDef)
+            ).resolves.toBeNull();
         });
 
         test('rejects an unencrypted config without writing it', async () => {
-            const { error } = await renderSave()(
+            const specDef = materializationSpecDef({
+                connector: { image: 'x', config: { password: 'plain' } },
+            });
+
+            const error = await renderSave()(
                 DRAFT_ID,
                 MATERIALIZATION_NAME,
-                materializationDraftSpec({
-                    connector: { image: 'x', config: { password: 'plain' } },
-                }),
-                true
+                PUB_ID,
+                specDef
             );
 
             expect(error?.message).toMatch(/must be encrypted/);
+            expect(modifyDraftSpec).not.toHaveBeenCalled();
+            expect(createDraftSpec).not.toHaveBeenCalled();
+        });
+
+        test('returns the drafted spec lookup error without writing', async () => {
+            const lookupError = new Error('lookup failed');
+            getDraftSpec.mockResolvedValue({ error: lookupError });
+
+            await expect(
+                renderSave()(
+                    DRAFT_ID,
+                    MATERIALIZATION_NAME,
+                    PUB_ID,
+                    materializationSpecDef()
+                )
+            ).resolves.toBe(lookupError);
             expect(modifyDraftSpec).not.toHaveBeenCalled();
             expect(createDraftSpec).not.toHaveBeenCalled();
         });

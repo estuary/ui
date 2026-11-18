@@ -1,4 +1,4 @@
-import type { WorkflowInitializerProps } from 'src/components/shared/Entity/types';
+import type { ReactNode } from 'react';
 
 import { useEffectOnce } from 'react-use';
 
@@ -9,10 +9,14 @@ import BindingHydrator from 'src/stores/Binding/Hydrator';
 import { useWorkflowStore } from 'src/stores/Workflow/Store';
 import { useWorkflowHydrator } from 'src/stores/Workflow/useWorkflowHydrator';
 
+interface WorkflowHydratorProps {
+    children?: ReactNode;
+}
+
 // This hydrator is here without a store so that we can start working on moving a lot of
 //  these separate stores into a single "Workflow" store for Create and Edit.
-function WorkflowHydratorInner({ children }: WorkflowInitializerProps) {
-    const { hydrateState } = useWorkflowHydrator();
+function WorkflowHydratorInner({ children }: WorkflowHydratorProps) {
+    const hydrateWorkflow = useWorkflowHydrator();
 
     const hydrationError = useWorkflowStore((state) => state.hydrationError);
     const hydrated = useWorkflowStore((state) => state.hydrated);
@@ -24,7 +28,7 @@ function WorkflowHydratorInner({ children }: WorkflowInitializerProps) {
     useEffectOnce(() => {
         if (!hydrated) {
             setActive(true);
-            hydrateState();
+            hydrateWorkflow();
         }
     });
 
@@ -47,7 +51,7 @@ function WorkflowHydratorInner({ children }: WorkflowInitializerProps) {
     return <BindingHydrator>{children}</BindingHydrator>;
 }
 
-function WorkflowHydrator({ children }: WorkflowInitializerProps) {
+function WorkflowHydrator({ children }: WorkflowHydratorProps) {
     return (
         <ConnectorTagProvider>
             <WorkflowHydratorInner>{children}</WorkflowHydratorInner>
