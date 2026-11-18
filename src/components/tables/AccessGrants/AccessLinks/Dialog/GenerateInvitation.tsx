@@ -18,6 +18,7 @@ import {
 import { useTheme } from '@mui/material/styles';
 
 import { usePostHog } from '@posthog/react';
+import { useLeaf } from 'react-semantic-tree';
 import { useMutation } from 'urql';
 
 import { CREATE_INVITE_LINK } from 'src/api/gql/inviteLinks';
@@ -45,10 +46,11 @@ const RadioOption = ({
     isSelected: boolean;
     onClick?: () => void;
 }) => {
+    const { ref } = useLeaf('Access Scope', { value });
     return (
         <FormControlLabel
             value={value}
-            control={<Radio size="small" />}
+            control={<Radio ref={ref} size="small" />}
             label={label}
             slotProps={{
                 typography: {
@@ -77,6 +79,9 @@ const RadioOption = ({
 };
 
 export function GenerateInvitation({ setError }: InviteErrorProps) {
+    const { ref: reusableRef } = useLeaf('Reusable Invite');
+    const { ref: tenantRef } = useLeaf('Tenant');
+    const { ref: capabilityRef } = useLeaf('Capability');
     const postHog = usePostHog();
     const { palette } = useTheme();
 
@@ -111,10 +116,15 @@ export function GenerateInvitation({ setError }: InviteErrorProps) {
             ? prefix.slice(0, MAX_PREFIX_LENGTH) + elipsis
             : prefix;
 
-    async function createInvite() {
-        const objectRole = `${prefix}${limitedAccessScope ? name : ''}`;
-        const catalogPrefix = appendWithForwardSlash(objectRole);
+    const objectRole = `${prefix}${limitedAccessScope ? name : ''}`;
+    const catalogPrefix = appendWithForwardSlash(objectRole);
 
+    const { ref: createRef } = useLeaf('Create Invite Link', {
+        capability,
+        catalogPrefix,
+    });
+
+    async function createInvite() {
         const result = await createMutation({
             catalogPrefix,
             capability,
@@ -134,7 +144,7 @@ export function GenerateInvitation({ setError }: InviteErrorProps) {
         <Stack sx={{ mb: 2, minWidth: 500 }} spacing={1}>
             <Stack spacing={1} sx={{ pt: 1 }}>
                 <Stack spacing={1} direction="row">
-                    <Box sx={{ flex: 1 }}>
+                    <Box ref={tenantRef} sx={{ flex: 1 }}>
                         <PrefixedName
                             prefixOnly
                             defaultPrefix
@@ -145,7 +155,7 @@ export function GenerateInvitation({ setError }: InviteErrorProps) {
                             }
                         />
                     </Box>
-                    <Box sx={{ minWidth: 150 }}>
+                    <Box ref={capabilityRef} sx={{ minWidth: 150 }}>
                         <AutocompletedField
                             label="Capability"
                             required
@@ -274,6 +284,7 @@ export function GenerateInvitation({ setError }: InviteErrorProps) {
                 <FormControlLabel
                     control={
                         <Checkbox
+                            ref={reusableRef}
                             checked={!singleUse}
                             onChange={(event) => {
                                 setSingleUse(!event.target.checked);
@@ -286,6 +297,7 @@ export function GenerateInvitation({ setError }: InviteErrorProps) {
                     }}
                 />
                 <Button
+                    ref={createRef}
                     disabled={
                         fetching ||
                         accessScope === null ||
