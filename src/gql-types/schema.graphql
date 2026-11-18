@@ -428,6 +428,7 @@ enum CapabilityBundle {
   Admin
   Assume
   Billing
+  CatalogRead
   CreateSandbox
   Delegate
   EditBilling
@@ -435,8 +436,10 @@ enum CapabilityBundle {
   Editor
   ManageDataPlane
   ManageServiceAccounts
+  ModifyDataPlanePrivateNetworking
   TeamAdmin
   ViewBilling
+  ViewDataPlanePrivateNetworking
   Viewer
   Writer
 }

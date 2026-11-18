@@ -446,6 +446,7 @@ export type CapabilityBundle =
   | 'Admin'
   | 'Assume'
   | 'Billing'
+  | 'CatalogRead'
   | 'CreateSandbox'
   | 'Delegate'
   | 'EditBilling'
@@ -453,8 +454,10 @@ export type CapabilityBundle =
   | 'Editor'
   | 'ManageDataPlane'
   | 'ManageServiceAccounts'
+  | 'ModifyDataPlanePrivateNetworking'
   | 'TeamAdmin'
   | 'ViewBilling'
+  | 'ViewDataPlanePrivateNetworking'
   | 'Viewer'
   | 'Writer';
 
