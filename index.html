@@ -2,6 +2,44 @@
 <html lang="en">
     <head>
         <meta charset="utf-8" />
+
+        <!--
+            Logins started from an SSO identity provider (such as an Okta app
+            tile) can't use PKCE, so Supabase sends them back with the session
+            tokens in the URL fragment. Move the tokens out of the URL before any
+            other script, analytics included, can read it.
+            src/services/supabaseClient.ts picks them up and signs the user in.
+            Skip the connector OAuth popup (/oauth), which reads its fragment.
+        -->
+        <script nonce="__NGINX_CSP_NONCE__">
+            (function () {
+                var location = window.location;
+                if (
+                    location.pathname === '/oauth' ||
+                    location.hash.indexOf('access_token=') === -1
+                ) {
+                    return;
+                }
+
+                var params = new URLSearchParams(location.hash.slice(1));
+                var accessToken = params.get('access_token');
+                var refreshToken = params.get('refresh_token');
+                if (!accessToken || !refreshToken) {
+                    return;
+                }
+
+                window.__supabaseFragmentSession = {
+                    access_token: accessToken,
+                    refresh_token: refreshToken,
+                };
+                window.history.replaceState(
+                    window.history.state,
+                    '',
+                    location.pathname + location.search
+                );
+            })();
+        </script>
+
         <meta name="viewport" content="initial-scale=1, width=device-width" />
         <meta name="theme-color" content="#000000" />
         <meta name="csp-nonce" content="__NGINX_CSP_NONCE__" />

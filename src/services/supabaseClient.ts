@@ -85,3 +85,26 @@ export const supabaseClient = createClient(
         global: { fetch: ssoCheckingFetch },
     }
 );
+
+declare global {
+    interface Window {
+        __supabaseFragmentSession?: {
+            access_token: string;
+            refresh_token: string;
+        };
+    }
+}
+
+// Logins started from an SSO identity provider (such as an Okta app tile)
+//  can't use PKCE, so Supabase sends them back with the tokens in the URL
+//  fragment, which a PKCE client rejects. The inline script at the top of
+//  index.html moves those tokens out of the URL before anything else runs;
+//  sign the user in with them here.
+const fragmentSession = window.__supabaseFragmentSession;
+if (fragmentSession) {
+    delete window.__supabaseFragmentSession;
+
+    void supabaseClient.auth.setSession(fragmentSession).then(({ error }) => {
+        logRocketEvent('Auth:FragmentSession', { success: !error });
+    });
+}
