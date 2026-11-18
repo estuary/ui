@@ -5,6 +5,7 @@ import {
     createBrowserRouter,
     createRoutesFromElements,
     Navigate,
+    Outlet,
     Route,
     RouterProvider,
     Routes,
@@ -15,6 +16,7 @@ import AccessGrants from 'src/components/admin/AccessGrants';
 import AdminApi from 'src/components/admin/Api';
 import AdminBilling from 'src/components/admin/Billing';
 import AdminSettings from 'src/components/admin/Settings';
+import AdminTabs from 'src/components/admin/Tabs';
 import { ErrorImporting } from 'src/components/shared/ErrorImporting';
 import HasSupportRoleGuard from 'src/components/shared/guards/SupportRole';
 import { AuthenticatedOnlyContext } from 'src/context/Authenticated';
@@ -686,7 +688,15 @@ const router = createBrowserRouter(
                         </Route>
                     </Route>
 
-                    <Route path={authenticatedRoutes.admin.path}>
+                    <Route
+                        path={authenticatedRoutes.admin.path}
+                        element={
+                            <>
+                                <AdminTabs />
+                                <Outlet />
+                            </>
+                        }
+                    >
                         <Route
                             path=""
                             element={

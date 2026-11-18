@@ -16,7 +16,6 @@ export function useCopyToClipboard(componentName: string) {
                 () => {
                     setIsCopied(false);
                     logRocketEvent('Error_Silent', {
-                        copiedValue: value,
                         component: componentName,
                     });
                 }

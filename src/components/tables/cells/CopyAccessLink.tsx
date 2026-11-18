@@ -28,8 +28,8 @@ export function CopyAccessLink({ token, ssoProviderId }: Props) {
     );
 
     return (
-        <TableCell>
-            <Tooltip title={accessLink}>
+        <TableCell data-private>
+            <Tooltip title="Copy invite link">
                 <span>
                     <CopyToClipboardButton writeValue={accessLink}>
                         Invite Link

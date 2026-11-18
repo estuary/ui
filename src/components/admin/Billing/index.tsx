@@ -13,7 +13,6 @@ import { BillingContactSection } from 'src/components/admin/Billing/BillingConta
 import DateRange from 'src/components/admin/Billing/DateRange';
 import PaymentMethods from 'src/components/admin/Billing/PaymentMethods';
 import { INVOICE_ROW_HEIGHT } from 'src/components/admin/Billing/shared';
-import AdminTabs from 'src/components/admin/Tabs';
 import GraphLoadingState from 'src/components/graphs/states/Loading';
 import GraphStateWrapper from 'src/components/graphs/states/Wrapper';
 import UsageByMonthGraph from 'src/components/graphs/UsageByMonthGraph';
@@ -46,8 +45,6 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
 
     return (
         <>
-            <AdminTabs />
-
             <Grid
                 container
                 spacing={{ xs: 3, md: 2 }}
