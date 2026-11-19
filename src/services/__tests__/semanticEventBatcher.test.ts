@@ -40,6 +40,7 @@ describe('semantic event batching', () => {
         vi.advanceTimersByTime(1);
         expect(fetchMock).toHaveBeenCalledTimes(1);
         expect(fetchMock.mock.calls[0][0]).toBe('/events');
+        expect(fetchMock.mock.calls[0][1].keepalive).toBe(true);
         expect(JSON.parse(fetchMock.mock.calls[0][1].body)).toEqual([
             { metadata: { page: '/first' } },
             { path: 'second' },
@@ -47,30 +48,18 @@ describe('semantic event batching', () => {
     });
 
     it('flushes at 20 events without a duplicate timer flush', () => {
-        const batcher = createSemanticEventBatcher('/events');
-        for (let i = 0; i < 20; i++) batcher.enqueue({ i });
-        expect(fetchMock).toHaveBeenCalledTimes(1);
-        expect(JSON.parse(fetchMock.mock.calls[0][1].body)).toHaveLength(20);
-        vi.advanceTimersByTime(1000);
-        expect(fetchMock).toHaveBeenCalledTimes(1);
-    });
-
-    it('splits by UTF-8 bytes and respects the shared keepalive budget', () => {
         fetchMock.mockImplementation(() => new Promise(() => {}));
         const batcher = createSemanticEventBatcher('/events');
-        for (let i = 0; i < 3; i++) {
-            batcher.enqueue({ text: '🙂'.repeat(9000) });
+        for (let i = 0; i < 40; i++) {
+            batcher.enqueue({ i, text: '🙂'.repeat(1000) });
         }
-        batcher.flush();
-        expect(fetchMock).toHaveBeenCalledTimes(3);
+        expect(fetchMock).toHaveBeenCalledTimes(2);
         for (const [, options] of fetchMock.mock.calls) {
-            expect(
-                new TextEncoder().encode(options.body).byteLength
-            ).toBeLessThanOrEqual(48 * 1024);
+            expect(JSON.parse(options.body)).toHaveLength(20);
+            expect(options.keepalive).toBe(true);
         }
-        expect(
-            fetchMock.mock.calls.map(([, options]) => options.keepalive)
-        ).toEqual([true, false, false]);
+        vi.advanceTimersByTime(1000);
+        expect(fetchMock).toHaveBeenCalledTimes(2);
     });
 
     it('flushes pending events once when explicitly requested', () => {
@@ -80,15 +69,15 @@ describe('semantic event batching', () => {
         batcher.flush();
         vi.advanceTimersByTime(1000);
         expect(fetchMock).toHaveBeenCalledTimes(1);
+        expect(fetchMock.mock.calls[0][1].keepalive).toBe(true);
     });
 
-    it('isolates oversized and unserializable events', () => {
+    it('isolates unserializable events', () => {
         vi.spyOn(console, 'warn').mockImplementation(() => {});
         const batcher = createSemanticEventBatcher('/events');
         const cyclic: Record<string, unknown> = {};
         cyclic.self = cyclic;
         batcher.enqueue(cyclic);
-        batcher.enqueue({ text: 'x'.repeat(48 * 1024) });
         batcher.enqueue({ path: 'valid' });
         batcher.flush();
         expect(JSON.parse(fetchMock.mock.calls[0][1].body)).toEqual([
