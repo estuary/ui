@@ -3,7 +3,7 @@ import type { InviteLink } from 'src/gql-types/graphql';
 
 import { Button, TableCell, TableRow, Typography } from '@mui/material';
 
-import { useLeaf } from 'react-semantic-tree';
+import { Branch, useLeaf } from 'react-semantic-tree';
 import { useMutation } from 'urql';
 
 import { DELETE_INVITE_LINK } from 'src/api/gql/inviteLinks';
@@ -26,40 +26,48 @@ export function Row({
     };
 
     return (
-        <TableRow hover>
-            <TableCell>
-                <Typography>{row.catalogPrefix}</Typography>
-            </TableCell>
+        <Branch
+            metadata={{
+                catalogPrefix: row.catalogPrefix,
+                capability: row.capability,
+                singleUse: row.singleUse,
+            }}
+        >
+            <TableRow hover>
+                <TableCell>
+                    <Typography>{row.catalogPrefix}</Typography>
+                </TableCell>
 
-            <TableCell>
-                <Typography>{row.capability}</Typography>
-            </TableCell>
+                <TableCell>
+                    <Typography>{row.capability}</Typography>
+                </TableCell>
 
-            <TableCell>
-                <Typography>
-                    {row.singleUse ? 'Single use' : 'Multi-use'}
-                </Typography>
-            </TableCell>
+                <TableCell>
+                    <Typography>
+                        {row.singleUse ? 'Single use' : 'Multi-use'}
+                    </Typography>
+                </TableCell>
 
-            <CopyAccessLink
-                token={row.token}
-                ssoProviderId={row.ssoProviderId}
-            />
+                <CopyAccessLink
+                    token={row.token}
+                    ssoProviderId={row.ssoProviderId}
+                />
 
-            <TimeStamp time={row.createdAt} />
+                <TimeStamp time={row.createdAt} />
 
-            <TableCell sx={{ width: 50 }}>
-                <Button
-                    ref={ref}
-                    onClick={handleDelete}
-                    disabled={fetching}
-                    variant="text"
-                    size="small"
-                    aria-label="Remove"
-                >
-                    Remove
-                </Button>
-            </TableCell>
-        </TableRow>
+                <TableCell sx={{ width: 50 }}>
+                    <Button
+                        ref={ref}
+                        onClick={handleDelete}
+                        disabled={fetching}
+                        variant="text"
+                        size="small"
+                        aria-label="Remove"
+                    >
+                        Remove
+                    </Button>
+                </TableCell>
+            </TableRow>
+        </Branch>
     );
 }
