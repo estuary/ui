@@ -1,85 +1,35 @@
-import type { DataPlaneScopes } from 'src/stores/DetailsForm/types';
-import type { TableColumns } from 'src/types';
-import type { CombinedError } from 'urql';
-
-import { useEffect, useState } from 'react';
-
 import {
-    Box,
+    Paper,
     Table,
+    TableBody,
+    TableCell,
     TableContainer,
-    TableFooter,
+    TableHead,
     TablePagination,
     TableRow,
-    Toolbar,
+    Typography,
 } from '@mui/material';
 
-import Rows from 'src/components/tables/DataPlanes/Rows';
-import ToggleDataPlaneScope from 'src/components/tables/DataPlanes/ToggleDataPlaneScope';
-import EntityTableBody from 'src/components/tables/EntityTable/TableBody';
-import EntityTableHeader from 'src/components/tables/EntityTable/TableHeader';
+import { compactTableSx } from 'src/components/admin/Settings/DataPlanes/compactTableSx';
+import Rows, {
+    PUBLIC_DATA_PLANES_STACK_BELOW,
+} from 'src/components/tables/DataPlanes/Rows';
+import { paperBackground } from 'src/context/Theme';
 import { useDataPlanesQuery } from 'src/hooks/dataPlanes/useDataPlanes';
 import { useCursorPagination } from 'src/hooks/useCursorPagination';
-import { DATA_PLANE_SETTINGS } from 'src/settings/dataPlanes';
-import { useTenantStore } from 'src/stores/Tenant';
-import { TableStatuses } from 'src/types';
-
-const columns: TableColumns[] = [
-    { field: null, headerIntlKey: null, collapseHeader: true },
-    { field: null, headerIntlKey: 'admin.dataPlanes.column.header.name' },
-    { field: null, headerIntlKey: 'admin.dataPlanes.column.header.region' },
-    { field: null, headerIntlKey: 'data.ipv4' },
-];
 
 const PAGE_SIZE = 10;
 
-function getTableStatus<T>(data: T[], loading: boolean, error?: CombinedError) {
-    if (loading) {
-        return TableStatuses.LOADING;
-    }
-
-    if (error) {
-        return error.networkError
-            ? TableStatuses.NETWORK_FAILED
-            : TableStatuses.TECHNICAL_DIFFICULTIES;
-    }
-
-    return data.length > 0
-        ? TableStatuses.DATA_FETCHED
-        : TableStatuses.NO_EXISTING_DATA;
-}
-
-function DataPlanesTable() {
-    const { currentPage, cursor, goToPage, onPageChange } =
-        useCursorPagination();
-
-    const selectedTenant = useTenantStore((state) => state.selectedTenant);
-    const [dataPlaneScope, setScope] = useState<DataPlaneScopes>('public');
+export function PublicDataPlanesTable({ tenant }: { tenant: string }) {
+    const { currentPage, cursor, onPageChange } = useCursorPagination();
     const { dataPlanes, fetching, error, pageInfo } = useDataPlanesQuery(
-        selectedTenant,
+        tenant,
         {
-            public: dataPlaneScope === 'public',
+            public: true,
             limit: PAGE_SIZE,
             cursor,
         }
     );
-
-    const status = getTableStatus(dataPlanes, fetching, error);
-    const settings = DATA_PLANE_SETTINGS[dataPlaneScope].table;
-
-    // reset to first page when changing tenant
-    useEffect(() => {
-        goToPage(0);
-        // exclude goToPage from the deps list as the function reference changes everytime
-        // goToPage(0) is called (since it both updates and depends on cursorHistory). Including
-        // it will cause an infinite render loop.
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [selectedTenant]);
-
-    const handleDataPlaneScopeChange = (newScope: DataPlaneScopes) => {
-        setScope(newScope);
-        goToPage(0); // reset to first page when changing scope to support cursor pagination
-    };
 
     const handlePageChange = (event: any, newPage: number) => {
         onPageChange(event, newPage, pageInfo?.endCursor);
@@ -87,82 +37,77 @@ function DataPlanesTable() {
 
     const labelDisplayedRows = ({ from }: { from: number }) => {
         return dataPlanes.length > 0
-            ? `${from} – ${from + dataPlanes.length - 1}`
+            ? `${from}–${from + dataPlanes.length - 1}`
             : '';
     };
 
     return (
-        <Box data-public>
-            <Toolbar
-                sx={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                }}
-                disableGutters
-            >
-                <ToggleDataPlaneScope
-                    scope={dataPlaneScope}
-                    onChange={handleDataPlaneScopeChange}
-                />
-            </Toolbar>
-
-            <TableContainer
-                component={Box}
-                sx={{
-                    mb: 2,
-                }}
-            >
+        <Paper
+            variant="outlined"
+            sx={{ bgcolor: (theme) => paperBackground[theme.palette.mode] }}
+        >
+            <TableContainer sx={{ containerType: 'inline-size' }}>
                 <Table
-                    sx={{
-                        minWidth: 350,
-                    }}
                     size="small"
-                    aria-label="Data Planes Table"
+                    aria-label="Public data planes"
+                    sx={compactTableSx(PUBLIC_DATA_PLANES_STACK_BELOW)}
                 >
-                    <EntityTableHeader columns={columns} />
-
-                    <EntityTableBody
-                        rows={
-                            dataPlanes.length > 0 ? (
-                                <Rows data={dataPlanes} />
-                            ) : null
-                        }
-                        columns={columns}
-                        loading={fetching}
-                        tableState={{ status }}
-                        noExistingDataContentIds={
-                            settings.noExistingDataContentIds
-                        }
-                    />
-
-                    <TableFooter>
+                    <TableHead>
                         <TableRow>
-                            <TablePagination
-                                count={-1}
-                                page={currentPage}
-                                rowsPerPage={PAGE_SIZE}
-                                rowsPerPageOptions={[PAGE_SIZE]}
-                                onPageChange={handlePageChange}
-                                labelDisplayedRows={labelDisplayedRows}
-                                slotProps={{
-                                    actions: {
-                                        previousButton: {
-                                            disabled:
-                                                !pageInfo?.hasPreviousPage,
-                                        },
-                                        nextButton: {
-                                            disabled: !pageInfo?.hasNextPage,
-                                        },
-                                    },
-                                }}
-                            />
+                            <TableCell scope="col">Data plane</TableCell>
+                            <TableCell scope="col">Region</TableCell>
+                            <TableCell scope="col">IPv4 egress</TableCell>
+                            <TableCell scope="col" aria-label="Actions" />
                         </TableRow>
-                    </TableFooter>
+                    </TableHead>
+                    <TableBody>
+                        {fetching || error || dataPlanes.length === 0 ? (
+                            <TableRow>
+                                <TableCell
+                                    colSpan={4}
+                                    sx={{ gridColumn: '1 / -1' }}
+                                >
+                                    <Typography
+                                        variant="body2"
+                                        color="text.secondary"
+                                        role={error ? 'alert' : 'status'}
+                                    >
+                                        {fetching
+                                            ? 'Loading public data planes…'
+                                            : error
+                                              ? 'Public data planes could not be loaded.'
+                                              : 'No public data planes found.'}
+                                    </Typography>
+                                </TableCell>
+                            </TableRow>
+                        ) : (
+                            <Rows data={dataPlanes} />
+                        )}
+                    </TableBody>
                 </Table>
             </TableContainer>
-        </Box>
+            {currentPage > 0 || pageInfo?.hasNextPage ? (
+                <TablePagination
+                    component="div"
+                    count={-1}
+                    page={currentPage}
+                    rowsPerPage={PAGE_SIZE}
+                    rowsPerPageOptions={[PAGE_SIZE]}
+                    onPageChange={handlePageChange}
+                    labelDisplayedRows={labelDisplayedRows}
+                    slotProps={{
+                        actions: {
+                            previousButton: {
+                                disabled:
+                                    fetching || !pageInfo?.hasPreviousPage,
+                            },
+                            nextButton: {
+                                disabled: fetching || !pageInfo?.hasNextPage,
+                            },
+                        },
+                    }}
+                />
+            ) : null}
+        </Paper>
     );
 }
-
-export default DataPlanesTable;

@@ -2,22 +2,26 @@ import type { DataPlaneNode } from 'src/api/gql/dataPlanes';
 
 import { useState } from 'react';
 
-import { Stack, TableCell, TableRow, useTheme } from '@mui/material';
+import { Button, Stack, TableCell, TableRow, Typography } from '@mui/material';
 
+import CopyToClipboardButton from 'src/components/shared/buttons/CopyToClipboardButton';
 import DataPlaneIcon from 'src/components/shared/Entity/DataPlaneIcon';
 import DataPlaneDialog from 'src/components/tables/DataPlanes/DataPlaneDialog';
-import { getEntityTableRowSx } from 'src/context/Theme';
 import useParseCidrBlocks from 'src/hooks/useParseCidrBlocks';
 import { getRegionDisplayName } from 'src/utils/cloudRegions';
 import { toPresentableName } from 'src/utils/dataPlane-utils';
 
-interface RowProps {
-    row: DataPlaneNode;
-    rowSx: any;
-    onRowClick: (row: DataPlaneNode) => void;
-}
+export const PUBLIC_DATA_PLANES_STACK_BELOW = 520;
 
-function Row({ row, rowSx, onRowClick }: RowProps) {
+const mobileLabelSx = {
+    display: 'none',
+    color: 'text.secondary',
+    [`@container (max-width: ${PUBLIC_DATA_PLANES_STACK_BELOW}px)`]: {
+        display: 'inline',
+    },
+};
+
+function Row({ row, onOpen }: { row: DataPlaneNode; onOpen: () => void }) {
     const parseCidrBlocks = useParseCidrBlocks();
     const { ipv4 } = parseCidrBlocks(row.cidrBlocks);
 
@@ -28,28 +32,62 @@ function Row({ row, rowSx, onRowClick }: RowProps) {
     );
 
     return (
-        <TableRow
-            hover
-            sx={{
-                ...rowSx,
-                '& td': {
-                    py: 1,
-                },
-            }}
-            onClick={() => onRowClick(row)}
-        >
-            <TableCell>
+        <TableRow hover>
+            <TableCell sx={{ gridArea: '1 / 1' }}>
                 <Stack direction="row" spacing={1} alignItems="center">
                     <DataPlaneIcon
                         provider={row.cloudProvider}
                         scope={row.scope}
-                        size={20}
                     />
+                    <Typography variant="body2">
+                        {dataPlaneDisplayName}
+                    </Typography>
                 </Stack>
             </TableCell>
-            <TableCell>{dataPlaneDisplayName}</TableCell>
-            <TableCell>{regionDisplayName}</TableCell>
-            <TableCell sx={{ fontFamily: 'monospace' }}>{ipv4}</TableCell>
+            <TableCell sx={{ gridColumn: '1 / -1', color: 'text.secondary' }}>
+                <Typography variant="caption" sx={mobileLabelSx}>
+                    Region{' '}
+                </Typography>
+                {regionDisplayName}
+            </TableCell>
+            <TableCell sx={{ gridColumn: '1 / -1' }}>
+                <Stack
+                    direction="row"
+                    useFlexGap
+                    spacing={0.5}
+                    sx={{ alignItems: 'center', flexWrap: 'wrap' }}
+                >
+                    <Typography variant="caption" sx={mobileLabelSx}>
+                        IPv4 egress
+                    </Typography>
+                    <Typography
+                        component="code"
+                        variant="body2"
+                        sx={{
+                            fontFamily: 'monospace',
+                            overflowWrap: 'anywhere',
+                        }}
+                    >
+                        {ipv4 ?? '—'}
+                    </Typography>
+                    {ipv4 ? (
+                        <CopyToClipboardButton
+                            label={`Copy IPv4 egress ranges for ${dataPlaneDisplayName}`}
+                            writeValue={ipv4}
+                        />
+                    ) : null}
+                </Stack>
+            </TableCell>
+            <TableCell align="right" sx={{ gridArea: '1 / 2' }}>
+                <Button
+                    variant="text"
+                    size="small"
+                    aria-label={`Details for ${dataPlaneDisplayName}`}
+                    onClick={onOpen}
+                >
+                    Details
+                </Button>
+            </TableCell>
         </TableRow>
     );
 }
@@ -59,17 +97,7 @@ interface RowsProps {
 }
 
 function Rows({ data }: RowsProps) {
-    const theme = useTheme();
-
     const [selectedRow, setSelectedRow] = useState<DataPlaneNode | null>(null);
-
-    const handleRowClick = (row: DataPlaneNode) => {
-        setSelectedRow(row);
-    };
-
-    const handleCloseModal = () => {
-        setSelectedRow(null);
-    };
 
     return (
         <>
@@ -77,13 +105,12 @@ function Rows({ data }: RowsProps) {
                 <Row
                     key={row.name}
                     row={row}
-                    rowSx={getEntityTableRowSx(theme)}
-                    onRowClick={handleRowClick}
+                    onOpen={() => setSelectedRow(row)}
                 />
             ))}
             {selectedRow ? (
                 <DataPlaneDialog
-                    onClose={handleCloseModal}
+                    onClose={() => setSelectedRow(null)}
                     dataPlane={selectedRow}
                 />
             ) : null}

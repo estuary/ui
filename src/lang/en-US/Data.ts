@@ -20,7 +20,6 @@ export const Data: Record<string, string> = {
     'data.dataPlane': `Data Plane`,
     'data.errors': `Errors`,
     'data.completed': `Completed`,
-    'data.ipv4': `IPv4`,
 
     'data.location': `Location`,
     'data.outcome': `Outcome`,

@@ -178,9 +178,11 @@ const REGION_MAPS: Record<CloudProvider, Record<string, string>> = {
 };
 
 export const getRegionDisplayName = (
-    provider: CloudProvider,
+    provider: CloudProvider | 'LOCAL',
     region: string
 ): string => {
-    const regionMap = REGION_MAPS[provider];
-    return regionMap?.[region] ?? `${provider}/${region}`;
+    const regionMap = provider === 'LOCAL' ? undefined : REGION_MAPS[provider];
+    return regionMap && Object.hasOwn(regionMap, region)
+        ? regionMap[region]
+        : `${provider}/${region}`;
 };
