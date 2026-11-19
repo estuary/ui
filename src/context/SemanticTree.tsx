@@ -17,18 +17,18 @@ const adapter: LoggerAdapter = (labels, metadata) => {
         pathname,
         // search, <--- invite link tokens appear here - don't send
     } = window.location;
-    const eventMetadata = {
-        ...metadata,
+    const eventData = {
         origin,
         pathname,
         user_id: useUserStore.getState().user?.id ?? null,
     };
 
     if (!isProduction) {
-        consoleLogAdapter(labels, eventMetadata);
+        consoleLogAdapter(labels, { ...eventData, ...metadata });
     }
     eventBatcher.enqueue({
-        ...eventMetadata,
+        metadata,
+        ...eventData,
         branches: labels,
         event_id: crypto.randomUUID(),
         timestamp: new Date().toISOString(),
