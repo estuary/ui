@@ -133,39 +133,12 @@ export function PrivateLinksTable({
                                             </Typography>
                                         ) : null}
                                     </TableCell>
-                                    <TableCell
-                                        sx={{
-                                            gridColumn: '1 / -1',
-                                            color: 'text.secondary',
-                                        }}
-                                    >
-                                        <Typography
-                                            variant="caption"
-                                            sx={mobileLabelSx}
-                                        >
-                                            {context.label}
-                                        </Typography>
-                                        <Box component="code" sx={codeSx}>
-                                            {context.value || '—'}
-                                        </Box>
-                                    </TableCell>
+                                    <MetadataCell {...context} />
                                     {showEndpointId ? (
-                                        <TableCell
-                                            sx={{
-                                                gridColumn: '1 / -1',
-                                                color: 'text.secondary',
-                                            }}
-                                        >
-                                            <Typography
-                                                variant="caption"
-                                                sx={mobileLabelSx}
-                                            >
-                                                Endpoint ID
-                                            </Typography>
-                                            <Box component="code" sx={codeSx}>
-                                                {endpoint.awsEndpointId ?? '—'}
-                                            </Box>
-                                        </TableCell>
+                                        <MetadataCell
+                                            label="Endpoint ID"
+                                            value={endpoint.awsEndpointId}
+                                        />
                                     ) : null}
                                     <TableCell>
                                         <Address
@@ -190,6 +163,19 @@ export function PrivateLinksTable({
                 </TableBody>
             </Table>
         </TableContainer>
+    );
+}
+
+function MetadataCell({ label, value }: { label: string; value?: string }) {
+    return (
+        <TableCell sx={{ gridColumn: '1 / -1', color: 'text.secondary' }}>
+            <Typography variant="caption" sx={mobileLabelSx}>
+                {label}
+            </Typography>
+            <Box component="code" sx={codeSx}>
+                {value || '—'}
+            </Box>
+        </TableCell>
     );
 }
 
