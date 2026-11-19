@@ -1,5 +1,5 @@
 import type { FormEvent } from 'react';
-import type { PrivateLinkDataPlane } from 'src/hooks/privateLinks/usePrivateLinks';
+import type { PrivateLinkDataPlane } from 'src/components/admin/Settings/PrivateLinks/PrivateDataPlane';
 import type { CloudProvider } from 'src/utils/cloudRegions';
 import type { PrivateLink } from 'src/utils/private-link-utils';
 

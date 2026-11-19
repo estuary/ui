@@ -1,4 +1,4 @@
-import type { PrivateLinkDataPlane } from 'src/hooks/privateLinks/usePrivateLinks';
+import type { PrivateLinkDataPlane } from 'src/components/admin/Settings/PrivateLinks/PrivateDataPlane';
 import type {
     PrivateLink,
     PrivateLinkConfig,

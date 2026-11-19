@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import type { PrivateLinkDataPlane } from 'src/hooks/privateLinks/usePrivateLinks';
+import type { DataPlanePrivateLinksQuery } from 'src/gql-types/graphql';
 
 import { Box, Button, ButtonBase, Stack, Typography } from '@mui/material';
 
@@ -8,6 +8,12 @@ import { EvPlugCharging, NavArrowDown, Plus } from 'iconoir-react';
 import { EmptyState } from 'src/components/admin/Settings/PrivateLinks/EmptyState';
 import DataPlaneIcon from 'src/components/shared/Entity/DataPlaneIcon';
 import { getRegionDisplayName } from 'src/utils/cloudRegions';
+
+export type PrivateLinkDataPlane =
+    DataPlanePrivateLinksQuery['dataPlanes']['edges'][number]['node'] & {
+        displayName: string;
+        scope: 'private';
+    };
 
 interface PrivateDataPlaneProps {
     plane: PrivateLinkDataPlane;

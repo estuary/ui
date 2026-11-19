@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import type { PrivateLinkDataPlane } from 'src/hooks/privateLinks/usePrivateLinks';
+import type { PrivateLinkDataPlane } from 'src/components/admin/Settings/PrivateLinks/PrivateDataPlane';
 
 import { useState } from 'react';
 
@@ -7,6 +7,8 @@ import { Button, Pagination, Paper, Stack, Typography } from '@mui/material';
 
 import { Lock, OpenNewWindow } from 'iconoir-react';
 
+import { PRIVATE_LINKS_QUERY } from 'src/api/gql/privateLinks';
+import { usePollingQuery } from 'src/api/gql/usePollingQuery';
 import { DeletePrivateLinkDialog } from 'src/components/admin/Settings/PrivateLinks/DeletePrivateLinkDialog';
 import { EmptyState } from 'src/components/admin/Settings/PrivateLinks/EmptyState';
 import { PrivateDataPlane } from 'src/components/admin/Settings/PrivateLinks/PrivateDataPlane';
@@ -19,7 +21,9 @@ import {
 import ExternalLink from 'src/components/shared/ExternalLink';
 import DataPlaneDialog from 'src/components/tables/DataPlanes/DataPlaneDialog';
 import { paperBackground } from 'src/context/Theme';
-import { usePrivateLinks } from 'src/hooks/privateLinks/usePrivateLinks';
+import { useCapabilities } from 'src/hooks/useCapabilities';
+import { DATA_PLANE_SETTINGS } from 'src/settings/dataPlanes';
+import { toPresentableName } from 'src/utils/dataPlane-utils';
 import {
     PRIVATE_LINK_DOCS_URL,
     PRIVATE_LINK_PROVIDERS,
@@ -42,12 +46,21 @@ export function PrivateLinks({ tenant }: { tenant: string }) {
     const [linkPage, setLinkPage] = useState(1);
 
     // Pause polling so a failed refresh cannot discard an open form.
-    const { dataPlanes, loading, canModify } = usePrivateLinks(tenant, {
+    const { data, fetching } = usePollingQuery({
+        query: PRIVATE_LINKS_QUERY,
+        variables: { tenant },
+        pollingIntervalMs: 15000,
         pause: dialog?.type === 'add' || dialog?.type === 'edit',
     });
+    const { capabilities } = useCapabilities(
+        `${DATA_PLANE_SETTINGS.private.prefix}${tenant}`
+    );
+    // While capabilities are unknown the actions are offered and the API decides.
+    const canModify =
+        capabilities?.includes('ModifyDataPlanePrivateNetworking') ?? true;
 
-    if (!dataPlanes) {
-        return loading ? (
+    if (!data) {
+        return fetching ? (
             <Section>
                 <Typography
                     component="output"
@@ -61,6 +74,16 @@ export function PrivateLinks({ tenant }: { tenant: string }) {
         ) : null;
     }
 
+    const dataPlanes: PrivateLinkDataPlane[] = data.dataPlanes.edges.map(
+        ({ node }) => ({
+            ...node,
+            displayName: toPresentableName({
+                name: node.name,
+                scope: 'private',
+            }),
+            scope: 'private',
+        })
+    );
     if (dataPlanes.length === 0) {
         return (
             <Section>
