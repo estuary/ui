@@ -283,62 +283,57 @@ interface LinkEndpoint {
 const asString = (value: unknown): string | null =>
     typeof value === 'string' && value.trim() ? value.trim() : null;
 
-const addressIfPresent = (
-    label: string,
-    value: string | null | undefined
-): EndpointAddress[] => (value ? [{ label, value }] : []);
-
 // Addresses are in connection order, with the preferred address first.
 export function getLinkEndpoint(
     config: PrivateLinkConfig,
     details: unknown
 ): LinkEndpoint {
+    const addresses: EndpointAddress[] = [];
     if (typeof details !== 'object' || details === null) {
-        return { addresses: [] };
+        return { addresses };
     }
     const fields = details as Record<string, unknown>;
+    const addAddress = (label: string, value: string | null | undefined) => {
+        if (value) {
+            addresses.push({ label, value });
+        }
+    };
 
     switch (config.__typename) {
         case 'AWSPrivateLink': {
-            const names = Array.isArray(fields.dns_entries)
-                ? fields.dns_entries.flatMap(
-                      (entry) => asString(entry?.dns_name) ?? []
-                  )
+            const regionalLabel = 'Regional DNS name';
+            const entries = Array.isArray(fields.dns_entries)
+                ? fields.dns_entries
                 : [];
-            const dnsNames = sortBy(
-                names.map((name) => ({
-                    name,
-                    zone: AWS_ZONAL_DNS_NAME.exec(name)?.[1],
-                })),
-                // Regional names resolve in every endpoint zone.
-                ({ zone }) => (zone ? 1 : 0)
-            );
-
+            for (const entry of entries) {
+                const name = asString(entry?.dns_name);
+                if (!name) {
+                    continue;
+                }
+                const zone = AWS_ZONAL_DNS_NAME.exec(name)?.[1];
+                addAddress(zone ? `DNS name in ${zone}` : regionalLabel, name);
+            }
+            const awsEndpointId = AWS_ENDPOINT_ID.exec(
+                addresses[0]?.value ?? ''
+            )?.[1];
             return {
-                addresses: dnsNames.map(({ name, zone }) => ({
-                    label: zone ? `DNS name in ${zone}` : 'Regional DNS name',
-                    value: name,
-                })),
-                awsEndpointId: names[0]
-                    ? AWS_ENDPOINT_ID.exec(names[0])?.[1]
-                    : undefined,
+                // Regional names resolve in every endpoint zone.
+                addresses: sortBy(
+                    addresses,
+                    ({ label }) => label !== regionalLabel
+                ),
+                awsEndpointId,
             };
         }
 
         case 'AzurePrivateLink':
-            return {
-                addresses: [
-                    // Azure can include the DNS root's trailing dot.
-                    ...addressIfPresent(
-                        'DNS name',
-                        asString(fields.dns_record)?.replace(/\.$/, '')
-                    ),
-                    ...addressIfPresent(
-                        'Private IP address',
-                        asString(fields.ip)
-                    ),
-                ],
-            };
+            // Azure can include the DNS root's trailing dot.
+            addAddress(
+                'DNS name',
+                asString(fields.dns_record)?.replace(/\.$/, '')
+            );
+            addAddress('Private IP address', asString(fields.ip));
+            return { addresses };
 
         case 'GCPPrivateServiceConnect': {
             const records = Array.isArray(fields.dns_record_names)
@@ -347,18 +342,15 @@ export function getLinkEndpoint(
                   )
                 : [];
 
-            return {
-                addresses: [
-                    ...getGcpHostnames(
-                        records,
-                        asString(fields.dns_zone_name) ?? ''
-                    ).map((value) => ({ label: 'DNS name', value })),
-                    ...addressIfPresent(
-                        'Private IP address',
-                        asString(fields.ip_address)
-                    ),
-                ],
-            };
+            const hostnames = getGcpHostnames(
+                records,
+                asString(fields.dns_zone_name) ?? ''
+            );
+            for (const hostname of hostnames) {
+                addAddress('DNS name', hostname);
+            }
+            addAddress('Private IP address', asString(fields.ip_address));
+            return { addresses };
         }
     }
 }
