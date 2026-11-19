@@ -86,7 +86,7 @@ export function proposeAwsServiceRegion(
 }
 
 // A same-region service has no separate region to display.
-export function getAwsCrossRegion({
+function getAwsCrossRegion({
     region,
     serviceRegion,
 }: {
