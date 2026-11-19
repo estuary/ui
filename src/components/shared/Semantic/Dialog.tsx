@@ -11,7 +11,7 @@ interface SemanticDialogProps extends DialogProps {
     semantic?: Pick<BranchProps, 'label' | 'metadata' | 'events'>;
 }
 
-export const Dialog = forwardRef<HTMLDivElement, SemanticDialogProps>(
+export const SemanticDialog = forwardRef<HTMLDivElement, SemanticDialogProps>(
     function SemanticDialog({ children, semantic, ...props }, ref) {
         return (
             <MUIDialog {...props} ref={ref}>

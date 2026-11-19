@@ -16,7 +16,7 @@ import { Xmark } from 'iconoir-react';
 import { useLeaf } from 'react-semantic-tree';
 
 import Error from 'src/components/shared/Error';
-import { Dialog } from 'src/components/shared/Semantic/Dialog';
+import { SemanticDialog as Dialog } from 'src/components/shared/Semantic/Dialog';
 import { AccessLinksTable } from 'src/components/tables/AccessGrants/AccessLinks';
 import { GenerateInvitation } from 'src/components/tables/AccessGrants/AccessLinks/Dialog/GenerateInvitation';
 
@@ -36,7 +36,7 @@ function PrefixInvitationDialog({ open, setOpen }: BaseDialogProps) {
 
     return (
         <Dialog
-            semantic={{ label: 'Dialog' }}
+            semantic={{ label: 'Add Users Dialog' }}
             open={open}
             maxWidth="md"
             fullWidth
