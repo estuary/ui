@@ -11,6 +11,16 @@ import { getAnalyticsEndpoint, isProduction } from 'src/utils/env-utils';
 
 const eventBatcher = createSemanticEventBatcher(getAnalyticsEndpoint());
 
+const reservedMetadataKeys = [
+    'origin',
+    'pathname',
+    'user_id',
+    'branches',
+    'event_id',
+    'timestamp',
+    'metadata',
+];
+
 const adapter: LoggerAdapter = (labels, metadata) => {
     const {
         origin,
@@ -25,6 +35,14 @@ const adapter: LoggerAdapter = (labels, metadata) => {
     };
 
     if (!isProduction) {
+        const collisions = reservedMetadataKeys.filter((key) =>
+            Object.prototype.hasOwnProperty.call(metadata ?? {}, key)
+        );
+        if (collisions.length) {
+            console.warn(
+                `Semantic metadata at "${labels.join(' > ')}" uses reserved event keys: ${collisions.join(', ')}`
+            );
+        }
         consoleLogAdapter(labels, eventMetadata);
     }
     eventBatcher.enqueue({
