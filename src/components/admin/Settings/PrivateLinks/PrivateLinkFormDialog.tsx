@@ -28,8 +28,7 @@ import ExternalLink from 'src/components/shared/ExternalLink';
 import { normalizeError } from 'src/utils/errors';
 import {
     getConfigInput,
-    getEmptyForm,
-    getFormFromConfig,
+    getInitialForm,
     getLinkRegion,
     PRIVATE_LINK_PROVIDER_DOCS,
     validateForm,
@@ -62,7 +61,7 @@ export function PrivateLinkFormDialog({
 
     const editing = typeof target === 'object';
     const [initialForm] = useState(() =>
-        editing ? getFormFromConfig(target.config) : getEmptyForm(target)
+        getInitialForm(editing ? target.config : target)
     );
     const { provider } = initialForm;
     const [form, setForm] = useState(initialForm);

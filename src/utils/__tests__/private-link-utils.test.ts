@@ -4,7 +4,7 @@ import { describe, expect, test } from 'vitest';
 
 import {
     getConfigInput,
-    getFormFromConfig,
+    getInitialForm,
     getLinkEndpoint,
     getLinkServiceLabel,
     parseList,
@@ -37,9 +37,9 @@ const gcpConfig: PrivateLinkConfig = {
     allPorts: false,
 };
 
-const awsForm = getFormFromConfig(awsConfig);
-const azureForm = getFormFromConfig(azureConfig);
-const gcpForm = getFormFromConfig(gcpConfig);
+const awsForm = getInitialForm(awsConfig);
+const azureForm = getInitialForm(azureConfig);
+const gcpForm = getInitialForm(gcpConfig);
 const awsChinaService = 'cn.com.amazonaws.vpce.cn-north-1.vpce-svc-0abc';
 const awsS3Service = 'com.amazonaws.us-east-2.s3';
 const gcpAttachmentUrl = `https://www.googleapis.com/compute/v1/${gcpConfig.serviceAttachment}`;
@@ -130,7 +130,7 @@ test('editing preserves locked fields and settings the form omits', () => {
         serviceRegion: 'us-east-2',
         azIds: ['usw2-az1'],
     };
-    expect(getFormFromConfig(existingAws).serviceRegion).toBe('us-east-2');
+    expect(getInitialForm(existingAws).serviceRegion).toBe('us-east-2');
     expect(
         getConfigInput(
             { ...awsForm, azIds: 'usw2-az2' },

@@ -118,64 +118,36 @@ export function parseList(text: string): string[] {
     return uniq(text.split(/[\s,;[\]"'`]+/).filter(Boolean));
 }
 
-export interface PrivateLinkForm {
-    provider: CloudProvider;
-    // GCP uses its service attachment URI for this field.
-    serviceName: string;
-    serviceRegion: string;
-    azIds: string;
-    resourceType: string;
-    dnsName: string;
-    dnsZoneName: string;
-    dnsRecordNames: string;
+export function getInitialForm(target: CloudProvider | PrivateLinkConfig) {
+    const editing = typeof target === 'object';
+    const aws =
+        editing && target.__typename === 'AWSPrivateLink' ? target : null;
+    const azure =
+        editing && target.__typename === 'AzurePrivateLink' ? target : null;
+    const gcp =
+        editing && target.__typename === 'GCPPrivateServiceConnect'
+            ? target
+            : null;
+
+    return {
+        provider: editing ? PRIVATE_LINK_PROVIDERS[target.__typename] : target,
+        // GCP uses its service attachment URI for this field.
+        serviceName: editing ? getLinkService(target) : '',
+        serviceRegion: aws?.serviceRegion ?? '',
+        azIds: aws?.azIds.join(', ') ?? '',
+        resourceType: azure?.resourceType ?? '',
+        dnsName: azure?.dnsName ?? '',
+        dnsZoneName: gcp ? gcp.dnsZoneName : '',
+        dnsRecordNames: gcp?.dnsRecordNames.join(', ') ?? '',
+    };
 }
 
+export type PrivateLinkForm = ReturnType<typeof getInitialForm>;
 export type PrivateLinkFormField = Exclude<keyof PrivateLinkForm, 'provider'>;
 
 export type PrivateLinkFormErrors = Partial<
     Record<PrivateLinkFormField, string>
 >;
-
-export function getEmptyForm(provider: CloudProvider): PrivateLinkForm {
-    return {
-        provider,
-        serviceName: '',
-        serviceRegion: '',
-        azIds: '',
-        resourceType: '',
-        dnsName: '',
-        dnsZoneName: '',
-        dnsRecordNames: '',
-    };
-}
-
-export function getFormFromConfig(config: PrivateLinkConfig): PrivateLinkForm {
-    const form = {
-        ...getEmptyForm(PRIVATE_LINK_PROVIDERS[config.__typename]),
-        serviceName: getLinkService(config),
-    };
-
-    switch (config.__typename) {
-        case 'AWSPrivateLink':
-            return {
-                ...form,
-                serviceRegion: config.serviceRegion ?? '',
-                azIds: config.azIds.join(', '),
-            };
-        case 'AzurePrivateLink':
-            return {
-                ...form,
-                resourceType: config.resourceType ?? '',
-                dnsName: config.dnsName ?? '',
-            };
-        case 'GCPPrivateServiceConnect':
-            return {
-                ...form,
-                dnsZoneName: config.dnsZoneName,
-                dnsRecordNames: config.dnsRecordNames.join(', '),
-            };
-    }
-}
 
 export function validateForm(form: PrivateLinkForm): PrivateLinkFormErrors {
     const errors: PrivateLinkFormErrors = {};
