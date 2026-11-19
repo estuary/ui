@@ -15,20 +15,17 @@ import Rows, {
     PUBLIC_DATA_PLANES_STACK_BELOW,
 } from 'src/components/tables/DataPlanes/Rows';
 import { paperBackground } from 'src/context/Theme';
-import { useDataPlanesQuery } from 'src/hooks/dataPlanes/useDataPlanes';
+import { usePublicDataPlanesQuery } from 'src/hooks/dataPlanes/useDataPlanes';
 import { useCursorPagination } from 'src/hooks/useCursorPagination';
 
 const PAGE_SIZE = 10;
 
 export function PublicDataPlanesTable({ tenant }: { tenant: string }) {
     const { currentPage, cursor, onPageChange } = useCursorPagination();
-    const { dataPlanes, fetching, error, pageInfo } = useDataPlanesQuery(
+    const { dataPlanes, fetching, error, pageInfo } = usePublicDataPlanesQuery(
         tenant,
-        {
-            public: true,
-            limit: PAGE_SIZE,
-            cursor,
-        }
+        PAGE_SIZE,
+        cursor
     );
 
     const handlePageChange = (event: any, newPage: number) => {
