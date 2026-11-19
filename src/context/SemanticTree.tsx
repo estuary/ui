@@ -6,10 +6,15 @@ import { useEffect } from 'react';
 import { Branch, consoleLogAdapter, SemanticConfig } from 'react-semantic-tree';
 
 import { useUserStore } from 'src/context/User/useUserContextStore';
+import { captureAnonymousId, getAnonymousId } from 'src/services/anonymousId';
 import { createSemanticEventBatcher } from 'src/services/semanticEventBatcher';
 import { getAnalyticsEndpoint, isProduction } from 'src/utils/env-utils';
 
 const eventBatcher = createSemanticEventBatcher(getAnalyticsEndpoint());
+
+// Read the marketing handoff at module load, before routing or auth redirects
+// can replace the URL.
+captureAnonymousId();
 
 const adapter: LoggerAdapter = (labels, metadata) => {
     const {
@@ -21,6 +26,8 @@ const adapter: LoggerAdapter = (labels, metadata) => {
         origin,
         pathname,
         user_id: useUserStore.getState().user?.id ?? null,
+        // Sent alongside user_id after login so the two can be linked.
+        anonymous_id: getAnonymousId(),
     };
 
     if (!isProduction) {

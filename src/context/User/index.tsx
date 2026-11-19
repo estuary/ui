@@ -7,6 +7,7 @@ import { useShallow } from 'zustand/react/shallow';
 import { usePostHog } from '@posthog/react';
 
 import { useUserStore } from 'src/context/User/useUserContextStore';
+import { clearAnonymousId } from 'src/services/anonymousId';
 import {
     getUserDetails,
     logRocketConsole,
@@ -46,6 +47,12 @@ const UserStoreProvider = ({ children }: BaseComponentProps) => {
                         trigger: 'UserContext:session',
                     });
                     postHog.reset();
+                    // Only on a real sign out: this branch also runs for a
+                    // visitor's initial, session-less page load, which is
+                    // exactly when the handoff ID must be kept.
+                    if (event === 'SIGNED_OUT') {
+                        clearAnonymousId();
+                    }
                     return;
                 }
 
