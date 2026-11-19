@@ -1,4 +1,7 @@
-import type { PrivateLink } from 'src/utils/private-link-utils';
+import type {
+    PrivateLink,
+    PrivateLinkConfig,
+} from 'src/utils/private-link-utils';
 
 import {
     Box,
@@ -24,11 +27,9 @@ import {
     getLinkServiceLabel,
 } from 'src/utils/private-link-utils';
 
-export const PRIVATE_LINKS_PAGE_SIZE = 10;
-
 interface PrivateLinksTableProps {
     links: PrivateLink[];
-    page: number;
+    firstConfig: PrivateLinkConfig;
     onOpen: (id: string) => void;
 }
 
@@ -48,13 +49,11 @@ const mobileLabelSx = {
 
 export function PrivateLinksTable({
     links,
-    page,
+    firstConfig,
     onOpen,
 }: PrivateLinksTableProps) {
-    const firstConfig = links[0].config;
     // Reserve the AWS endpoint ID column while provisioning is pending.
     const showEndpointId = firstConfig.__typename === 'AWSPrivateLink';
-    const start = (page - 1) * PRIVATE_LINKS_PAGE_SIZE;
 
     return (
         <TableContainer sx={{ containerType: 'inline-size' }}>
@@ -94,66 +93,61 @@ export function PrivateLinksTable({
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {links
-                        .slice(start, start + PRIVATE_LINKS_PAGE_SIZE)
-                        .map((link) => {
-                            const { config, details, id, status } = link;
-                            const endpoint = getLinkEndpoint(
-                                config,
-                                status === 'PROVISIONED' ? details : null
-                            );
-                            const service = getLinkServiceLabel(config);
-                            const crossRegionName =
-                                getCrossRegionDisplayName(config);
-                            const context = getLinkContext(config);
+                    {links.map((link) => {
+                        const { config, details, id, status } = link;
+                        const endpoint = getLinkEndpoint(
+                            config,
+                            status === 'PROVISIONED' ? details : null
+                        );
+                        const service = getLinkServiceLabel(config);
+                        const crossRegionName =
+                            getCrossRegionDisplayName(config);
+                        const context = getLinkContext(config);
 
-                            return (
-                                <TableRow key={id} hover>
-                                    <TableCell sx={{ gridColumn: '1 / -1' }}>
+                        return (
+                            <TableRow key={id} hover>
+                                <TableCell sx={{ gridColumn: '1 / -1' }}>
+                                    <Typography
+                                        component="code"
+                                        variant="body2"
+                                        sx={codeSx}
+                                    >
+                                        {service}
+                                    </Typography>
+                                    {crossRegionName ? (
                                         <Typography
-                                            component="code"
-                                            variant="body2"
-                                            sx={codeSx}
+                                            variant="caption"
+                                            sx={captionSx}
                                         >
-                                            {service}
+                                            Cross-region service in{' '}
+                                            {crossRegionName}
                                         </Typography>
-                                        {crossRegionName ? (
-                                            <Typography
-                                                variant="caption"
-                                                sx={captionSx}
-                                            >
-                                                Cross-region service in{' '}
-                                                {crossRegionName}
-                                            </Typography>
-                                        ) : null}
-                                    </TableCell>
-                                    <MetadataCell {...context} />
-                                    {showEndpointId ? (
-                                        <MetadataCell
-                                            label="Endpoint ID"
-                                            value={endpoint.awsEndpointId}
-                                        />
                                     ) : null}
-                                    <TableCell>
-                                        <Address
-                                            link={link}
-                                            endpoint={endpoint}
-                                        />
-                                    </TableCell>
-                                    <TableCell align="right">
-                                        <Button
-                                            size="small"
-                                            variant="text"
-                                            onClick={() => onOpen(id)}
-                                            aria-label={`Details for ${service}`}
-                                            sx={{ whiteSpace: 'nowrap' }}
-                                        >
-                                            Details
-                                        </Button>
-                                    </TableCell>
-                                </TableRow>
-                            );
-                        })}
+                                </TableCell>
+                                <MetadataCell {...context} />
+                                {showEndpointId ? (
+                                    <MetadataCell
+                                        label="Endpoint ID"
+                                        value={endpoint.awsEndpointId}
+                                    />
+                                ) : null}
+                                <TableCell>
+                                    <Address link={link} endpoint={endpoint} />
+                                </TableCell>
+                                <TableCell align="right">
+                                    <Button
+                                        size="small"
+                                        variant="text"
+                                        onClick={() => onOpen(id)}
+                                        aria-label={`Details for ${service}`}
+                                        sx={{ whiteSpace: 'nowrap' }}
+                                    >
+                                        Details
+                                    </Button>
+                                </TableCell>
+                            </TableRow>
+                        );
+                    })}
                 </TableBody>
             </Table>
         </TableContainer>

@@ -14,10 +14,7 @@ import { EmptyState } from 'src/components/admin/Settings/PrivateLinks/EmptyStat
 import { PrivateDataPlane } from 'src/components/admin/Settings/PrivateLinks/PrivateDataPlane';
 import { PrivateLinkDialog } from 'src/components/admin/Settings/PrivateLinks/PrivateLinkDialog';
 import { PrivateLinkFormDialog } from 'src/components/admin/Settings/PrivateLinks/PrivateLinkFormDialog';
-import {
-    PRIVATE_LINKS_PAGE_SIZE,
-    PrivateLinksTable,
-} from 'src/components/admin/Settings/PrivateLinks/PrivateLinksTable';
+import { PrivateLinksTable } from 'src/components/admin/Settings/PrivateLinks/PrivateLinksTable';
 import ExternalLink from 'src/components/shared/ExternalLink';
 import DataPlaneDialog from 'src/components/tables/DataPlanes/DataPlaneDialog';
 import { paperBackground } from 'src/context/Theme';
@@ -29,6 +26,7 @@ import { PRIVATE_LINK_DOCS_URL } from 'src/utils/private-link-utils';
 const TITLE_ID = 'private-data-planes-title';
 const PRIVATE_DEPLOYMENTS_DOCS_URL = 'https://docs.estuary.dev/private-byoc/';
 const CONTACT_URL = 'https://estuary.dev/contact-us';
+const PAGE_SIZE = 10;
 
 type OpenDialog =
     | { type: 'add' | 'plane'; name: string }
@@ -39,8 +37,6 @@ export function PrivateLinks({ tenant }: { tenant: string }) {
     const [dialog, setDialog] = useState<OpenDialog>(null);
     // With multiple planes, undefined uses the default and null collapses all.
     const [expanded, setExpanded] = useState<string | null>();
-    const [planePage, setPlanePage] = useState(1);
-    const [linkPage, setLinkPage] = useState(1);
 
     // Pause polling so a failed refresh cannot discard an open form.
     const { data, fetching } = usePollingQuery({
@@ -55,6 +51,27 @@ export function PrivateLinks({ tenant }: { tenant: string }) {
     // While capabilities are unknown the actions are offered and the API decides.
     const canModify =
         capabilities?.includes('ModifyDataPlanePrivateNetworking') ?? true;
+
+    const dataPlanes: PrivateLinkDataPlane[] = (
+        data?.dataPlanes.edges ?? []
+    ).map(({ node }) => ({
+        ...node,
+        displayName: toPresentableName({
+            name: node.name,
+            scope: 'private',
+        }),
+        scope: 'private',
+    }));
+    const multiple = dataPlanes.length > 1;
+    const openPlaneName =
+        !multiple || (expanded === undefined && dataPlanes.length <= PAGE_SIZE)
+            ? dataPlanes[0]?.name
+            : expanded;
+    const links =
+        dataPlanes.find(({ name }) => name === openPlaneName)?.privateLinks ??
+        [];
+    const planePage = useListPagination(dataPlanes, 'data planes');
+    const linkPage = useListPagination(links, 'private links');
 
     if (!data) {
         return fetching ? (
@@ -71,16 +88,6 @@ export function PrivateLinks({ tenant }: { tenant: string }) {
         ) : null;
     }
 
-    const dataPlanes: PrivateLinkDataPlane[] = data.dataPlanes.edges.map(
-        ({ node }) => ({
-            ...node,
-            displayName: toPresentableName({
-                name: node.name,
-                scope: 'private',
-            }),
-            scope: 'private',
-        })
-    );
     if (dataPlanes.length === 0) {
         return (
             <Section>
@@ -129,19 +136,6 @@ export function PrivateLinks({ tenant }: { tenant: string }) {
         );
     }
 
-    const multiple = dataPlanes.length > 1;
-    const openPlaneName =
-        !multiple ||
-        (expanded === undefined && dataPlanes.length <= PRIVATE_LINKS_PAGE_SIZE)
-            ? dataPlanes[0].name
-            : expanded;
-    const currentPlanePage = Math.min(planePage, pageCount(dataPlanes.length));
-    const planeOffset = (currentPlanePage - 1) * PRIVATE_LINKS_PAGE_SIZE;
-    const links =
-        dataPlanes.find(({ name }) => name === openPlaneName)?.privateLinks ??
-        [];
-    const currentLinkPage = Math.min(linkPage, pageCount(links.length));
-
     const selectedLink =
         dialog && 'id' in dialog ? findLink(dataPlanes, dialog.id) : undefined;
     const selectedPlane =
@@ -155,16 +149,11 @@ export function PrivateLinks({ tenant }: { tenant: string }) {
         links.length > 0 ? (
             <>
                 <PrivateLinksTable
-                    links={links}
-                    page={currentLinkPage}
+                    links={linkPage.visible}
+                    firstConfig={links[0].config}
                     onOpen={view}
                 />
-                <ListPagination
-                    label="private links"
-                    total={links.length}
-                    page={currentLinkPage}
-                    onChange={setLinkPage}
-                />
+                {linkPage.navigation}
             </>
         ) : null;
 
@@ -183,58 +172,46 @@ export function PrivateLinks({ tenant }: { tenant: string }) {
                     overflow: 'clip',
                 }}
             >
-                <ListPagination
-                    label="data planes"
-                    total={dataPlanes.length}
-                    page={currentPlanePage}
-                    onChange={setPlanePage}
-                />
-                {dataPlanes
-                    .slice(planeOffset, planeOffset + PRIVATE_LINKS_PAGE_SIZE)
-                    .map((plane) => {
-                        const open = plane.name === openPlaneName;
+                {planePage.navigation}
+                {planePage.visible.map((plane) => {
+                    const open = plane.name === openPlaneName;
 
-                        return (
-                            <PrivateDataPlane
-                                key={plane.name}
-                                plane={plane}
-                                open={open}
-                                compact={
-                                    open
-                                        ? false
-                                        : dataPlanes.length >
-                                          PRIVATE_LINKS_PAGE_SIZE
-                                }
-                                onToggle={
-                                    multiple
-                                        ? () => {
-                                              setExpanded(
-                                                  open ? null : plane.name
-                                              );
-                                              setLinkPage(1);
-                                          }
-                                        : undefined
-                                }
-                                onDetails={() =>
-                                    setDialog({
-                                        type: 'plane',
-                                        name: plane.name,
-                                    })
-                                }
-                                onAdd={
-                                    canModify && plane.cloudProvider !== 'LOCAL'
-                                        ? () =>
-                                              setDialog({
-                                                  type: 'add',
-                                                  name: plane.name,
-                                              })
-                                        : undefined
-                                }
-                            >
-                                {open ? linkTable : null}
-                            </PrivateDataPlane>
-                        );
-                    })}
+                    return (
+                        <PrivateDataPlane
+                            key={plane.name}
+                            plane={plane}
+                            open={open}
+                            compact={
+                                open ? false : dataPlanes.length > PAGE_SIZE
+                            }
+                            onToggle={
+                                multiple
+                                    ? () => {
+                                          setExpanded(open ? null : plane.name);
+                                          linkPage.reset();
+                                      }
+                                    : undefined
+                            }
+                            onDetails={() =>
+                                setDialog({
+                                    type: 'plane',
+                                    name: plane.name,
+                                })
+                            }
+                            onAdd={
+                                canModify && plane.cloudProvider !== 'LOCAL'
+                                    ? () =>
+                                          setDialog({
+                                              type: 'add',
+                                              name: plane.name,
+                                          })
+                                    : undefined
+                            }
+                        >
+                            {open ? linkTable : null}
+                        </PrivateDataPlane>
+                    );
+                })}
             </Paper>
 
             {selectedPlane && dialog?.type === 'plane' ? (
@@ -294,56 +271,42 @@ function findLink(dataPlanes: PrivateLinkDataPlane[], id: string) {
     return undefined;
 }
 
-function pageCount(total: number) {
-    return Math.max(1, Math.ceil(total / PRIVATE_LINKS_PAGE_SIZE));
-}
+function useListPagination<T>(items: T[], label: string) {
+    const [requestedPage, setRequestedPage] = useState(1);
+    const total = items.length;
+    const pages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+    const page = Math.min(requestedPage, pages);
+    const start = (page - 1) * PAGE_SIZE;
+    const visible = items.slice(start, start + PAGE_SIZE);
+    const navigation =
+        pages > 1 ? (
+            <Stack
+                direction="row"
+                useFlexGap
+                spacing={1}
+                sx={{
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    flexWrap: 'wrap',
+                    px: 1.5,
+                    py: 0.75,
+                    bgcolor: 'action.hover',
+                }}
+            >
+                <Typography variant="caption" color="text.secondary">
+                    {start + 1}–{start + visible.length} of {total} {label}
+                </Typography>
+                <Pagination
+                    aria-label={`${label} pagination`}
+                    size="small"
+                    count={pages}
+                    page={page}
+                    onChange={(_event, nextPage) => setRequestedPage(nextPage)}
+                />
+            </Stack>
+        ) : null;
 
-function ListPagination({
-    label,
-    total,
-    page,
-    onChange,
-}: {
-    label: string;
-    total: number;
-    page: number;
-    onChange: (page: number) => void;
-}) {
-    const pages = pageCount(total);
-
-    if (pages <= 1) {
-        return null;
-    }
-
-    const start = (page - 1) * PRIVATE_LINKS_PAGE_SIZE;
-
-    return (
-        <Stack
-            direction="row"
-            useFlexGap
-            spacing={1}
-            sx={{
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                flexWrap: 'wrap',
-                px: 1.5,
-                py: 0.75,
-                bgcolor: 'action.hover',
-            }}
-        >
-            <Typography variant="caption" color="text.secondary">
-                {start + 1}–{Math.min(start + PRIVATE_LINKS_PAGE_SIZE, total)}{' '}
-                of {total} {label}
-            </Typography>
-            <Pagination
-                aria-label={`${label} pagination`}
-                size="small"
-                count={pages}
-                page={page}
-                onChange={(_event, nextPage) => onChange(nextPage)}
-            />
-        </Stack>
-    );
+    return { visible, navigation, reset: () => setRequestedPage(1) };
 }
 
 function Section({
