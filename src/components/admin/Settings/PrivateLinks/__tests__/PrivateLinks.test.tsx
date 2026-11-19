@@ -269,9 +269,7 @@ test('puts copy actions and setup states in the endpoint address column', async 
 
 test('paginates 20 data planes and expands a plane on page 2', async () => {
     planes = Array.from({ length: 20 }, (_, i) => ({
-        ...awsPlane(
-            Array.from({ length: 5 }, (_, j) => numberedLink(i * 5 + j + 1))
-        ),
+        ...awsPlane([numberedLink(i + 1)]),
         name: `ops/dp/private/acmeCo/aws-us-east-2-c${i + 1}`,
     }));
     await renderLinks();
@@ -288,9 +286,7 @@ test('paginates 20 data planes and expands a plane on page 2', async () => {
     const plane = screen.getByRole('button', { name: /^AWS: us-east-2 c20/ });
     fireEvent.click(plane);
     expect(plane.getAttribute('aria-expanded')).toBe('true');
-    expect(within(screen.getByRole('table')).getAllByRole('row')).toHaveLength(
-        6
-    );
+    expect(linkButtonNames()).toEqual(['Details for vpce-svc-00000014']);
 });
 
 test('paginates private links on a large single plane', async () => {
