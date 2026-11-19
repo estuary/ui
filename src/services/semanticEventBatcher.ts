@@ -19,6 +19,7 @@ export function createSemanticEventBatcher(endpoint: string) {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     credentials: 'omit',
+                    referrerPolicy: 'no-referrer',
                     keepalive: true,
                     body,
                 });

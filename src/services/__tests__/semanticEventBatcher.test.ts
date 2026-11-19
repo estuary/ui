@@ -41,6 +41,7 @@ describe('semantic event batching', () => {
         expect(fetchMock).toHaveBeenCalledTimes(1);
         expect(fetchMock.mock.calls[0][0]).toBe('/events');
         expect(fetchMock.mock.calls[0][1].keepalive).toBe(true);
+        expect(fetchMock.mock.calls[0][1].referrerPolicy).toBe('no-referrer');
         expect(JSON.parse(fetchMock.mock.calls[0][1].body)).toEqual([
             { metadata: { page: '/first' } },
             { path: 'second' },
