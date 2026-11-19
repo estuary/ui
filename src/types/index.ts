@@ -73,8 +73,10 @@ export interface StorageMappingsQuery {
 type TenantPaymentProviders = 'external' | 'stripe';
 
 export interface TenantPaymentDetails {
+    collection_method: 'charge_default_payment_method' | 'send_invoice';
     gcm_account_id: string | null;
     payment_provider: TenantPaymentProviders;
+    plan_kind: 'self_serve' | 'contract' | 'internal';
     tenant: string;
     trial_start: string;
 }

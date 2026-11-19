@@ -2001,6 +2001,7 @@ export type MutationRoot = {
 export type MutationRootAddDataPlanePrivateLinkArgs = {
   config: PrivateLinkConfigInput;
   dataPlaneName: Scalars['String']['input'];
+  detail?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -2240,6 +2241,7 @@ export type MutationRootUpdateAlertSubscriptionArgs = {
 
 export type MutationRootUpdateDataPlanePrivateLinkArgs = {
   config: PrivateLinkConfigInput;
+  detail?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['Id']['input'];
 };
 
@@ -2389,6 +2391,10 @@ export type PrivateLink = {
    * is the link's cloud provider.
    */
   config: PrivateLinkConfig;
+  /** When this private link record was created. */
+  createdAt: Scalars['DateTime']['output'];
+  /** User-provided name for this private link. */
+  detail?: Maybe<Scalars['String']['output']>;
   /**
    * Provider-specific provisioning details (DNS entries, IPs) once
    * provisioned; opaque JSON exported by the data-plane controller.
