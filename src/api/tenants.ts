@@ -3,7 +3,14 @@ import type { TenantHidesDataPreview, TenantPaymentDetails } from 'src/types';
 import { TABLES } from 'src/services/supabase';
 import { supabaseClient } from 'src/services/supabaseClient';
 
-const COLUMNS = ['gcm_account_id', 'payment_provider', 'tenant', 'trial_start'];
+const COLUMNS = [
+    'collection_method',
+    'gcm_account_id',
+    'payment_provider',
+    'plan_kind',
+    'tenant',
+    'trial_start',
+];
 
 const getTenantDetails = (tenants: string[]) => {
     return supabaseClient
