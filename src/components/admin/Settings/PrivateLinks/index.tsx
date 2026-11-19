@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import type { PrivateLinkRow } from 'src/components/admin/Settings/PrivateLinks/PrivateLinksTable';
+import type { PrivateLinkDataPlane } from 'src/hooks/privateLinks/usePrivateLinks';
 
 import { useState } from 'react';
 
@@ -21,7 +21,6 @@ import DataPlaneDialog from 'src/components/tables/DataPlanes/DataPlaneDialog';
 import { paperBackground } from 'src/context/Theme';
 import { usePrivateLinks } from 'src/hooks/privateLinks/usePrivateLinks';
 import {
-    getLinkEndpoint,
     PRIVATE_LINK_DOCS_URL,
     PRIVATE_LINK_PROVIDERS,
 } from 'src/utils/private-link-utils';
@@ -110,16 +109,6 @@ export function PrivateLinks({ tenant }: { tenant: string }) {
         );
     }
 
-    const rows: PrivateLinkRow[] = dataPlanes.flatMap((dataPlane) =>
-        dataPlane.privateLinks.map((link) => ({
-            dataPlane,
-            link,
-            endpoint: getLinkEndpoint(
-                link.config,
-                link.status === 'PROVISIONED' ? link.details : null
-            ),
-        }))
-    );
     const multiple = dataPlanes.length > 1;
     const openPlaneName =
         !multiple ||
@@ -128,15 +117,13 @@ export function PrivateLinks({ tenant }: { tenant: string }) {
             : expanded;
     const currentPlanePage = Math.min(planePage, pageCount(dataPlanes.length));
     const planeOffset = (currentPlanePage - 1) * PRIVATE_LINKS_PAGE_SIZE;
-    const shownRows = rows.filter(
-        ({ dataPlane }) => dataPlane.name === openPlaneName
-    );
-    const currentLinkPage = Math.min(linkPage, pageCount(shownRows.length));
+    const links =
+        dataPlanes.find(({ name }) => name === openPlaneName)?.privateLinks ??
+        [];
+    const currentLinkPage = Math.min(linkPage, pageCount(links.length));
 
     const selectedLink =
-        dialog && 'id' in dialog
-            ? rows.find(({ link }) => link.id === dialog.id)
-            : undefined;
+        dialog && 'id' in dialog ? findLink(dataPlanes, dialog.id) : undefined;
     const selectedPlane =
         dialog && 'name' in dialog
             ? dataPlanes.find(({ name }) => name === dialog.name)
@@ -145,16 +132,16 @@ export function PrivateLinks({ tenant }: { tenant: string }) {
     const view = (id: string) => setDialog({ type: 'view', id });
 
     const linkTable =
-        shownRows.length > 0 ? (
+        links.length > 0 ? (
             <>
                 <PrivateLinksTable
-                    rows={shownRows}
+                    links={links}
                     page={currentLinkPage}
                     onOpen={view}
                 />
                 <ListPagination
                     label="private links"
-                    total={shownRows.length}
+                    total={links.length}
                     page={currentLinkPage}
                     onChange={setLinkPage}
                 />
@@ -280,6 +267,16 @@ export function PrivateLinks({ tenant }: { tenant: string }) {
             ) : null}
         </Section>
     );
+}
+
+function findLink(dataPlanes: PrivateLinkDataPlane[], id: string) {
+    for (const dataPlane of dataPlanes) {
+        const link = dataPlane.privateLinks.find((link) => link.id === id);
+        if (link) {
+            return { dataPlane, link };
+        }
+    }
+    return undefined;
 }
 
 function pageCount(total: number) {

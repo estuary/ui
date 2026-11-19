@@ -1,8 +1,4 @@
-import type { PrivateLinkDataPlane } from 'src/hooks/privateLinks/usePrivateLinks';
-import type {
-    getLinkEndpoint,
-    PrivateLink,
-} from 'src/utils/private-link-utils';
+import type { PrivateLink } from 'src/utils/private-link-utils';
 
 import {
     Box,
@@ -25,19 +21,14 @@ import { getRegionDisplayName } from 'src/utils/cloudRegions';
 import {
     getAwsCrossRegion,
     getLinkContext,
+    getLinkEndpoint,
     getLinkServiceLabel,
 } from 'src/utils/private-link-utils';
 
 export const PRIVATE_LINKS_PAGE_SIZE = 10;
 
-export interface PrivateLinkRow {
-    dataPlane: PrivateLinkDataPlane;
-    link: PrivateLink;
-    endpoint: ReturnType<typeof getLinkEndpoint>;
-}
-
 interface PrivateLinksTableProps {
-    rows: PrivateLinkRow[];
+    links: PrivateLink[];
     page: number;
     onOpen: (id: string) => void;
 }
@@ -57,11 +48,11 @@ const mobileLabelSx = {
 };
 
 export function PrivateLinksTable({
-    rows,
+    links,
     page,
     onOpen,
 }: PrivateLinksTableProps) {
-    const firstConfig = rows[0].link.config;
+    const firstConfig = links[0].config;
     // Reserve the AWS endpoint ID column while provisioning is pending.
     const showEndpointId = firstConfig.__typename === 'AWSPrivateLink';
     const start = (page - 1) * PRIVATE_LINKS_PAGE_SIZE;
@@ -104,10 +95,14 @@ export function PrivateLinksTable({
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {rows
+                    {links
                         .slice(start, start + PRIVATE_LINKS_PAGE_SIZE)
-                        .map((row) => {
-                            const { config, id } = row.link;
+                        .map((link) => {
+                            const { config, details, id, status } = link;
+                            const endpoint = getLinkEndpoint(
+                                config,
+                                status === 'PROVISIONED' ? details : null
+                            );
                             const service = getLinkServiceLabel(config);
                             const crossRegion =
                                 config.__typename === 'AWSPrivateLink'
@@ -168,13 +163,15 @@ export function PrivateLinksTable({
                                                 Endpoint ID
                                             </Typography>
                                             <Box component="code" sx={codeSx}>
-                                                {row.endpoint.awsEndpointId ??
-                                                    '—'}
+                                                {endpoint.awsEndpointId ?? '—'}
                                             </Box>
                                         </TableCell>
                                     ) : null}
                                     <TableCell>
-                                        <Address row={row} />
+                                        <Address
+                                            link={link}
+                                            endpoint={endpoint}
+                                        />
                                     </TableCell>
                                     <TableCell align="right">
                                         <Button
@@ -196,9 +193,13 @@ export function PrivateLinksTable({
     );
 }
 
-function Address({ row }: { row: PrivateLinkRow }) {
-    const { link, endpoint } = row;
-
+function Address({
+    link,
+    endpoint,
+}: {
+    link: PrivateLink;
+    endpoint: ReturnType<typeof getLinkEndpoint>;
+}) {
     if (link.status !== 'PROVISIONED') {
         return <PrivateLinkStatus status={link.status} />;
     }
