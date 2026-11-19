@@ -1,4 +1,3 @@
-import type { PrivateLinkDataPlane } from 'src/components/admin/Settings/PrivateLinks/PrivateDataPlane';
 import type {
     PrivateLink,
     PrivateLinkConfig,
@@ -36,7 +35,7 @@ import {
 const TITLE_ID = 'private-link-dialog-title';
 
 interface PrivateLinkDialogProps {
-    dataPlane: PrivateLinkDataPlane;
+    planeDisplayName: string;
     link: PrivateLink;
     canModify: boolean;
     onClose: () => void;
@@ -45,7 +44,7 @@ interface PrivateLinkDialogProps {
 }
 
 export function PrivateLinkDialog({
-    dataPlane,
+    planeDisplayName,
     link,
     canModify,
     onClose,
@@ -95,7 +94,7 @@ export function PrivateLinkDialog({
                                 variant="caption"
                                 color="text.secondary"
                             >
-                                {dataPlane.displayName}
+                                {planeDisplayName}
                             </Typography>
                         </Stack>
                         <PrivateLinkStatus status={status} />

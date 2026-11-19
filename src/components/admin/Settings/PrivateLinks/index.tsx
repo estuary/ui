@@ -255,7 +255,7 @@ export function PrivateLinks({ tenant }: { tenant: string }) {
             ) : null}
             {selectedLink && dialog?.type === 'view' ? (
                 <PrivateLinkDialog
-                    dataPlane={selectedLink.dataPlane}
+                    planeDisplayName={selectedLink.dataPlane.displayName}
                     link={selectedLink.link}
                     canModify={canModify}
                     onClose={close}
@@ -282,7 +282,7 @@ export function PrivateLinks({ tenant }: { tenant: string }) {
             ) : null}
             {selectedLink && dialog?.type === 'delete' ? (
                 <DeletePrivateLinkDialog
-                    dataPlane={selectedLink.dataPlane}
+                    planeDisplayName={selectedLink.dataPlane.displayName}
                     link={selectedLink.link}
                     onClose={() => view(selectedLink.link.id)}
                     onDeleted={close}

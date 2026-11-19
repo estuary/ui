@@ -1,4 +1,3 @@
-import type { PrivateLinkDataPlane } from 'src/components/admin/Settings/PrivateLinks/PrivateDataPlane';
 import type { PrivateLink } from 'src/utils/private-link-utils';
 
 import {
@@ -20,14 +19,14 @@ import { normalizeError } from 'src/utils/errors';
 import { getLinkServiceLabel } from 'src/utils/private-link-utils';
 
 interface DeletePrivateLinkDialogProps {
-    dataPlane: PrivateLinkDataPlane;
+    planeDisplayName: string;
     link: PrivateLink;
     onClose: () => void;
     onDeleted: () => void;
 }
 
 export function DeletePrivateLinkDialog({
-    dataPlane,
+    planeDisplayName,
     link,
     onClose,
     onDeleted,
@@ -69,8 +68,8 @@ export function DeletePrivateLinkDialog({
                         >
                             {getLinkServiceLabel(link.config)}
                         </Box>{' '}
-                        will be deleted from {dataPlane.displayName} and the
-                        data plane will delete its endpoint. Captures and
+                        will be deleted from {planeDisplayName} and the data
+                        plane will delete its endpoint. Captures and
                         materializations that connect through it stop working.
                     </Typography>
 
