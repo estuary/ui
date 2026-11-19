@@ -23,7 +23,7 @@ import {
 } from 'src/components/shared/LabeledValue';
 import { getRegionDisplayName } from 'src/utils/cloudRegions';
 import {
-    getAwsCrossRegion,
+    getCrossRegionDisplayName,
     getLinkContext,
     getLinkEndpoint,
     getLinkRegion,
@@ -220,9 +220,7 @@ function getConfiguration(config: PrivateLinkConfig): {
     const region = getRegionDisplayName(provider, getLinkRegion(config));
 
     switch (config.__typename) {
-        case 'AWSPrivateLink': {
-            const serviceRegion = getAwsCrossRegion(config);
-
+        case 'AWSPrivateLink':
             return [
                 {
                     label: 'Endpoint service name',
@@ -232,13 +230,10 @@ function getConfiguration(config: PrivateLinkConfig): {
                 { label: 'Endpoint region', value: region },
                 {
                     label: 'Service region',
-                    value:
-                        serviceRegion &&
-                        getRegionDisplayName(provider, serviceRegion),
+                    value: getCrossRegionDisplayName(config),
                 },
                 getLinkContext(config),
             ];
-        }
 
         case 'AzurePrivateLink':
             return [

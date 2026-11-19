@@ -6,6 +6,8 @@ import type { CloudProvider } from 'src/utils/cloudRegions';
 
 import { sortBy, uniq } from 'lodash';
 
+import { getRegionDisplayName } from 'src/utils/cloudRegions';
+
 export type PrivateLink = PrivateLinkFieldsFragment;
 export type PrivateLinkConfig = PrivateLink['config'];
 
@@ -92,6 +94,14 @@ export function getAwsCrossRegion({
     serviceRegion?: string | null;
 }): string | null {
     return serviceRegion && serviceRegion !== region ? serviceRegion : null;
+}
+
+export function getCrossRegionDisplayName(config: PrivateLinkConfig) {
+    const region =
+        config.__typename === 'AWSPrivateLink'
+            ? getAwsCrossRegion(config)
+            : null;
+    return region && getRegionDisplayName('AWS', region);
 }
 
 // Tasks resolve these names inside the data plane.

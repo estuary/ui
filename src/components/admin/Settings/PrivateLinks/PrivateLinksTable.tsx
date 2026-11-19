@@ -17,9 +17,8 @@ import {
 import { compactTableSx } from 'src/components/admin/Settings/DataPlanes/compactTableSx';
 import { PrivateLinkStatus } from 'src/components/admin/Settings/PrivateLinks/PrivateLinkStatus';
 import CopyToClipboardButton from 'src/components/shared/buttons/CopyToClipboardButton';
-import { getRegionDisplayName } from 'src/utils/cloudRegions';
 import {
-    getAwsCrossRegion,
+    getCrossRegionDisplayName,
     getLinkContext,
     getLinkEndpoint,
     getLinkServiceLabel,
@@ -104,10 +103,8 @@ export function PrivateLinksTable({
                                 status === 'PROVISIONED' ? details : null
                             );
                             const service = getLinkServiceLabel(config);
-                            const crossRegion =
-                                config.__typename === 'AWSPrivateLink'
-                                    ? getAwsCrossRegion(config)
-                                    : null;
+                            const crossRegionName =
+                                getCrossRegionDisplayName(config);
                             const context = getLinkContext(config);
 
                             return (
@@ -120,16 +117,13 @@ export function PrivateLinksTable({
                                         >
                                             {service}
                                         </Typography>
-                                        {crossRegion ? (
+                                        {crossRegionName ? (
                                             <Typography
                                                 variant="caption"
                                                 sx={captionSx}
                                             >
                                                 Cross-region service in{' '}
-                                                {getRegionDisplayName(
-                                                    'AWS',
-                                                    crossRegion
-                                                )}
+                                                {crossRegionName}
                                             </Typography>
                                         ) : null}
                                     </TableCell>
