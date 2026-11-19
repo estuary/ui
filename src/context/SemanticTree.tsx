@@ -37,7 +37,7 @@ const adapter: LoggerAdapter = (labels, metadata) => {
 
 const events = {
     click: true,
-    mount: true,
+    mount: false,
     hover: true,
     focus: false,
     visible: true,
