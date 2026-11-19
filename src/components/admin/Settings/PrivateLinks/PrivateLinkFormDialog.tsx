@@ -37,8 +37,7 @@ import {
 
 interface PrivateLinkFormDialogProps {
     dataPlane: PrivateLinkDataPlane;
-    provider: CloudProvider;
-    editing?: PrivateLink;
+    target: CloudProvider | PrivateLink;
     onClose: () => void;
     onSaved: (linkId: string) => void;
 }
@@ -52,8 +51,7 @@ const PRIVATE_LINK_LABELS: Record<CloudProvider, string> = {
 // Mount on open so each edit starts from the current link configuration.
 export function PrivateLinkFormDialog({
     dataPlane,
-    provider,
-    editing,
+    target,
     onClose,
     onSaved,
 }: PrivateLinkFormDialogProps) {
@@ -62,14 +60,16 @@ export function PrivateLinkFormDialog({
         useMutation(UPDATE_PRIVATE_LINK);
     const saving = adding || updating;
 
+    const editing = typeof target === 'object';
     const [initialForm] = useState(() =>
-        editing ? getFormFromConfig(editing.config) : getEmptyForm(provider)
+        editing ? getFormFromConfig(target.config) : getEmptyForm(target)
     );
+    const { provider } = initialForm;
     const [form, setForm] = useState(initialForm);
     const [submitted, setSubmitted] = useState(false);
     const [saveError, setSaveError] = useState<string | null>(null);
 
-    const region = editing ? getLinkRegion(editing.config) : dataPlane.region;
+    const region = editing ? getLinkRegion(target.config) : dataPlane.region;
 
     const errors = validateForm(form);
     const shownErrors = submitted ? errors : {};
@@ -83,9 +83,13 @@ export function PrivateLinkFormDialog({
             return;
         }
 
-        const config = getConfigInput(form, region, editing?.config);
+        const config = getConfigInput(
+            form,
+            region,
+            editing ? target.config : undefined
+        );
         const result = editing
-            ? await updateLink({ id: editing.id, config })
+            ? await updateLink({ id: target.id, config })
             : await addLink({ dataPlaneName: dataPlane.name, config });
 
         if (result.error || !result.data) {
@@ -133,7 +137,7 @@ export function PrivateLinkFormDialog({
                         </AlertBox>
                     ) : null}
 
-                    {editing?.status === 'PROVISIONED' ? (
+                    {editing && target.status === 'PROVISIONED' ? (
                         <AlertBox short severity="info">
                             Saving a change sets this link up again. It shows as
                             Setting up, and its endpoint address is hidden,
@@ -155,7 +159,7 @@ export function PrivateLinkFormDialog({
                         form={form}
                         errors={shownErrors}
                         region={region}
-                        serviceLocked={Boolean(editing)}
+                        serviceLocked={editing}
                         disabled={saving}
                         onChange={setForm}
                     />

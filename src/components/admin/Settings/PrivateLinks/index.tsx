@@ -24,10 +24,7 @@ import { paperBackground } from 'src/context/Theme';
 import { useCapabilities } from 'src/hooks/useCapabilities';
 import { DATA_PLANE_SETTINGS } from 'src/settings/dataPlanes';
 import { toPresentableName } from 'src/utils/dataPlane-utils';
-import {
-    PRIVATE_LINK_DOCS_URL,
-    PRIVATE_LINK_PROVIDERS,
-} from 'src/utils/private-link-utils';
+import { PRIVATE_LINK_DOCS_URL } from 'src/utils/private-link-utils';
 
 const TITLE_ID = 'private-data-planes-title';
 const PRIVATE_DEPLOYMENTS_DOCS_URL = 'https://docs.estuary.dev/private-byoc/';
@@ -248,7 +245,7 @@ export function PrivateLinks({ tenant }: { tenant: string }) {
             dialog?.type === 'add' ? (
                 <PrivateLinkFormDialog
                     dataPlane={selectedPlane}
-                    provider={selectedPlane.cloudProvider}
+                    target={selectedPlane.cloudProvider}
                     onClose={close}
                     onSaved={view}
                 />
@@ -270,12 +267,7 @@ export function PrivateLinks({ tenant }: { tenant: string }) {
             {selectedLink && dialog?.type === 'edit' ? (
                 <PrivateLinkFormDialog
                     dataPlane={selectedLink.dataPlane}
-                    provider={
-                        PRIVATE_LINK_PROVIDERS[
-                            selectedLink.link.config.__typename
-                        ]
-                    }
-                    editing={selectedLink.link}
+                    target={selectedLink.link}
                     onClose={() => view(selectedLink.link.id)}
                     onSaved={view}
                 />
