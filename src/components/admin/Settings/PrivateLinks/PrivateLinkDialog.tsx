@@ -54,6 +54,7 @@ export function PrivateLinkDialog({
     const { config, details, error, status } = link;
     const provider = PRIVATE_LINK_PROVIDERS[config.__typename];
     const { addresses, awsEndpointId } = getLinkEndpoint(config, details);
+    const hasAddresses = addresses.length > 0;
     const host =
         provider === 'AWS' ? 'the regional DNS name' : 'a listed address';
 
@@ -151,8 +152,8 @@ export function PrivateLinkDialog({
                     </LabeledValueGroup>
 
                     {status === 'PROVISIONED' ? (
-                        addresses.length > 0 ? (
-                            <Stack spacing={0.75}>
+                        <Stack spacing={0.75}>
+                            {hasAddresses || details ? (
                                 <LabeledValueGroup title="Endpoint details">
                                     {addresses.map(({ label, value }) => (
                                         <LabeledValue
@@ -161,41 +162,32 @@ export function PrivateLinkDialog({
                                             value={value}
                                         />
                                     ))}
-                                    {awsEndpointId ? (
+                                    {hasAddresses && awsEndpointId ? (
                                         <LabeledValue
                                             label="Endpoint ID"
                                             value={awsEndpointId}
                                             hint="If your service requires manual approval, match this ID to Estuary’s request under Endpoint connections in AWS."
                                         />
                                     ) : null}
-                                </LabeledValueGroup>
-                                <Typography
-                                    variant="body2"
-                                    color="text.secondary"
-                                >
-                                    Use {host} as the host in a capture or
-                                    materialization on this data plane.
-                                </Typography>
-                            </Stack>
-                        ) : (
-                            <Stack spacing={0.75}>
-                                {details ? (
-                                    <LabeledValueGroup title="Endpoint details">
+                                    {hasAddresses ? null : (
                                         <LabeledValue
                                             label="Reported details"
                                             value={JSON.stringify(details)}
                                         />
-                                    </LabeledValueGroup>
-                                ) : null}
-                                <Typography
-                                    variant="body2"
-                                    color="text.secondary"
-                                >
-                                    The data plane provisioned this link without
-                                    reporting a usable address.
-                                </Typography>
-                            </Stack>
-                        )
+                                    )}
+                                </LabeledValueGroup>
+                            ) : null}
+                            <Typography variant="body2" color="text.secondary">
+                                {hasAddresses ? (
+                                    <>
+                                        Use {host} as the host in a capture or
+                                        materialization on this data plane.
+                                    </>
+                                ) : (
+                                    'The data plane provisioned this link without reporting a usable address.'
+                                )}
+                            </Typography>
+                        </Stack>
                     ) : null}
                 </Stack>
             </DialogContent>
