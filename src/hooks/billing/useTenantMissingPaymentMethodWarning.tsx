@@ -20,8 +20,8 @@ import useNotificationStore, {
 import { basicSort_string, getPathWithParams } from 'src/utils/misc-utils';
 
 // TODO (billing plan): Read each tenant's `TenantBilling.plan` instead of
-// deriving its trial and payment provider from the tenant row once
-// https://github.com/estuary/flow/pull/3609 lands.
+// deriving its trial and payment provider from the tenant row once the
+// `payment_provider` and `gcm_account_id` checks are retired.
 const TRIAL_LENGTH = 30;
 
 // TODO (payment method notification) we should eventually move the "component type stuff" out of here

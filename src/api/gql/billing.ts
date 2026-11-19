@@ -148,9 +148,14 @@ export const getPaymentMethodsForTenants = async (
     tenants: TenantPaymentDetails[]
 ): Promise<MultiplePaymentMethods> => {
     // Callers pass at most MAX_TENANTS tenants.
+    // Only self-serve tenants that pay by card are asked for a payment method.
+    // The `payment_provider` and `gcm_account_id` checks cover contract and
+    // internal tenants whose `plan_kind` isn't set yet.
     const responses: any[] = await Promise.all(
         tenants.map((tenantDetail) =>
             !tenantDetail.trial_start ||
+            tenantDetail.plan_kind !== 'self_serve' ||
+            tenantDetail.collection_method === 'send_invoice' ||
             tenantDetail.payment_provider !== 'stripe' ||
             tenantDetail.gcm_account_id
                 ? {
