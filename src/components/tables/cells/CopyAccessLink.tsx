@@ -1,5 +1,7 @@
 import { TableCell, Tooltip } from '@mui/material';
 
+import { useLeaf } from 'react-semantic-tree';
+
 import { unauthenticatedRoutes } from 'src/app/routes';
 import CopyToClipboardButton from 'src/components/shared/buttons/CopyToClipboardButton';
 import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
@@ -14,6 +16,7 @@ const LOGIN_LINK_URL = `${window.location.origin}${unauthenticatedRoutes.login.p
 const SSO_LOGIN_LINK_URL = `${window.location.origin}${unauthenticatedRoutes.sso.login.fullPath}`;
 
 export function CopyAccessLink({ token, ssoProviderId }: Props) {
+    const { ref } = useLeaf('Copy Invite Link');
     const params: Record<string, string> = {
         [GlobalSearchParams.GRANT_TOKEN]: token,
     };
@@ -31,7 +34,7 @@ export function CopyAccessLink({ token, ssoProviderId }: Props) {
         <TableCell data-private>
             <Tooltip title="Copy invite link">
                 <span>
-                    <CopyToClipboardButton writeValue={accessLink}>
+                    <CopyToClipboardButton writeValue={accessLink} ref={ref}>
                         Invite Link
                     </CopyToClipboardButton>
                 </span>
