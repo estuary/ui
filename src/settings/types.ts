@@ -14,10 +14,6 @@ export interface AlertSetting {
     humanReadableIntlKey: string;
 }
 
-export interface DataPlaneSetting {
-    prefix: string;
-}
-
 export interface EntitySetting {
     Icon: React.ForwardRefExoticComponent<
         Omit<React.SVGProps<SVGSVGElement>, 'ref'>
