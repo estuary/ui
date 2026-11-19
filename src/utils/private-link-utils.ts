@@ -105,12 +105,7 @@ function getGcpHostnames(
 
 // Accept pasted lists with brackets or quotes and return each entry once.
 export function parseList(text: string): string[] {
-    return uniq(
-        text
-            .replace(/[[\]"'`]/g, ' ')
-            .split(/[\s,;]+/)
-            .filter(Boolean)
-    );
+    return uniq(text.split(/[\s,;[\]"'`]+/).filter(Boolean));
 }
 
 export interface PrivateLinkForm {
