@@ -653,8 +653,8 @@ export const useHydrateEditorState = (
 ) => {
     const draftIdInURL = useGlobalSearchParams(GlobalSearchParams.DRAFT_ID);
 
-    const setRelatedBindingIndices = useBindingStore(
-        (state) => state.setRelatedBindingIndices
+    const setMaterializationBindingIndices = useBindingStore(
+        (state) => state.setMaterializationBindingIndices
     );
 
     const hydrateCollections = useCollectionsHydrator();
@@ -680,11 +680,14 @@ export const useHydrateEditorState = (
             setQueryResponse(response);
 
             if (response.draftSpecs.length > 0) {
-                setRelatedBindingIndices(
-                    response.draftSpecs[0].built_spec,
-                    response.draftSpecs[0].validated,
-                    liveBuiltSpec
-                );
+                // The nested Collection editor shares the task's binding store.
+                if (specType === 'materialization') {
+                    setMaterializationBindingIndices(
+                        response.draftSpecs[0].built_spec,
+                        response.draftSpecs[0].validated,
+                        liveBuiltSpec
+                    );
+                }
 
                 // TODO (draft init / workflow)
                 // This is hacky - but will work for now. We need to know about
@@ -701,7 +704,8 @@ export const useHydrateEditorState = (
     }, [
         liveBuiltSpec,
         setQueryResponse,
-        setRelatedBindingIndices,
+        setMaterializationBindingIndices,
+        specType,
         response,
         hydrateCollections,
     ]);

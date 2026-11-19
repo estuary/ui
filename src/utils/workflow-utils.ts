@@ -1,6 +1,5 @@
 import type { FullSourceDictionary } from 'src/stores/Binding/slices/TimeTravel';
 import type { Entity, Schema } from 'src/types';
-import type { MaterializationBuiltBinding } from 'src/types/schemaModels';
 
 import { isEmpty, isEqual } from 'lodash';
 
@@ -88,18 +87,6 @@ export const getFullSourceSetting = (
     return !isEmpty(fullSourceConfig)
         ? { ...fullSourceConfig, name: collectionName }
         : collectionName;
-};
-
-export const getBuiltBindingIndex = (
-    builtSpec: Schema,
-    targetCollection: string
-): number => {
-    const builtBindings: MaterializationBuiltBinding[] =
-        builtSpec.bindings ?? [];
-
-    return builtBindings.findIndex(
-        (binding) => binding.collection.name === targetCollection
-    );
 };
 
 export const getBindingIndexByResourcePath = <T extends Schema>(

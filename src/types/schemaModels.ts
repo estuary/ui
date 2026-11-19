@@ -22,7 +22,7 @@ export interface BaseMaterializationFields {
     groupBy?: string[];
 }
 
-interface BuiltCollection {
+export interface BuiltCollection {
     ackTemplate: any;
     key: string[];
     name: string;
@@ -84,7 +84,6 @@ export interface MaterializationBinding {
 
 // The definition of a binding in the built specification for a materialization.
 export interface MaterializationBuiltBinding {
-    collection: BuiltCollection;
     fieldSelection: FieldSelection;
     journalReadSuffix: string;
     partitionSelector: any;
