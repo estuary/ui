@@ -56,6 +56,8 @@ export function PrivateLinksTable({
                     compactTableSx,
                     {
                         'tableLayout': 'fixed',
+                        // A narrower container scrolls sideways so the columns keep their widths.
+                        'minWidth': 800,
                         '& th:first-of-type': {
                             width: showEndpointId ? '26%' : '36%',
                         },
