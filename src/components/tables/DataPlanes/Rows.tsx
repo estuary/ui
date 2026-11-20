@@ -11,16 +11,6 @@ import useParseCidrBlocks from 'src/hooks/useParseCidrBlocks';
 import { getRegionDisplayName } from 'src/utils/cloudRegions';
 import { toPresentableName } from 'src/utils/dataPlane-utils';
 
-export const PUBLIC_DATA_PLANES_STACK_BELOW = 520;
-
-const mobileLabelSx = {
-    display: 'none',
-    color: 'text.secondary',
-    [`@container (max-width: ${PUBLIC_DATA_PLANES_STACK_BELOW}px)`]: {
-        display: 'inline',
-    },
-};
-
 function Row({ row, onOpen }: { row: DataPlaneNode; onOpen: () => void }) {
     const parseCidrBlocks = useParseCidrBlocks();
     const { ipv4 } = parseCidrBlocks(row.cidrBlocks);
@@ -33,7 +23,7 @@ function Row({ row, onOpen }: { row: DataPlaneNode; onOpen: () => void }) {
 
     return (
         <TableRow hover>
-            <TableCell sx={{ gridArea: '1 / 1' }}>
+            <TableCell>
                 <Stack direction="row" spacing={1} alignItems="center">
                     <DataPlaneIcon
                         provider={row.cloudProvider}
@@ -44,22 +34,16 @@ function Row({ row, onOpen }: { row: DataPlaneNode; onOpen: () => void }) {
                     </Typography>
                 </Stack>
             </TableCell>
-            <TableCell sx={{ gridColumn: '1 / -1', color: 'text.secondary' }}>
-                <Typography variant="caption" sx={mobileLabelSx}>
-                    Region{' '}
-                </Typography>
+            <TableCell sx={{ color: 'text.secondary' }}>
                 {regionDisplayName}
             </TableCell>
-            <TableCell sx={{ gridColumn: '1 / -1' }}>
+            <TableCell>
                 <Stack
                     direction="row"
                     useFlexGap
                     spacing={0.5}
                     sx={{ alignItems: 'center', flexWrap: 'wrap' }}
                 >
-                    <Typography variant="caption" sx={mobileLabelSx}>
-                        IPv4 egress
-                    </Typography>
                     <Typography
                         component="code"
                         variant="body2"
@@ -78,7 +62,7 @@ function Row({ row, onOpen }: { row: DataPlaneNode; onOpen: () => void }) {
                     ) : null}
                 </Stack>
             </TableCell>
-            <TableCell align="right" sx={{ gridArea: '1 / 2' }}>
+            <TableCell align="right">
                 <Button
                     variant="text"
                     size="small"

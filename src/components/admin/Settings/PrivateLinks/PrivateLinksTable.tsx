@@ -33,19 +33,12 @@ interface PrivateLinksTableProps {
     onOpen: (id: string) => void;
 }
 
-const STACK_BELOW = 650;
-
 const codeSx = {
     typography: 'caption',
     fontFamily: 'monospace',
     overflowWrap: 'anywhere',
 };
 const captionSx = { display: 'block', color: 'text.secondary' };
-const mobileLabelSx = {
-    ...captionSx,
-    display: 'none',
-    [`@container (max-width: ${STACK_BELOW}px)`]: { display: 'block' },
-};
 
 export function PrivateLinksTable({
     links,
@@ -56,12 +49,12 @@ export function PrivateLinksTable({
     const showEndpointId = firstConfig.__typename === 'AWSPrivateLink';
 
     return (
-        <TableContainer sx={{ containerType: 'inline-size' }}>
+        <TableContainer>
             <Table
                 size="small"
                 aria-label="Private links"
                 sx={[
-                    compactTableSx(STACK_BELOW),
+                    compactTableSx,
                     {
                         'tableLayout': 'fixed',
                         '& th:first-of-type': {
@@ -106,7 +99,7 @@ export function PrivateLinksTable({
 
                         return (
                             <TableRow key={id} hover>
-                                <TableCell sx={{ gridColumn: '1 / -1' }}>
+                                <TableCell>
                                     <Typography
                                         component="code"
                                         variant="body2"
@@ -124,10 +117,9 @@ export function PrivateLinksTable({
                                         </Typography>
                                     ) : null}
                                 </TableCell>
-                                <MetadataCell {...context} />
+                                <MetadataCell value={context.value} />
                                 {showEndpointId ? (
                                     <MetadataCell
-                                        label="Endpoint ID"
                                         value={endpoint.awsEndpointId}
                                     />
                                 ) : null}
@@ -154,12 +146,9 @@ export function PrivateLinksTable({
     );
 }
 
-function MetadataCell({ label, value }: { label: string; value?: string }) {
+function MetadataCell({ value }: { value?: string }) {
     return (
-        <TableCell sx={{ gridColumn: '1 / -1', color: 'text.secondary' }}>
-            <Typography variant="caption" sx={mobileLabelSx}>
-                {label}
-            </Typography>
+        <TableCell sx={{ color: 'text.secondary' }}>
             <Box component="code" sx={codeSx}>
                 {value || '—'}
             </Box>

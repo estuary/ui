@@ -11,9 +11,7 @@ import {
 } from '@mui/material';
 
 import { compactTableSx } from 'src/components/admin/Settings/DataPlanes/compactTableSx';
-import Rows, {
-    PUBLIC_DATA_PLANES_STACK_BELOW,
-} from 'src/components/tables/DataPlanes/Rows';
+import Rows from 'src/components/tables/DataPlanes/Rows';
 import { paperBackground } from 'src/context/Theme';
 import { usePublicDataPlanesQuery } from 'src/hooks/dataPlanes/useDataPlanes';
 import { useCursorPagination } from 'src/hooks/useCursorPagination';
@@ -43,11 +41,11 @@ export function PublicDataPlanesTable({ tenant }: { tenant: string }) {
             variant="outlined"
             sx={{ bgcolor: (theme) => paperBackground[theme.palette.mode] }}
         >
-            <TableContainer sx={{ containerType: 'inline-size' }}>
+            <TableContainer>
                 <Table
                     size="small"
                     aria-label="Public data planes"
-                    sx={compactTableSx(PUBLIC_DATA_PLANES_STACK_BELOW)}
+                    sx={compactTableSx}
                 >
                     <TableHead>
                         <TableRow>
@@ -60,10 +58,7 @@ export function PublicDataPlanesTable({ tenant }: { tenant: string }) {
                     <TableBody>
                         {fetching || error || dataPlanes.length === 0 ? (
                             <TableRow>
-                                <TableCell
-                                    colSpan={4}
-                                    sx={{ gridColumn: '1 / -1' }}
-                                >
+                                <TableCell colSpan={4}>
                                     <Typography
                                         variant="body2"
                                         color="text.secondary"
