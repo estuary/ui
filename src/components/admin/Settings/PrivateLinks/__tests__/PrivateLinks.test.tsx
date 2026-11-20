@@ -267,7 +267,7 @@ test('puts copy actions and setup states in the endpoint address column', async 
     ).toBeTruthy();
 });
 
-test('opens the first plane by default and shows links for the selected plane', async () => {
+test("opens the first plane by default and shows the selected plane's private links", async () => {
     planes = [1, 2, 3].map((n) => ({
         ...awsPlane([numberedLink(n)]),
         name: `ops/dp/private/acmeCo/aws-us-east-2-c${n}`,

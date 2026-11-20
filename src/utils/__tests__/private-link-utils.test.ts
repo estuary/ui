@@ -169,7 +169,7 @@ test.each([
     expect(getPrivateLinkServiceLabel(config)).toBe(label);
 });
 
-describe('getLinkEndpoint', () => {
+describe('getPrivateLinkEndpoint', () => {
     test('reads AWS DNS names, regional first, and the endpoint ID', () => {
         const regional =
             'vpce-0b7c-k3x9.vpce-svc-0a1b.us-east-2.vpce.amazonaws.com';
