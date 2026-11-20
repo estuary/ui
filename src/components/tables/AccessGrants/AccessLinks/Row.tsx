@@ -26,48 +26,50 @@ export function Row({
     };
 
     return (
-        <Branch
-            metadata={{
-                catalogPrefix: row.catalogPrefix,
-                capability: row.capability,
-                singleUse: row.singleUse,
-            }}
-        >
-            <TableRow hover>
-                <TableCell>
-                    <Typography>{row.catalogPrefix}</Typography>
-                </TableCell>
+        <TableRow hover>
+            <TableCell>
+                <Typography>{row.catalogPrefix}</Typography>
+            </TableCell>
 
-                <TableCell>
-                    <Typography>{row.capability}</Typography>
-                </TableCell>
+            <TableCell>
+                <Typography>{row.capability}</Typography>
+            </TableCell>
 
-                <TableCell>
-                    <Typography>
-                        {row.singleUse ? 'Single use' : 'Multi-use'}
-                    </Typography>
-                </TableCell>
+            <TableCell>
+                <Typography>
+                    {row.singleUse ? 'Single use' : 'Multi-use'}
+                </Typography>
+            </TableCell>
 
-                <CopyAccessLink
-                    token={row.token}
-                    ssoProviderId={row.ssoProviderId}
-                />
+            <TableCell>
+                <Branch
+                    metadata={{
+                        catalogPrefix: row.catalogPrefix,
+                        capability: row.capability,
+                        singleUse: row.singleUse,
+                    }}
+                >
+                    <CopyAccessLink
+                        token={row.token}
+                        ssoProviderId={row.ssoProviderId}
+                    />
+                </Branch>
+            </TableCell>
 
-                <TimeStamp time={row.createdAt} />
+            <TimeStamp time={row.createdAt} />
 
-                <TableCell sx={{ width: 50 }}>
-                    <Button
-                        ref={ref}
-                        onClick={handleDelete}
-                        disabled={fetching}
-                        variant="text"
-                        size="small"
-                        aria-label="Remove"
-                    >
-                        Remove
-                    </Button>
-                </TableCell>
-            </TableRow>
-        </Branch>
+            <TableCell sx={{ width: 50 }}>
+                <Button
+                    ref={ref}
+                    onClick={handleDelete}
+                    disabled={fetching}
+                    variant="text"
+                    size="small"
+                    aria-label="Remove"
+                >
+                    Remove
+                </Button>
+            </TableCell>
+        </TableRow>
     );
 }

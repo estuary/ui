@@ -1,5 +1,3 @@
-import { TableCell, Tooltip } from '@mui/material';
-
 import { useLeaf } from 'react-semantic-tree';
 
 import { unauthenticatedRoutes } from 'src/app/routes';
@@ -31,14 +29,8 @@ export function CopyAccessLink({ token, ssoProviderId }: Props) {
     );
 
     return (
-        <TableCell data-private>
-            <Tooltip title="Copy invite link">
-                <span>
-                    <CopyToClipboardButton writeValue={accessLink} ref={ref}>
-                        Invite Link
-                    </CopyToClipboardButton>
-                </span>
-            </Tooltip>
-        </TableCell>
+        <CopyToClipboardButton writeValue={accessLink} ref={ref}>
+            Invite Link
+        </CopyToClipboardButton>
     );
 }
