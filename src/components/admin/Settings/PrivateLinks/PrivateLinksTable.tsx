@@ -1,10 +1,10 @@
 import type { PrivateLinkDataPlane } from 'src/components/admin/Settings/PrivateLinks/PrivateDataPlane';
+import type { PrivateLinkProvisioningStatus } from 'src/gql-types/graphql';
 
 import { useState } from 'react';
 
 import {
     Box,
-    Link,
     Table,
     TableBody,
     TableCell,
@@ -19,7 +19,10 @@ import {
 import { orderBy } from 'lodash';
 
 import { compactTableSx } from 'src/components/admin/Settings/DataPlanes/compactTableSx';
-import { privateLinkStatuses } from 'src/components/admin/Settings/PrivateLinks/PrivateLinkStatus';
+import {
+    PrivateLinkStatus,
+    privateLinkStatuses,
+} from 'src/components/admin/Settings/PrivateLinks/PrivateLinkStatus';
 import CopyToClipboardButton from 'src/components/shared/buttons/CopyToClipboardButton';
 import SearchField from 'src/components/shared/toolbar/SearchField';
 import TablePaginationActions from 'src/components/tables/PaginationActions';
@@ -137,7 +140,17 @@ export function PrivateLinksTable({ plane, onOpen }: PrivateLinksTableProps) {
                                 <TableRow
                                     key={link.id}
                                     hover
-                                    sx={{ cursor: 'pointer' }}
+                                    tabIndex={0}
+                                    aria-label={`Details for ${name}`}
+                                    aria-haspopup="dialog"
+                                    sx={{
+                                        'cursor': 'pointer',
+                                        '&:focus-visible': {
+                                            outline: '2px solid',
+                                            outlineColor: 'primary.main',
+                                            outlineOffset: -2,
+                                        },
+                                    }}
                                     onClick={({ target }) => {
                                         if (
                                             target instanceof Element &&
@@ -146,27 +159,28 @@ export function PrivateLinksTable({ plane, onOpen }: PrivateLinksTableProps) {
                                             onOpen(link.id);
                                         }
                                     }}
+                                    onKeyDown={(event) => {
+                                        if (
+                                            event.target ===
+                                                event.currentTarget &&
+                                            (event.key === 'Enter' ||
+                                                event.key === ' ')
+                                        ) {
+                                            event.preventDefault();
+                                            onOpen(link.id);
+                                        }
+                                    }}
                                 >
-                                    <TableCell>
-                                        <Link
-                                            component="button"
-                                            type="button"
-                                            variant="body2"
-                                            aria-label={`Details for ${name}`}
-                                            aria-haspopup="dialog"
-                                            onClick={() => onOpen(link.id)}
-                                            sx={{
-                                                textAlign: 'left',
-                                                overflowWrap: 'anywhere',
-                                            }}
-                                        >
-                                            {name}
-                                        </Link>
+                                    <TableCell
+                                        sx={{ overflowWrap: 'anywhere' }}
+                                    >
+                                        {name}
                                     </TableCell>
                                     <TableCell>
                                         <Address
                                             name={name}
                                             endpoint={endpoint}
+                                            status={link.status}
                                         />
                                     </TableCell>
                                     <TableCell>
@@ -228,10 +242,16 @@ function includesValue(value: unknown, search: string): boolean {
 function Address({
     name,
     endpoint,
+    status,
 }: {
     name: string;
     endpoint: ReturnType<typeof getPrivateLinkEndpoint>;
+    status: PrivateLinkProvisioningStatus;
 }) {
+    if (status !== 'PROVISIONED') {
+        return <PrivateLinkStatus status={status} />;
+    }
+
     const address = endpoint.addresses[0];
     if (!address) {
         return '—';

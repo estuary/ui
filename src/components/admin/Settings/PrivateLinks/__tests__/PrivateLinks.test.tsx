@@ -161,17 +161,17 @@ const renderLinks = async () => {
 
 const openLink = async (name: string) => {
     fireEvent.click(
-        await screen.findByRole('button', {
+        await screen.findByRole('row', {
             name: `Details for ${name}`,
         })
     );
     return screen.findByRole('dialog');
 };
 
-const linkButtonNames = () =>
+const linkRowNames = () =>
     within(screen.getByRole('table', { name: 'Private links' }))
-        .getAllByRole('button', { name: /^Details for / })
-        .map((button) => button.getAttribute('aria-label'));
+        .getAllByRole('row', { name: /^Details for / })
+        .map((row) => row.getAttribute('aria-label'));
 
 const field = (dialog: HTMLElement, label: string) =>
     within(dialog).getByLabelText(label) as HTMLInputElement;
@@ -225,7 +225,7 @@ beforeEach(() => {
     );
 });
 
-test('shows the name, copyable address and creation time, with provisioning details in the dialog', async () => {
+test('shows plain names and the address or provisioning status, with details on the row', async () => {
     const user = userEvent.setup();
     const writeText = vi
         .spyOn(navigator.clipboard, 'writeText')
@@ -250,6 +250,10 @@ test('shows the name, copyable address and creation time, with provisioning deta
     );
     expect(screen.getByText('AWS: us-east-2 c1')).toBeTruthy();
     expect(screen.getByText('US East (Ohio)')).toBeTruthy();
+    const nameCell = within(provisionedRow).getByRole('cell', {
+        name: 'Orders database',
+    });
+    expect(nameCell.querySelector('a, button')).toBeNull();
     expect(within(provisionedRow).getByText(DNS_NAME)).toBeTruthy();
     expect(within(provisionedRow).queryByText('vpce-0b7c6d5e')).toBeNull();
     await user.click(
@@ -257,16 +261,20 @@ test('shows the name, copyable address and creation time, with provisioning deta
             name: 'Copy Regional DNS name for Orders database',
         })
     );
+    await user.keyboard('{Enter}');
+    expect(writeText).toHaveBeenCalledTimes(2);
     expect(writeText).toHaveBeenCalledWith(DNS_NAME);
     expect(screen.queryByRole('dialog')).toBeNull();
-    expect(within(failedRow).getByText('—')).toBeTruthy();
+    expect(within(failedRow).getAllByRole('cell')[1].textContent).toBe(
+        'Failed'
+    );
 
     const search = screen.getByRole('textbox', {
         name: 'Search private links',
     });
     for (const value of ['USE2-AZ2', awsConfig.serviceName, 'vpce-0b7c6d5e']) {
         fireEvent.change(search, { target: { value } });
-        expect(linkButtonNames()).toEqual(['Details for Orders database']);
+        expect(linkRowNames()).toEqual(['Details for Orders database']);
     }
     fireEvent.change(search, { target: { value: '' } });
 
@@ -297,7 +305,7 @@ test('shows the name, copyable address and creation time, with provisioning deta
     ).toEqual(['Delete', 'Edit']);
     fireEvent.click(within(details).getByRole('button', { name: 'Close' }));
 
-    screen.getByRole('button', { name: 'Details for Analytics' }).focus();
+    screen.getByRole('row', { name: 'Details for Analytics' }).focus();
     await user.keyboard('{Enter}');
     const error = await screen.findByRole('dialog', { name: /Analytics/ });
     expect(within(error).getByText('Failed')).toBeTruthy();
@@ -319,12 +327,12 @@ test("opens the first plane by default and shows the selected plane's private li
     const third = screen.getByRole('button', { name: /^AWS: us-east-2 c3/ });
     expect(first.getAttribute('aria-expanded')).toBe('true');
     expect(third.getAttribute('aria-expanded')).toBe('false');
-    expect(linkButtonNames()).toEqual(['Details for Database 1']);
+    expect(linkRowNames()).toEqual(['Details for Database 1']);
 
     fireEvent.click(third);
     expect(first.getAttribute('aria-expanded')).toBe('false');
     expect(third.getAttribute('aria-expanded')).toBe('true');
-    expect(linkButtonNames()).toEqual(['Details for Database 3']);
+    expect(linkRowNames()).toEqual(['Details for Database 3']);
 });
 
 test('sorts and searches all links before paginating the matches', async () => {
@@ -336,14 +344,14 @@ test('sorts and searches all links before paginating the matches', async () => {
     const pager = within(
         screen.getByRole('navigation', { name: 'private links pagination' })
     );
-    expect(linkButtonNames()).toEqual(labels.slice(0, 10));
+    expect(linkRowNames()).toEqual(labels.slice(0, 10));
 
     fireEvent.click(pager.getByRole('button', { name: 'next page' }));
-    expect(linkButtonNames()).toEqual(labels.slice(10, 20));
+    expect(linkRowNames()).toEqual(labels.slice(10, 20));
 
     fireEvent.click(pager.getByRole('button', { name: 'last page' }));
     expect(pager.getByText('51–57 of 57')).toBeTruthy();
-    expect(linkButtonNames()).toEqual(labels.slice(50));
+    expect(linkRowNames()).toEqual(labels.slice(50));
     expect(within(screen.getByRole('table')).getAllByRole('row')).toHaveLength(
         8
     );
@@ -352,13 +360,13 @@ test('sorts and searches all links before paginating the matches', async () => {
     expect(created.getAttribute('aria-sort')).toBe('descending');
     fireEvent.click(within(created).getByRole('button'));
     expect(created.getAttribute('aria-sort')).toBe('ascending');
-    expect(linkButtonNames()).toEqual(labels.slice(-10).reverse());
+    expect(linkRowNames()).toEqual(labels.slice(-10).reverse());
 
     const search = screen.getByRole('textbox', {
         name: 'Search private links',
     });
     fireEvent.change(search, { target: { value: '  VPCE-SVC-00000039  ' } });
-    expect(linkButtonNames()).toEqual(['Details for Database 57']);
+    expect(linkRowNames()).toEqual(['Details for Database 57']);
     expect(
         screen.queryByRole('navigation', { name: 'private links pagination' })
     ).toBeNull();
@@ -367,7 +375,7 @@ test('sorts and searches all links before paginating the matches', async () => {
         screen.getByText('No private links match your search.')
     ).toBeTruthy();
     fireEvent.change(search, { target: { value: '' } });
-    expect(linkButtonNames()).toEqual(labels.slice(-10).reverse());
+    expect(linkRowNames()).toEqual(labels.slice(-10).reverse());
 });
 
 test('matches dialog values, nested provider details and formatted dates', async () => {
@@ -421,10 +429,10 @@ test('matches dialog values, nested provider details and formatted dates', async
         displayedDate,
     ]) {
         fireEvent.change(search, { target: { value } });
-        expect(linkButtonNames()).toEqual(['Details for Orders']);
+        expect(linkRowNames()).toEqual(['Details for Orders']);
     }
     fireEvent.change(search, { target: { value: 'permission denied' } });
-    expect(linkButtonNames()).toEqual(['Details for Unnamed private link']);
+    expect(linkRowNames()).toEqual(['Details for Unnamed private link']);
 });
 
 test('shows IPv4 in the public table and both IP families in plane details', async () => {
@@ -501,7 +509,17 @@ test('does not refresh while a form is open, then follows the status change', as
     );
     await renderLinks();
 
-    const details = await openLink('Orders database');
+    const pendingRow = screen.getByRole('row', {
+        name: 'Details for Orders database',
+    });
+    const address = within(pendingRow).getAllByRole('cell')[1];
+    expect(within(address).getByText('Setting up')).toBeTruthy();
+    expect(
+        within(address).getByRole('progressbar', { hidden: true })
+    ).toBeTruthy();
+    pendingRow.focus();
+    fireEvent.keyDown(pendingRow, { key: ' ' });
+    const details = await screen.findByRole('dialog');
     fireEvent.click(within(details).getByRole('button', { name: 'Edit' }));
     const form = await screen.findByRole('dialog');
     refresh();
@@ -824,10 +842,10 @@ test('deletes a link after confirmation, which stays open to retry a failure', a
 
     remove();
     await waitFor(() =>
-        expect(linkButtonNames()).toEqual(['Details for Analytics'])
+        expect(linkRowNames()).toEqual(['Details for Analytics'])
     );
     expect(
-        screen.queryByRole('button', {
+        screen.queryByRole('row', {
             name: 'Details for Orders database',
         })
     ).toBeNull();
@@ -881,7 +899,7 @@ test('creates an Azure link with its resource type and DNS name', async () => {
     fireEvent.click(
         await screen.findByRole('button', { name: /^AWS: us-east-2 c1/ })
     );
-    expect(linkButtonNames()).toEqual([
+    expect(linkRowNames()).toEqual([
         'Details for Orders database',
         'Details for Analytics',
     ]);
