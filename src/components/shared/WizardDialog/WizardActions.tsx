@@ -19,11 +19,13 @@ export function WizardActions() {
 
     const currentStepConfig = steps[currentStep];
     const showBackButton = !isFirstStep;
+    const nextLabel =
+        currentStepConfig?.nextLabel ?? (isLastStep ? 'Save' : 'Next');
     const canAdvance = currentStepConfig?.canAdvance?.() ?? true;
     const meta = { currentStep, isLastStep, isFirstStep };
     const { ref: advanceRef } = useLeaf(`Advance`, {
         ...meta,
-        buttonLabel: currentStepConfig?.nextLabel,
+        buttonLabel: nextLabel,
     });
     const { ref: retreatRef } = useLeaf('Retreat', meta);
 
@@ -50,7 +52,7 @@ export function WizardActions() {
                 loading={isNavigating}
                 sx={{ whiteSpace: 'nowrap' }}
             >
-                {currentStepConfig?.nextLabel ?? (isLastStep ? 'Save' : 'Next')}
+                {nextLabel}
             </Button>
         </DialogActions>
     );
