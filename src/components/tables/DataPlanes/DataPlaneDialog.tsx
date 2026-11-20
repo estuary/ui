@@ -1,11 +1,14 @@
 import type { DataPlaneNode } from 'src/api/gql/dataPlanes';
+import type { DataPlaneCloudProvider } from 'src/gql-types/graphql';
 
-import { Badge, Dialog, DialogContent, Stack, Typography } from '@mui/material';
+import { Dialog, DialogContent, Stack, Typography } from '@mui/material';
 
 import DialogTitleWithClose from 'src/components/shared/Dialog/TitleWithClose';
 import DataPlaneIcon from 'src/components/shared/Entity/DataPlaneIcon';
-import { DataPlaneDialogField } from 'src/components/tables/DataPlanes/DialogFields/DataPlaneDialogField';
-import { ToggleField } from 'src/components/tables/DataPlanes/DialogFields/ToggleField';
+import {
+    LabeledValue,
+    LabeledValueGroup,
+} from 'src/components/shared/LabeledValue';
 import useParseCidrBlocks from 'src/hooks/useParseCidrBlocks';
 import { getRegionDisplayName, PROVIDER_LABELS } from 'src/utils/cloudRegions';
 import { formatIamOidc, toPresentableName } from 'src/utils/dataPlane-utils';
@@ -14,7 +17,10 @@ const TITLE_ID = 'data-plane-dialog-title';
 
 interface DataPlaneDialogProps {
     onClose: () => void;
-    dataPlane: DataPlaneNode;
+    dataPlane: Pick<
+        DataPlaneNode,
+        'cidrBlocks' | 'fqdn' | 'name' | 'region' | 'scope'
+    > & { cloudProvider: DataPlaneCloudProvider };
 }
 
 function DataPlaneDialog({ onClose, dataPlane }: DataPlaneDialogProps) {
@@ -35,80 +41,57 @@ function DataPlaneDialog({ onClose, dataPlane }: DataPlaneDialogProps) {
             fullWidth
             aria-labelledby={TITLE_ID}
         >
-            <DialogTitleWithClose
-                id={TITLE_ID}
-                onClose={onClose}
-                sx={{ pb: 0 }}
-            >
+            <DialogTitleWithClose id={TITLE_ID} onClose={onClose}>
                 <Stack
                     direction="row"
-                    alignItems="center"
-                    justifyContent="flex-start"
+                    spacing={1}
+                    sx={{ alignItems: 'center', pr: 3 }}
                 >
                     <DataPlaneIcon
+                        hideScopeIcon
                         provider={cloudProvider}
                         scope={scope}
-                        size={30}
                     />
-                    <Typography variant="h6" sx={{ ml: 1, fontWeight: 600 }}>
+                    <Typography component="span" variant="h6">
                         {dataPlaneDisplayName}
                     </Typography>
-                    <Badge
-                        sx={{
-                            ml: 5,
-                        }}
-                        badgeContent={scope}
-                        color="secondary"
-                        invisible={scope == 'public'}
-                    />
                 </Stack>
             </DialogTitleWithClose>
             <DialogContent>
-                <Typography
-                    variant="body2"
-                    color="text.secondary"
-                    sx={{ mt: 0, mb: 2 }}
-                >
-                    Data plane details and configuration
-                </Typography>
-                <Stack spacing={1}>
-                    {cloudProvider ? (
-                        <DataPlaneDialogField
-                            label="Cloud Provider"
-                            value={PROVIDER_LABELS[cloudProvider]}
+                <Stack spacing={2}>
+                    <LabeledValueGroup title="Egress IP ranges">
+                        <LabeledValue label="IPv4" value={ipv4} />
+                        <LabeledValue
+                            label="IPv6"
+                            value={ipv6}
+                            showCopyButton={dataPlane.cidrBlocks.length > 0}
+                        />
+                    </LabeledValueGroup>
+                    <LabeledValueGroup title="Data plane identity">
+                        <LabeledValue
+                            label="Cloud provider"
+                            value={
+                                cloudProvider === 'LOCAL'
+                                    ? 'Local'
+                                    : PROVIDER_LABELS[cloudProvider]
+                            }
                             showCopyButton={false}
                         />
-                    ) : null}
-                    {region ? (
-                        <DataPlaneDialogField
-                            label="Region"
-                            value={regionDisplayName}
-                            showCopyButton={false}
-                        />
-                    ) : null}
-                    <DataPlaneDialogField label="Internal ID" value={name} />
-                    <ToggleField
-                        lowercaseButton
-                        label="IPs"
-                        options={[
-                            {
-                                key: 'ipv4',
-                                label: 'v4',
-                                value: ipv4,
-                            },
-                            {
-                                key: 'ipv6',
-                                label: 'v6',
-                                value: ipv6,
-                            },
-                        ]}
-                    />
-                    {iamOidc ? (
-                        <DataPlaneDialogField
-                            label="IAM OIDC"
-                            value={iamOidc}
-                        />
-                    ) : null}
+                        {region ? (
+                            <LabeledValue
+                                label="Region"
+                                value={regionDisplayName}
+                                showCopyButton={false}
+                            />
+                        ) : null}
+                        <LabeledValue label="Internal ID" value={name} />
+                        {iamOidc ? (
+                            <LabeledValue
+                                label="IAM OIDC issuer"
+                                value={iamOidc}
+                            />
+                        ) : null}
+                    </LabeledValueGroup>
                 </Stack>
             </DialogContent>
         </Dialog>

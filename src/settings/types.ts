@@ -14,11 +14,6 @@ export interface AlertSetting {
     humanReadableIntlKey: string;
 }
 
-export interface DataPlaneSetting {
-    prefix: string;
-    table: Pick<TableSettings, 'noExistingDataContentIds'>;
-}
-
 export interface EntitySetting {
     Icon: React.ForwardRefExoticComponent<
         Omit<React.SVGProps<SVGSVGElement>, 'ref'>
