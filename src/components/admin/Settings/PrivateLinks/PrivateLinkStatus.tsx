@@ -2,7 +2,7 @@ import type { PrivateLinkProvisioningStatus } from 'src/gql-types/graphql';
 
 import { Box, CircularProgress, Stack, Typography } from '@mui/material';
 
-const statuses = {
+export const privateLinkStatuses = {
     PENDING: { label: 'Setting up', color: 'warning.main' },
     PROVISIONED: { label: 'Provisioned', color: 'success.main' },
     FAILED: { label: 'Failed', color: 'error.main' },
@@ -13,7 +13,7 @@ export function PrivateLinkStatus({
 }: {
     status: PrivateLinkProvisioningStatus;
 }) {
-    const { label, color } = statuses[status];
+    const { label, color } = privateLinkStatuses[status];
 
     return (
         <Stack

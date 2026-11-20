@@ -964,10 +964,8 @@ type DataPlane {
 
   """
   Configured private links for this data-plane, each with its
-  controller-observed provisioning status. Mutating links (via
-  `addDataPlanePrivateLink` and friends) triggers reconvergence by the
-  data-plane controller. Returns an empty list to callers that lack the
-  `ViewDataPlanePrivateNetworking` capability on this data plane.
+  controller-observed provisioning status. Returns an empty list to callers
+  that lack the `ViewDataPlanePrivateNetworking` capability on this data plane.
   """
   privateLinks: [PrivateLink!]!
 
@@ -1777,7 +1775,7 @@ type MutationRoot {
   converges to provision it on its next poll; the returned link starts
   `pending`. Requires `ModifyDataPlanePrivateNetworking` on the data plane.
   """
-  addDataPlanePrivateLink(config: PrivateLinkConfigInput!, dataPlaneName: String!): PrivateLink!
+  addDataPlanePrivateLink(config: PrivateLinkConfigInput!, dataPlaneName: String!, detail: String): PrivateLink!
 
   """
   Add a user_grant to a service account.
@@ -2137,14 +2135,13 @@ type MutationRoot {
   updateAlertSubscription(alertTypes: [AlertType!], detail: String, email: String!, prefix: Prefix!): AlertSubscription!
 
   """
-  Replaces the configuration of an existing private link by id. A changed
-  config resets the observed status to `pending` and re-triggers convergence:
-  the desired-edit trigger clears the observation columns and bumps the
-  link's internal generation, so a converge already in flight against the
-  previous configuration cannot later stamp this link with a stale status.
+  Replaces a private link's config and optionally sets its name. Omit `detail`
+  or pass null to keep the current name. A config change resets the link's
+  provisioning status to `pending` for the next converge.
   Requires `ModifyDataPlanePrivateNetworking` on the owning data plane.
+  Callers with only modify access see the name they supply.
   """
-  updateDataPlanePrivateLink(config: PrivateLinkConfigInput!, id: Id!): PrivateLink!
+  updateDataPlanePrivateLink(config: PrivateLinkConfigInput!, detail: String, id: Id!): PrivateLink!
 
   """
   Update an existing storage mapping for the given catalog prefix.
@@ -2323,6 +2320,12 @@ type PrivateLink {
   is the link's cloud provider.
   """
   config: PrivateLinkConfig!
+
+  """When this private link record was created."""
+  createdAt: DateTime!
+
+  """Customer-provided name for this link."""
+  detail: String
 
   """
   Provider-specific provisioning details (DNS entries, IPs) once

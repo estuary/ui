@@ -42,30 +42,6 @@ function getPrivateLinkService(config: PrivateLinkConfig): string {
         : config.serviceName;
 }
 
-export function getPrivateLinkContext(config: PrivateLinkConfig) {
-    switch (config.__typename) {
-        case 'AWSPrivateLink':
-            return {
-                label: 'Availability Zone IDs',
-                value: config.azIds.join(', '),
-            };
-        case 'AzurePrivateLink':
-            return {
-                label: 'Resource group',
-                value: /\/resourceGroups\/([^/]+)/i.exec(
-                    config.serviceName
-                )?.[1],
-            };
-        case 'GCPPrivateServiceConnect':
-            return {
-                label: 'Project',
-                value: /(?:^|\/)projects\/([^/]+)/.exec(
-                    config.serviceAttachment
-                )?.[1],
-            };
-    }
-}
-
 export function getPrivateLinkServiceLabel(config: PrivateLinkConfig): string {
     const service = getPrivateLinkService(config);
 
@@ -96,12 +72,72 @@ function getAwsCrossRegion({
     return serviceRegion && serviceRegion !== region ? serviceRegion : null;
 }
 
-export function getCrossRegionDisplayName(config: PrivateLinkConfig) {
-    const region =
-        config.__typename === 'AWSPrivateLink'
-            ? getAwsCrossRegion(config)
-            : null;
-    return region && getRegionDisplayName('AWS', region);
+export function getPrivateLinkConfiguration(config: PrivateLinkConfig): {
+    label: string;
+    value: string | null | undefined;
+    copy?: boolean;
+}[] {
+    const provider = PRIVATE_LINK_PROVIDERS[config.__typename];
+    const region = getRegionDisplayName(provider, getPrivateLinkRegion(config));
+
+    switch (config.__typename) {
+        case 'AWSPrivateLink': {
+            const serviceRegion = getAwsCrossRegion(config);
+            return [
+                {
+                    label: 'Endpoint service name',
+                    value: config.serviceName,
+                    copy: true,
+                },
+                { label: 'Endpoint region', value: region },
+                {
+                    label: 'Service region',
+                    value:
+                        serviceRegion &&
+                        getRegionDisplayName('AWS', serviceRegion),
+                },
+                {
+                    label: 'Availability Zone IDs',
+                    value: config.azIds.join(', '),
+                },
+            ];
+        }
+
+        case 'AzurePrivateLink':
+            return [
+                { label: 'Resource ID', value: config.serviceName, copy: true },
+                {
+                    label: 'Resource group',
+                    value: /\/resourceGroups\/([^/]+)/i.exec(
+                        config.serviceName
+                    )?.[1],
+                },
+                { label: 'Location', value: region },
+                { label: 'Sub-resource type', value: config.resourceType },
+                { label: 'DNS name', value: config.dnsName },
+            ];
+
+        case 'GCPPrivateServiceConnect':
+            return [
+                {
+                    label: 'Service attachment',
+                    value: config.serviceAttachment,
+                    copy: true,
+                },
+                {
+                    label: 'Project',
+                    value: /(?:^|\/)projects\/([^/]+)/.exec(
+                        config.serviceAttachment
+                    )?.[1],
+                },
+                { label: 'Endpoint region', value: region },
+                { label: 'DNS zone name', value: config.dnsZoneName },
+                {
+                    label: 'DNS record names',
+                    value: config.dnsRecordNames.join(', '),
+                },
+            ];
+    }
 }
 
 // Tasks resolve these names inside the data plane.

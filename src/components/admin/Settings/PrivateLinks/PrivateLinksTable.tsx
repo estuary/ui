@@ -1,196 +1,254 @@
-import type {
-    PrivateLink,
-    PrivateLinkConfig,
-} from 'src/utils/private-link-utils';
+import type { PrivateLinkDataPlane } from 'src/components/admin/Settings/PrivateLinks/PrivateDataPlane';
+
+import { useState } from 'react';
 
 import {
     Box,
-    Button,
+    Link,
     Table,
     TableBody,
     TableCell,
     TableContainer,
     TableHead,
+    TablePagination,
     TableRow,
+    TableSortLabel,
     Typography,
 } from '@mui/material';
 
+import { orderBy } from 'lodash';
+
 import { compactTableSx } from 'src/components/admin/Settings/DataPlanes/compactTableSx';
-import { PrivateLinkStatus } from 'src/components/admin/Settings/PrivateLinks/PrivateLinkStatus';
+import { privateLinkStatuses } from 'src/components/admin/Settings/PrivateLinks/PrivateLinkStatus';
 import CopyToClipboardButton from 'src/components/shared/buttons/CopyToClipboardButton';
+import SearchField from 'src/components/shared/toolbar/SearchField';
+import TablePaginationActions from 'src/components/tables/PaginationActions';
 import {
-    getCrossRegionDisplayName,
-    getPrivateLinkContext,
+    getPrivateLinkConfiguration,
     getPrivateLinkEndpoint,
-    getPrivateLinkServiceLabel,
 } from 'src/utils/private-link-utils';
 
+const PAGE_SIZE = 10;
+const dateFormat = new Intl.DateTimeFormat(undefined, {
+    dateStyle: 'medium',
+    timeStyle: 'short',
+});
+
 interface PrivateLinksTableProps {
-    links: PrivateLink[];
-    firstConfig: PrivateLinkConfig;
+    plane: PrivateLinkDataPlane;
     onOpen: (id: string) => void;
 }
 
-const codeSx = {
-    typography: 'caption',
-    fontFamily: 'monospace',
-    overflowWrap: 'anywhere',
-};
-const captionSx = { display: 'block', color: 'text.secondary' };
+export function PrivateLinksTable({ plane, onOpen }: PrivateLinksTableProps) {
+    const [search, setSearch] = useState('');
+    const [order, setOrder] = useState<'asc' | 'desc'>('desc');
+    const [requestedPage, setRequestedPage] = useState(0);
 
-export function PrivateLinksTable({
-    links,
-    firstConfig,
-    onOpen,
-}: PrivateLinksTableProps) {
-    // Reserve the AWS endpoint ID column while provisioning is pending.
-    const showEndpointId = firstConfig.__typename === 'AWSPrivateLink';
+    const rows = plane.privateLinks.map((link) => {
+        const name = link.detail?.trim() || 'Unnamed private link';
+        const createdAt = new Date(link.createdAt);
+        const createdLabel = dateFormat.format(createdAt);
+        const endpoint = getPrivateLinkEndpoint(
+            link.config,
+            link.status === 'PROVISIONED' ? link.details : null
+        );
+        return { link, name, createdAt, createdLabel, endpoint };
+    });
+    const matches = rows.filter(
+        ({ link, name, createdLabel, endpoint }) =>
+            !search ||
+            includesValue(
+                [
+                    link,
+                    name,
+                    createdLabel,
+                    plane.displayName,
+                    privateLinkStatuses[link.status].label,
+                    getPrivateLinkConfiguration(link.config).map(
+                        ({ value }) => value
+                    ),
+                    endpoint.addresses.map(({ value }) => value),
+                ],
+                search
+            )
+    );
+    // PostgreSQL can distinguish links created within the same millisecond.
+    const sorted = orderBy(
+        matches,
+        [
+            ({ createdAt }) => createdAt,
+            ({ link }) => link.createdAt.match(/\.(\d+)/)?.[1] ?? '',
+        ],
+        [order, order]
+    );
+    const lastPage = Math.max(0, Math.ceil(sorted.length / PAGE_SIZE) - 1);
+    const page = Math.min(requestedPage, lastPage);
+    const start = page * PAGE_SIZE;
 
     return (
-        <TableContainer>
-            <Table
-                size="small"
-                aria-label="Private links"
-                sx={[
-                    compactTableSx,
-                    {
-                        'tableLayout': 'fixed',
-                        // A narrower container scrolls sideways so the columns keep their widths.
-                        'minWidth': 800,
-                        '& th:first-of-type': {
-                            width: showEndpointId ? '26%' : '36%',
+        <>
+            <Box sx={{ p: 1.5 }}>
+                <SearchField
+                    label="Search private links"
+                    changeHandler={(event) => {
+                        setSearch(event.target.value.trim().toLowerCase());
+                        setRequestedPage(0);
+                    }}
+                />
+            </Box>
+            <TableContainer>
+                <Table
+                    size="small"
+                    aria-label="Private links"
+                    sx={[
+                        compactTableSx,
+                        {
+                            'tableLayout': 'fixed',
+                            'minWidth': 540,
+                            '& th:first-of-type': { width: '27%' },
+                            '& th:last-of-type': { width: '26%' },
                         },
-                        '& th:nth-of-type(2)': {
-                            width: showEndpointId ? '16%' : '22%',
-                        },
-                        '& th:nth-of-type(3)': {
-                            width: showEndpointId ? '24%' : undefined,
-                        },
-                        '& th:last-of-type': {
-                            width: (theme) => theme.spacing(11),
-                        },
-                    },
-                ]}
-            >
-                <TableHead>
-                    <TableRow>
-                        <TableCell scope="col">Service</TableCell>
-                        <TableCell scope="col">
-                            {getPrivateLinkContext(firstConfig).label}
-                        </TableCell>
-                        {showEndpointId ? (
-                            <TableCell scope="col">Endpoint ID</TableCell>
-                        ) : null}
-                        <TableCell scope="col">Endpoint address</TableCell>
-                        <TableCell scope="col" aria-label="Actions" />
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {links.map((link) => {
-                        const { config, details, id, status } = link;
-                        const endpoint = getPrivateLinkEndpoint(
-                            config,
-                            status === 'PROVISIONED' ? details : null
-                        );
-                        const service = getPrivateLinkServiceLabel(config);
-                        const crossRegionName =
-                            getCrossRegionDisplayName(config);
-                        const context = getPrivateLinkContext(config);
-
-                        return (
-                            <TableRow key={id} hover>
-                                <TableCell>
-                                    <Typography
-                                        component="code"
-                                        variant="body2"
-                                        sx={codeSx}
-                                    >
-                                        {service}
-                                    </Typography>
-                                    {crossRegionName ? (
-                                        <Typography
-                                            variant="caption"
-                                            sx={captionSx}
+                    ]}
+                >
+                    <TableHead>
+                        <TableRow>
+                            <TableCell scope="col">Name</TableCell>
+                            <TableCell scope="col">Endpoint address</TableCell>
+                            <TableCell scope="col" sortDirection={order}>
+                                <TableSortLabel
+                                    active
+                                    direction={order}
+                                    onClick={() => {
+                                        setOrder(
+                                            order === 'desc' ? 'asc' : 'desc'
+                                        );
+                                        setRequestedPage(0);
+                                    }}
+                                >
+                                    Created at
+                                </TableSortLabel>
+                            </TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {sorted
+                            .slice(start, start + PAGE_SIZE)
+                            .map(({ link, name, createdLabel, endpoint }) => (
+                                <TableRow
+                                    key={link.id}
+                                    hover
+                                    sx={{ cursor: 'pointer' }}
+                                    onClick={({ target }) => {
+                                        if (
+                                            target instanceof Element &&
+                                            !target.closest('button')
+                                        ) {
+                                            onOpen(link.id);
+                                        }
+                                    }}
+                                >
+                                    <TableCell>
+                                        <Link
+                                            component="button"
+                                            type="button"
+                                            variant="body2"
+                                            aria-label={`Details for ${name}`}
+                                            aria-haspopup="dialog"
+                                            onClick={() => onOpen(link.id)}
+                                            sx={{
+                                                textAlign: 'left',
+                                                overflowWrap: 'anywhere',
+                                            }}
                                         >
-                                            Cross-region service in{' '}
-                                            {crossRegionName}
-                                        </Typography>
-                                    ) : null}
-                                </TableCell>
-                                <MetadataCell value={context.value} />
-                                {showEndpointId ? (
-                                    <MetadataCell
-                                        value={endpoint.awsEndpointId}
-                                    />
-                                ) : null}
-                                <TableCell>
-                                    <Address link={link} endpoint={endpoint} />
-                                </TableCell>
-                                <TableCell align="right">
-                                    <Button
-                                        size="small"
-                                        variant="text"
-                                        onClick={() => onOpen(id)}
-                                        aria-label={`Details for ${service}`}
-                                        sx={{ whiteSpace: 'nowrap' }}
+                                            {name}
+                                        </Link>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Address
+                                            name={name}
+                                            endpoint={endpoint}
+                                        />
+                                    </TableCell>
+                                    <TableCell>
+                                        <time
+                                            dateTime={link.createdAt}
+                                            title={link.createdAt}
+                                        >
+                                            {createdLabel}
+                                        </time>
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        {sorted.length === 0 ? (
+                            <TableRow>
+                                <TableCell colSpan={3}>
+                                    <Typography
+                                        variant="body2"
+                                        component="output"
                                     >
-                                        Details
-                                    </Button>
+                                        No private links match your search.
+                                    </Typography>
                                 </TableCell>
                             </TableRow>
-                        );
-                    })}
-                </TableBody>
-            </Table>
-        </TableContainer>
+                        ) : null}
+                    </TableBody>
+                </Table>
+            </TableContainer>
+            {lastPage > 0 ? (
+                <nav aria-label="private links pagination">
+                    <TablePagination
+                        component="div"
+                        ActionsComponent={TablePaginationActions}
+                        count={sorted.length}
+                        rowsPerPage={PAGE_SIZE}
+                        rowsPerPageOptions={[PAGE_SIZE]}
+                        page={page}
+                        onPageChange={(_event, nextPage) =>
+                            setRequestedPage(nextPage)
+                        }
+                    />
+                </nav>
+            ) : null}
+        </>
     );
 }
 
-function MetadataCell({ value }: { value?: string }) {
-    return (
-        <TableCell sx={{ color: 'text.secondary' }}>
-            <Box component="code" sx={codeSx}>
-                {value || '—'}
-            </Box>
-        </TableCell>
-    );
+function includesValue(value: unknown, search: string): boolean {
+    if (value == null) {
+        return false;
+    }
+    if (typeof value === 'object') {
+        return Object.values(value).some((child) =>
+            includesValue(child, search)
+        );
+    }
+    return String(value).toLowerCase().includes(search);
 }
 
 function Address({
-    link,
+    name,
     endpoint,
 }: {
-    link: PrivateLink;
+    name: string;
     endpoint: ReturnType<typeof getPrivateLinkEndpoint>;
 }) {
-    if (link.status !== 'PROVISIONED') {
-        return <PrivateLinkStatus status={link.status} />;
-    }
-
     const address = endpoint.addresses[0];
-
     if (!address) {
-        return (
-            <Typography variant="body2" color="text.secondary">
-                No address reported
-            </Typography>
-        );
+        return '—';
     }
-
-    const service = getPrivateLinkServiceLabel(link.config);
-
     return (
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
             <Typography
                 component="code"
+                variant="caption"
                 noWrap
                 title={address.value}
-                sx={{ ...codeSx, minWidth: 0 }}
+                sx={{ fontFamily: 'monospace', minWidth: 0 }}
             >
                 {address.value}
             </Typography>
             <CopyToClipboardButton
-                label={`Copy ${address.label} for ${service}`}
+                label={`Copy ${address.label} for ${name}`}
                 writeValue={address.value}
             />
         </Box>

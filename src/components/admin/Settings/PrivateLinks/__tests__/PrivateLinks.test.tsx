@@ -48,6 +48,9 @@ const pendingLink = (
     __typename: 'PrivateLink',
     id,
     config,
+    detail: null,
+    createdAt: '2026-06-01T10:00:00Z',
+    observedAt: null,
     status: 'PENDING',
     error: null,
     details: null,
@@ -55,14 +58,20 @@ const pendingLink = (
 
 const numberedLink = (n: number) => {
     const id = n.toString(16).padStart(8, '0');
-    return pendingLink(id, {
-        ...awsConfig,
-        serviceName: `com.amazonaws.vpce.us-east-2.vpce-svc-${id}`,
-    });
+    return {
+        ...pendingLink(id, {
+            ...awsConfig,
+            serviceName: `com.amazonaws.vpce.us-east-2.vpce-svc-${id}`,
+        }),
+        detail: `Database ${n}`,
+        createdAt: new Date(Date.UTC(2026, 0, n)).toISOString(),
+    };
 };
 
 const provisioned: PrivateLink = {
     ...pendingLink('01'),
+    detail: 'Orders database',
+    createdAt: '2026-10-11T12:00:00Z',
     status: 'PROVISIONED',
     details: { dns_entries: [{ dns_name: DNS_NAME }] },
 };
@@ -70,7 +79,9 @@ const failed: PrivateLink = {
     ...pendingLink('02', {
         ...awsConfig,
         serviceName: 'com.amazonaws.vpce.us-east-2.vpce-svc-04d2c1b0a9f8e7d65',
+        azIds: ['use2-az9'],
     }),
+    detail: 'Analytics',
     status: 'FAILED',
     error: "Invalid PrivateLink Availability Zone ID 'use2-az9'",
 };
@@ -148,10 +159,10 @@ const renderLinks = async () => {
     );
 };
 
-const openLink = async (serviceId: string) => {
+const openLink = async (name: string) => {
     fireEvent.click(
         await screen.findByRole('button', {
-            name: `Details for ${serviceId}`,
+            name: `Details for ${name}`,
         })
     );
     return screen.findByRole('dialog');
@@ -214,31 +225,57 @@ beforeEach(() => {
     );
 });
 
-test('puts copy actions and setup states in the endpoint address column', async () => {
+test('shows the name, copyable address and creation time, with provisioning details in the dialog', async () => {
     const user = userEvent.setup();
     const writeText = vi
         .spyOn(navigator.clipboard, 'writeText')
         .mockResolvedValue();
+    planes = [
+        awsPlane([
+            failed,
+            { ...provisioned, createdAt: '2026-06-01T10:00:00.000001Z' },
+        ]),
+    ];
     await renderLinks();
 
     const [headers, provisionedRow, failedRow] =
         await screen.findAllByRole('row');
-    expect(within(headers).queryByText('Status')).toBeNull();
-    expect(within(headers).getByText('Endpoint ID')).toBeTruthy();
+    expect(
+        within(headers)
+            .getAllByRole('columnheader')
+            .map((cell) => cell.textContent)
+    ).toEqual(['Name', 'Endpoint address', 'Created at']);
+    expect(provisionedRow.querySelector('time')?.dateTime).toBe(
+        '2026-06-01T10:00:00.000001Z'
+    );
     expect(screen.getByText('AWS: us-east-2 c1')).toBeTruthy();
     expect(screen.getByText('US East (Ohio)')).toBeTruthy();
     expect(within(provisionedRow).getByText(DNS_NAME)).toBeTruthy();
-    expect(within(provisionedRow).getByText('vpce-0b7c6d5e')).toBeTruthy();
+    expect(within(provisionedRow).queryByText('vpce-0b7c6d5e')).toBeNull();
     await user.click(
         within(provisionedRow).getByRole('button', {
-            name: 'Copy Regional DNS name for vpce-svc-0a1b2c3d4e5f67890',
+            name: 'Copy Regional DNS name for Orders database',
         })
     );
     expect(writeText).toHaveBeenCalledWith(DNS_NAME);
     expect(screen.queryByRole('dialog')).toBeNull();
-    expect(within(failedRow).getByText('Failed')).toBeTruthy();
+    expect(within(failedRow).getByText('—')).toBeTruthy();
 
-    const details = await openLink('vpce-svc-0a1b2c3d4e5f67890');
+    const search = screen.getByRole('textbox', {
+        name: 'Search private links',
+    });
+    for (const value of ['USE2-AZ2', awsConfig.serviceName, 'vpce-0b7c6d5e']) {
+        fireEvent.change(search, { target: { value } });
+        expect(linkButtonNames()).toEqual(['Details for Orders database']);
+    }
+    fireEvent.change(search, { target: { value: '' } });
+
+    await user.click(within(provisionedRow).getByRole('time'));
+    const details = await screen.findByRole('dialog', {
+        name: /Orders database/,
+    });
+    expect(within(details).getByText(awsConfig.serviceName)).toBeTruthy();
+    expect(within(details).getByText('use2-az1, use2-az2')).toBeTruthy();
     const endpoint = within(details)
         .getByText('Regional DNS name')
         .closest('dl')!;
@@ -260,7 +297,9 @@ test('puts copy actions and setup states in the endpoint address column', async 
     ).toEqual(['Delete', 'Edit']);
     fireEvent.click(within(details).getByRole('button', { name: 'Close' }));
 
-    const error = await openLink('vpce-svc-04d2c1b0a9f8e7d65');
+    screen.getByRole('button', { name: 'Details for Analytics' }).focus();
+    await user.keyboard('{Enter}');
+    const error = await screen.findByRole('dialog', { name: /Analytics/ });
     expect(within(error).getByText('Failed')).toBeTruthy();
     expect(
         within(error).getByText(
@@ -280,17 +319,17 @@ test("opens the first plane by default and shows the selected plane's private li
     const third = screen.getByRole('button', { name: /^AWS: us-east-2 c3/ });
     expect(first.getAttribute('aria-expanded')).toBe('true');
     expect(third.getAttribute('aria-expanded')).toBe('false');
-    expect(linkButtonNames()).toEqual(['Details for vpce-svc-00000001']);
+    expect(linkButtonNames()).toEqual(['Details for Database 1']);
 
     fireEvent.click(third);
     expect(first.getAttribute('aria-expanded')).toBe('false');
     expect(third.getAttribute('aria-expanded')).toBe('true');
-    expect(linkButtonNames()).toEqual(['Details for vpce-svc-00000003']);
+    expect(linkButtonNames()).toEqual(['Details for Database 3']);
 });
 
-test('paginates private links on a large single plane', async () => {
+test('sorts and searches all links before paginating the matches', async () => {
     const links = Array.from({ length: 57 }, (_, i) => numberedLink(i + 1));
-    const labels = links.map(({ id }) => `Details for vpce-svc-${id}`);
+    const labels = links.map(({ detail }) => `Details for ${detail}`).reverse();
     planes = [awsPlane(links)];
     await renderLinks();
 
@@ -308,6 +347,84 @@ test('paginates private links on a large single plane', async () => {
     expect(within(screen.getByRole('table')).getAllByRole('row')).toHaveLength(
         8
     );
+
+    const created = screen.getByRole('columnheader', { name: 'Created at' });
+    expect(created.getAttribute('aria-sort')).toBe('descending');
+    fireEvent.click(within(created).getByRole('button'));
+    expect(created.getAttribute('aria-sort')).toBe('ascending');
+    expect(linkButtonNames()).toEqual(labels.slice(-10).reverse());
+
+    const search = screen.getByRole('textbox', {
+        name: 'Search private links',
+    });
+    fireEvent.change(search, { target: { value: '  VPCE-SVC-00000039  ' } });
+    expect(linkButtonNames()).toEqual(['Details for Database 57']);
+    expect(
+        screen.queryByRole('navigation', { name: 'private links pagination' })
+    ).toBeNull();
+    fireEvent.change(search, { target: { value: 'unknown service' } });
+    expect(
+        screen.getByText('No private links match your search.')
+    ).toBeTruthy();
+    fireEvent.change(search, { target: { value: '' } });
+    expect(linkButtonNames()).toEqual(labels.slice(-10).reverse());
+});
+
+test('matches dialog values, nested provider details and formatted dates', async () => {
+    const gcp: PrivateLink = {
+        ...pendingLink('03', {
+            __typename: 'GCPPrivateServiceConnect',
+            region: 'us-central1',
+            serviceAttachment:
+                'projects/orders/regions/us-central1/serviceAttachments/primary',
+            dnsZoneName: 'orders.internal',
+            dnsRecordNames: ['db', 'replica'],
+            allPorts: true,
+        }),
+        detail: 'Orders',
+        status: 'PROVISIONED',
+        details: {
+            dns_zone_name: 'orders.internal',
+            dns_record_names: ['db', 'replica'],
+            ip_address: '10.1.2.3',
+            extra: { reference: 'controller-ref-42' },
+        },
+    };
+    planes = [
+        {
+            ...awsPlane([
+                gcp,
+                {
+                    ...gcp,
+                    id: '04',
+                    detail: null,
+                    status: 'FAILED',
+                    details: null,
+                    error: 'Permission denied',
+                    createdAt: '2025-02-05T10:00:00Z',
+                },
+            ]),
+            name: 'ops/dp/private/acmeCo/gcp-us-central1-c1',
+            cloudProvider: 'GCP',
+            region: 'us-central1',
+        },
+    ];
+    await renderLinks();
+    const search = screen.getByRole('textbox', {
+        name: 'Search private links',
+    });
+    const displayedDate = screen.getAllByRole('time')[0].textContent;
+    for (const value of [
+        'replica.orders.internal',
+        '10.1.2.3',
+        'CONTROLLER-REF-42',
+        displayedDate,
+    ]) {
+        fireEvent.change(search, { target: { value } });
+        expect(linkButtonNames()).toEqual(['Details for Orders']);
+    }
+    fireEvent.change(search, { target: { value: 'permission denied' } });
+    expect(linkButtonNames()).toEqual(['Details for Unnamed private link']);
 });
 
 test('shows IPv4 in the public table and both IP families in plane details', async () => {
@@ -370,7 +487,12 @@ test('shows IPv4 in the public table and both IP families in plane details', asy
 test('does not refresh while a form is open, then follows the status change', async () => {
     const refresh = spyOnRefresh();
     const requested = vi.fn();
-    planes = [awsPlane([pendingLink('01'), failed])];
+    planes = [
+        awsPlane([
+            { ...pendingLink('01'), detail: provisioned.detail },
+            failed,
+        ]),
+    ];
     server.use(
         api.query('DataPlanePrivateLinks', () => {
             requested();
@@ -379,7 +501,7 @@ test('does not refresh while a form is open, then follows the status change', as
     );
     await renderLinks();
 
-    const details = await openLink('vpce-svc-0a1b2c3d4e5f67890');
+    const details = await openLink('Orders database');
     fireEvent.click(within(details).getByRole('button', { name: 'Edit' }));
     const form = await screen.findByRole('dialog');
     refresh();
@@ -476,7 +598,7 @@ test('without the bundle to modify, links can be viewed but not changed', async 
     bundles = ['ViewDataPlanePrivateNetworking'];
     await renderLinks();
 
-    const dialog = await openLink('vpce-svc-0a1b2c3d4e5f67890');
+    const dialog = await openLink('Orders database');
     // Edit is offered until the bundles arrive.
     await waitFor(() =>
         expect(
@@ -503,7 +625,7 @@ test('offers the actions when the bundles cannot be loaded', async () => {
     await renderLinks();
     await waitFor(() => expect(answered).toBe(true));
 
-    const dialog = await openLink('vpce-svc-0a1b2c3d4e5f67890');
+    const dialog = await openLink('Orders database');
     expect(within(dialog).getByRole('button', { name: 'Edit' })).toBeTruthy();
     expect(
         screen.getByRole('button', { name: 'Add private link' })
@@ -517,7 +639,10 @@ test('adds a link once its fields are valid and the server accepts it, then show
         serviceRegion: 'eu-west-1',
         azIds: ['use2-az1', 'use2-az3'],
     };
-    const link = pendingLink('03', { __typename: 'AWSPrivateLink', ...aws });
+    const link = {
+        ...pendingLink('03', { __typename: 'AWSPrivateLink', ...aws }),
+        detail: 'Reporting database',
+    };
     const added = mockMutation('AddDataPlanePrivateLink', addResult, [
         awsPlane([provisioned, failed, link]),
     ]);
@@ -532,6 +657,7 @@ test('adds a link once its fields are valid and the server accepts it, then show
             within(dialog).getByRole('button', { name: 'Add private link' })
         );
 
+    fill(dialog, 'Name (optional)', ' Reporting database ');
     const regionLabel = 'Service region (optional)';
     fill(dialog, 'Endpoint service name', aws.serviceName);
     expect(field(dialog, regionLabel).value).toBe(aws.serviceRegion);
@@ -568,13 +694,19 @@ test('adds a link once its fields are valid and the server accepts it, then show
     submit();
 
     const details = await screen.findByRole('dialog', {
-        name: /vpce-svc-0f9e8d7c6b5a43210/,
+        name: /Reporting database/,
     });
     expect(within(details).getByText('Setting up')).toBeTruthy();
     expect(
         within(details).getByText('Setting up this private link')
     ).toBeTruthy();
-    expect(added).toEqual([{ dataPlaneName: AWS_PLANE, config: { aws } }]);
+    expect(added).toEqual([
+        {
+            dataPlaneName: AWS_PLANE,
+            config: { aws },
+            detail: 'Reporting database',
+        },
+    ]);
 });
 
 test('editing locks the service and sends the update', async () => {
@@ -592,7 +724,7 @@ test('editing locks the service and sends the update', async () => {
     );
     await renderLinks();
 
-    const details = await openLink('vpce-svc-04d2c1b0a9f8e7d65');
+    const details = await openLink('Analytics');
     expect(
         within(details).getByText("This private link couldn't be set up")
     ).toBeTruthy();
@@ -611,6 +743,55 @@ test('editing locks the service and sends the update', async () => {
     expect(updated).toEqual([{ id: '02', config: { aws } }]);
 });
 
+test.each(['Ledger database', ''])(
+    'saves the name %j with the exact stored configuration',
+    async (detail) => {
+        const azureConfig = {
+            serviceName:
+                '/subscriptions/sub/resourceGroups/rg/providers/Microsoft.Sql/servers/mydb',
+            location: 'eastus',
+            resourceType: null,
+            dnsName: '',
+        };
+        const existing = {
+            ...provisioned,
+            config: { __typename: 'AzurePrivateLink' as const, ...azureConfig },
+            details: { ip: '10.2.0.3' },
+        };
+        const plane: DataPlane = {
+            ...awsPlane([existing]),
+            name: 'ops/dp/private/acmeCo/azure-eastus-c1',
+            cloudProvider: 'AZURE',
+            region: 'eastus',
+        };
+        planes = [plane];
+        const link = { ...existing, detail };
+        const updated = mockMutation(
+            'UpdateDataPlanePrivateLink',
+            { updateDataPlanePrivateLink: link },
+            [{ ...plane, privateLinks: [link] }]
+        );
+        await renderLinks();
+        const details = await openLink('Orders database');
+        fireEvent.click(within(details).getByRole('button', { name: 'Edit' }));
+        const form = await screen.findByRole('dialog', {
+            name: /^Edit private link/,
+        });
+        expect(field(form, 'Name (optional)').value).toBe('Orders database');
+        fill(form, 'Name (optional)', detail);
+        fireEvent.click(
+            within(form).getByRole('button', { name: 'Save changes' })
+        );
+        const saved = await screen.findByRole('dialog', {
+            name: new RegExp(detail || 'mydb'),
+        });
+        expect(within(saved).getByText('10.2.0.3')).toBeTruthy();
+        expect(updated).toStrictEqual([
+            { id: link.id, detail, config: { azure: azureConfig } },
+        ]);
+    }
+);
+
 test('deletes a link after confirmation, which stays open to retry a failure', async () => {
     const removed = mockMutation(
         'RemoveDataPlanePrivateLink',
@@ -619,7 +800,7 @@ test('deletes a link after confirmation, which stays open to retry a failure', a
     );
     await renderLinks();
 
-    const details = await openLink('vpce-svc-0a1b2c3d4e5f67890');
+    const details = await openLink('Orders database');
     fireEvent.click(within(details).getByRole('button', { name: 'Delete' }));
 
     const confirm = await screen.findByRole('dialog');
@@ -643,13 +824,11 @@ test('deletes a link after confirmation, which stays open to retry a failure', a
 
     remove();
     await waitFor(() =>
-        expect(linkButtonNames()).toEqual([
-            'Details for vpce-svc-04d2c1b0a9f8e7d65',
-        ])
+        expect(linkButtonNames()).toEqual(['Details for Analytics'])
     );
     expect(
         screen.queryByRole('button', {
-            name: 'Details for vpce-svc-0a1b2c3d4e5f67890',
+            name: 'Details for Orders database',
         })
     ).toBeNull();
     expect(removed).toEqual([{ id: '01' }]);
@@ -694,14 +873,16 @@ test('creates an Azure link with its resource type and DNS name', async () => {
     expect(
         within(details).getByText('Setting up this private link')
     ).toBeTruthy();
-    expect(added).toEqual([{ dataPlaneName: name, config: { azure } }]);
+    expect(added).toEqual([
+        { dataPlaneName: name, config: { azure }, detail: null },
+    ]);
 
     fireEvent.click(within(details).getByRole('button', { name: 'Close' }));
     fireEvent.click(
         await screen.findByRole('button', { name: /^AWS: us-east-2 c1/ })
     );
     expect(linkButtonNames()).toEqual([
-        'Details for vpce-svc-0a1b2c3d4e5f67890',
-        'Details for vpce-svc-04d2c1b0a9f8e7d65',
+        'Details for Orders database',
+        'Details for Analytics',
     ]);
 });

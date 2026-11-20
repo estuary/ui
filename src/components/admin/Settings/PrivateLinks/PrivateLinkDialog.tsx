@@ -1,7 +1,4 @@
-import type {
-    PrivateLink,
-    PrivateLinkConfig,
-} from 'src/utils/private-link-utils';
+import type { PrivateLink } from 'src/utils/private-link-utils';
 
 import {
     Button,
@@ -21,12 +18,9 @@ import {
     LabeledValue,
     LabeledValueGroup,
 } from 'src/components/shared/LabeledValue';
-import { getRegionDisplayName } from 'src/utils/cloudRegions';
 import {
-    getCrossRegionDisplayName,
-    getPrivateLinkContext,
+    getPrivateLinkConfiguration,
     getPrivateLinkEndpoint,
-    getPrivateLinkRegion,
     getPrivateLinkServiceLabel,
     PRIVATE_LINK_PROVIDER_DOCS,
     PRIVATE_LINK_PROVIDERS,
@@ -76,7 +70,8 @@ export function PrivateLinkDialog({
                         component="span"
                         sx={{ overflowWrap: 'anywhere' }}
                     >
-                        {getPrivateLinkServiceLabel(config)}
+                        {link.detail?.trim() ||
+                            getPrivateLinkServiceLabel(config)}
                     </Typography>
                     <Stack
                         direction="row"
@@ -141,7 +136,7 @@ export function PrivateLinkDialog({
                     ) : null}
 
                     <LabeledValueGroup title="Configuration">
-                        {getConfiguration(config).map(
+                        {getPrivateLinkConfiguration(config).map(
                             ({ label, value, copy }) =>
                                 value ? (
                                     <LabeledValue
@@ -212,55 +207,4 @@ export function PrivateLinkDialog({
             ) : null}
         </Dialog>
     );
-}
-
-function getConfiguration(config: PrivateLinkConfig): {
-    label: string;
-    value: string | null | undefined;
-    copy?: boolean;
-}[] {
-    const provider = PRIVATE_LINK_PROVIDERS[config.__typename];
-    const region = getRegionDisplayName(provider, getPrivateLinkRegion(config));
-
-    switch (config.__typename) {
-        case 'AWSPrivateLink':
-            return [
-                {
-                    label: 'Endpoint service name',
-                    value: config.serviceName,
-                    copy: true,
-                },
-                { label: 'Endpoint region', value: region },
-                {
-                    label: 'Service region',
-                    value: getCrossRegionDisplayName(config),
-                },
-                getPrivateLinkContext(config),
-            ];
-
-        case 'AzurePrivateLink':
-            return [
-                { label: 'Resource ID', value: config.serviceName, copy: true },
-                getPrivateLinkContext(config),
-                { label: 'Location', value: region },
-                { label: 'Sub-resource type', value: config.resourceType },
-                { label: 'DNS name', value: config.dnsName },
-            ];
-
-        case 'GCPPrivateServiceConnect':
-            return [
-                {
-                    label: 'Service attachment',
-                    value: config.serviceAttachment,
-                    copy: true,
-                },
-                getPrivateLinkContext(config),
-                { label: 'Endpoint region', value: region },
-                { label: 'DNS zone name', value: config.dnsZoneName },
-                {
-                    label: 'DNS record names',
-                    value: config.dnsRecordNames.join(', '),
-                },
-            ];
-    }
 }

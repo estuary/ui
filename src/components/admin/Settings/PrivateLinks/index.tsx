@@ -3,13 +3,7 @@ import type { PrivateLinkDataPlane } from 'src/components/admin/Settings/Private
 
 import { useState } from 'react';
 
-import {
-    Button,
-    Paper,
-    Stack,
-    TablePagination,
-    Typography,
-} from '@mui/material';
+import { Button, Paper, Stack, Typography } from '@mui/material';
 
 import { Lock, OpenNewWindow } from 'iconoir-react';
 
@@ -23,7 +17,6 @@ import { PrivateLinkFormDialog } from 'src/components/admin/Settings/PrivateLink
 import { PrivateLinksTable } from 'src/components/admin/Settings/PrivateLinks/PrivateLinksTable';
 import ExternalLink from 'src/components/shared/ExternalLink';
 import DataPlaneDialog from 'src/components/tables/DataPlanes/DataPlaneDialog';
-import TablePaginationActions from 'src/components/tables/PaginationActions';
 import { paperBackground } from 'src/context/Theme';
 import { useCapabilities } from 'src/hooks/useCapabilities';
 import { DATA_PLANE_SETTINGS } from 'src/settings/dataPlanes';
@@ -33,7 +26,6 @@ import { PRIVATE_LINK_DOCS_URL } from 'src/utils/private-link-utils';
 const TITLE_ID = 'private-data-planes-title';
 const PRIVATE_DEPLOYMENTS_DOCS_URL = 'https://docs.estuary.dev/private-byoc/';
 const CONTACT_URL = 'https://estuary.dev/contact-us';
-const PAGE_SIZE = 10;
 
 type OpenDialog =
     | { type: 'add' | 'plane'; name: string }
@@ -44,7 +36,6 @@ export function PrivateLinks({ tenant }: { tenant: string }) {
     const [dialog, setDialog] = useState<OpenDialog>(null);
     // With multiple planes, undefined uses the default and null collapses all.
     const [expanded, setExpanded] = useState<string | null>();
-    const [requestedPage, setRequestedPage] = useState(0);
 
     // Pause polling so a failed refresh cannot discard an open form.
     const { data, fetching } = usePollingQuery({
@@ -73,12 +64,6 @@ export function PrivateLinks({ tenant }: { tenant: string }) {
     const multiple = dataPlanes.length > 1;
     const openPlaneName =
         !multiple || expanded === undefined ? dataPlanes[0]?.name : expanded;
-    const links =
-        dataPlanes.find(({ name }) => name === openPlaneName)?.privateLinks ??
-        [];
-    const lastPage = Math.max(0, Math.ceil(links.length / PAGE_SIZE) - 1);
-    const page = Math.min(requestedPage, lastPage);
-    const start = page * PAGE_SIZE;
 
     if (!data) {
         return fetching ? (
@@ -154,32 +139,6 @@ export function PrivateLinks({ tenant }: { tenant: string }) {
     const close = () => setDialog(null);
     const view = (id: string) => setDialog({ type: 'view', id });
 
-    const linkTable =
-        links.length > 0 ? (
-            <>
-                <PrivateLinksTable
-                    links={links.slice(start, start + PAGE_SIZE)}
-                    firstConfig={links[0].config}
-                    onOpen={view}
-                />
-                {lastPage > 0 ? (
-                    <nav aria-label="private links pagination">
-                        <TablePagination
-                            component="div"
-                            ActionsComponent={TablePaginationActions}
-                            count={links.length}
-                            rowsPerPage={PAGE_SIZE}
-                            rowsPerPageOptions={[PAGE_SIZE]}
-                            page={page}
-                            onPageChange={(_event, nextPage) =>
-                                setRequestedPage(nextPage)
-                            }
-                        />
-                    </nav>
-                ) : null}
-            </>
-        ) : null;
-
     return (
         <Section
             beside={
@@ -205,10 +164,8 @@ export function PrivateLinks({ tenant }: { tenant: string }) {
                             open={open}
                             onToggle={
                                 multiple
-                                    ? () => {
-                                          setExpanded(open ? null : plane.name);
-                                          setRequestedPage(0);
-                                      }
+                                    ? () =>
+                                          setExpanded(open ? null : plane.name)
                                     : undefined
                             }
                             onDetails={() =>
@@ -227,7 +184,7 @@ export function PrivateLinks({ tenant }: { tenant: string }) {
                                     : undefined
                             }
                         >
-                            {open ? linkTable : null}
+                            <PrivateLinksTable plane={plane} onOpen={view} />
                         </PrivateDataPlane>
                     );
                 })}

@@ -4,6 +4,9 @@ import { graphql } from 'src/gql-types';
 graphql(`
     fragment PrivateLinkFields on PrivateLink {
         id
+        detail
+        createdAt
+        observedAt
         status
         error
         details
@@ -58,10 +61,12 @@ export const ADD_PRIVATE_LINK = graphql(`
     mutation AddDataPlanePrivateLink(
         $dataPlaneName: String!
         $config: PrivateLinkConfigInput!
+        $detail: String
     ) {
         addDataPlanePrivateLink(
             dataPlaneName: $dataPlaneName
             config: $config
+            detail: $detail
         ) {
             id
         }
@@ -72,8 +77,9 @@ export const UPDATE_PRIVATE_LINK = graphql(`
     mutation UpdateDataPlanePrivateLink(
         $id: Id!
         $config: PrivateLinkConfigInput!
+        $detail: String
     ) {
-        updateDataPlanePrivateLink(id: $id, config: $config) {
+        updateDataPlanePrivateLink(id: $id, config: $config, detail: $detail) {
             ...PrivateLinkFields
         }
     }

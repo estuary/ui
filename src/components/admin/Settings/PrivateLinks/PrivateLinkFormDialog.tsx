@@ -12,6 +12,7 @@ import {
     DialogContent,
     DialogTitle,
     Stack,
+    TextField,
     Typography,
 } from '@mui/material';
 
@@ -31,6 +32,7 @@ import {
     getInitialForm,
     getPrivateLinkRegion,
     PRIVATE_LINK_PROVIDER_DOCS,
+    PRIVATE_LINK_PROVIDERS,
     validateForm,
 } from 'src/utils/private-link-utils';
 
@@ -60,11 +62,13 @@ export function PrivateLinkFormDialog({
     const saving = adding || updating;
 
     const editing = typeof target === 'object';
-    const [initialForm] = useState(() =>
-        getInitialForm(editing ? target.config : target)
-    );
-    const { provider } = initialForm;
-    const [form, setForm] = useState(initialForm);
+    const [initial] = useState(() => ({
+        config: getInitialForm(editing ? target.config : target),
+        name: editing ? (target.detail ?? '') : '',
+    }));
+    const { provider } = initial.config;
+    const [form, setForm] = useState(initial.config);
+    const [name, setName] = useState(initial.name);
     const [submitted, setSubmitted] = useState(false);
     const [saveError, setSaveError] = useState<string | null>(null);
 
@@ -72,7 +76,10 @@ export function PrivateLinkFormDialog({
         ? getPrivateLinkRegion(target.config)
         : dataPlane.region;
 
-    const errors = validateForm(form);
+    const configChanged = !isEqual(form, initial.config);
+    const nameChanged = name !== initial.name;
+    const dirty = configChanged || nameChanged;
+    const errors = editing && !configChanged ? {} : validateForm(form);
     const shownErrors = submitted ? errors : {};
 
     const save = async (event: FormEvent) => {
@@ -84,14 +91,31 @@ export function PrivateLinkFormDialog({
             return;
         }
 
-        const config = getConfigInput(
-            form,
-            region,
-            editing ? target.config : undefined
-        );
+        if (editing && !dirty) {
+            onSaved(target.id);
+            return;
+        }
+
+        const config =
+            editing && !configChanged
+                ? storedConfigInput(target.config)
+                : getConfigInput(
+                      form,
+                      region,
+                      editing ? target.config : undefined
+                  );
+        const detail = name.trim();
         const result = editing
-            ? await updateLink({ id: target.id, config })
-            : await addLink({ dataPlaneName: dataPlane.name, config });
+            ? await updateLink({
+                  id: target.id,
+                  config,
+                  detail: nameChanged ? detail : undefined,
+              })
+            : await addLink({
+                  dataPlaneName: dataPlane.name,
+                  config,
+                  detail: detail || null,
+              });
 
         if (result.error || !result.data) {
             const errorMessage =
@@ -113,9 +137,7 @@ export function PrivateLinkFormDialog({
         // Escape and backdrop clicks may dismiss only an idle, unchanged form.
         <Dialog
             open
-            onClose={
-                !saving && isEqual(form, initialForm) ? onClose : undefined
-            }
+            onClose={!saving && !dirty ? onClose : undefined}
             maxWidth="sm"
             fullWidth
             aria-labelledby="private-link-form-title"
@@ -140,9 +162,8 @@ export function PrivateLinkFormDialog({
 
                     {editing && target.status === 'PROVISIONED' ? (
                         <AlertBox short severity="info">
-                            Saving a change sets this private link up again. It
-                            shows as Setting up, and its endpoint address is
-                            hidden, until the data plane has applied the change.
+                            Changing the endpoint configuration hides the
+                            address until the data plane has applied the change.
                         </AlertBox>
                     ) : null}
 
@@ -156,6 +177,12 @@ export function PrivateLinkFormDialog({
                         </Typography>
                     )}
 
+                    <TextField
+                        label="Name (optional)"
+                        value={name}
+                        disabled={saving}
+                        onChange={(event) => setName(event.target.value)}
+                    />
                     <PrivateLinkFormFields
                         form={form}
                         errors={shownErrors}
@@ -181,4 +208,10 @@ export function PrivateLinkFormDialog({
             </DialogActions>
         </Dialog>
     );
+}
+
+// Normalizing untouched provider fields during a rename can reprovision the endpoint.
+function storedConfigInput({ __typename, ...fields }: PrivateLink['config']) {
+    const provider = PRIVATE_LINK_PROVIDERS[__typename];
+    return { [provider.toLowerCase()]: fields };
 }
