@@ -110,6 +110,9 @@ export const getPostHogSettings = () => {
     return null;
 };
 
+export const getAnalyticsEndpoint = (): string =>
+    import.meta.env.VITE_ANALYTICS_ENDPOINT?.trim() ?? '';
+
 export const getEncryptionSettings = () => {
     const encryptionEndpoint = import.meta.env.VITE_ENCRYPTION_URL;
 

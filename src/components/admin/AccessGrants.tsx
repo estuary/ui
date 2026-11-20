@@ -1,5 +1,7 @@
 import { Box, Divider, Stack, Typography } from '@mui/material';
 
+import { Branch, withBranch } from 'react-semantic-tree';
+
 import { authenticatedRoutes } from 'src/app/routes';
 import MessageWithLink from 'src/components/content/MessageWithLink';
 import AccessGrantsTable from 'src/components/tables/AccessGrants';
@@ -24,12 +26,13 @@ function AccessGrants() {
 
                 <Divider />
             </Stack>
-
-            <AccessGrantsTable tablePrefix="ag" showUser />
+            <Branch label="User Grants">
+                <AccessGrantsTable tablePrefix="ag" showUser />
+            </Branch>
 
             <AccessGrantsTable tablePrefix="pr" />
         </>
     );
 }
 
-export default AccessGrants;
+export default withBranch('Account Access')(AccessGrants);
