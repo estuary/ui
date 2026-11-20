@@ -133,10 +133,10 @@
         "zustand": "^5.0.11"
     },
     "devDependencies": {
-        "@graphql-codegen/cli": "^6.2.1",
-        "@graphql-codegen/client-preset": "^5.2.4",
-        "@graphql-codegen/plugin-helpers": "^6.2.1",
-        "@graphql-codegen/schema-ast": "^5.0.1",
+        "@graphql-codegen/cli": "^7.4.6",
+        "@graphql-codegen/client-preset": "^6.2.3",
+        "@graphql-codegen/plugin-helpers": "^7.4.2",
+        "@graphql-codegen/schema-ast": "^6.1.1",
         "@ianvs/prettier-plugin-sort-imports": "^4.4.1",
         "@storybook/addon-a11y": "^10.3.4",
         "@storybook/addon-docs": "^10.3.4",
