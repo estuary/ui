@@ -19,6 +19,7 @@ export const DATA_PLANES_QUERY = graphql(`
                     gcpServiceAccountEmail
                     azureApplicationClientId
                     azureApplicationName
+                    tag
                 }
             }
             pageInfo {

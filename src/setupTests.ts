@@ -16,9 +16,24 @@ beforeAll(async () => {
     server.listen({ onUnhandledRequest: 'error' });
 });
 
+// flip-toolkit checks reduced motion through matchMedia, which jsdom lacks.
+beforeEach(() => {
+    vi.stubGlobal('matchMedia', (query: string) => ({
+        matches: false,
+        media: query,
+        onchange: null,
+        addListener: vi.fn(),
+        removeListener: vi.fn(),
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+        dispatchEvent: vi.fn(),
+    }));
+});
+
 afterEach(() => {
     server.resetHandlers();
     cleanup();
+    vi.unstubAllGlobals();
 });
 
 afterAll(() => server.close());
