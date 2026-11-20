@@ -3,7 +3,13 @@ import type { PrivateLinkDataPlane } from 'src/components/admin/Settings/Private
 
 import { useState } from 'react';
 
-import { Button, Pagination, Paper, Stack, Typography } from '@mui/material';
+import {
+    Button,
+    Paper,
+    Stack,
+    TablePagination,
+    Typography,
+} from '@mui/material';
 
 import { Lock, OpenNewWindow } from 'iconoir-react';
 
@@ -17,6 +23,7 @@ import { PrivateLinkFormDialog } from 'src/components/admin/Settings/PrivateLink
 import { PrivateLinksTable } from 'src/components/admin/Settings/PrivateLinks/PrivateLinksTable';
 import ExternalLink from 'src/components/shared/ExternalLink';
 import DataPlaneDialog from 'src/components/tables/DataPlanes/DataPlaneDialog';
+import TablePaginationActions from 'src/components/tables/PaginationActions';
 import { paperBackground } from 'src/context/Theme';
 import { useCapabilities } from 'src/hooks/useCapabilities';
 import { DATA_PLANE_SETTINGS } from 'src/settings/dataPlanes';
@@ -37,6 +44,7 @@ export function PrivateLinks({ tenant }: { tenant: string }) {
     const [dialog, setDialog] = useState<OpenDialog>(null);
     // With multiple planes, undefined uses the default and null collapses all.
     const [expanded, setExpanded] = useState<string | null>();
+    const [requestedPage, setRequestedPage] = useState(0);
 
     // Pause polling so a failed refresh cannot discard an open form.
     const { data, fetching } = usePollingQuery({
@@ -68,7 +76,9 @@ export function PrivateLinks({ tenant }: { tenant: string }) {
     const links =
         dataPlanes.find(({ name }) => name === openPlaneName)?.privateLinks ??
         [];
-    const linkPage = useListPagination(links, 'private links');
+    const lastPage = Math.max(0, Math.ceil(links.length / PAGE_SIZE) - 1);
+    const page = Math.min(requestedPage, lastPage);
+    const start = page * PAGE_SIZE;
 
     if (!data) {
         return fetching ? (
@@ -146,11 +156,25 @@ export function PrivateLinks({ tenant }: { tenant: string }) {
         links.length > 0 ? (
             <>
                 <PrivateLinksTable
-                    links={linkPage.visible}
+                    links={links.slice(start, start + PAGE_SIZE)}
                     firstConfig={links[0].config}
                     onOpen={view}
                 />
-                {linkPage.navigation}
+                {lastPage > 0 ? (
+                    <nav aria-label="private links pagination">
+                        <TablePagination
+                            component="div"
+                            ActionsComponent={TablePaginationActions}
+                            count={links.length}
+                            rowsPerPage={PAGE_SIZE}
+                            rowsPerPageOptions={[PAGE_SIZE]}
+                            page={page}
+                            onPageChange={(_event, nextPage) =>
+                                setRequestedPage(nextPage)
+                            }
+                        />
+                    </nav>
+                ) : null}
             </>
         ) : null;
 
@@ -181,7 +205,7 @@ export function PrivateLinks({ tenant }: { tenant: string }) {
                                 multiple
                                     ? () => {
                                           setExpanded(open ? null : plane.name);
-                                          linkPage.reset();
+                                          setRequestedPage(0);
                                       }
                                     : undefined
                             }
@@ -262,44 +286,6 @@ function findLink(dataPlanes: PrivateLinkDataPlane[], id: string) {
         }
     }
     return undefined;
-}
-
-function useListPagination<T>(items: T[], label: string) {
-    const [requestedPage, setRequestedPage] = useState(1);
-    const total = items.length;
-    const pages = Math.max(1, Math.ceil(total / PAGE_SIZE));
-    const page = Math.min(requestedPage, pages);
-    const start = (page - 1) * PAGE_SIZE;
-    const visible = items.slice(start, start + PAGE_SIZE);
-    const navigation =
-        pages > 1 ? (
-            <Stack
-                direction="row"
-                useFlexGap
-                spacing={1}
-                sx={{
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    flexWrap: 'wrap',
-                    px: 1.5,
-                    py: 0.75,
-                    bgcolor: 'action.hover',
-                }}
-            >
-                <Typography variant="caption" color="text.secondary">
-                    {start + 1}–{start + visible.length} of {total} {label}
-                </Typography>
-                <Pagination
-                    aria-label={`${label} pagination`}
-                    size="small"
-                    count={pages}
-                    page={page}
-                    onChange={(_event, nextPage) => setRequestedPage(nextPage)}
-                />
-            </Stack>
-        ) : null;
-
-    return { visible, navigation, reset: () => setRequestedPage(1) };
 }
 
 function Section({

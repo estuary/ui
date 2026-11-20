@@ -287,17 +287,22 @@ test('opens the first plane by default and shows links for the selected plane', 
 });
 
 test('paginates private links on a large single plane', async () => {
-    planes = [
-        awsPlane(Array.from({ length: 57 }, (_, i) => numberedLink(i + 1))),
-    ];
+    const links = Array.from({ length: 57 }, (_, i) => numberedLink(i + 1));
+    const labels = links.map(({ id }) => `Details for vpce-svc-${id}`);
+    planes = [awsPlane(links)];
     await renderLinks();
 
-    fireEvent.click(
-        within(
-            screen.getByRole('navigation', { name: 'private links pagination' })
-        ).getByRole('button', { name: 'Go to page 6' })
+    const pager = within(
+        screen.getByRole('navigation', { name: 'private links pagination' })
     );
-    expect(screen.getByText('51–57 of 57 private links')).toBeTruthy();
+    expect(linkButtonNames()).toEqual(labels.slice(0, 10));
+
+    fireEvent.click(pager.getByRole('button', { name: 'next page' }));
+    expect(linkButtonNames()).toEqual(labels.slice(10, 20));
+
+    fireEvent.click(pager.getByRole('button', { name: 'last page' }));
+    expect(pager.getByText('51–57 of 57')).toBeTruthy();
+    expect(linkButtonNames()).toEqual(labels.slice(50));
     expect(within(screen.getByRole('table')).getAllByRole('row')).toHaveLength(
         8
     );
