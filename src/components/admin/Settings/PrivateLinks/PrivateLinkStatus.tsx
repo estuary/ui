@@ -1,6 +1,8 @@
 import type { PrivateLinkProvisioningStatus } from 'src/gql-types/graphql';
 
-import { Box, CircularProgress, Stack, Typography } from '@mui/material';
+import { Box, CircularProgress, Typography } from '@mui/material';
+
+const INDICATOR_SIZE = 12;
 
 export const privateLinkStatuses = {
     PENDING: { label: 'Setting up', color: 'warning.main' },
@@ -16,19 +18,28 @@ export function PrivateLinkStatus({
     const { label, color } = privateLinkStatuses[status];
 
     return (
-        <Stack
+        <Box
             component="span"
-            direction="row"
-            spacing={0.75}
-            sx={{ display: 'inline-flex', alignItems: 'center', color }}
+            sx={{
+                display: 'inline-grid',
+                gridTemplateColumns: `${INDICATOR_SIZE}px auto`,
+                columnGap: 0.75,
+                alignItems: 'center',
+                color,
+            }}
         >
             {status === 'PENDING' ? (
-                <CircularProgress size={12} color="inherit" aria-hidden />
+                <CircularProgress
+                    size={INDICATOR_SIZE}
+                    color="inherit"
+                    aria-hidden
+                />
             ) : (
                 <Box
                     component="span"
                     aria-hidden
                     sx={{
+                        justifySelf: 'center',
                         width: 6,
                         height: 6,
                         bgcolor: 'currentColor',
@@ -39,6 +50,6 @@ export function PrivateLinkStatus({
             <Typography component="span" variant="caption">
                 {label}
             </Typography>
-        </Stack>
+        </Box>
     );
 }
