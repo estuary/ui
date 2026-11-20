@@ -6,7 +6,6 @@ import type {
 import {
     Box,
     Button,
-    buttonClasses,
     Table,
     TableBody,
     TableCell,
@@ -178,27 +177,22 @@ function Address({
         );
     }
 
+    const service = getPrivateLinkServiceLabel(link.config);
+
     return (
-        <Box
-            sx={{
-                '& > button': {
-                    px: 0,
-                    whiteSpace: 'nowrap',
-                    typography: 'caption',
-                    fontWeight: 'fontWeightMedium',
-                },
-                [`& .${buttonClasses.endIcon}`]: {
-                    'ml': 0.5,
-                    'mr': 0,
-                    '& svg': { width: 14, height: 14 },
-                },
-            }}
-        >
-            <CopyToClipboardButton writeValue={address.value}>
-                {address.label === 'Private IP address'
-                    ? 'Copy IP address'
-                    : 'Copy DNS name'}
-            </CopyToClipboardButton>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+            <Typography
+                component="code"
+                noWrap
+                title={address.value}
+                sx={{ ...codeSx, minWidth: 0 }}
+            >
+                {address.value}
+            </Typography>
+            <CopyToClipboardButton
+                label={`Copy ${address.label} for ${service}`}
+                writeValue={address.value}
+            />
         </Box>
     );
 }

@@ -227,10 +227,12 @@ test('puts copy actions and setup states in the endpoint address column', async 
     expect(within(headers).getByText('Endpoint ID')).toBeTruthy();
     expect(screen.getByText('AWS: us-east-2 c1')).toBeTruthy();
     expect(screen.getByText('US East (Ohio)')).toBeTruthy();
-    expect(within(provisionedRow).queryByText(DNS_NAME)).toBeNull();
+    expect(within(provisionedRow).getByText(DNS_NAME)).toBeTruthy();
     expect(within(provisionedRow).getByText('vpce-0b7c6d5e')).toBeTruthy();
     await user.click(
-        within(provisionedRow).getByRole('button', { name: 'Copy DNS name' })
+        within(provisionedRow).getByRole('button', {
+            name: 'Copy Regional DNS name for vpce-svc-0a1b2c3d4e5f67890',
+        })
     );
     expect(writeText).toHaveBeenCalledWith(DNS_NAME);
     expect(screen.queryByRole('dialog')).toBeNull();
