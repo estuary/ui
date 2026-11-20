@@ -7,7 +7,6 @@ import {
     Box,
     Button,
     buttonClasses,
-    Stack,
     Table,
     TableBody,
     TableCell,
@@ -177,47 +176,27 @@ function Address({
         );
     }
 
-    // Keep long addresses from wrapping across several lines.
-    if (address.value.length > 40) {
-        return (
-            <Box
-                sx={{
-                    '& > button': {
-                        px: 0,
-                        whiteSpace: 'nowrap',
-                        typography: 'caption',
-                        fontWeight: 'fontWeightMedium',
-                    },
-                    [`& .${buttonClasses.endIcon}`]: {
-                        'ml': 0.5,
-                        'mr': 0,
-                        '& svg': { width: 14, height: 14 },
-                    },
-                }}
-            >
-                <CopyToClipboardButton writeValue={address.value}>
-                    Copy DNS name
-                </CopyToClipboardButton>
-            </Box>
-        );
-    }
-
-    const service = getLinkServiceLabel(link.config);
-
     return (
-        <Stack
-            direction="row"
-            useFlexGap
-            spacing={0.5}
-            sx={{ alignItems: 'center', flexWrap: 'wrap' }}
+        <Box
+            sx={{
+                '& > button': {
+                    px: 0,
+                    whiteSpace: 'nowrap',
+                    typography: 'caption',
+                    fontWeight: 'fontWeightMedium',
+                },
+                [`& .${buttonClasses.endIcon}`]: {
+                    'ml': 0.5,
+                    'mr': 0,
+                    '& svg': { width: 14, height: 14 },
+                },
+            }}
         >
-            <Typography component="code" variant="body2" sx={codeSx}>
-                {address.value}
-            </Typography>
-            <CopyToClipboardButton
-                label={`Copy ${address.label} for ${service}`}
-                writeValue={address.value}
-            />
-        </Stack>
+            <CopyToClipboardButton writeValue={address.value}>
+                {address.label === 'Private IP address'
+                    ? 'Copy IP address'
+                    : 'Copy DNS name'}
+            </CopyToClipboardButton>
+        </Box>
     );
 }
