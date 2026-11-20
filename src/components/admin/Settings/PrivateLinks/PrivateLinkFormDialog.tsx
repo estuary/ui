@@ -29,7 +29,7 @@ import { normalizeError } from 'src/utils/errors';
 import {
     getConfigInput,
     getInitialForm,
-    getLinkRegion,
+    getPrivateLinkRegion,
     PRIVATE_LINK_PROVIDER_DOCS,
     validateForm,
 } from 'src/utils/private-link-utils';
@@ -68,7 +68,9 @@ export function PrivateLinkFormDialog({
     const [submitted, setSubmitted] = useState(false);
     const [saveError, setSaveError] = useState<string | null>(null);
 
-    const region = editing ? getLinkRegion(target.config) : dataPlane.region;
+    const region = editing
+        ? getPrivateLinkRegion(target.config)
+        : dataPlane.region;
 
     const errors = validateForm(form);
     const shownErrors = submitted ? errors : {};
@@ -138,9 +140,9 @@ export function PrivateLinkFormDialog({
 
                     {editing && target.status === 'PROVISIONED' ? (
                         <AlertBox short severity="info">
-                            Saving a change sets this link up again. It shows as
-                            Setting up, and its endpoint address is hidden,
-                            until the data plane has applied the change.
+                            Saving a change sets this private link up again. It
+                            shows as Setting up, and its endpoint address is
+                            hidden, until the data plane has applied the change.
                         </AlertBox>
                     ) : null}
 

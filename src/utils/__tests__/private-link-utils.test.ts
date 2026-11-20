@@ -5,8 +5,8 @@ import { describe, expect, test } from 'vitest';
 import {
     getConfigInput,
     getInitialForm,
-    getLinkEndpoint,
-    getLinkServiceLabel,
+    getPrivateLinkEndpoint,
+    getPrivateLinkServiceLabel,
     parseList,
     proposeAwsServiceRegion,
     validateForm,
@@ -166,7 +166,7 @@ test.each([
     [azureConfig, 'orders-db'],
     [gcpConfig, 'orders-db'],
 ] as const)('gets the service label for %j', (config, label) => {
-    expect(getLinkServiceLabel(config)).toBe(label);
+    expect(getPrivateLinkServiceLabel(config)).toBe(label);
 });
 
 describe('getLinkEndpoint', () => {
@@ -176,7 +176,7 @@ describe('getLinkEndpoint', () => {
         const zonal =
             'vpce-0b7c-k3x9-us-east-2a.vpce-svc-0a1b.us-east-2.vpce.amazonaws.com';
         expect(
-            getLinkEndpoint(awsConfig, {
+            getPrivateLinkEndpoint(awsConfig, {
                 dns_entries: [{ dns_name: zonal }, { dns_name: regional }],
             })
         ).toEqual({
@@ -190,7 +190,7 @@ describe('getLinkEndpoint', () => {
 
     test('reads an Azure DNS record and IP address', () => {
         expect(
-            getLinkEndpoint(azureConfig, {
+            getPrivateLinkEndpoint(azureConfig, {
                 ip: '10.1.0.5',
                 dns_record: 'orders-db.acme.internal.',
             }).addresses
@@ -200,14 +200,16 @@ describe('getLinkEndpoint', () => {
         ]);
 
         expect(
-            getLinkEndpoint(azureConfig, { ip: '10.1.0.5', dns_record: '' })
-                .addresses
+            getPrivateLinkEndpoint(azureConfig, {
+                ip: '10.1.0.5',
+                dns_record: '',
+            }).addresses
         ).toEqual([{ label: 'Private IP address', value: '10.1.0.5' }]);
     });
 
     test('reads GCP DNS names and a private IP address', () => {
         expect(
-            getLinkEndpoint(gcpConfig, {
+            getPrivateLinkEndpoint(gcpConfig, {
                 ip_address: '10.128.0.100',
                 dns_zone_name: 'acme-links',
                 dns_record_names: ['orders-db', 'orders-replica'],
@@ -225,6 +227,8 @@ describe('getLinkEndpoint', () => {
         ['another shape', { endpoints: [{ host: 'example.com' }] }],
         ['malformed entries', { dns_entries: [null, { dns_name: 7 }] }],
     ])('yields nothing for %s', (_case, details) => {
-        expect(getLinkEndpoint(awsConfig, details).addresses).toEqual([]);
+        expect(getPrivateLinkEndpoint(awsConfig, details).addresses).toEqual(
+            []
+        );
     });
 });

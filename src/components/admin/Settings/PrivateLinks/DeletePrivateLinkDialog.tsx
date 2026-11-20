@@ -16,7 +16,7 @@ import { useMutation } from 'urql';
 import { REMOVE_PRIVATE_LINK } from 'src/api/gql/privateLinks';
 import AlertBox from 'src/components/shared/AlertBox';
 import { normalizeError } from 'src/utils/errors';
-import { getLinkServiceLabel } from 'src/utils/private-link-utils';
+import { getPrivateLinkServiceLabel } from 'src/utils/private-link-utils';
 
 interface DeletePrivateLinkDialogProps {
     planeDisplayName: string;
@@ -61,12 +61,12 @@ export function DeletePrivateLinkDialog({
                     ) : null}
 
                     <Typography>
-                        The link to{' '}
+                        The private link to{' '}
                         <Box
                             component="span"
                             sx={{ fontWeight: 600, overflowWrap: 'anywhere' }}
                         >
-                            {getLinkServiceLabel(link.config)}
+                            {getPrivateLinkServiceLabel(link.config)}
                         </Box>{' '}
                         will be deleted from {planeDisplayName} and the data
                         plane will delete its endpoint. Captures and
@@ -74,8 +74,8 @@ export function DeletePrivateLinkDialog({
                     </Typography>
 
                     <Typography>
-                        Adding the link again may create a new endpoint with a
-                        different address and require you to accept a new
+                        Adding the private link again may create a new endpoint
+                        with a different address and require you to accept a new
                         connection.
                     </Typography>
                 </Stack>

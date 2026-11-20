@@ -382,7 +382,9 @@ test('does not refresh while a form is open, then follows the status change', as
     const form = await screen.findByRole('dialog');
     refresh();
     fireEvent.click(within(form).getByRole('button', { name: 'Cancel' }));
-    expect(await screen.findByText('Setting up this link')).toBeTruthy();
+    expect(
+        await screen.findByText('Setting up this private link')
+    ).toBeTruthy();
 
     planes = [awsPlane([provisioned, failed])];
     refresh();
@@ -567,7 +569,9 @@ test('adds a link once its fields are valid and the server accepts it, then show
         name: /vpce-svc-0f9e8d7c6b5a43210/,
     });
     expect(within(details).getByText('Setting up')).toBeTruthy();
-    expect(within(details).getByText('Setting up this link')).toBeTruthy();
+    expect(
+        within(details).getByText('Setting up this private link')
+    ).toBeTruthy();
     expect(added).toEqual([{ dataPlaneName: AWS_PLANE, config: { aws } }]);
 });
 
@@ -588,7 +592,7 @@ test('editing locks the service and sends the update', async () => {
 
     const details = await openLink('vpce-svc-04d2c1b0a9f8e7d65');
     expect(
-        within(details).getByText("This link couldn't be set up")
+        within(details).getByText("This private link couldn't be set up")
     ).toBeTruthy();
 
     fireEvent.click(within(details).getByRole('button', { name: 'Edit' }));
@@ -601,7 +605,7 @@ test('editing locks the service and sends the update', async () => {
         within(dialog).getByRole('button', { name: 'Save changes' })
     );
 
-    await screen.findByText('Setting up this link');
+    await screen.findByText('Setting up this private link');
     expect(updated).toEqual([{ id: '02', config: { aws } }]);
 });
 
@@ -685,7 +689,9 @@ test('creates an Azure link with its resource type and DNS name', async () => {
         within(dialog).getByRole('button', { name: 'Add private link' })
     );
     const details = await screen.findByRole('dialog', { name: /mydb/ });
-    expect(within(details).getByText('Setting up this link')).toBeTruthy();
+    expect(
+        within(details).getByText('Setting up this private link')
+    ).toBeTruthy();
     expect(added).toEqual([{ dataPlaneName: name, config: { azure } }]);
 
     fireEvent.click(within(details).getByRole('button', { name: 'Close' }));

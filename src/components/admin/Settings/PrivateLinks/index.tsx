@@ -144,7 +144,9 @@ export function PrivateLinks({ tenant }: { tenant: string }) {
     }
 
     const selectedLink =
-        dialog && 'id' in dialog ? findLink(dataPlanes, dialog.id) : undefined;
+        dialog && 'id' in dialog
+            ? findPrivateLink(dataPlanes, dialog.id)
+            : undefined;
     const selectedPlane =
         dialog && 'name' in dialog
             ? dataPlanes.find(({ name }) => name === dialog.name)
@@ -278,7 +280,7 @@ export function PrivateLinks({ tenant }: { tenant: string }) {
     );
 }
 
-function findLink(dataPlanes: PrivateLinkDataPlane[], id: string) {
+function findPrivateLink(dataPlanes: PrivateLinkDataPlane[], id: string) {
     for (const dataPlane of dataPlanes) {
         const link = dataPlane.privateLinks.find((link) => link.id === id);
         if (link) {

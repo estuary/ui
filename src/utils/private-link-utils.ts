@@ -30,19 +30,19 @@ export const PRIVATE_LINK_PROVIDERS: Record<
 };
 
 // Use the endpoint's region even for a cross-region service.
-export function getLinkRegion(config: PrivateLinkConfig): string {
+export function getPrivateLinkRegion(config: PrivateLinkConfig): string {
     return config.__typename === 'AzurePrivateLink'
         ? config.location
         : config.region;
 }
 
-function getLinkService(config: PrivateLinkConfig): string {
+function getPrivateLinkService(config: PrivateLinkConfig): string {
     return config.__typename === 'GCPPrivateServiceConnect'
         ? config.serviceAttachment
         : config.serviceName;
 }
 
-export function getLinkContext(config: PrivateLinkConfig) {
+export function getPrivateLinkContext(config: PrivateLinkConfig) {
     switch (config.__typename) {
         case 'AWSPrivateLink':
             return {
@@ -66,8 +66,8 @@ export function getLinkContext(config: PrivateLinkConfig) {
     }
 }
 
-export function getLinkServiceLabel(config: PrivateLinkConfig): string {
-    const service = getLinkService(config);
+export function getPrivateLinkServiceLabel(config: PrivateLinkConfig): string {
+    const service = getPrivateLinkService(config);
 
     if (config.__typename === 'AWSPrivateLink') {
         const last = service.split('.').pop();
@@ -132,7 +132,7 @@ export function getInitialForm(target: CloudProvider | PrivateLinkConfig) {
     return {
         provider: editing ? PRIVATE_LINK_PROVIDERS[target.__typename] : target,
         // GCP uses its service attachment URI for this field.
-        serviceName: editing ? getLinkService(target) : '',
+        serviceName: editing ? getPrivateLinkService(target) : '',
         serviceRegion: aws?.serviceRegion ?? '',
         azIds: aws?.azIds.join(', ') ?? '',
         resourceType: azure?.resourceType ?? '',
@@ -257,7 +257,7 @@ interface EndpointAddress {
     value: string;
 }
 
-interface LinkEndpoint {
+interface PrivateLinkEndpoint {
     addresses: EndpointAddress[];
     awsEndpointId?: string;
 }
@@ -266,10 +266,10 @@ const asString = (value: unknown): string | null =>
     typeof value === 'string' && value.trim() ? value.trim() : null;
 
 // Addresses are in connection order, with the preferred address first.
-export function getLinkEndpoint(
+export function getPrivateLinkEndpoint(
     config: PrivateLinkConfig,
     details: unknown
-): LinkEndpoint {
+): PrivateLinkEndpoint {
     const addresses: EndpointAddress[] = [];
     if (typeof details !== 'object' || details === null) {
         return { addresses };

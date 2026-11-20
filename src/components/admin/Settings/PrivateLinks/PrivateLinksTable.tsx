@@ -21,9 +21,9 @@ import { PrivateLinkStatus } from 'src/components/admin/Settings/PrivateLinks/Pr
 import CopyToClipboardButton from 'src/components/shared/buttons/CopyToClipboardButton';
 import {
     getCrossRegionDisplayName,
-    getLinkContext,
-    getLinkEndpoint,
-    getLinkServiceLabel,
+    getPrivateLinkContext,
+    getPrivateLinkEndpoint,
+    getPrivateLinkServiceLabel,
 } from 'src/utils/private-link-utils';
 
 interface PrivateLinksTableProps {
@@ -75,7 +75,7 @@ export function PrivateLinksTable({
                     <TableRow>
                         <TableCell scope="col">Service</TableCell>
                         <TableCell scope="col">
-                            {getLinkContext(firstConfig).label}
+                            {getPrivateLinkContext(firstConfig).label}
                         </TableCell>
                         {showEndpointId ? (
                             <TableCell scope="col">Endpoint ID</TableCell>
@@ -87,14 +87,14 @@ export function PrivateLinksTable({
                 <TableBody>
                     {links.map((link) => {
                         const { config, details, id, status } = link;
-                        const endpoint = getLinkEndpoint(
+                        const endpoint = getPrivateLinkEndpoint(
                             config,
                             status === 'PROVISIONED' ? details : null
                         );
-                        const service = getLinkServiceLabel(config);
+                        const service = getPrivateLinkServiceLabel(config);
                         const crossRegionName =
                             getCrossRegionDisplayName(config);
-                        const context = getLinkContext(config);
+                        const context = getPrivateLinkContext(config);
 
                         return (
                             <TableRow key={id} hover>
@@ -160,7 +160,7 @@ function Address({
     endpoint,
 }: {
     link: PrivateLink;
-    endpoint: ReturnType<typeof getLinkEndpoint>;
+    endpoint: ReturnType<typeof getPrivateLinkEndpoint>;
 }) {
     if (link.status !== 'PROVISIONED') {
         return <PrivateLinkStatus status={link.status} />;

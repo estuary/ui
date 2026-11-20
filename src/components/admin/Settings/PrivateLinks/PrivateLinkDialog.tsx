@@ -24,10 +24,10 @@ import {
 import { getRegionDisplayName } from 'src/utils/cloudRegions';
 import {
     getCrossRegionDisplayName,
-    getLinkContext,
-    getLinkEndpoint,
-    getLinkRegion,
-    getLinkServiceLabel,
+    getPrivateLinkContext,
+    getPrivateLinkEndpoint,
+    getPrivateLinkRegion,
+    getPrivateLinkServiceLabel,
     PRIVATE_LINK_PROVIDER_DOCS,
     PRIVATE_LINK_PROVIDERS,
 } from 'src/utils/private-link-utils';
@@ -53,7 +53,10 @@ export function PrivateLinkDialog({
 }: PrivateLinkDialogProps) {
     const { config, details, error, status } = link;
     const provider = PRIVATE_LINK_PROVIDERS[config.__typename];
-    const { addresses, awsEndpointId } = getLinkEndpoint(config, details);
+    const { addresses, awsEndpointId } = getPrivateLinkEndpoint(
+        config,
+        details
+    );
     const hasAddresses = addresses.length > 0;
     const host =
         provider === 'AWS' ? 'the regional DNS name' : 'a listed address';
@@ -73,7 +76,7 @@ export function PrivateLinkDialog({
                         component="span"
                         sx={{ overflowWrap: 'anywhere' }}
                     >
-                        {getLinkServiceLabel(config)}
+                        {getPrivateLinkServiceLabel(config)}
                     </Typography>
                     <Stack
                         direction="row"
@@ -109,7 +112,7 @@ export function PrivateLinkDialog({
                         <AlertBox
                             short
                             severity="info"
-                            title="Setting up this link"
+                            title="Setting up this private link"
                         >
                             The endpoint address will appear here when the data
                             plane reports it. If setup takes longer than
@@ -127,7 +130,7 @@ export function PrivateLinkDialog({
                         <AlertBox
                             short
                             severity="error"
-                            title="This link couldn't be set up"
+                            title="This private link couldn't be set up"
                         >
                             {error ? (
                                 <Typography sx={{ overflowWrap: 'anywhere' }}>
@@ -184,7 +187,7 @@ export function PrivateLinkDialog({
                                         materialization on this data plane.
                                     </>
                                 ) : (
-                                    'The data plane provisioned this link without reporting a usable address.'
+                                    'The data plane provisioned this private link without reporting a usable address.'
                                 )}
                             </Typography>
                         </Stack>
@@ -217,7 +220,7 @@ function getConfiguration(config: PrivateLinkConfig): {
     copy?: boolean;
 }[] {
     const provider = PRIVATE_LINK_PROVIDERS[config.__typename];
-    const region = getRegionDisplayName(provider, getLinkRegion(config));
+    const region = getRegionDisplayName(provider, getPrivateLinkRegion(config));
 
     switch (config.__typename) {
         case 'AWSPrivateLink':
@@ -232,13 +235,13 @@ function getConfiguration(config: PrivateLinkConfig): {
                     label: 'Service region',
                     value: getCrossRegionDisplayName(config),
                 },
-                getLinkContext(config),
+                getPrivateLinkContext(config),
             ];
 
         case 'AzurePrivateLink':
             return [
                 { label: 'Resource ID', value: config.serviceName, copy: true },
-                getLinkContext(config),
+                getPrivateLinkContext(config),
                 { label: 'Location', value: region },
                 { label: 'Sub-resource type', value: config.resourceType },
                 { label: 'DNS name', value: config.dnsName },
@@ -251,7 +254,7 @@ function getConfiguration(config: PrivateLinkConfig): {
                     value: config.serviceAttachment,
                     copy: true,
                 },
-                getLinkContext(config),
+                getPrivateLinkContext(config),
                 { label: 'Endpoint region', value: region },
                 { label: 'DNS zone name', value: config.dnsZoneName },
                 {
