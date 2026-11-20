@@ -267,26 +267,23 @@ test('puts copy actions and setup states in the endpoint address column', async 
     ).toBeTruthy();
 });
 
-test('paginates 20 data planes and expands a plane on page 2', async () => {
-    planes = Array.from({ length: 20 }, (_, i) => ({
-        ...awsPlane([numberedLink(i + 1)]),
-        name: `ops/dp/private/acmeCo/aws-us-east-2-c${i + 1}`,
+test('opens the first plane by default and shows links for the selected plane', async () => {
+    planes = [1, 2, 3].map((n) => ({
+        ...awsPlane([numberedLink(n)]),
+        name: `ops/dp/private/acmeCo/aws-us-east-2-c${n}`,
     }));
     await renderLinks();
 
-    expect(screen.getByText('1–10 of 20 data planes')).toBeTruthy();
-    expect(screen.queryByRole('table')).toBeNull();
-    fireEvent.click(
-        within(
-            screen.getByRole('navigation', { name: 'data planes pagination' })
-        ).getByRole('button', { name: 'Go to page 2' })
-    );
-    expect(screen.getByText('11–20 of 20 data planes')).toBeTruthy();
+    const first = screen.getByRole('button', { name: /^AWS: us-east-2 c1/ });
+    const third = screen.getByRole('button', { name: /^AWS: us-east-2 c3/ });
+    expect(first.getAttribute('aria-expanded')).toBe('true');
+    expect(third.getAttribute('aria-expanded')).toBe('false');
+    expect(linkButtonNames()).toEqual(['Details for vpce-svc-00000001']);
 
-    const plane = screen.getByRole('button', { name: /^AWS: us-east-2 c20/ });
-    fireEvent.click(plane);
-    expect(plane.getAttribute('aria-expanded')).toBe('true');
-    expect(linkButtonNames()).toEqual(['Details for vpce-svc-00000014']);
+    fireEvent.click(third);
+    expect(first.getAttribute('aria-expanded')).toBe('false');
+    expect(third.getAttribute('aria-expanded')).toBe('true');
+    expect(linkButtonNames()).toEqual(['Details for vpce-svc-00000003']);
 });
 
 test('paginates private links on a large single plane', async () => {

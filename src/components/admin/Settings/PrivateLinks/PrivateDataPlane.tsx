@@ -18,7 +18,6 @@ export type PrivateLinkDataPlane =
 interface PrivateDataPlaneProps {
     plane: PrivateLinkDataPlane;
     open: boolean;
-    compact: boolean;
     // Omit for a plane that cannot be collapsed.
     onToggle?: () => void;
     onDetails: () => void;
@@ -30,7 +29,6 @@ interface PrivateDataPlaneProps {
 export function PrivateDataPlane({
     plane,
     open,
-    compact,
     onToggle,
     onDetails,
     onAdd,
@@ -38,7 +36,7 @@ export function PrivateDataPlane({
 }: PrivateDataPlaneProps) {
     const bodyId = `private-links-${encodeURIComponent(plane.name)}`;
     const empty = plane.privateLinks.length === 0;
-    const identity = <PlaneIdentity plane={plane} compact={compact} />;
+    const identity = <PlaneIdentity plane={plane} />;
     const add = (size: 'small' | 'medium') =>
         onAdd ? (
             <Button
@@ -151,10 +149,7 @@ export function PrivateDataPlane({
     );
 }
 
-function PlaneIdentity({
-    plane,
-    compact,
-}: Pick<PrivateDataPlaneProps, 'plane' | 'compact'>) {
+function PlaneIdentity({ plane }: { plane: PrivateLinkDataPlane }) {
     const failed = plane.privateLinks.filter(
         ({ status }) => status === 'FAILED'
     ).length;
@@ -176,14 +171,11 @@ function PlaneIdentity({
             />
             <Stack
                 component="span"
-                direction={compact ? 'row' : 'column'}
                 useFlexGap
-                spacing={compact ? 1 : 0.25}
+                spacing={0.25}
                 sx={{
                     flex: 1,
                     minWidth: 0,
-                    flexWrap: compact ? 'wrap' : 'nowrap',
-                    alignItems: compact ? 'baseline' : 'stretch',
                     justifyContent: 'space-between',
                 }}
             >

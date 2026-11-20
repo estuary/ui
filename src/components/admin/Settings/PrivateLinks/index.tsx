@@ -64,13 +64,10 @@ export function PrivateLinks({ tenant }: { tenant: string }) {
     }));
     const multiple = dataPlanes.length > 1;
     const openPlaneName =
-        !multiple || (expanded === undefined && dataPlanes.length <= PAGE_SIZE)
-            ? dataPlanes[0]?.name
-            : expanded;
+        !multiple || expanded === undefined ? dataPlanes[0]?.name : expanded;
     const links =
         dataPlanes.find(({ name }) => name === openPlaneName)?.privateLinks ??
         [];
-    const planePage = useListPagination(dataPlanes, 'data planes');
     const linkPage = useListPagination(links, 'private links');
 
     if (!data) {
@@ -172,8 +169,7 @@ export function PrivateLinks({ tenant }: { tenant: string }) {
                     overflow: 'clip',
                 }}
             >
-                {planePage.navigation}
-                {planePage.visible.map((plane) => {
+                {dataPlanes.map((plane) => {
                     const open = plane.name === openPlaneName;
 
                     return (
@@ -181,9 +177,6 @@ export function PrivateLinks({ tenant }: { tenant: string }) {
                             key={plane.name}
                             plane={plane}
                             open={open}
-                            compact={
-                                open ? false : dataPlanes.length > PAGE_SIZE
-                            }
                             onToggle={
                                 multiple
                                     ? () => {
