@@ -1,14 +1,18 @@
 import { Link } from '@mui/material';
 
+import { useLeaf } from 'react-semantic-tree';
+
 interface ActionLinkProps {
-    children: React.ReactNode;
+    label: string;
     onClick?: () => void;
     disabled?: boolean;
 }
 
-export function ActionLink({ children, onClick, disabled }: ActionLinkProps) {
+export function ActionLink({ onClick, disabled, label }: ActionLinkProps) {
+    const { ref } = useLeaf('Action Link', { label });
     return (
         <Link
+            ref={ref}
             component="button"
             variant="body2"
             underline="hover"
@@ -18,7 +22,7 @@ export function ActionLink({ children, onClick, disabled }: ActionLinkProps) {
                 pointerEvents: disabled ? 'none' : 'auto',
             }}
         >
-            {children}
+            {label}
         </Link>
     );
 }

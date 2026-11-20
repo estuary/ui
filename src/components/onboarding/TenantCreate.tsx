@@ -17,6 +17,7 @@ import {
 
 import { usePostHog } from '@posthog/react';
 import { Controller, useForm } from 'react-hook-form';
+import { useLeaf } from 'react-semantic-tree';
 import { useQuery } from 'urql';
 
 import { LEGAL_TERMS } from 'src/api/gql/legalTerms';
@@ -40,6 +41,9 @@ const NAME_TAKEN_MESSAGE = 'is already in use';
 const EVENT_NAME = 'Tenant:Create';
 
 export const TenantCreate = () => {
+    const { ref: acceptTermsRef } = useLeaf('Accept Terms');
+    const { ref: cancelRef } = useLeaf('Cancel');
+    const { ref: continueRef } = useLeaf('Continue');
     const rawTenantName = useRef('');
     const refreshUserInfo = useUserInfoSummaryStore((state) => state.mutate);
     const postHog = usePostHog();
@@ -384,6 +388,7 @@ export const TenantCreate = () => {
                             <FormControlLabel
                                 control={
                                     <Checkbox
+                                        ref={acceptTermsRef}
                                         name={field.name}
                                         inputRef={field.ref}
                                         checked={Boolean(
@@ -403,17 +408,17 @@ export const TenantCreate = () => {
                                     <>
                                         I have read and accept the
                                         <br />
-                                        <ExternalLink link={urls.privacyPolicy}>
-                                            Privacy Policy
-                                        </ExternalLink>{' '}
-                                        and{' '}
+                                        <ExternalLink
+                                            link={urls.privacyPolicy}
+                                            label="Privacy Policy"
+                                        />
+                                        {' and '}
                                         <ExternalLink
                                             link={
                                                 unauthenticatedRoutes.terms.path
                                             }
-                                        >
-                                            Terms of Service
-                                        </ExternalLink>
+                                            label="Terms of Service"
+                                        />
                                     </>
                                 }
                             />
@@ -425,6 +430,7 @@ export const TenantCreate = () => {
                         sx={{ justifyContent: 'space-between', width: '100%' }}
                     >
                         <Button
+                            ref={cancelRef}
                             disabled={saving}
                             variant="outlined"
                             onClick={async () => {
@@ -434,6 +440,7 @@ export const TenantCreate = () => {
                             Cancel
                         </Button>
                         <Button
+                            ref={continueRef}
                             type="submit"
                             variant="contained"
                             loading={saving}

@@ -1,5 +1,7 @@
 import { Divider, Grid, Stack } from '@mui/material';
 
+import { Branch } from 'react-semantic-tree';
+
 import { authenticatedRoutes } from 'src/app/routes';
 import { DataPlanes } from 'src/components/admin/Settings/DataPlanes';
 import PrefixAlerts from 'src/components/admin/Settings/PrefixAlerts';
@@ -13,7 +15,7 @@ function Settings() {
     });
 
     return (
-        <>
+        <Branch label="Settings">
             <Grid
                 container
                 spacing={{ xs: 3, md: 2 }}
@@ -40,7 +42,7 @@ function Settings() {
 
                 <DataPlanes />
             </Stack>
-        </>
+        </Branch>
     );
 }
 

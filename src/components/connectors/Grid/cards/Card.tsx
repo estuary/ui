@@ -92,9 +92,10 @@ export default function Card({
                                 {Title}
                                 {docsUrl ? (
                                     <Box>
-                                        <ExternalLink link={docsUrl}>
-                                            Docs
-                                        </ExternalLink>
+                                        <ExternalLink
+                                            link={docsUrl}
+                                            label="Docs"
+                                        />
                                     </Box>
                                 ) : null}
                             </Stack>

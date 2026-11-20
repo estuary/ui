@@ -1,3 +1,5 @@
+import { withBranch } from 'react-semantic-tree';
+
 import StandAloneTableTitle from 'src/components/tables/EntityTable/StandAloneTableTitle';
 import PrefixAlertTable from 'src/components/tables/PrefixAlerts';
 import { AlertSubscriptionsProvider } from 'src/context/AlertSubscriptions';
@@ -19,4 +21,4 @@ function PrefixAlerts() {
     );
 }
 
-export default PrefixAlerts;
+export default withBranch('Notifications')(PrefixAlerts);

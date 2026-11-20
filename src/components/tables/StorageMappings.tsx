@@ -17,6 +17,8 @@ import {
     useTheme,
 } from '@mui/material';
 
+import { useLeaf } from 'react-semantic-tree';
+
 import { usePaginatedStorageMappings } from 'src/api/gql/storageMappings';
 import { AddStorageButton } from 'src/components/admin/Settings/StorageMappings/AddStorageButton';
 import { getEntityTableRowSx } from 'src/context/Theme';
@@ -35,6 +37,8 @@ const tableColumns = [
 const columnCount = tableColumns.length;
 
 function Row({ row }: { row: StorageMappingTableRow }) {
+    const { ref } = useLeaf('Edit', { prefix: row.catalogPrefix });
+
     const theme = useTheme();
 
     const { onOpen } = useDialog('EDIT_STORAGE_MAPPING');
@@ -43,6 +47,7 @@ function Row({ row }: { row: StorageMappingTableRow }) {
 
     return (
         <TableRow
+            ref={ref}
             hover
             sx={getEntityTableRowSx(theme)}
             onClick={() => onOpen({ prefix: row.catalogPrefix })}

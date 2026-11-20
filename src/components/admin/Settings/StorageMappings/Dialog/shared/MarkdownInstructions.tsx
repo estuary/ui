@@ -5,6 +5,7 @@ import { isValidElement, useMemo } from 'react';
 import { Box, Link, Stack, Typography, useTheme } from '@mui/material';
 
 import Markdown from 'markdown-to-jsx';
+import { useLeaf } from 'react-semantic-tree';
 
 import SingleLineCode from 'src/components/content/SingleLineCode';
 import TechnicalEmphasis from 'src/components/derivation/Create/TechnicalEmphasis';
@@ -24,6 +25,28 @@ function extractText(children: ReactNode): string {
         return extractText(children.props.children);
     }
     return '';
+}
+
+function InstructionCode({ text }: { text: string }) {
+    const { ref } = useLeaf('Copy Code');
+
+    return <SingleLineCode ref={ref} value={text} sx={{ my: 2 }} />;
+}
+
+function SemanticLink({
+    href,
+    children,
+}: {
+    href?: string;
+    children: ReactNode;
+}) {
+    const { ref } = useLeaf(extractText(children));
+
+    return (
+        <Link ref={ref} href={href} target="_blank" rel="noopener noreferrer">
+            {children}
+        </Link>
+    );
 }
 
 interface MarkdownInstructionsProps {
@@ -89,25 +112,11 @@ export function MarkdownInstructions({
                             );
                         }
 
-                        return <SingleLineCode value={text} sx={{ my: 2 }} />;
+                        return <InstructionCode text={text} />;
                     },
                 },
                 a: {
-                    component: ({
-                        href,
-                        children,
-                    }: {
-                        href?: string;
-                        children: ReactNode;
-                    }) => (
-                        <Link
-                            href={href}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                        >
-                            {children}
-                        </Link>
-                    ),
+                    component: SemanticLink,
                 },
                 blockquote: {
                     component: ({ children }: { children: ReactNode }) => (

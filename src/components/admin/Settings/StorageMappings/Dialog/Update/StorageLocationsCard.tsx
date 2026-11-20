@@ -16,6 +16,7 @@ import {
 
 import { Check, EditPencil, Xmark } from 'iconoir-react';
 import { useFieldArray, useFormContext } from 'react-hook-form';
+import { Branch, useLeaf } from 'react-semantic-tree';
 
 import { useConnectionTest } from 'src/components/admin/Settings/StorageMappings/Dialog/ConnectionTest';
 import { ActionLink } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/ActionLink';
@@ -89,6 +90,13 @@ function NestedFormActions({
     onAccept: () => void;
     onCancel: () => void;
 }) {
+    const { ref: semanticAcceptStorageLocationRef } = useLeaf(
+        'Accept Storage Location'
+    );
+    const { ref: semanticCancelStorageLocationRef } = useLeaf(
+        'Cancel Storage Location'
+    );
+
     return (
         <Stack
             direction="row"
@@ -100,6 +108,7 @@ function NestedFormActions({
             }}
         >
             <Link
+                ref={semanticAcceptStorageLocationRef}
                 component="button"
                 variant="body2"
                 underline="hover"
@@ -113,6 +122,7 @@ function NestedFormActions({
             </Link>
             <Divider orientation="vertical" flexItem />
             <Link
+                ref={semanticCancelStorageLocationRef}
                 component="button"
                 variant="body2"
                 underline="hover"
@@ -135,12 +145,27 @@ function StoreRowActions({
     onEdit: () => void;
     onRemove: () => void;
 }) {
+    const { ref: semanticEditStorageLocationRef } = useLeaf(
+        'Edit Storage Location'
+    );
+    const { ref: semanticRemoveStorageLocationRef } = useLeaf(
+        'Remove Storage Location'
+    );
+
     return (
         <>
-            <IconButton size="small" onClick={onEdit}>
+            <IconButton
+                ref={semanticEditStorageLocationRef}
+                size="small"
+                onClick={onEdit}
+            >
                 <EditPencil width={16} height={16} />
             </IconButton>
-            <IconButton size="small" onClick={onRemove}>
+            <IconButton
+                ref={semanticRemoveStorageLocationRef}
+                size="small"
+                onClick={onRemove}
+            >
                 <Xmark width={16} height={16} />
             </IconButton>
         </>
@@ -273,7 +298,7 @@ export function StorageLocationsCard({
         : fragmentStores.length > (outgoingKey ? 2 : 1);
 
     return (
-        <>
+        <Branch label="Storage Locations">
             <Stack
                 direction="row"
                 alignItems="center"
@@ -288,11 +313,10 @@ export function StorageLocationsCard({
                 <Typography sx={cardHeaderSx}>Storage Locations</Typography>
                 <Collapse in={!showNestedStorageForm}>
                     <ActionLink
+                        label="Change Primary Storage"
                         onClick={handleStartAdding}
                         disabled={hasNewStore}
-                    >
-                        Change primary store
-                    </ActionLink>
+                    />
                 </Collapse>
             </Stack>
             <Stack spacing={1}>
@@ -367,6 +391,6 @@ export function StorageLocationsCard({
                     </Typography>
                 </Collapse>
             </Stack>
-        </>
+        </Branch>
     );
 }

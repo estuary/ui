@@ -13,6 +13,8 @@ import {
     TableRow,
 } from '@mui/material';
 
+import { withBranch } from 'react-semantic-tree';
+
 import { BILLING_HISTORY_PAGE_SIZE } from 'src/api/gql/billing';
 import Rows from 'src/components/tables/Billing/Rows';
 import EntityTableBody from 'src/components/tables/EntityTable/TableBody';
@@ -130,4 +132,4 @@ function BillingHistoryTable({
     );
 }
 
-export default BillingHistoryTable;
+export default withBranch('Billing History')(BillingHistoryTable);

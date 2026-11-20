@@ -144,9 +144,10 @@ function BindingsEditor({ itemType, readOnly = false }: Props) {
                                         sx={{ mr: 1 }}
                                     >
                                         Collection Schema
-                                        <ExternalLink link="https://docs.estuary.dev/concepts/collections/#schemas">
-                                            Docs
-                                        </ExternalLink>
+                                        <ExternalLink
+                                            link="https://docs.estuary.dev/concepts/collections/#schemas"
+                                            label="Docs"
+                                        />
                                     </Typography>
 
                                     <Stack direction="row" spacing={1}>

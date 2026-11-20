@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { Divider, Grid, Stack } from '@mui/material';
 
 import { ErrorBoundary } from 'react-error-boundary';
+import { Branch } from 'react-semantic-tree';
 
 import { BILLING_HISTORY_PAGE_SIZE } from 'src/api/gql/billing';
 import { authenticatedRoutes } from 'src/app/routes';
@@ -44,7 +45,7 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
     const selectedTenant = useTenantStore((state) => state.selectedTenant);
 
     return (
-        <>
+        <Branch label="Billing">
             <Grid
                 container
                 spacing={{ xs: 3, md: 2 }}
@@ -68,7 +69,7 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
                     showAddPayment={showAddPayment}
                 />
             ) : null}
-        </>
+        </Branch>
     );
 }
 

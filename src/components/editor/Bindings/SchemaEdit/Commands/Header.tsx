@@ -22,9 +22,10 @@ function EditCommandsHeader() {
                 </Typography>
             </Box>
 
-            <ExternalLink link="https://docs.estuary.dev/concepts/flowctl/">
-                Docs
-            </ExternalLink>
+            <ExternalLink
+                link="https://docs.estuary.dev/concepts/flowctl/"
+                label="Docs"
+            />
         </Box>
     );
 }
