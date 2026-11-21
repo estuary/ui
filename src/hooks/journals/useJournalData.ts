@@ -5,18 +5,19 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 
 import { JournalClient, JournalSelector } from 'data-plane-gateway';
-import { isEmpty } from 'lodash';
 import { useCounter } from 'react-use';
 import useSWR from 'swr';
 
 import { singleCallSettings } from 'src/context/SWR';
 import { useUserStore } from 'src/context/User/useUserContextStore';
 import { loadDocuments } from 'src/hooks/journals/shared';
-import { logRocketEvent } from 'src/services/shared';
+import {
+    FETCH_DEFAULT_ERROR,
+    logRocketConsole,
+    logRocketEvent,
+} from 'src/services/shared';
 import useJournalStore from 'src/stores/JournalData/Store';
 import {
-    getJournals,
-    isNestedProtocolListResponse,
     MAX_DOCUMENT_SIZE,
     shouldRefreshToken,
 } from 'src/utils/dataPlane-utils';
@@ -48,42 +49,37 @@ const useJournalsForCollection = (collectionName: string | undefined) => {
 
     const fetcher = useCallback(
         async (_url: string) => {
-            if (
-                journalClient &&
-                collectionName &&
-                brokerAddress &&
-                brokerToken
-            ) {
-                const journalSelector = new JournalSelector().collection(
-                    collectionName
-                );
+            if (journalClient && collectionName) {
+                try {
+                    const result = await journalClient.list(
+                        new JournalSelector().collection(collectionName)
+                    );
 
-                const dataPlaneListResponse = await getJournals(
-                    brokerAddress,
-                    brokerToken,
-                    {
-                        include: journalSelector.toLabelSet(),
+                    // Returning the rejected promise (rather than throwing) keeps
+                    // this out of the catch below, so the broker's error message
+                    // reaches SWR's onError for token-refresh handling.
+                    if (result.err()) {
+                        return Promise.reject({
+                            message:
+                                result.unwrap_err().body.message ??
+                                FETCH_DEFAULT_ERROR,
+                        });
                     }
-                );
 
-                if (isEmpty(dataPlaneListResponse)) {
-                    return Promise.reject(dataPlaneListResponse);
+                    return {
+                        journals: result.unwrap().journals ?? [],
+                    };
+                } catch (error: unknown) {
+                    // The gateway client throws on transport-level failures it
+                    // cannot parse into a ResponseError, e.g. a network error.
+                    logRocketConsole('journals:list:error', error);
+                    return Promise.reject({ message: FETCH_DEFAULT_ERROR });
                 }
-
-                const journals = isNestedProtocolListResponse(
-                    dataPlaneListResponse
-                )
-                    ? dataPlaneListResponse.result.journals
-                    : dataPlaneListResponse.journals;
-
-                return {
-                    journals: journals ?? [],
-                };
             } else {
                 return null;
             }
         },
-        [brokerAddress, brokerToken, collectionName, journalClient]
+        [collectionName, journalClient]
     );
 
     const response = useSWR(
@@ -106,7 +102,7 @@ const useJournalsForCollection = (collectionName: string | undefined) => {
 
                 if (
                     session &&
-                    shouldRefreshToken(`${error}`) &&
+                    shouldRefreshToken(error?.message) &&
                     collectionName
                 ) {
                     await refreshAuthToken(
