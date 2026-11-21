@@ -49,12 +49,7 @@ const useJournalsForCollection = (collectionName: string | undefined) => {
 
     const fetcher = useCallback(
         async (_url: string) => {
-            if (
-                journalClient &&
-                collectionName &&
-                brokerAddress &&
-                brokerToken
-            ) {
+            if (journalClient && collectionName) {
                 try {
                     const result = await journalClient.list(
                         new JournalSelector().collection(collectionName)
@@ -84,7 +79,7 @@ const useJournalsForCollection = (collectionName: string | undefined) => {
                 return null;
             }
         },
-        [brokerAddress, brokerToken, collectionName, journalClient]
+        [collectionName, journalClient]
     );
 
     const response = useSWR(
