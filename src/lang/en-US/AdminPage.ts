@@ -8,23 +8,6 @@ export const AdminPage: Record<string, string> = {
 
     'admin.cli_api.refreshToken.dialog.alert.tokenEncodingFailed': `An issue was encountered displaying your token. Please generate a new token.`,
 
-    'admin.billing.table.history.label.dataVolume': `Data Volume`,
-    'admin.billing.table.history.label.date_start': `Start Date`,
-    'admin.billing.table.history.label.date_end': `End Date`,
-    'admin.billing.table.history.label.tasks': `Task Usage`,
-    'admin.billing.table.history.label.totalCost': `Total Cost`,
-    'admin.billing.table.history.tooltip.date_start': `This billing period began on {timestamp}`,
-    'admin.billing.table.history.tooltip.date_end': `This billing period ended on {timestamp}`,
-    'admin.billing.table.history.emptyTableDefault.header': `No information found.`,
-    'admin.billing.table.history.emptyTableDefault.message': `We couldn't find any billing information on file.`,
-
-    'admin.billing.table.line_items.label.description': `Description`,
-    'admin.billing.table.line_items.label.count': `Quantity`,
-    'admin.billing.table.line_items.label.rate': `Unit Price`,
-    'admin.billing.table.line_items.label.subtotal': `Subtotal`,
-    'admin.billing.table.line_items.emptyTableDefault.header': `No information found.`,
-    'admin.billing.table.line_items.emptyTableDefault.message': `We couldn't find any billing information on file.`,
-
     'admin.grants.confirmation.alert': `Access to all items will be removed and this action cannot be undone. Please review the list to continue.`,
 
     'admin.dataPlanes.column.header.name': `Name`,

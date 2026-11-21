@@ -7,7 +7,6 @@ import {
     waitFor,
     within,
 } from '@testing-library/react';
-import { ErrorBoundary } from 'react-error-boundary';
 import { IntlProvider } from 'react-intl';
 import { beforeEach, expect, test, vi } from 'vitest';
 
@@ -117,7 +116,6 @@ test.each([
 test.each([false, true])(
     'keeps an unreadable tenant unavailable on remount (query error: %s)',
     async (withQueryError) => {
-        vi.spyOn(console, 'error').mockImplementation(() => undefined);
         server.use(
             billingGraphql.query('TenantBillingContact', () => {
                 contactReads++;
@@ -130,18 +128,11 @@ test.each([false, true])(
             })
         );
         const section = (key: string) => (
-            <ErrorBoundary
-                key={key}
-                fallbackRender={({ error }) => <div>{error.message}</div>}
-            >
-                <BillingContactSection canEdit />
-            </ErrorBoundary>
+            <BillingContactSection key={key} canEdit />
         );
         const { rerender } = render(section('first'), { wrapper });
 
-        const message = withQueryError
-            ? /Stripe unavailable/
-            : 'Unable to load billing for acme/';
+        const message = /error loading your billing contact/;
         await screen.findByText(message);
         rerender(section('return'));
 

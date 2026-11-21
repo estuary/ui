@@ -1,3 +1,5 @@
+import type { TypedDocumentNode } from '@urql/core';
+import type { FragmentDefinitionNode } from 'graphql';
 import type { DataByHourRange } from 'src/components/graphs/types';
 import type {
     CatalogStatsBy,
@@ -8,6 +10,7 @@ import type {
 } from 'src/gql-types/graphql';
 
 import { DateTime } from 'luxon';
+import { gql } from 'urql';
 
 import { DataGrains } from 'src/components/graphs/types';
 import {
@@ -16,6 +19,43 @@ import {
 } from 'src/services/luxon';
 
 export const STATS_TIMESTAMP_FORMAT = defaultQueryDateFormat;
+
+// A failed batch comes back null, with the error alongside.
+export type StatsBatches<Node> = Record<
+    string,
+    { edges: { node: Node }[] } | null
+>;
+
+// `catalogStats` once per batch of names, as `batch_N` reading `$vars_N`, so
+// one request reads any number of names. Each bucket selects `fragment`.
+export function buildStatsBatchQuery<Node>(
+    operationName: string,
+    fragment: TypedDocumentNode<Node>,
+    batchCount: number
+) {
+    const { name } = fragment.definitions[0] as FragmentDefinitionNode;
+    const batches = Array.from({ length: batchCount }, (_, index) => index);
+
+    const variables = batches
+        .map((index) => `$vars_${index}: CatalogStatsBy!`)
+        .join(', ');
+
+    const fields = batches
+        .map(
+            (index) =>
+                `batch_${index}: catalogStats(by: $vars_${index}) {
+                    edges { node { ...${name.value} } }
+                }`
+        )
+        .join('\n');
+
+    return gql<StatsBatches<Node>, Record<string, CatalogStatsBy>>`
+        query ${operationName}(${variables}) {
+            ${fields}
+        }
+        ${fragment}
+    `;
+}
 
 // maps app grain -> GQL grain
 const TO_GQL_GRAIN_MAP: Record<DataGrains, CatalogStatsGrain> = {

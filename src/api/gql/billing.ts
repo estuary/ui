@@ -1,8 +1,82 @@
-import type { TenantBillingInvoicesQuery } from 'src/gql-types/graphql';
+import type {
+    TenantBillingInvoicesQuery,
+    TenantBillingPlanQuery,
+} from 'src/gql-types/graphql';
 import type { TenantPaymentDetails } from 'src/types';
 import type { Client } from 'urql';
 
 import { graphql } from 'src/gql-types';
+
+// The billing page reads each card's data with its own query, so one failing
+// read leaves the other cards in place.
+export const TENANT_BILLING_PLAN_QUERY = graphql(`
+    query TenantBillingPlan($tenant: String!) {
+        tenant(name: $tenant) {
+            billing {
+                plan {
+                    __typename
+                    ... on SelfServePlan {
+                        phase
+                        collectionMethod
+                        trial {
+                            start
+                            end
+                        }
+                        dataTiers {
+                            rateCents
+                            quantity
+                        }
+                        usageTiers {
+                            rateCents
+                            quantity
+                        }
+                    }
+                    ... on ContractPlan {
+                        collectionMethod
+                        paymentProvider
+                        dataTiers {
+                            rateCents
+                            quantity
+                        }
+                        usageTiers {
+                            rateCents
+                            quantity
+                        }
+                    }
+                }
+            }
+        }
+    }
+`);
+
+export type BillingPlan = NonNullable<
+    TenantBillingPlanQuery['tenant']
+>['billing']['plan'];
+
+export type PricingTier = Extract<
+    BillingPlan,
+    { __typename: 'SelfServePlan' }
+>['dataTiers'][number];
+
+// The server prices the month and projects it, so the page never repeats the
+// pricing rules. Null, with an error, when the month's usage can't be read.
+export const TENANT_BILLING_MONTH_TO_DATE_QUERY = graphql(`
+    query TenantBillingMonthToDate($tenant: String!) {
+        tenant(name: $tenant) {
+            billing {
+                monthToDate {
+                    chargesCents
+                    projectedSubtotalCents
+                    days {
+                        date
+                        chargesCents
+                        projected
+                    }
+                }
+            }
+        }
+    }
+`);
 
 // The filter's dates are exclusive.
 export const TENANT_BILLING_INVOICES_QUERY = graphql(`
@@ -39,7 +113,7 @@ export const TENANT_BILLING_INVOICES_QUERY = graphql(`
     }
 `);
 
-export const BILLING_HISTORY_PAGE_SIZE = 4;
+export const INVOICES_PAGE_SIZE = 5;
 
 // Only card or usBankAccount is populated; last4 remains a zero-padded string.
 graphql(`
@@ -123,8 +197,9 @@ export const DELETE_BILLING_PAYMENT_METHOD = graphql(`
     }
 `);
 
+// An adjustment without a detail has no description.
 export interface InvoiceLineItem {
-    description: string;
+    description: string | null;
     count: number;
     rate: number;
     subtotal: number;

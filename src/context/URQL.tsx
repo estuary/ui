@@ -112,13 +112,24 @@ export function UrqlConfigProvider({ children }: BaseComponentProps) {
                     // },
                     resolvers: {
                         Query: {
-                            // A failed billing read caches `tenant: null`
-                            // without its error. Treat it as uncached, so
-                            // returning to the tenant reads it again instead
-                            // of showing empty billing data.
-                            tenant: (_parent, args, cache) =>
-                                cache.resolve('Query', 'tenant', args) ??
-                                undefined,
+                            // An error in any billing field nulls `tenant`,
+                            // since `billing` and its fields are non-null. The
+                            // billing cards read the tenant in concurrent
+                            // queries, and a later query's null would hide the
+                            // tenant an earlier one wrote, leaving that one
+                            // empty with no error. So read the tenant record
+                            // whenever one exists; the failed query reads null
+                            // at its error's path, beside its error. A tenant
+                            // no query has read stays uncached, so returning
+                            // to it reads it again.
+                            tenant: (_parent, _args, cache, info) => {
+                                // `Tenant` has no key, so it's embedded here.
+                                const key = `${info.parentKey}.${info.parentFieldKey}`;
+
+                                return cache.resolve(key, '__typename')
+                                    ? key
+                                    : undefined;
+                            },
                         },
                     },
                     // Migration: replace these null keys with real keys — `id`
@@ -161,6 +172,12 @@ export function UrqlConfigProvider({ children }: BaseComponentProps) {
                         BillingContact: (_data) => null,
                         BillingAddress: (_data) => null,
                         SetBillingContactPayload: (_data) => null,
+                        SelfServePlan: (_data) => null,
+                        ContractPlan: (_data) => null,
+                        TrialPeriod: (_data) => null,
+                        PricingTier: (_data) => null,
+                        BillingMonthToDate: (_data) => null,
+                        BillingDayCharges: (_data) => null,
                     },
                     // Normalization only merges update results into entities
                     // already in the cache. Creates and deletes need updaters
@@ -201,6 +218,7 @@ export function UrqlConfigProvider({ children }: BaseComponentProps) {
                             },
                             updateAlertConfig(_result, _args, cache) {
                                 invalidateQuery(cache, 'alertConfigs');
+                                invalidateQuery(cache, 'alerts');
                             },
                             createAlertSubscription(_result, _args, cache) {
                                 invalidateQuery(cache, 'alertSubscriptions');

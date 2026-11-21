@@ -9,7 +9,7 @@ import DiscoverLogo from 'src/images/payment-methods/discover.png';
 import MastercardLogo from 'src/images/payment-methods/mastercard.png';
 import VisaLogo from 'src/images/payment-methods/visa.png';
 
-const cardLogos: Record<string, string> = {
+export const cardLogos: Record<string, string> = {
     amex: AmexLogo,
     discover: DiscoverLogo,
     visa: VisaLogo,

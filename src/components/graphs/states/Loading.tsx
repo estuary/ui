@@ -1,6 +1,6 @@
 import { CircularProgress, Stack, Typography } from '@mui/material';
 
-import { CARD_AREA_HEIGHT } from 'src/utils/billing-utils';
+import { CARD_AREA_HEIGHT } from 'src/components/graphs/states/shared';
 
 function GraphLoadingState() {
     return (
