@@ -1,64 +1,31 @@
 import { useMemo } from 'react';
 
-import {
-    addMonths,
-    endOfMonth,
-    format,
-    startOfMonth,
-    subMonths,
-} from 'date-fns';
 import { useQuery } from 'urql';
 
 import { TENANT_BILLING_INVOICES_QUERY } from 'src/api/gql/billing';
+import { readBilling } from 'src/hooks/billing/shared';
 import { useCursorPagination } from 'src/hooks/useCursorPagination';
-import { useTenantStore } from 'src/stores/Tenant';
 
-const day = (date: Date) => format(date, 'yyyy-MM-dd');
-
-// The last `months` months, through the current one.
-const lastMonths = (months: number) => ({
-    dateStart: { gt: day(endOfMonth(subMonths(new Date(), months))) },
-    dateEnd: { lt: day(startOfMonth(addMonths(new Date(), 1))) },
-});
-
-interface BillingInvoicesOptions {
-    months?: number;
-    pageSize?: number;
-    // Each invoice's Stripe status and links cost the server a Stripe search,
-    // so only a paged read should ask for them.
-    withStripe?: boolean;
-}
-
-// The selected tenant's invoices, newest first.
-export function useBillingInvoices({
-    months,
-    pageSize,
-    withStripe = false,
-}: BillingInvoicesOptions) {
-    const selectedTenant = useTenantStore((state) => state.selectedTenant);
+// A tenant's invoices, newest first, a page at a time.
+export function useBillingInvoices(tenant: string, pageSize: number) {
     const { currentPage, cursor, onPageChange } = useCursorPagination();
 
-    const filter = useMemo(
-        () => (months ? lastMonths(months) : undefined),
-        [months]
-    );
-
+    // Callers remount when the tenant changes, so no earlier tenant's data
+    // is retained here.
     const [{ data, fetching, error }] = useQuery({
         query: TENANT_BILLING_INVOICES_QUERY,
         variables: {
-            tenant: selectedTenant,
-            filter,
+            tenant,
             first: pageSize,
             after: cursor,
-            withStripe,
+            // Each invoice's Stripe status and links cost the server a Stripe
+            // search, so only a paged read asks for them.
+            withStripe: true,
         },
     });
 
-    if (error) {
-        throw error;
-    }
-
-    const connection = data?.tenant?.billing.invoices;
+    const read = readBilling(tenant, data, error);
+    const connection = read.billing?.invoices;
     const invoices = useMemo(
         () => connection?.edges.map(({ node }) => node) ?? [],
         [connection]
@@ -68,8 +35,9 @@ export function useBillingInvoices({
         invoices,
         page: currentPage,
         hasNextPage: Boolean(connection?.pageInfo.hasNextPage),
-        onPageChange: (event: unknown, page: number) =>
-            onPageChange(event, page, connection?.pageInfo.endCursor),
-        isLoading: fetching,
+        onPageChange: (page: number) =>
+            onPageChange(undefined, page, connection?.pageInfo.endCursor),
+        isLoading: fetching && !data,
+        error: read.error,
     };
 }
