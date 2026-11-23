@@ -19,8 +19,8 @@ import ServerErrors from 'src/components/admin/Settings/PrefixAlerts/Dialog/Serv
 import SubscriberSection from 'src/components/admin/Settings/PrefixAlerts/Dialog/SubscriberSection/index';
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
 import MessageWithLink from 'src/components/content/MessageWithLink';
-import { SemanticDialog as Dialog } from 'src/components/shared/Semantic/Dialog';
 import DialogTitleWithClose from 'src/components/shared/Dialog/TitleWithClose';
+import { SemanticDialog as Dialog } from 'src/components/shared/Semantic/Dialog';
 
 const TITLE_ID = 'alert-subscription-dialog-title';
 
