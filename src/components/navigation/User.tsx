@@ -78,9 +78,13 @@ export const UserMenu = ({ anchorEl, onClose }: UserMenuProps) => {
     const theme = useTheme();
     const colorMode = useColorMode();
     const userDetails = useUserStore((state) => state.userDetails);
-    const themeLabel =
-        theme.palette.mode === 'dark' ? 'Light Mode' : 'Dark Mode';
-    const { ref: themeRef } = useLeaf(themeLabel);
+    const themeButton =
+        theme.palette.mode === 'dark'
+            ? { label: 'Light Mode', icon: <SunLight /> }
+            : { label: 'Dark Mode', icon: <HalfMoon /> };
+    const { ref: themeRef } = useLeaf('Toggle Color Mode', {
+        mode: theme.palette.mode,
+    });
     const { ref: logoutRef } = useLeaf('Logout');
 
     if (!userDetails) {
@@ -130,14 +134,8 @@ export const UserMenu = ({ anchorEl, onClose }: UserMenuProps) => {
                 ref={themeRef}
                 onClick={() => colorMode.toggleColorMode()}
             >
-                <ListItemIcon>
-                    {theme.palette.mode === 'dark' ? (
-                        <SunLight />
-                    ) : (
-                        <HalfMoon />
-                    )}
-                </ListItemIcon>
-                {themeLabel}
+                <ListItemIcon>{themeButton.icon}</ListItemIcon>
+                {themeButton.label}
             </MenuItem>
             <Divider />
 

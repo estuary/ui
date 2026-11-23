@@ -1,6 +1,6 @@
 import type { LegalTermsType } from 'src/gql-types/graphql';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { Button, CircularProgress, Stack, Typography } from '@mui/material';
 
@@ -199,8 +199,10 @@ export function LegalConsent() {
         updateTitle('Estuary | Legal consent');
     }, [setHeader, updateTitle]);
 
+    const semanticMetadata = useMemo(() => ({ type, tenant }), [type, tenant]);
+
     return (
-        <Branch label="Legal Consent" metadata={{ type, tenant }}>
+        <Branch label="Legal Consent" metadata={semanticMetadata}>
             <Stack spacing={3} sx={{ maxWidth: 860, mx: 'auto', py: 4, px: 3 }}>
                 <Typography variant="h4" component="h1">
                     Legal consent

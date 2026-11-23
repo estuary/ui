@@ -10,6 +10,8 @@ import {
     useTheme,
 } from '@mui/material';
 
+import { Branch } from 'react-semantic-tree';
+
 import {
     defaultOutline,
     paperBackground,
@@ -73,7 +75,8 @@ function PopperWrapper({
                                 p: 2,
                             }}
                         >
-                            {children}
+                            {/* Restore the inherited semantic path inside the popper portal. */}
+                            <Branch>{children}</Branch>
                         </Box>
                     </Fade>
                 </ClickAwayListener>

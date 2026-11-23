@@ -1,6 +1,8 @@
 import type { InviteErrorProps } from 'src/components/tables/AccessGrants/AccessLinks';
 import type { InviteLink } from 'src/gql-types/graphql';
 
+import { useMemo } from 'react';
+
 import { Button, TableCell, TableRow, Typography } from '@mui/material';
 
 import { Branch, useLeaf } from 'react-semantic-tree';
@@ -24,11 +26,14 @@ export function Row({
 
         setError(result.error ?? null);
     };
-    const metadata = {
-        catalogPrefix: row.catalogPrefix,
-        capability: row.capability,
-        singleUse: row.singleUse,
-    };
+    const metadata = useMemo(
+        () => ({
+            catalogPrefix: row.catalogPrefix,
+            capability: row.capability,
+            singleUse: row.singleUse,
+        }),
+        [row.catalogPrefix, row.capability, row.singleUse]
+    );
 
     return (
         <TableRow hover>

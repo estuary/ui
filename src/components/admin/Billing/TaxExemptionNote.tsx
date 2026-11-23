@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 import { Box, Link, Popover, Stack, Typography } from '@mui/material';
 
-import { useLeaf } from 'react-semantic-tree';
+import { Branch, useLeaf } from 'react-semantic-tree';
 
 const SUPPORT_EMAIL = 'support@estuary.dev';
 
@@ -58,41 +58,48 @@ export function TaxExemptionNote() {
                     },
                 }}
             >
-                <Stack spacing={1.5}>
-                    <Box>
-                        <Typography variant="body2">
-                            Depending on your state and tax status, you may
-                            qualify for a sales tax exemption, for example if:
-                        </Typography>
-                        <Box component="ul" sx={{ my: 1, pl: 2.5 }}>
-                            {examples.map((example) => (
-                                <Typography
-                                    key={example}
-                                    component="li"
-                                    variant="body2"
-                                >
-                                    {example}
-                                </Typography>
-                            ))}
+                <Branch label="Tax Exemption Details">
+                    <Stack spacing={1.5}>
+                        <Box>
+                            <Typography variant="body2">
+                                Depending on your state and tax status, you may
+                                qualify for a sales tax exemption, for example
+                                if:
+                            </Typography>
+                            <Box component="ul" sx={{ my: 1, pl: 2.5 }}>
+                                {examples.map((example) => (
+                                    <Typography
+                                        key={example}
+                                        component="li"
+                                        variant="body2"
+                                    >
+                                        {example}
+                                    </Typography>
+                                ))}
+                            </Box>
+                            <Typography variant="body2">
+                                To request an exemption, email <SupportLink />{' '}
+                                with your company name, billing state, and a
+                                completed exemption or resale certificate.
+                            </Typography>
                         </Box>
-                        <Typography variant="body2">
-                            To request an exemption, email <SupportLink /> with
-                            your company name, billing state, and a completed
-                            exemption or resale certificate.
+                        <Typography
+                            variant="caption"
+                            sx={{
+                                color: 'text.secondary',
+                                fontStyle: 'italic',
+                            }}
+                        >
+                            This information is provided for general
+                            informational purposes only and does not constitute
+                            tax or legal advice. Sales tax rules and exemption
+                            eligibility vary by state and by the nature of the
+                            purchase. Please consult your tax advisor to
+                            determine whether your organization qualifies for an
+                            exemption.
                         </Typography>
-                    </Box>
-                    <Typography
-                        variant="caption"
-                        sx={{ color: 'text.secondary', fontStyle: 'italic' }}
-                    >
-                        This information is provided for general informational
-                        purposes only and does not constitute tax or legal
-                        advice. Sales tax rules and exemption eligibility vary
-                        by state and by the nature of the purchase. Please
-                        consult your tax advisor to determine whether your
-                        organization qualifies for an exemption.
-                    </Typography>
-                </Stack>
+                    </Stack>
+                </Branch>
             </Popover>
         </>
     );

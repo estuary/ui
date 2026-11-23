@@ -1,6 +1,6 @@
 import type { Connection } from 'src/components/admin/Settings/StorageMappings/Dialog/ConnectionTest/ConnectionTestContext';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 
 import {
     Accordion,
@@ -108,14 +108,15 @@ export function ConnectionAccordion({
         prevStatusRef.current = connection.status;
     }, [expanded, connection.status, connection.errorMessage]);
 
+    const dataPlaneName = toPresentableName(connection.dataPlane);
+    const storeProvider = connection.store.provider;
+    const semanticMetadata = useMemo(
+        () => ({ dataPlane: dataPlaneName, storeProvider }),
+        [dataPlaneName, storeProvider]
+    );
+
     return (
-        <Branch
-            label="Connection Instructions"
-            metadata={{
-                dataPlane: toPresentableName(connection.dataPlane),
-                storeProvider: connection.store.provider,
-            }}
-        >
+        <Branch label="Connection Instructions" metadata={semanticMetadata}>
             <Accordion
                 expanded={disabled ? false : expanded}
                 onChange={(_event, isExpanded) => {

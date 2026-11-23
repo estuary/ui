@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import { Box, List, Stack, useTheme } from '@mui/material';
 
@@ -39,9 +39,10 @@ export const Navigation = () => {
     const toggleOpen = useNavigationStore((state) => state.toggleOpen);
     const { ref: helpRef } = useLeaf('Help');
     const { ref: collapseRef } = useLeaf(open ? 'Collapse' : 'Expand');
+    const semanticMetadata = useMemo(() => ({ navExpanded: open }), [open]);
 
     return (
-        <Branch label="Side Nav" metadata={{ navExpanded: open }}>
+        <Branch label="Side Nav" metadata={semanticMetadata}>
             <Box
                 sx={{
                     height: '100%',

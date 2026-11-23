@@ -1,5 +1,7 @@
 import type { DataPlaneNode } from 'src/api/gql/dataPlanes';
 
+import { useMemo } from 'react';
+
 import { Badge, DialogContent, Stack, Typography } from '@mui/material';
 
 import DialogTitleWithClose from 'src/components/shared/Dialog/TitleWithClose';
@@ -27,13 +29,17 @@ function DataPlaneDialog({ onClose, dataPlane }: DataPlaneDialogProps) {
     const dataPlaneDisplayName = toPresentableName(dataPlane);
     const regionDisplayName = getRegionDisplayName(cloudProvider, region);
     const iamOidc = fqdn ? formatIamOidc(fqdn) : null;
+    const semantic = useMemo(
+        () => ({
+            label: 'Dialog',
+            metadata: { dataPlane: dataPlaneDisplayName },
+        }),
+        [dataPlaneDisplayName]
+    );
 
     return (
         <Dialog
-            semantic={{
-                label: 'Dialog',
-                metadata: { dataPlane: dataPlaneDisplayName },
-            }}
+            semantic={semantic}
             open
             onClose={onClose}
             maxWidth="sm"

@@ -313,7 +313,7 @@ export function StorageLocationsCard({
                 <Typography sx={cardHeaderSx}>Storage Locations</Typography>
                 <Collapse in={!showNestedStorageForm}>
                     <ActionLink
-                        label="Change Primary Storage"
+                        label="Change primary store"
                         onClick={handleStartAdding}
                         disabled={hasNewStore}
                     />

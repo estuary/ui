@@ -290,6 +290,12 @@ export function UpdateMappingWizard() {
         };
     }, [prefix, storageMappings, dataPlanes, dataPlanesLoading]);
 
+    const semanticPrefix = storageMapping?.catalogPrefix;
+    const semanticMetadata = useMemo(
+        () => ({ prefix: semanticPrefix ?? null }),
+        [semanticPrefix]
+    );
+
     const methods = useForm<StorageMappingFormData>({
         mode: 'onChange',
         defaultValues: {
@@ -374,10 +380,7 @@ export function UpdateMappingWizard() {
                 key={storageMapping.catalogPrefix}
                 catalogPrefix={storageMapping.catalogPrefix}
             >
-                <Branch
-                    label="Edit Wizard"
-                    metadata={{ prefix: storageMapping.catalogPrefix }}
-                >
+                <Branch label="Edit Wizard" metadata={semanticMetadata}>
                     <DialogInner
                         key={storageMapping.catalogPrefix}
                         mapping={storageMapping}

@@ -243,15 +243,6 @@ export const Workflows: Record<string, string> = {
     'schemaEditor.table.empty.message': `We were unable to generate a table from the current schema. Please update the schema.`,
     'schemaEditor.table.empty.filtered.message': `This schema does not contain these kind of fields.`,
 
-    // Task Endpoints
-
-    'taskEndpoint.link.public.label': 'Public endpoint: ',
-    'taskEndpoint.link.private.label': 'Private endpoint: ',
-    'taskEndpoint.visibility.public.tooltip':
-        'Public: anyone may access this port over the public internet',
-    'taskEndpoint.visibility.private.tooltip':
-        'Private: access to this port is restricted to authenticated users who have "admin" permissions to the task',
-
     // Logs Dialog
     'logs.default': `waiting`,
     'logs.paused': `paused`,
