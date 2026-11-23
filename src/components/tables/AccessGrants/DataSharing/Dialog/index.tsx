@@ -42,7 +42,7 @@ function ShareDataDialog({ open, setOpen }: Props) {
 
     return (
         <Dialog
-            semantic={{ label: 'Dialog' }}
+            semantic={{ label: 'Grant Access Dialog' }}
             open={open}
             maxWidth="md"
             fullWidth

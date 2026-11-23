@@ -31,7 +31,7 @@ function DataPlaneDialog({ onClose, dataPlane }: DataPlaneDialogProps) {
     const iamOidc = fqdn ? formatIamOidc(fqdn) : null;
     const semantic = useMemo(
         () => ({
-            label: 'Dialog',
+            label: 'Details Dialog',
             metadata: { dataPlane: dataPlaneDisplayName },
         }),
         [dataPlaneDisplayName]

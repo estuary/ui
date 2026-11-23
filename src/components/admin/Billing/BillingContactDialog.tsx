@@ -118,7 +118,7 @@ export function BillingContactDialog({
     return (
         // No onClose: Escape or a click outside would discard the entered contact, so only Cancel closes it.
         <Dialog
-            semantic={{ label: 'Dialog' }}
+            semantic={{ label: 'Edit Dialog' }}
             open={open}
             maxWidth="sm"
             fullWidth

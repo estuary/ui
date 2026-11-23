@@ -52,7 +52,10 @@ const AlertSubscriptionDialog = ({
 
     return (
         <Dialog
-            semantic={{ label: 'Dialog' }}
+            semantic={{
+                // Only the edit flow can delete a subscription.
+                label: enableDeletion ? 'Edit Dialog' : 'Create Dialog',
+            }}
             open={open}
             maxWidth="md"
             fullWidth

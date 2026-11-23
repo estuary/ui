@@ -76,7 +76,7 @@ function AddPaymentMethod({
             />
 
             <Dialog
-                semantic={{ label: 'Dialog' }}
+                semantic={{ label: 'Add Dialog' }}
                 maxWidth="sm"
                 fullWidth
                 sx={{ padding: 2 }}
