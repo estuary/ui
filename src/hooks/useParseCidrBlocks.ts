@@ -25,10 +25,7 @@ const useParseCidrBlocks = () => {
             };
         }
 
-        return {
-            ipv4: '35.226.75.135',
-            ipv6: 'does not support IPv6',
-        };
+        return { ipv4: null, ipv6: null };
     }, []);
 };
 

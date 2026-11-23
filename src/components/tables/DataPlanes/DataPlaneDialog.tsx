@@ -61,11 +61,7 @@ function DataPlaneDialog({ onClose, dataPlane }: DataPlaneDialogProps) {
                 <Stack spacing={2}>
                     <LabeledValueGroup title="Egress IP ranges">
                         <LabeledValue label="IPv4" value={ipv4} />
-                        <LabeledValue
-                            label="IPv6"
-                            value={ipv6}
-                            showCopyButton={dataPlane.cidrBlocks.length > 0}
-                        />
+                        <LabeledValue label="IPv6" value={ipv6} />
                     </LabeledValueGroup>
                     <LabeledValueGroup title="Data plane identity">
                         <LabeledValue
