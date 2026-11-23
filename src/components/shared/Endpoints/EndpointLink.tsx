@@ -26,7 +26,7 @@ export function EndpointLink({ endpoint, hostName }: EndpointLinkProps) {
                 ref={endpointRef}
                 href={linkText}
                 target="_blank"
-                rel="noopener"
+                rel="noopener noreferrer"
                 color="secondary"
                 underline="hover"
                 onClick={(event) => event.stopPropagation()}

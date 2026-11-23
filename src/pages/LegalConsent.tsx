@@ -153,7 +153,11 @@ function ConsentForm({
                     submitError ? { ...BASE_ERROR, message: submitError } : null
                 }
                 cta={
-                    <Button ref={reloadRef} onClick={reload}>
+                    <Button
+                        ref={reloadRef}
+                        disabled={submitting}
+                        onClick={reload}
+                    >
                         Reload terms
                     </Button>
                 }
