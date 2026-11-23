@@ -35,11 +35,7 @@ export function EndpointLink({ endpoint, hostName }: EndpointLinkProps) {
             </Link>
         );
     } else {
-        linky = (
-            <Typography>
-                {`${endpoint.protocol ?? ''} hostname: ${fullHostName}`}
-            </Typography>
-        );
+        linky = `${endpoint.protocol ?? ''} hostname: ${fullHostName}`;
     }
 
     return (
