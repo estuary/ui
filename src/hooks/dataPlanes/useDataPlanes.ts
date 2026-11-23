@@ -7,15 +7,6 @@ import { useQuery } from 'urql';
 import { DATA_PLANES_QUERY, toDataPlaneNode } from 'src/api/gql/dataPlanes';
 import { useAllPages } from 'src/api/gql/useAllPages';
 
-type DataPlanesArgs = {
-    /** Whether to filter data planes by public status. If not provided, no filtering will be applied. */
-    public?: boolean;
-    /** The cursor for pagination. If not provided, the first page will be fetched. */
-    cursor?: string;
-    /** The number of data planes to fetch per page. If not provided, the default is 10. */
-    limit?: number;
-};
-
 export function useDataPlanes() {
     const {
         data: dataPlanes,
@@ -30,28 +21,23 @@ export function useDataPlanes() {
     return { dataPlanes, loading, error };
 }
 
-/**
- * Queries dataPlanes for the specified tenant prefix.
- *
- * @param tenantPrefix The tenant prefix to filter data planes by. If not provided, no filtering will be applied.
- * @param args Optional args to futher filter or paginate the results.
- * @returns GQL response containing the list of matching data planes.
- */
-export function useDataPlanesQuery(
+/** Fetches one page of public data planes for the tenant prefix. */
+export function usePublicDataPlanesQuery(
     tenantPrefix: string,
-    { public: isPublic, cursor = '', limit = 10 }: DataPlanesArgs
+    pageSize: number,
+    cursor = ''
 ) {
     const filter: DataPlanesFilter = useMemo(
         () => ({
             tenant: { eq: tenantPrefix },
-            public: { eq: isPublic },
+            public: { eq: true },
         }),
-        [tenantPrefix, isPublic]
+        [tenantPrefix]
     );
 
     const [{ fetching, data, error }] = useQuery({
         query: DATA_PLANES_QUERY,
-        variables: { filter, after: cursor, first: limit },
+        variables: { filter, after: cursor, first: pageSize },
         pause: !tenantPrefix,
     });
 

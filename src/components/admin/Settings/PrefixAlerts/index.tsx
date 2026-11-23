@@ -1,4 +1,4 @@
-import StandAloneTableTitle from 'src/components/tables/EntityTable/StandAloneTableTitle';
+import { StandAloneTableTitle } from 'src/components/tables/EntityTable/StandAloneTableTitle';
 import PrefixAlertTable from 'src/components/tables/PrefixAlerts';
 import { AlertSubscriptionsProvider } from 'src/context/AlertSubscriptions';
 import { AlertTypeProvider } from 'src/context/AlertType';
@@ -11,7 +11,7 @@ function PrefixAlerts() {
             <AlertSubscriptionsProvider>
                 <StandAloneTableTitle
                     docsUrl={docsUrl}
-                    titleIntlKey="alerts.config.header"
+                    title="Organization Notifications"
                 />
                 <PrefixAlertTable />
             </AlertSubscriptionsProvider>
