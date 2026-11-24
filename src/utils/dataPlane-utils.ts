@@ -252,8 +252,12 @@ const splitDataPlaneSuffix = (suffix: string, firstHyphenIndex: number) => {
 };
 
 export function toPresentableName(dp: DataPlaneNode): string {
-    const dataPlaneName = parseDataPlaneName(dp.name, dp.scope);
-    return formatDataPlaneName(dataPlaneName);
+    return `${dp.cloudProvider}: ${dp.region} ${dp.tag}`;
+}
+/** @deprecated Remove when the GraphQL API returns the public scope or private tenant name. */
+export function getScope(dp: DataPlaneNode) {
+    if (dp.name.startsWith('ops/dp/public/')) return 'public';
+    return dp.name.split('/private/')[1]?.split('/')[0] || 'private';
 }
 
 /** @deprecated details are now returned by dataplane gql query */
