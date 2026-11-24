@@ -83,7 +83,7 @@
         "data-plane-gateway": "file:__inline-deps__/data-plane-gateway-0.0.0-20261121-053554.tgz",
         "date-fns": "^4.1.0",
         "dayjs": "^1.11.19",
-        "echarts": "^5.4.3",
+        "echarts": "^6.1.0",
         "filter-obj": "^5.1.0",
         "graphql": "^16.11.0",
         "highlight-words-core": "^1.2.3",
