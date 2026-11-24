@@ -5,7 +5,8 @@ RUN apk upgrade --no-cache
 
 COPY ./nginx.conf /etc/nginx/nginx.conf
 COPY ./ /usr/share/nginx/html/
-# Delete the nginx.conf file so that we don't serve our config via nginx
-# This is because I don't know an easier way to COPY all files _except_ that one.
-RUN rm /usr/share/nginx/html/nginx.conf
+# Delete the build files so nginx doesn't serve our config or this Dockerfile.
+# Cloud Run builds from ./build/, so both files have to be in the build context;
+# COPY can't skip individual files, so we remove them after copying.
+RUN rm /usr/share/nginx/html/nginx.conf /usr/share/nginx/html/Dockerfile
 
