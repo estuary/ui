@@ -5,15 +5,15 @@ import { CombinedError } from 'urql';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
 import { SecretDropboxForm } from 'src/components/secrets/SecretDropboxForm';
-import { useCanEditSecret } from 'src/hooks/secrets/useCanEditSecret';
 import { useGetSecret } from 'src/hooks/secrets/useGetSecret';
 import { useSetSecret } from 'src/hooks/secrets/useSetSecret';
+import { useCapabilities } from 'src/hooks/useCapabilities';
 import enUSMessages from 'src/lang/en-US';
 
 import '@testing-library/jest-dom/vitest';
 
-vi.mock(import('src/hooks/secrets/useCanEditSecret'), () => ({
-    useCanEditSecret: vi.fn(),
+vi.mock(import('src/hooks/useCapabilities'), () => ({
+    useCapabilities: vi.fn(),
 }));
 vi.mock(import('src/hooks/secrets/useGetSecret'), () => ({
     useGetSecret: vi.fn(),
@@ -44,8 +44,8 @@ function mockHooks({
     secretFetching?: boolean;
     secretError?: CombinedError;
 } = {}) {
-    vi.mocked(useCanEditSecret).mockReturnValue({
-        canEdit,
+    vi.mocked(useCapabilities).mockReturnValue({
+        capabilities: canEdit ? ['EditSecret'] : ['Viewer'],
         fetching: permissionFetching,
         error: permissionError,
     });
@@ -139,6 +139,10 @@ describe('SecretDropboxForm', () => {
                 /You don't have permission to set secrets under acmeCo\/team\//
             )
         ).toBeInTheDocument();
+        // The check reads from the network, so a cached answer is never used.
+        expect(useCapabilities).toHaveBeenCalledWith(NAME, {
+            requestPolicy: 'network-only',
+        });
         expect(querySaveButton()).not.toBeInTheDocument();
     });
 
