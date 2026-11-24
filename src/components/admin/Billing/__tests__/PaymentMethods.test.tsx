@@ -10,6 +10,7 @@ import {
 } from '@testing-library/react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { IntlProvider } from 'react-intl';
+import { SemanticConfig } from 'react-semantic-tree';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
 import PaymentMethods from 'src/components/admin/Billing/PaymentMethods';
@@ -98,9 +99,11 @@ const view = (showAddPayment = false) => (
     />
 );
 const wrapper = ({ children }: { children: ReactNode }) => (
-    <IntlProvider locale="en">
-        <UrqlConfigProvider>{children}</UrqlConfigProvider>
-    </IntlProvider>
+    <SemanticConfig adapter={() => {}}>
+        <IntlProvider locale="en">
+            <UrqlConfigProvider>{children}</UrqlConfigProvider>
+        </IntlProvider>
+    </SemanticConfig>
 );
 
 beforeEach(() => {

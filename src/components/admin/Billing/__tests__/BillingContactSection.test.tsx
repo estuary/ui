@@ -9,6 +9,7 @@ import {
 } from '@testing-library/react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { IntlProvider } from 'react-intl';
+import { SemanticConfig } from 'react-semantic-tree';
 import { beforeEach, expect, test, vi } from 'vitest';
 
 import { BillingContactSection } from 'src/components/admin/Billing/BillingContactSection';
@@ -56,9 +57,11 @@ let contact = completeContact;
 let contactReads = 0;
 
 const wrapper = ({ children }: { children: ReactNode }) => (
-    <IntlProvider locale="en">
-        <UrqlConfigProvider>{children}</UrqlConfigProvider>
-    </IntlProvider>
+    <SemanticConfig adapter={() => {}}>
+        <IntlProvider locale="en">
+            <UrqlConfigProvider>{children}</UrqlConfigProvider>
+        </IntlProvider>
+    </SemanticConfig>
 );
 
 const openEditDialog = async () => {
