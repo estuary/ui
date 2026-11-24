@@ -3,6 +3,8 @@ import type { InvoiceId } from 'src/utils/billing-utils';
 
 import { TableCell, TableRow, Typography } from '@mui/material';
 
+import { useLeaf } from 'react-semantic-tree';
+
 import DataVolume from 'src/components/tables/cells/billing/DataVolume';
 import TimeStamp from 'src/components/tables/cells/billing/TimeStamp';
 import MonetaryValue from 'src/components/tables/cells/MonetaryValue';
@@ -21,10 +23,16 @@ interface RowsProps {
 }
 
 function Row({ row, isSelected, onSelectInvoice }: RowProps) {
+    const { ref } = useLeaf('Select Invoice', {
+        dateStart: row.dateStart,
+        dateEnd: row.dateEnd,
+    });
+
     const taskUsage = row.extra?.task_usage_hours ?? 0;
 
     return (
         <TableRow
+            ref={ref}
             hover
             selected={isSelected}
             onClick={() => onSelectInvoice(invoiceId(row))}

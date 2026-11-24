@@ -10,6 +10,7 @@ import {
     waitFor,
 } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
+import { SemanticConfig } from 'react-semantic-tree';
 import { beforeEach, expect, test, vi } from 'vitest';
 
 import AdminBilling from 'src/components/admin/Billing';
@@ -83,11 +84,13 @@ const invoicesData = (
 });
 
 const wrapper = ({ children }: { children: ReactNode }) => (
-    <MemoryRouter>
-        <ContentProvider>
-            <UrqlConfigProvider>{children}</UrqlConfigProvider>
-        </ContentProvider>
-    </MemoryRouter>
+    <SemanticConfig adapter={() => {}}>
+        <MemoryRouter>
+            <ContentProvider>
+                <UrqlConfigProvider>{children}</UrqlConfigProvider>
+            </ContentProvider>
+        </MemoryRouter>
+    </SemanticConfig>
 );
 
 const link = (name: string) =>

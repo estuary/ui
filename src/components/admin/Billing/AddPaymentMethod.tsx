@@ -1,10 +1,11 @@
 import { useState } from 'react';
 
-import { Box, Button, Dialog, DialogTitle } from '@mui/material';
+import { Box, Button, DialogTitle } from '@mui/material';
 
 import { usePostHog } from '@posthog/react';
 import { Elements } from '@stripe/react-stripe-js';
 import { Plus } from 'iconoir-react';
+import { useLeaf } from 'react-semantic-tree';
 
 import { BillingContactDialog } from 'src/components/admin/Billing/BillingContactDialog';
 import { PaymentForm } from 'src/components/admin/Billing/CapturePaymentMethod';
@@ -12,6 +13,7 @@ import {
     getStripe,
     useStripeAppearance,
 } from 'src/components/admin/Billing/stripe';
+import { SemanticDialog as Dialog } from 'src/components/shared/Semantic/Dialog';
 import { useBillingContact } from 'src/hooks/billing/useBillingContact';
 import { fireGtmEvent } from 'src/services/gtm';
 import { getContactStatus } from 'src/utils/billing-contact-utils';
@@ -32,6 +34,8 @@ function AddPaymentMethod({
     setupIntentSecret,
     tenant,
 }: Props) {
+    const { ref: semanticAddPaymentMethodRef } = useLeaf('Add Payment Method');
+
     const [show, setOpen] = useState(autoOpen);
     const postHog = usePostHog();
     const appearance = useStripeAppearance();
@@ -48,6 +52,7 @@ function AddPaymentMethod({
         <>
             <Box>
                 <Button
+                    ref={semanticAddPaymentMethodRef}
                     loadingPosition="start"
                     disabled={!setupIntentSecret}
                     loading={loading}
@@ -71,6 +76,7 @@ function AddPaymentMethod({
             />
 
             <Dialog
+                semantic={{ label: 'Add Dialog' }}
                 maxWidth="sm"
                 fullWidth
                 sx={{ padding: 2 }}

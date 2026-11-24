@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import { Box, List, Stack, useTheme } from '@mui/material';
 
@@ -11,6 +11,7 @@ import {
     HomeSimple,
     Settings,
 } from 'iconoir-react';
+import { Branch, useLeaf } from 'react-semantic-tree';
 
 import { authenticatedRoutes } from 'src/app/routes';
 import { Pill as AgentSkillsPill } from 'src/components/AgentSkills/Pill';
@@ -36,126 +37,133 @@ export const Navigation = () => {
 
     const open = useNavigationStore((state) => state.open);
     const toggleOpen = useNavigationStore((state) => state.toggleOpen);
+    const { ref: helpRef } = useLeaf('Help');
+    const { ref: collapseRef } = useLeaf(open ? 'Collapse' : 'Expand');
+    const semanticMetadata = useMemo(() => ({ navExpanded: open }), [open]);
 
     return (
-        <Box
-            sx={{
-                height: '100%',
-                width: open ? NavWidths.FULL : NavWidths.RAIL,
-                flexShrink: 0,
-                overflowY: 'auto',
-                display: 'flex',
-                flexDirection: 'column',
-                background: theme.palette.background.default,
-                boxSizing: 'border-box',
-                transition: theme.transitions.create('width', {
-                    duration: theme.transitions.duration.shortest,
-                }),
-            }}
-        >
-            <Stack
+        <Branch label="Side Nav" metadata={semanticMetadata}>
+            <Box
                 sx={{
                     height: '100%',
-                    overflowX: 'hidden',
+                    width: open ? NavWidths.FULL : NavWidths.RAIL,
+                    flexShrink: 0,
+                    overflowY: 'auto',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    background: theme.palette.background.default,
+                    boxSizing: 'border-box',
+                    transition: theme.transitions.create('width', {
+                        duration: theme.transitions.duration.shortest,
+                    }),
                 }}
             >
-                <Box
+                <Stack
                     sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        // Left-anchor the brand in both states. The drawer
-                        // animates its width on collapse; centering would fling
-                        // the mark toward the middle of the still-wide rail and
-                        // snap it back as the width settles.
-                        justifyContent: 'flex-start',
-                        height: 48,
-                        px: 2.5,
+                        height: '100%',
+                        overflowX: 'hidden',
                     }}
                 >
-                    {open ? <CompanyLogo /> : <CompanyMark />}
-                </Box>
-
-                <List aria-label="Main navigation">
-                    <NavLink
-                        icon={<HomeSimple />}
-                        title={authenticatedRoutes.home.title}
-                        link={authenticatedRoutes.home.path}
-                        isOpen={open}
-                    />
-                    <NavLink
-                        icon={<CloudUpload />}
-                        title={authenticatedRoutes.captures.title}
-                        link={authenticatedRoutes.captures.path}
-                        isOpen={open}
-                    />
-                    <NavLink
-                        icon={<DatabaseScript />}
-                        title={authenticatedRoutes.collections.title}
-                        link={authenticatedRoutes.collections.path}
-                        isOpen={open}
-                    />
-                    <NavLink
-                        icon={<CloudDownload />}
-                        title={authenticatedRoutes.materializations.title}
-                        link={authenticatedRoutes.materializations.path}
-                        isOpen={open}
-                    />
-                    <NavLink
-                        icon={<Settings />}
-                        title={authenticatedRoutes.admin.title}
-                        link={authenticatedRoutes.admin.path}
-                        isOpen={open}
-                    />
-                </List>
-
-                <Box
-                    aria-label="Secondary navigation"
-                    sx={{ mt: 'auto', pb: 1 }}
-                >
-                    <UpdateAlert isOpen={open} />
-
-                    <Box sx={{ mx: 1, my: 0.25 }}>
-                        <AgentSkillsPill />
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            // Left-anchor the brand in both states. The drawer
+                            // animates its width on collapse; centering would fling
+                            // the mark toward the middle of the still-wide rail and
+                            // snap it back as the width settles.
+                            justifyContent: 'flex-start',
+                            height: 48,
+                            px: 2.5,
+                        }}
+                    >
+                        {open ? <CompanyLogo /> : <CompanyMark />}
                     </Box>
 
-                    <NavButton
-                        icon={<HelpCircle />}
-                        title="Help"
-                        onClick={(e) => setHelpAnchor(e.currentTarget)}
-                        isOpen={open}
-                    />
-                    <HelpMenu
-                        anchorEl={helpAnchor}
-                        onClose={() => setHelpAnchor(null)}
-                    />
+                    <List aria-label="Main navigation">
+                        <NavLink
+                            icon={<HomeSimple />}
+                            title={authenticatedRoutes.home.title}
+                            link={authenticatedRoutes.home.path}
+                            isOpen={open}
+                        />
+                        <NavLink
+                            icon={<CloudUpload />}
+                            title={authenticatedRoutes.captures.title}
+                            link={authenticatedRoutes.captures.path}
+                            isOpen={open}
+                        />
+                        <NavLink
+                            icon={<DatabaseScript />}
+                            title={authenticatedRoutes.collections.title}
+                            link={authenticatedRoutes.collections.path}
+                            isOpen={open}
+                        />
+                        <NavLink
+                            icon={<CloudDownload />}
+                            title={authenticatedRoutes.materializations.title}
+                            link={authenticatedRoutes.materializations.path}
+                            isOpen={open}
+                        />
+                        <NavLink
+                            icon={<Settings />}
+                            title={authenticatedRoutes.admin.title}
+                            link={authenticatedRoutes.admin.path}
+                            isOpen={open}
+                        />
+                    </List>
 
-                    <NavButton
-                        icon={
-                            <FastArrowLeft
-                                style={{
-                                    transform: open
-                                        ? 'scaleX(1)'
-                                        : 'scaleX(-1)',
-                                    transition: 'all 50ms ease-in-out',
-                                }}
-                            />
-                        }
-                        title="Collapse"
-                        tooltip="Expand"
-                        onClick={toggleOpen}
-                        isOpen={open}
-                    />
+                    <Box
+                        aria-label="Secondary navigation"
+                        sx={{ mt: 'auto', pb: 1 }}
+                    >
+                        <UpdateAlert isOpen={open} />
 
-                    <UserButton
-                        onClick={(e) => setMenuAnchor(e.currentTarget)}
-                        isOpen={open}
-                    />
-                    <UserMenu
-                        anchorEl={menuAnchor}
-                        onClose={() => setMenuAnchor(null)}
-                    />
-                </Box>
-            </Stack>
-        </Box>
+                        <Box sx={{ mx: 1, my: 0.25 }}>
+                            <AgentSkillsPill />
+                        </Box>
+
+                        <NavButton
+                            ref={helpRef}
+                            icon={<HelpCircle />}
+                            title="Help"
+                            onClick={(e) => setHelpAnchor(e.currentTarget)}
+                            isOpen={open}
+                        />
+                        <HelpMenu
+                            anchorEl={helpAnchor}
+                            onClose={() => setHelpAnchor(null)}
+                        />
+
+                        <NavButton
+                            ref={collapseRef}
+                            icon={
+                                <FastArrowLeft
+                                    style={{
+                                        transform: open
+                                            ? 'scaleX(1)'
+                                            : 'scaleX(-1)',
+                                        transition: 'all 50ms ease-in-out',
+                                    }}
+                                />
+                            }
+                            title="Collapse"
+                            tooltip="Expand"
+                            onClick={toggleOpen}
+                            isOpen={open}
+                        />
+
+                        <UserButton
+                            onClick={(e) => setMenuAnchor(e.currentTarget)}
+                            isOpen={open}
+                        />
+                        <UserMenu
+                            anchorEl={menuAnchor}
+                            onClose={() => setMenuAnchor(null)}
+                        />
+                    </Box>
+                </Stack>
+            </Box>
+        </Branch>
     );
 };

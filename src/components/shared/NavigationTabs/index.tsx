@@ -20,7 +20,10 @@ function NavigationTabs({
     const tabsRendered = useMemo(
         () =>
             tabs.map(
-                ({ labelMessageId, path, wrapperProps, Wrapper }, index) => {
+                (
+                    { labelMessageId, path, wrapperProps, Wrapper, ref },
+                    index
+                ) => {
                     const to = getPath ? getPath(path) : path;
                     const WrapperElement = Wrapper ?? Fragment;
 
@@ -30,6 +33,7 @@ function NavigationTabs({
 
                     return (
                         <Tab
+                            ref={ref}
                             key={`${keyPrefix}-${labelMessageId}-${index}`}
                             label={
                                 <WrapperElement {...(wrapperProps ?? {})}>

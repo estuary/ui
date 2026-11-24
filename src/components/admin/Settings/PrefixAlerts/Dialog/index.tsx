@@ -3,7 +3,6 @@ import type { AlertSubscriptionDialogProps } from 'src/components/admin/Settings
 import {
     Box,
     Button,
-    Dialog,
     DialogActions,
     DialogContent,
     Stack,
@@ -21,6 +20,7 @@ import SubscriberSection from 'src/components/admin/Settings/PrefixAlerts/Dialog
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
 import MessageWithLink from 'src/components/content/MessageWithLink';
 import DialogTitleWithClose from 'src/components/shared/Dialog/TitleWithClose';
+import { SemanticDialog as Dialog } from 'src/components/shared/Semantic/Dialog';
 
 const TITLE_ID = 'alert-subscription-dialog-title';
 
@@ -51,7 +51,16 @@ const AlertSubscriptionDialog = ({
     });
 
     return (
-        <Dialog open={open} maxWidth="md" fullWidth aria-labelledby={TITLE_ID}>
+        <Dialog
+            semantic={{
+                // Only the edit flow can delete a subscription.
+                label: enableDeletion ? 'Edit Dialog' : 'Create Dialog',
+            }}
+            open={open}
+            maxWidth="md"
+            fullWidth
+            aria-labelledby={TITLE_ID}
+        >
             <DialogTitleWithClose id={TITLE_ID} onClose={closeDialog}>
                 {intl.formatMessage({ id: headerId })}
             </DialogTitleWithClose>

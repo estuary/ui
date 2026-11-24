@@ -1,10 +1,14 @@
 import { Box, Stack, Typography } from '@mui/material';
 
+import { useLeaf, withBranch } from 'react-semantic-tree';
+
 import SingleLineCode from 'src/components/content/SingleLineCode';
 import ExternalLink from 'src/components/shared/ExternalLink';
 import { useUserStore } from 'src/context/User/useUserContextStore';
 
-function AccessToken() {
+function _AccessToken() {
+    const { ref: tokenRef } = useLeaf('Copy Access Token');
+
     const session = useUserStore((state) => state.session);
 
     return (
@@ -19,9 +23,10 @@ function AccessToken() {
                     Access Token
                 </Typography>
 
-                <ExternalLink link="https://docs.estuary.dev/reference/authentication/#authenticating-flow-using-the-cli">
-                    Docs
-                </ExternalLink>
+                <ExternalLink
+                    link="https://docs.estuary.dev/reference/authentication/#authenticating-flow-using-the-cli"
+                    label="Docs"
+                />
             </Stack>
 
             <Typography sx={{ mb: 3 }}>
@@ -29,9 +34,12 @@ function AccessToken() {
             </Typography>
 
             {/* TODO (defect): Display an error in the event the access token does not exist. */}
-            <SingleLineCode value={session?.access_token ?? ''} />
+            <SingleLineCode
+                ref={tokenRef}
+                value={session?.access_token ?? ''}
+            />
         </Box>
     );
 }
 
-export default AccessToken;
+export default withBranch('Access Token')(_AccessToken);

@@ -42,9 +42,10 @@ function ShardInformation({ taskName, taskTypes }: Props) {
             message={
                 <Stack direction="row" spacing={1}>
                     Shard Information
-                    <ExternalLink link="https://docs.estuary.dev/concepts/advanced/shards/">
-                        Docs
-                    </ExternalLink>
+                    <ExternalLink
+                        link="https://docs.estuary.dev/concepts/advanced/shards/"
+                        label="Docs"
+                    />
                 </Stack>
             }
         >

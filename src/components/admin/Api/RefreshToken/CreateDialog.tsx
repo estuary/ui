@@ -4,7 +4,6 @@ import { useState } from 'react';
 
 import {
     Button,
-    Dialog,
     DialogContent,
     DialogTitle,
     IconButton,
@@ -15,11 +14,13 @@ import {
 } from '@mui/material';
 
 import { Xmark } from 'iconoir-react';
+import { useLeaf } from 'react-semantic-tree';
 
 import { useCreateRefreshToken } from 'src/api/gql/refreshTokens';
 import SingleLineCode from 'src/components/content/SingleLineCode';
 import AlertBox from 'src/components/shared/AlertBox';
 import Error from 'src/components/shared/Error';
+import { SemanticDialog as Dialog } from 'src/components/shared/Semantic/Dialog';
 import { hasLength } from 'src/utils/misc-utils';
 
 const TOKEN_VALIDITY = 'P1Y';
@@ -39,7 +40,11 @@ interface Props {
 }
 
 export function CreateRefreshTokenDialog({ open, onClose, onCreated }: Props) {
+    const { ref: closeRef } = useLeaf('Close');
+    const { ref: copyRef } = useLeaf('Copy Token');
+
     const theme = useTheme();
+    const { ref: createRef } = useLeaf('Create Token');
 
     const [label, setLabel] = useState('');
     const [token, setToken] = useState('');
@@ -92,6 +97,7 @@ export function CreateRefreshTokenDialog({ open, onClose, onCreated }: Props) {
 
     return (
         <Dialog
+            semantic={{ label: 'Create Dialog' }}
             open={open}
             onClose={token || generating ? undefined : onClose}
             maxWidth="sm"
@@ -113,7 +119,11 @@ export function CreateRefreshTokenDialog({ open, onClose, onCreated }: Props) {
             >
                 <Typography variant="h6">Create Refresh Token</Typography>
 
-                <IconButton disabled={generating} onClick={onClose}>
+                <IconButton
+                    ref={closeRef}
+                    disabled={generating}
+                    onClick={onClose}
+                >
                     <Xmark
                         aria-label="Close"
                         style={{
@@ -137,7 +147,7 @@ export function CreateRefreshTokenDialog({ open, onClose, onCreated }: Props) {
                                 able to see it again!
                             </Typography>
 
-                            <SingleLineCode value={token} />
+                            <SingleLineCode ref={copyRef} value={token} />
                         </AlertBox>
                     ) : (
                         <Stack
@@ -166,6 +176,7 @@ export function CreateRefreshTokenDialog({ open, onClose, onCreated }: Props) {
                             />
 
                             <Button
+                                ref={createRef}
                                 disabled={!hasLength(label) || generating}
                                 loading={generating}
                                 type="submit"

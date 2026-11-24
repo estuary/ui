@@ -12,6 +12,7 @@ import {
 } from '@mui/material';
 
 import { CreditCard, Download } from 'iconoir-react';
+import { useLeaf, withBranch } from 'react-semantic-tree';
 
 import { INVOICE_ROW_HEIGHT } from 'src/components/admin/Billing/shared';
 import Rows from 'src/components/tables/BillLineItems/Rows';
@@ -49,6 +50,11 @@ interface BillingLineItemsTableProps {
 function BillingLineItemsTable({
     selectedInvoice,
 }: BillingLineItemsTableProps) {
+    const { ref: semanticDownloadInvoiceRef } = useLeaf('Download Invoice');
+    const { ref: semanticOpenInvoicePaymentRef } = useLeaf(
+        'Open Invoice Payment'
+    );
+
     const dataRows = useMemo(
         () => <Rows lineItems={selectedInvoice?.lineItems ?? []} />,
         [selectedInvoice]
@@ -102,6 +108,7 @@ function BillingLineItemsTable({
                 {selectedInvoice?.invoiceType !== 'PREVIEW' ? (
                     <Box>
                         <Button
+                            ref={semanticDownloadInvoiceRef}
                             href={selectedInvoice?.invoicePdf ?? undefined}
                             disabled={!selectedInvoice?.invoicePdf}
                             startIcon={<Download />}
@@ -111,6 +118,7 @@ function BillingLineItemsTable({
                             {'Download invoice PDF'}
                         </Button>
                         <Button
+                            ref={semanticOpenInvoicePaymentRef}
                             href={
                                 open
                                     ? (selectedInvoice.hostedInvoiceUrl ??
@@ -138,4 +146,4 @@ function BillingLineItemsTable({
     );
 }
 
-export default BillingLineItemsTable;
+export default withBranch('Invoice Details')(BillingLineItemsTable);

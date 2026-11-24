@@ -5,7 +5,6 @@ import { useState } from 'react';
 
 import {
     Box,
-    Dialog,
     DialogContent,
     DialogTitle,
     IconButton,
@@ -14,9 +13,11 @@ import {
 } from '@mui/material';
 
 import { Xmark } from 'iconoir-react';
+import { useLeaf } from 'react-semantic-tree';
 
 import AlertBox from 'src/components/shared/AlertBox';
 import Error from 'src/components/shared/Error';
+import { SemanticDialog as Dialog } from 'src/components/shared/Semantic/Dialog';
 import GenerateGrant from 'src/components/tables/AccessGrants/DataSharing/Dialog/GenerateGrant';
 
 const TITLE_ID = 'share-data-dialog-title';
@@ -27,6 +28,7 @@ interface Props {
 }
 
 function ShareDataDialog({ open, setOpen }: Props) {
+    const { ref: closeRef } = useLeaf('Close');
     const theme = useTheme();
 
     const [serverError, setServerError] = useState<PostgrestError | null>(null);
@@ -40,6 +42,7 @@ function ShareDataDialog({ open, setOpen }: Props) {
 
     return (
         <Dialog
+            semantic={{ label: 'Grant Access Dialog' }}
             open={open}
             maxWidth="md"
             fullWidth
@@ -56,7 +59,7 @@ function ShareDataDialog({ open, setOpen }: Props) {
             >
                 <Typography variant="h6">Share Data</Typography>
 
-                <IconButton onClick={closeDialog}>
+                <IconButton ref={closeRef} onClick={closeDialog}>
                     <Xmark
                         style={{
                             fontSize: '1rem',

@@ -1,6 +1,6 @@
 import type { Connection } from 'src/components/admin/Settings/StorageMappings/Dialog/ConnectionTest/ConnectionTestContext';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 
 import {
     Accordion,
@@ -19,6 +19,7 @@ import {
     Refresh,
     WarningTriangle,
 } from 'iconoir-react';
+import { Branch, useLeaf } from 'react-semantic-tree';
 
 import { ConnectionInstructions } from 'src/components/admin/Settings/StorageMappings/Dialog/ConnectionTest/ConnectionInstructions';
 import {
@@ -82,6 +83,12 @@ export function ConnectionAccordion({
     onToggle,
     disabled = false,
 }: ConnectionAccordionProps) {
+    const { ref: semanticToggleRef } = useLeaf(
+        expanded ? 'Collapse' : 'Expand'
+    );
+    const { ref: testRef } = useLeaf('Test Connections');
+    const { ref: errorRef } = useLeaf('Error', {}, { click: false });
+
     const { connections, testConnections, isTesting } = useConnectionTest();
 
     const prevStatusRef = useRef(connection.status);
@@ -101,125 +108,139 @@ export function ConnectionAccordion({
         prevStatusRef.current = connection.status;
     }, [expanded, connection.status, connection.errorMessage]);
 
+    const dataPlaneName = toPresentableName(connection.dataPlane);
+    const storeProvider = connection.store.provider;
+    const semanticMetadata = useMemo(
+        () => ({ dataPlane: dataPlaneName, storeProvider }),
+        [dataPlaneName, storeProvider]
+    );
+
     return (
-        <Accordion
-            expanded={disabled ? false : expanded}
-            onChange={(_event, isExpanded) => {
-                if (!disabled) onToggle(isExpanded);
-            }}
-            disabled={disabled}
-            disableGutters
-            sx={{
-                'border': 1,
-                '&:first-of-type': { borderRadius: 2 },
-                '&:last-of-type': { borderRadius: 2 },
-                'borderColor': disabled
-                    ? 'divider'
-                    : connection.status === 'success'
-                      ? 'success.main'
-                      : connection.status === 'error'
-                        ? 'warning.main'
-                        : 'divider',
-                'opacity': disabled ? 0.6 : 1,
-                '&.Mui-disabled': {
-                    bgcolor: 'background.paper',
-                },
-            }}
-        >
-            <AccordionSummary
-                expandIcon={<NavArrowDown />}
+        <Branch label="Connection Instructions" metadata={semanticMetadata}>
+            <Accordion
+                expanded={disabled ? false : expanded}
+                onChange={(_event, isExpanded) => {
+                    if (!disabled) onToggle(isExpanded);
+                }}
+                disabled={disabled}
+                disableGutters
                 sx={{
-                    'minHeight': 'unset',
-                    'px': 1,
-                    'py': 0.75,
-                    '&.Mui-expanded': { minHeight: 'unset' },
-                    '& .MuiAccordionSummary-content': {
-                        'gap': 2,
-                        'my': 0,
-                        '&.Mui-expanded': { my: 0 },
+                    'border': 1,
+                    '&:first-of-type': { borderRadius: 2 },
+                    '&:last-of-type': { borderRadius: 2 },
+                    'borderColor': disabled
+                        ? 'divider'
+                        : connection.status === 'success'
+                          ? 'success.main'
+                          : connection.status === 'error'
+                            ? 'warning.main'
+                            : 'divider',
+                    'opacity': disabled ? 0.6 : 1,
+                    '&.Mui-disabled': {
+                        bgcolor: 'background.paper',
                     },
                 }}
             >
-                <Stack
-                    component="span"
-                    direction="row"
-                    alignItems="center"
-                    justifyContent="space-between"
+                <AccordionSummary
+                    ref={semanticToggleRef}
+                    expandIcon={<NavArrowDown />}
                     sx={{
-                        width: '100%',
-                        pr: 1,
-                        m: 0,
-                        overflow: 'hidden',
+                        'minHeight': 'unset',
+                        'px': 1,
+                        'py': 0.75,
+                        '&.Mui-expanded': { minHeight: 'unset' },
+                        '& .MuiAccordionSummary-content': {
+                            'gap': 2,
+                            'my': 0,
+                            '&.Mui-expanded': { my: 0 },
+                        },
                     }}
                 >
-                    <Typography
-                        component="span"
-                        fontWeight={600}
-                        noWrap
-                        sx={{ minWidth: 0 }}
-                    >
-                        {toPresentableName(connection.dataPlane)} &rarr;{' '}
-                        {getStoreId(connection.store)}
-                    </Typography>
-                    <ConnectionStatusBadge result={connection} />
-                </Stack>
-            </AccordionSummary>
-            <AccordionDetails sx={{ pt: 0.5 }}>
-                <Stack spacing={1}>
                     <Stack
+                        component="span"
                         direction="row"
-                        gap={1}
+                        alignItems="center"
                         justifyContent="space-between"
-                        alignItems="flex-start"
+                        sx={{
+                            width: '100%',
+                            pr: 1,
+                            m: 0,
+                            overflow: 'hidden',
+                        }}
                     >
-                        <Box sx={{ flex: 1, minWidth: 0 }}>
-                            {connection.errorMessage ? (
-                                <Typography
-                                    variant="body2"
-                                    sx={{
-                                        color: 'warning.main',
-                                        overflowWrap: 'anywhere',
-                                    }}
-                                >
-                                    {connection.errorMessage}
-                                </Typography>
-                            ) : null}
-                        </Box>
-                        <Button
-                            variant="text"
-                            size="small"
-                            disabled={isTesting}
-                            sx={{ flexShrink: 0 }}
-                            onClick={() => {
-                                // there's a risk of breaking other connections when updating the bucket policy for AWS,
-                                // so we want to test all connections using the same bucket at once.
-                                // For other providers, we can just test the single connection.
-                                if (connection.store.provider === 'AWS') {
-                                    const storeId = getStoreId(
-                                        connection.store
-                                    );
-                                    const sameBucket = connections.filter(
-                                        (c) =>
-                                            !c.orphaned &&
-                                            getStoreId(c.store) === storeId
-                                    );
-                                    for (const c of sameBucket) {
-                                        testConnections([c]).catch(() => {});
-                                    }
-                                } else {
-                                    testConnections([connection]).catch(
-                                        () => {}
-                                    );
-                                }
-                            }}
-                            startIcon={<Refresh width={16} height={16} />}
+                        <Typography
+                            component="span"
+                            fontWeight={600}
+                            noWrap
+                            sx={{ minWidth: 0 }}
                         >
-                            Retry
-                        </Button>
+                            {toPresentableName(connection.dataPlane)} &rarr;{' '}
+                            {getStoreId(connection.store)}
+                        </Typography>
+                        <ConnectionStatusBadge result={connection} />
                     </Stack>
-                    <ConnectionInstructions connection={connection} />
-                </Stack>
-            </AccordionDetails>
-        </Accordion>
+                </AccordionSummary>
+                <AccordionDetails sx={{ pt: 0.5 }}>
+                    <Stack spacing={1}>
+                        <Stack
+                            direction="row"
+                            gap={1}
+                            justifyContent="space-between"
+                            alignItems="flex-start"
+                        >
+                            <Box sx={{ flex: 1, minWidth: 0 }}>
+                                {connection.errorMessage ? (
+                                    <Typography
+                                        ref={errorRef}
+                                        variant="body2"
+                                        sx={{
+                                            color: 'warning.main',
+                                            overflowWrap: 'anywhere',
+                                        }}
+                                    >
+                                        {connection.errorMessage}
+                                    </Typography>
+                                ) : null}
+                            </Box>
+                            <Button
+                                ref={testRef}
+                                variant="text"
+                                size="small"
+                                disabled={isTesting}
+                                sx={{ flexShrink: 0 }}
+                                onClick={() => {
+                                    // there's a risk of breaking other connections when updating the bucket policy for AWS,
+                                    // so we want to test all connections using the same bucket at once.
+                                    // For other providers, we can just test the single connection.
+                                    if (connection.store.provider === 'AWS') {
+                                        const storeId = getStoreId(
+                                            connection.store
+                                        );
+                                        const sameBucket = connections.filter(
+                                            (c) =>
+                                                !c.orphaned &&
+                                                getStoreId(c.store) === storeId
+                                        );
+                                        for (const c of sameBucket) {
+                                            testConnections([c]).catch(
+                                                () => {}
+                                            );
+                                        }
+                                    } else {
+                                        testConnections([connection]).catch(
+                                            () => {}
+                                        );
+                                    }
+                                }}
+                                startIcon={<Refresh width={16} height={16} />}
+                            >
+                                Retry
+                            </Button>
+                        </Stack>
+                        <ConnectionInstructions connection={connection} />
+                    </Stack>
+                </AccordionDetails>
+            </Accordion>
+        </Branch>
     );
 }

@@ -32,9 +32,7 @@ export function StandAloneTableTitle({
                 </Typography>
 
                 {docsUrl ? (
-                    <ExternalLink link={docsUrl} sx={{ ml: 0 }}>
-                        Docs
-                    </ExternalLink>
+                    <ExternalLink link={docsUrl} sx={{ ml: 0 }} label="Docs" />
                 ) : null}
             </Stack>
 

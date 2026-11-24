@@ -1,9 +1,13 @@
 import { Button } from '@mui/material';
 
+import { useLeaf } from 'react-semantic-tree';
+
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
 import { useEvaluateSubscriptionIneligibility } from 'src/components/admin/Settings/PrefixAlerts/useEvaluateSubscriptionIneligibility';
 
 const AddButton = () => {
+    const { ref: semanticAddSubscriberRef } = useLeaf('Add Subscriber');
+
     const addTemplatedSubscription = useAlertSubscriptionsStore(
         (state) => state.addTemplatedSubscription
     );
@@ -16,6 +20,7 @@ const AddButton = () => {
 
     return (
         <Button
+            ref={semanticAddSubscriberRef}
             disabled={
                 duplicatePrefixExists ||
                 emptyEmailDetected ||

@@ -4,6 +4,8 @@ import { useState } from 'react';
 
 import { Stack, TableCell, TableRow, useTheme } from '@mui/material';
 
+import { useLeaf } from 'react-semantic-tree';
+
 import DataPlaneIcon from 'src/components/shared/Entity/DataPlaneIcon';
 import DataPlaneDialog from 'src/components/tables/DataPlanes/DataPlaneDialog';
 import { getEntityTableRowSx } from 'src/context/Theme';
@@ -26,9 +28,13 @@ function Row({ row, rowSx, onRowClick }: RowProps) {
         row.cloudProvider,
         row.region
     );
+    const { ref } = useLeaf('Row', {
+        dataPlane: dataPlaneDisplayName,
+    });
 
     return (
         <TableRow
+            ref={ref}
             hover
             sx={{
                 ...rowSx,

@@ -1,6 +1,8 @@
 import type { SxProps, Theme } from '@mui/material';
 import type { MouseEvent, ReactElement } from 'react';
 
+import { forwardRef } from 'react';
+
 import {
     ListItemIcon,
     ListItemText,
@@ -10,6 +12,7 @@ import {
 
 import { useIntl } from 'react-intl';
 import { Link, useMatch, useResolvedPath } from 'react-router-dom';
+import { useLeaf } from 'react-semantic-tree';
 
 // Compact styling for the sidebar's buttons, links, and their contents.
 // Scoped here so other List usages across the app keep default styling.
@@ -45,7 +48,8 @@ interface LinkProps {
     isOpen?: boolean;
 }
 
-const NavLink = ({ icon, title, link, isOpen }: LinkProps) => {
+export const NavLink = ({ icon, title, link, isOpen }: LinkProps) => {
+    const { ref } = useLeaf(title);
     const resolved = useResolvedPath(link);
     const selected = Boolean(useMatch({ path: resolved.pathname, end: false }));
 
@@ -53,6 +57,7 @@ const NavLink = ({ icon, title, link, isOpen }: LinkProps) => {
         <li>
             <Tooltip title={!isOpen ? title : ''} placement="right">
                 <MuiListItemButton
+                    ref={ref}
                     component={Link}
                     to={link}
                     selected={selected}
@@ -78,28 +83,31 @@ interface ButtonProps {
     isOpen?: boolean;
 }
 
-export const NavButton = ({
-    icon,
-    title,
-    tooltip,
-    onClick,
-    isOpen,
-}: ButtonProps) => {
-    return (
-        <li>
-            <Tooltip title={!isOpen ? tooltip || title : ''} placement="right">
-                <MuiListItemButton onClick={onClick} sx={navButtonSx}>
-                    <ListItemIcon sx={navIconSx}>{icon}</ListItemIcon>
+export const NavButton = forwardRef<HTMLDivElement, ButtonProps>(
+    function NavButton({ icon, title, tooltip, onClick, isOpen }, ref) {
+        return (
+            <li>
+                <Tooltip
+                    title={!isOpen ? tooltip || title : ''}
+                    placement="right"
+                >
+                    <MuiListItemButton
+                        ref={ref}
+                        onClick={onClick}
+                        sx={navButtonSx}
+                    >
+                        <ListItemIcon sx={navIconSx}>{icon}</ListItemIcon>
 
-                    <ListItemText
-                        primary={title}
-                        slotProps={navTextSlotProps}
-                    />
-                </MuiListItemButton>
-            </Tooltip>
-        </li>
-    );
-};
+                        <ListItemText
+                            primary={title}
+                            slotProps={navTextSlotProps}
+                        />
+                    </MuiListItemButton>
+                </Tooltip>
+            </li>
+        );
+    }
+);
 
 /** @deprecated Prefer the named `NavLink` export with a pre-translated title */
 const NavLinkWrapper = ({ title, ...props }: LinkProps) => {

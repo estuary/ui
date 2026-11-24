@@ -57,7 +57,7 @@ function Spec() {
                             Specification
                         </Typography>
 
-                        <ExternalLink link={docsLink}>Docs</ExternalLink>
+                        <ExternalLink link={docsLink} label="Docs" />
                     </Stack>
 
                     {entityType === 'collection' ? (

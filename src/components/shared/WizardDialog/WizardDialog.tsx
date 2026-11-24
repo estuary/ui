@@ -5,9 +5,10 @@ import type {
 
 import { useCallback, useMemo, useState } from 'react';
 
-import { Collapse, Dialog } from '@mui/material';
+import { Collapse } from '@mui/material';
 
 import DialogTitleWithClose from 'src/components/shared/Dialog/TitleWithClose';
+import { SemanticDialog as Dialog } from 'src/components/shared/Semantic/Dialog';
 import { WizardContext } from 'src/components/shared/WizardDialog/context';
 import { WizardActions } from 'src/components/shared/WizardDialog/WizardActions';
 import { WizardContent } from 'src/components/shared/WizardDialog/WizardContent';

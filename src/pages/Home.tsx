@@ -1,4 +1,4 @@
-//TODO (UI / UX) - These icons are not final
+import { Branch } from 'react-semantic-tree';
 
 import { authenticatedRoutes } from 'src/app/routes';
 import Dashboard from 'src/components/home/dashboard';
@@ -10,13 +10,11 @@ const Home = () => {
     usePageTitle({ header: authenticatedRoutes.home.title });
 
     return (
-        <>
+        <Branch label="Home">
             <LoginError />
-
             <Welcome />
-
             <Dashboard />
-        </>
+        </Branch>
     );
 };
 

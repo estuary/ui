@@ -4,6 +4,8 @@ import { useCallback } from 'react';
 
 import { ToggleButtonGroup } from '@mui/material';
 
+import { useLeaf } from 'react-semantic-tree';
+
 import OutlinedToggleButton from 'src/components/shared/buttons/OutlinedToggleButton';
 
 type ToggleDataPlaneScopeProps = {
@@ -12,6 +14,9 @@ type ToggleDataPlaneScopeProps = {
 };
 
 function ToggleDataPlaneScope({ scope, onChange }: ToggleDataPlaneScopeProps) {
+    const { ref: semanticPublicDataPlanesRef } = useLeaf('Public');
+    const { ref: semanticPrivateDataPlanesRef } = useLeaf('Private');
+
     const handleChange = useCallback(
         (_event: any, newValue: DataPlaneScopes) => {
             if (newValue && newValue !== scope) {
@@ -30,6 +35,7 @@ function ToggleDataPlaneScope({ scope, onChange }: ToggleDataPlaneScopeProps) {
             onChange={handleChange}
         >
             <OutlinedToggleButton
+                ref={semanticPublicDataPlanesRef}
                 selected={scope === 'public'}
                 size="small"
                 value="public"
@@ -37,6 +43,7 @@ function ToggleDataPlaneScope({ scope, onChange }: ToggleDataPlaneScopeProps) {
                 Public
             </OutlinedToggleButton>
             <OutlinedToggleButton
+                ref={semanticPrivateDataPlanesRef}
                 selected={scope === 'private'}
                 size="small"
                 value="private"

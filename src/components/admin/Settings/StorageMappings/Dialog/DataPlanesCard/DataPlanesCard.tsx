@@ -5,6 +5,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Collapse, Stack } from '@mui/material';
 
 import { Flipped, Flipper } from 'react-flip-toolkit';
+import { Branch } from 'react-semantic-tree';
 
 import { DataPlaneRow } from 'src/components/admin/Settings/StorageMappings/Dialog/DataPlanesCard/DataPlaneRow';
 import { DataPlaneSelector } from 'src/components/admin/Settings/StorageMappings/Dialog/DataPlanesCard/DataPlaneSelector';
@@ -136,7 +137,7 @@ export function DataPlanesCard({
     }, [incomingNames]);
 
     return (
-        <>
+        <Branch label="Data Planes">
             <CardTitle
                 title="Data Planes"
                 action="Add data plane"
@@ -192,6 +193,6 @@ export function DataPlanesCard({
                     onToggleAllowPublic={onToggleAllowPublic}
                 />
             </Collapse>
-        </>
+        </Branch>
     );
 }

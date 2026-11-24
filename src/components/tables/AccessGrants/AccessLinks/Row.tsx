@@ -1,6 +1,8 @@
 import type { InviteErrorProps } from 'src/components/tables/AccessGrants/AccessLinks';
 import type { InviteLink } from 'src/gql-types/graphql';
 
+import { useMemo } from 'react';
+
 import { Button, TableCell, TableRow, Typography } from '@mui/material';
 
 import { Branch, useLeaf } from 'react-semantic-tree';
@@ -24,6 +26,14 @@ export function Row({
 
         setError(result.error ?? null);
     };
+    const metadata = useMemo(
+        () => ({
+            catalogPrefix: row.catalogPrefix,
+            capability: row.capability,
+            singleUse: row.singleUse,
+        }),
+        [row.catalogPrefix, row.capability, row.singleUse]
+    );
 
     return (
         <TableRow hover>
@@ -42,13 +52,7 @@ export function Row({
             </TableCell>
 
             <TableCell>
-                <Branch
-                    metadata={{
-                        catalogPrefix: row.catalogPrefix,
-                        capability: row.capability,
-                        singleUse: row.singleUse,
-                    }}
-                >
+                <Branch metadata={metadata}>
                     <CopyAccessLink
                         token={row.token}
                         ssoProviderId={row.ssoProviderId}
@@ -59,16 +63,18 @@ export function Row({
             <TimeStamp time={row.createdAt} />
 
             <TableCell sx={{ width: 50 }}>
-                <Button
-                    ref={ref}
-                    onClick={handleDelete}
-                    disabled={fetching}
-                    variant="text"
-                    size="small"
-                    aria-label="Remove"
-                >
-                    Remove
-                </Button>
+                <Branch metadata={metadata}>
+                    <Button
+                        ref={ref}
+                        onClick={handleDelete}
+                        disabled={fetching}
+                        variant="text"
+                        size="small"
+                        aria-label="Remove"
+                    >
+                        Remove
+                    </Button>
+                </Branch>
             </TableCell>
         </TableRow>
     );

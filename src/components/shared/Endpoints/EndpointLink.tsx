@@ -2,59 +2,47 @@ import type { EndpointLinkProps } from 'src/components/shared/Endpoints/types';
 
 import { useMemo } from 'react';
 
-import { Box, Tooltip, Typography } from '@mui/material';
+import { Box, Link, Typography } from '@mui/material';
 
-import { useIntl } from 'react-intl';
+import { useLeaf } from 'react-semantic-tree';
 
-import ExternalLink from 'src/components/shared/ExternalLink';
 import { formatHttpUrl, isHttp } from 'src/utils/dataPlane-utils';
 
 export function EndpointLink({ endpoint, hostName }: EndpointLinkProps) {
-    const intl = useIntl();
-
-    const visibility = endpoint.isPublic ? 'public' : 'private';
-    const tooltip = intl.formatMessage({
-        id: `taskEndpoint.visibility.${visibility}.tooltip`,
-    });
-    const labelMessage = `taskEndpoint.link.${visibility}.label`;
-
     const fullHostName = useMemo(
         () => `${endpoint.hostPrefix}.${hostName}`,
         [endpoint.hostPrefix, hostName]
     );
+    const publicOrPrivate = endpoint.isPublic
+        ? 'Public Endpoint'
+        : 'Private Endpoint';
+    const linkText = formatHttpUrl(fullHostName);
+    const { ref: endpointRef } = useLeaf(publicOrPrivate);
 
     let linky = null;
     if (isHttp(endpoint)) {
-        const linkText = formatHttpUrl(fullHostName);
-
         linky = (
-            <ExternalLink
-                link={linkText}
-                children={
-                    <Typography sx={{ textTransform: 'none' }}>
-                        {linkText}
-                    </Typography>
-                }
-            />
+            <Link
+                ref={endpointRef}
+                href={linkText}
+                target="_blank"
+                rel="noopener noreferrer"
+                color="secondary"
+                underline="hover"
+                onClick={(event) => event.stopPropagation()}
+            >
+                {linkText}
+            </Link>
         );
     } else {
-        linky = (
-            <Typography>
-                {`${endpoint.protocol ?? ''} hostname: ${fullHostName}`}
-            </Typography>
-        );
+        linky = `${endpoint.protocol ?? ''} hostname: ${fullHostName}`;
     }
 
     return (
         <Box sx={{ display: 'flex', justifyContent: 'left' }}>
-            <Tooltip title={tooltip}>
-                <Typography>
-                    {intl.formatMessage({
-                        id: labelMessage,
-                    })}
-                </Typography>
-            </Tooltip>
-            {linky}
+            <Typography>
+                {publicOrPrivate}: {linky}
+            </Typography>
         </Box>
     );
 }

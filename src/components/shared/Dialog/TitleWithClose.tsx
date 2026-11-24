@@ -4,6 +4,7 @@ import type { BaseComponentProps } from 'src/types';
 import { DialogTitle, IconButton } from '@mui/material';
 
 import { Xmark } from 'iconoir-react';
+import { useLeaf } from 'react-semantic-tree';
 
 interface DialogTitleProps extends BaseComponentProps {
     id: string;
@@ -18,10 +19,13 @@ function DialogTitleWithClose({
     disabled,
     ...other
 }: DialogTitleProps) {
+    const { ref: closeRef } = useLeaf('Close');
+
     return (
         <DialogTitle {...other}>
             {children}
             <IconButton
+                ref={closeRef}
                 aria-label="Close"
                 disabled={disabled}
                 onClick={onClose}

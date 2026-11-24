@@ -7,7 +7,7 @@ export interface WizardStep {
     /** Title for the dialog when on this step */
     title?: ReactNode;
     /** Custom label for the next/submit button */
-    nextLabel?: ReactNode;
+    nextLabel?: string;
     /** Function to check if the next/save button should be enabled for this step */
     canAdvance?: () => boolean;
     /** Callback when user attempts to proceed from this step. Return true to proceed, false to block. */
