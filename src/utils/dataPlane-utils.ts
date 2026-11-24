@@ -251,7 +251,9 @@ const splitDataPlaneSuffix = (suffix: string, firstHyphenIndex: number) => {
     return [provider, region, cluster];
 };
 
-export function toPresentableName(dp: DataPlaneNode): string {
+export function toPresentableName(
+    dp: Pick<DataPlaneNode, 'name' | 'scope'>
+): string {
     const dataPlaneName = parseDataPlaneName(dp.name, dp.scope);
     return formatDataPlaneName(dataPlaneName);
 }

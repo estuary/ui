@@ -1,5 +1,4 @@
 import { CommonMessages } from 'src/lang/en-US/CommonMessages';
-import { CTAs } from 'src/lang/en-US/CTAs';
 
 export const AdminPage: Record<string, string> = {
     'admin.roles.message': `These are all the ${CommonMessages['terms.permissions']} that are currently provisioned. An administrator can update them in the {docLink}.`,
@@ -26,15 +25,6 @@ export const AdminPage: Record<string, string> = {
     'admin.billing.table.line_items.emptyTableDefault.message': `We couldn't find any billing information on file.`,
 
     'admin.grants.confirmation.alert': `Access to all items will be removed and this action cannot be undone. Please review the list to continue.`,
-
-    'admin.dataPlanes.column.header.name': `Name`,
-    'admin.dataPlanes.column.header.region': `Region`,
-
-    // There are dynamically generated in src/components/tables/DataPlanes/index.tsx
-    'admin.dataPlanes.private.table.noContent.header': `No private data planes found`,
-    'admin.dataPlanes.private.table.noContent.message': `To configure a private data plane, please contact support.`,
-    'admin.dataPlanes.public.table.noContent.header': `No data planes found`,
-    'admin.dataPlanes.public.table.noContent.message': `There was an issue reaching our servers. Please try again. If the issue persists, ${CTAs['cta.support']}.`,
 
     'admin.tabs.users': `Account Access`,
     'admin.tabs.api': `CLI-API`,
