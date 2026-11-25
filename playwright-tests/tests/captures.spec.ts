@@ -154,8 +154,8 @@ test.describe.serial('Capture edit:', () => {
         const encryptions = recordRequests(page, isEncryptRequest);
         await clickNext(page);
 
-        // The changed config is encrypted before it's drafted
-        expect(encryptions).toHaveLength(1);
+        // Hello World has no secrets, so its config is drafted as is
+        expect(encryptions).toHaveLength(0);
 
         const drafted = await getDraftedCapture(name);
         expect(drafted?.draftId).not.toBe(createDraftId);
@@ -171,7 +171,6 @@ test.describe.serial('Capture edit:', () => {
         const encryptions = recordRequests(page, isEncryptRequest);
         await refresh(page);
 
-        // The config hasn't changed since it was encrypted, so it's reused
         expect(encryptions).toHaveLength(0);
 
         const drafted = await getDraftedCapture(name);
