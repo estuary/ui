@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 
 import { Stack, Typography } from '@mui/material';
 
-import { CARD_AREA_HEIGHT } from 'src/utils/billing-utils';
+import { CARD_AREA_HEIGHT } from 'src/components/graphs/states/shared';
 
 interface Props {
     message: string | ReactNode;

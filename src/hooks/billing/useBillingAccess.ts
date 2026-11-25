@@ -16,6 +16,9 @@ export function useBillingAccess(tenant: string) {
     return {
         canView: capabilities.includes('ViewBilling'),
         canEdit: capabilities.includes('EditBilling'),
+        // The spend alert lives in the tenant's alert config, which takes
+        // Admin rather than EditBilling to change.
+        canEditAlerts: capabilities.includes('Admin'),
         isLoading: fetching && !data,
         error,
     };

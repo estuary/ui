@@ -1,16 +1,15 @@
 import type { CatalogTaskStats } from 'src/api/catalogStats';
 import type { DataByHourRange } from 'src/components/graphs/types';
-import type {
-    CatalogStatsBy,
-    CatalogTaskStatsFieldsFragment,
-} from 'src/gql-types/graphql';
 
 import { useMemo, useState } from 'react';
 
 import { chunk } from 'lodash';
-import { gql } from 'urql';
 
-import { toCatalogStatsBy, toCatalogTaskStats } from 'src/api/catalogStats';
+import {
+    buildStatsBatchQuery,
+    toCatalogStatsBy,
+    toCatalogTaskStats,
+} from 'src/api/catalogStats';
 import { CATALOG_TASK_STATS_FRAGMENT } from 'src/api/gql/catalogStats';
 import { usePollingQuery } from 'src/api/gql/usePollingQuery';
 import { getCleanCatalogNames } from 'src/utils/names';
@@ -44,7 +43,15 @@ export function useCatalogTaskStats(
     const batches = chunk(names, MAX_NAMES_PER_BATCH);
     const batchCount = Math.max(batches.length, 1);
 
-    const query = useMemo(() => buildBatchQuery(batchCount), [batchCount]);
+    const query = useMemo(
+        () =>
+            buildStatsBatchQuery(
+                'CatalogTaskStatsBatch',
+                CATALOG_TASK_STATS_FRAGMENT,
+                batchCount
+            ),
+        [batchCount]
+    );
     const pause = opts.pause || names.length <= 0;
 
     const variables = Object.fromEntries(
@@ -96,36 +103,3 @@ export function useCatalogTaskStats(
         stale,
     };
 }
-
-const buildBatchQuery = (batchCount: number) => {
-    const batches = Array.from({ length: batchCount }, (_, index) => index);
-
-    const variables = batches
-        .map((index) => `$vars_${index}: CatalogStatsBy!`)
-        .join(', ');
-
-    const fields = batches
-        .map(
-            (index) =>
-                `batch_${index}: catalogStats(by: $vars_${index}) { 
-                    edges { node { ...CatalogTaskStatsFields } }
-                }`
-        )
-        .join('\n');
-
-    const operation = `
-        query CatalogTaskStatsBatch(${variables}) { 
-            ${fields} 
-        }
-    `;
-
-    type CatalogTaskStatsBatch = Record<
-        string,
-        { edges: { node: CatalogTaskStatsFieldsFragment }[] }
-    >;
-
-    return gql<CatalogTaskStatsBatch, Record<string, CatalogStatsBy>>`
-        ${operation}
-        ${CATALOG_TASK_STATS_FRAGMENT}
-    `;
-};

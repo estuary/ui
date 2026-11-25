@@ -4,7 +4,6 @@ import type { TableColumns } from 'src/types';
 import { useEffect, useState } from 'react';
 
 import {
-    Box,
     Stack,
     Table,
     TableBody,
@@ -132,7 +131,12 @@ function PaymentMethods({ canEdit, showAddPayment }: PaymentMethodsProps) {
     };
 
     if (error) {
-        throw error;
+        return (
+            <AlertBox short severity="error">
+                There was an error loading your payment methods. Please try
+                again later.
+            </AlertBox>
+        );
     }
 
     return (
@@ -151,42 +155,18 @@ function PaymentMethods({ canEdit, showAddPayment }: PaymentMethodsProps) {
                     {actionError}
                 </AlertBox>
             ) : null}
-            <Stack
-                spacing={2}
-                direction="row"
-                sx={{ mb: 1, justifyContent: 'space-between' }}
-            >
-                <Box>
-                    <Typography
-                        sx={{
-                            mb: 1,
-                            fontSize: 18,
-                            fontWeight: '400',
-                        }}
-                    >
-                        Payment Information
-                    </Typography>
-
-                    <Typography>
-                        Enter your payment information. You won&apos;t be
-                        charged until your account usage exceeds free tier
-                        limits.
-                    </Typography>
-                </Box>
-
-                {canEdit ? (
-                    <AddPaymentMethod
-                        autoOpen={Boolean(showAddPayment)}
-                        tenant={tenant}
-                        loading={creatingSetup}
-                        setupIntentSecret={setupIntentSecret}
-                        onAdded={async (id) => {
-                            await makePrimary(id);
-                            void createSetupIntent({ tenant });
-                        }}
-                    />
-                ) : null}
-            </Stack>
+            {canEdit ? (
+                <AddPaymentMethod
+                    autoOpen={Boolean(showAddPayment)}
+                    tenant={tenant}
+                    loading={creatingSetup}
+                    setupIntentSecret={setupIntentSecret}
+                    onAdded={async (id) => {
+                        await makePrimary(id);
+                        void createSetupIntent({ tenant });
+                    }}
+                />
+            ) : null}
 
             <TableContainer>
                 <Table

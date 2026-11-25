@@ -15,6 +15,13 @@ export const ALERT_SETTING: { [k in AlertType]: AlertSetting } = {
         humanReadableIntlKey:
             'alerts.alertType.humanReadable.background_publication_failed',
     },
+    billing_threshold_exceeded: {
+        detailKey: null,
+        docLink:
+            'https://docs.estuary.dev/reference/notifications/#billing-alerts',
+        humanReadableIntlKey:
+            'alerts.alertType.humanReadable.billing_threshold_exceeded',
+    },
     bindings_auto_disabled: {
         detailKey: null,
         docLink: 'https://docs.estuary.dev/reference/notifications',

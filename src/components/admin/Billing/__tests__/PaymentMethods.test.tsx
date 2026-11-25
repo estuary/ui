@@ -8,7 +8,6 @@ import {
     waitFor,
     within,
 } from '@testing-library/react';
-import { ErrorBoundary } from 'react-error-boundary';
 import { IntlProvider } from 'react-intl';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
@@ -409,24 +408,17 @@ describe('billing payments', () => {
                 }
             )
         );
-        const paymentMethods = () => (
-            <ErrorBoundary
-                key={tenant.selectedTenant}
-                fallbackRender={({ error }) => <div>{error.message}</div>}
-            >
-                {view()}
-            </ErrorBoundary>
-        );
-        const { rerender } = render(paymentMethods(), { wrapper });
-        await screen.findByText(/Payment provider unavailable/);
+        const failed = /error loading your payment methods/;
+        const { rerender } = render(view(), { wrapper });
+        await screen.findByText(failed);
 
         tenant.selectedTenant = 'other/';
-        rerender(paymentMethods());
+        rerender(view());
         await screen.findByText('Acme card');
         tenant.selectedTenant = 'acme/';
-        rerender(paymentMethods());
+        rerender(view());
 
-        await screen.findByText(/Payment provider unavailable/);
+        await screen.findByText(failed);
         expect(failedReads).toBe(2);
     });
 });

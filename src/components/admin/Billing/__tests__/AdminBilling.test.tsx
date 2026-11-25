@@ -8,9 +8,10 @@ import {
     render,
     screen,
     waitFor,
+    within,
 } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import { beforeEach, expect, test, vi } from 'vitest';
+import { afterEach, beforeEach, expect, test, vi } from 'vitest';
 
 import AdminBilling from 'src/components/admin/Billing';
 import ContentProvider from 'src/context/Content';
@@ -20,67 +21,54 @@ import {
     billingGraphql,
     completeContact,
     contactData,
+    internalPlan,
+    invoice,
+    invoicesData,
+    monthToDateData,
     paymentMethodsData,
+    planData,
     setupIntent,
 } from 'src/test/billing';
+import { handleSpendAlert } from 'src/test/billingAlert';
 import { HttpResponse, server } from 'src/test/server/test-server';
 import { dropFetchSignals } from 'src/test/shared';
 
-vi.mock('src/components/graphs/UsageByMonthGraph', () => ({
-    default: () => null,
+// ECharts draws nothing in jsdom.
+vi.mock('src/components/admin/Billing/overview/ThisMonthChart', () => ({
+    ThisMonthChart: () => null,
+}));
+vi.mock(
+    'src/components/admin/Billing/overview/SpendAlert/SpendAlertCard',
+    () => ({
+        SpendAlertCard: ({
+            tenant,
+            canEdit,
+            chargesCents,
+        }: {
+            tenant: string;
+            canEdit: boolean;
+            chargesCents: number | null;
+        }) => (
+            <div>
+                {`Spend alert for ${tenant} at ${chargesCents}, ${
+                    canEdit ? 'editable' : 'read-only'
+                }`}
+            </div>
+        ),
+    })
+);
+vi.mock('src/components/admin/Billing/usage/UsageTab', () => ({
+    UsageTab: ({ tenant }: { tenant: string }) => (
+        <div>{`Usage for ${tenant}`}</div>
+    ),
 }));
 vi.mock('@stripe/stripe-js', () => ({
     loadStripe: () => Promise.resolve(null),
 }));
 
-// The page runs several queries before the history shows, which can take
-// longer than the default wait on a busy machine.
+// The page runs several queries before its cards show, which can take longer
+// than the default wait on a busy machine.
 configure({ asyncUtilTimeout: 3000 });
-
-const invoice = (month: string, overrides = {}) => ({
-    __typename: 'Invoice' as const,
-    dateStart: `2026-${month}-01`,
-    dateEnd: `2026-${month}-28`,
-    invoiceType: 'FINAL' as const,
-    subtotal: 100,
-    lineItems: [
-        {
-            description: `Usage in ${month}`,
-            count: 1,
-            rate: 100,
-            subtotal: 100,
-        },
-    ],
-    extra: { processed_data_gb: 1, task_usage_hours: 1 },
-    status: null,
-    invoicePdf: null,
-    hostedInvoiceUrl: null,
-    ...overrides,
-});
-
-const invoicesData = (
-    nodes: ReturnType<typeof invoice>[] = [],
-    endCursor: string | null = null
-) => ({
-    tenant: {
-        __typename: 'Tenant',
-        billing: {
-            __typename: 'TenantBilling',
-            invoices: {
-                __typename: 'InvoiceConnection',
-                edges: nodes.map((node) => ({
-                    __typename: 'InvoiceEdge',
-                    node,
-                })),
-                pageInfo: {
-                    __typename: 'PageInfo',
-                    hasNextPage: Boolean(endCursor),
-                    endCursor,
-                },
-            },
-        },
-    },
-});
 
 const wrapper = ({ children }: { children: ReactNode }) => (
     <MemoryRouter>
@@ -90,8 +78,7 @@ const wrapper = ({ children }: { children: ReactNode }) => (
     </MemoryRouter>
 );
 
-const link = (name: string) =>
-    screen.getByRole('link', { name }).getAttribute('href');
+const card = (name: string) => screen.findByRole('region', { name });
 
 // Each GraphQL operation the page sent, with its tenant.
 let operations: string[];
@@ -128,18 +115,56 @@ const grant = (grants: Record<string, CapabilityBundle[]>) =>
         )
     );
 
+const preview = invoice('11', {
+    invoiceType: 'PREVIEW',
+    dateEnd: '2026-11-30',
+    subtotal: 56660,
+    status: null,
+});
+
+// Serves the preview to the This month card and a page per cursor to the
+// invoices card.
+const serveInvoices = (
+    pages: Record<string, ReturnType<typeof invoicesData>>
+) =>
+    server.use(
+        billingGraphql.query('TenantBillingInvoices', ({ variables }) =>
+            HttpResponse.json({
+                data:
+                    variables.filter?.invoiceType?.eq === 'PREVIEW'
+                        ? invoicesData([preview])
+                        : pages[variables.after ?? 'first'],
+            })
+        )
+    );
+
+// `billing` is non-null, so an error in one of its fields nulls the tenant.
+const failure = (field: string) => ({
+    data: { tenant: null },
+    errors: [
+        { message: 'Stripe unavailable', path: ['tenant', 'billing', field] },
+    ],
+});
+
 beforeEach(() => {
     dropFetchSignals();
+    vi.useFakeTimers({ toFake: ['Date'], now: new Date('2026-11-09T12:00Z') });
     operations = [];
     useTenantStore.setState({ selectedTenant: 'acme/' });
+    serveInvoices({
+        first: invoicesData([preview, invoice('10'), invoice('09')]),
+    });
     server.use(
         billingGraphql.query('BillingCapabilities', () =>
             HttpResponse.json({
                 data: capabilities(['ViewBilling', 'EditBilling']),
             })
         ),
-        billingGraphql.query('TenantBillingInvoices', () =>
-            HttpResponse.json({ data: invoicesData() })
+        billingGraphql.query('TenantBillingPlan', () =>
+            HttpResponse.json({ data: planData() })
+        ),
+        billingGraphql.query('TenantBillingMonthToDate', () =>
+            HttpResponse.json({ data: monthToDateData() })
         ),
         billingGraphql.query('TenantBillingContact', () =>
             HttpResponse.json({ data: contactData(completeContact) })
@@ -149,96 +174,209 @@ beforeEach(() => {
         ),
         billingGraphql.mutation('CreateBillingSetupIntent', () => setupIntent())
     );
+    handleSpendAlert({});
 });
 
-test('pages through the invoice history', async () => {
+afterEach(() => vi.useRealTimers());
+
+test('shows each card from its own read', async () => {
+    render(<AdminBilling />, { wrapper });
+
+    await within(await card('Plan')).findByText(
+        'Your next invoice is about $2,017 on Dec 1, charged to Visa ending 0042.'
+    );
+    const thisMonth = await card('This month');
+    expect(within(thisMonth).getByText('Due for November')).toBeTruthy();
+    expect(
+        within(thisMonth).getByText('Nov 1 – 9 · billed Dec 1')
+    ).toBeTruthy();
+    expect(within(thisMonth).getByText('$566.60')).toBeTruthy();
+    expect(within(thisMonth).getByText('2,960 GB at $0.50/GB')).toBeTruthy();
+    expect(within(thisMonth).getByText('Billing credits')).toBeTruthy();
+    expect(
+        screen.getByText('Spend alert for acme/ at 68200, read-only')
+    ).toBeTruthy();
+
+    const invoices = await card('Invoices');
+    expect(within(invoices).getByText('In progress')).toBeTruthy();
+    expect(within(invoices).getByText('October 2026')).toBeTruthy();
+    expect(within(invoices).getAllByText('Paid')).toHaveLength(2);
+
+    const payment = await card('Payment');
+    await within(payment).findByText('•••• 0042');
+    expect(within(payment).getByText('Expires 12/30')).toBeTruthy();
+    expect(within(payment).getByText('Acme Corp')).toBeTruthy();
+});
+
+test('lets admins edit the spend alert', async () => {
+    grant({ 'acme/': ['ViewBilling', 'EditBilling', 'Admin'] });
+    render(<AdminBilling />, { wrapper });
+
+    await screen.findByText('Spend alert for acme/ at 68200, editable');
+});
+
+test.each([
+    {
+        operation: 'TenantBillingPaymentMethods',
+        field: 'paymentMethods',
+        message: /error loading your payment methods/,
+    },
+    {
+        operation: 'TenantBillingContact',
+        field: 'contact',
+        message: /error loading your billing contact/,
+    },
+    {
+        operation: 'TenantBillingPlan',
+        field: 'plan',
+        message: /error loading your plan/,
+    },
+])(
+    'keeps the other cards when $operation fails',
+    async ({ operation, field, message }) => {
+        server.use(
+            billingGraphql.query(operation, () =>
+                HttpResponse.json(failure(field))
+            )
+        );
+        render(<AdminBilling />, { wrapper });
+
+        await screen.findByText(message);
+        await within(await card('Invoices')).findByText('October 2026');
+        // Each failure leaves at least one of the payment card's rows.
+        await waitFor(() =>
+            expect(
+                screen.queryByText('Acme Corp') ??
+                    screen.queryByText('\u2022\u2022\u2022\u2022 0042')
+            ).toBeTruthy()
+        );
+    }
+);
+
+test("leaves the projection out when this month's usage can't be read", async () => {
+    server.use(
+        billingGraphql.query('TenantBillingMonthToDate', () =>
+            HttpResponse.json(failure('monthToDate'))
+        )
+    );
+    render(<AdminBilling />, { wrapper });
+
+    await screen.findByText(
+        'Your next invoice is on Dec 1, charged to Visa ending 0042.'
+    );
+    expect(
+        screen.getByText('Spend alert for acme/ at null, read-only')
+    ).toBeTruthy();
+});
+
+test('pages through the invoices', async () => {
     const cursors: unknown[] = [];
     server.use(
         billingGraphql.query('TenantBillingInvoices', ({ variables }) => {
-            // The history pages; the usage graph reads its months at once.
-            if (variables.first) {
-                cursors.push(variables.after);
+            if (variables.filter?.invoiceType?.eq === 'PREVIEW') {
+                return HttpResponse.json({ data: invoicesData([preview]) });
             }
+            cursors.push(variables.after);
             return HttpResponse.json({
                 data: variables.after
-                    ? invoicesData([
-                          invoice('05', {
-                              status: 'paid',
-                              invoicePdf: 'https://pdf/05',
-                          }),
-                      ])
+                    ? invoicesData([invoice('05')])
                     : invoicesData(
                           [
-                              invoice('09', {
-                                  status: 'open',
-                                  invoicePdf: 'https://pdf/09',
-                                  hostedInvoiceUrl: 'https://pay/09',
-                              }),
+                              preview,
+                              invoice('10'),
+                              invoice('09'),
                               invoice('08'),
                               invoice('07'),
-                              // Shares its period with the final invoice.
-                              invoice('07', {
-                                  invoiceType: 'MANUAL',
-                                  subtotal: 50000,
-                                  lineItems: [
-                                      {
-                                          description: 'Manual charge',
-                                          count: 1,
-                                          rate: 50000,
-                                          subtotal: 50000,
-                                      },
-                                  ],
-                                  invoicePdf: 'https://pdf/manual',
-                              }),
                           ],
-                          'cursor-manual'
+                          'cursor-07'
                       ),
             });
         })
     );
     render(<AdminBilling />, { wrapper });
 
-    // Each page shows its newest bill, with that invoice's Stripe links.
-    await screen.findByText('Usage in 09');
-    expect(link('Download invoice PDF')).toBe('https://pdf/09');
-    expect(link('Pay Invoice')).toBe('https://pay/09');
+    const invoices = await screen.findByRole('region', { name: 'Invoices' });
+    await within(invoices).findByText('1–5');
+    expect(
+        within(invoices)
+            .getByRole('button', { name: 'Newer invoices' })
+            .hasAttribute('disabled')
+    ).toBe(true);
 
-    fireEvent.click(screen.getByRole('row', { name: /\$500\.00/ }));
-    await screen.findByText('Manual charge');
-    expect(link('Download invoice PDF')).toBe('https://pdf/manual');
-
-    fireEvent.click(screen.getByRole('button', { name: 'Go to next page' }));
-    await screen.findByText('Usage in 05');
-    expect(cursors).toEqual([undefined, 'cursor-manual']);
-    expect(link('Download invoice PDF')).toBe('https://pdf/05');
-    expect(screen.getByRole('button', { name: 'Invoice Paid' })).toBeTruthy();
-    expect(screen.getByText('5–5 of 5')).toBeTruthy();
-
-    // The selection returns with its page.
     fireEvent.click(
-        screen.getByRole('button', { name: 'Go to previous page' })
+        within(invoices).getByRole('button', { name: 'Older invoices' })
     );
-    await screen.findByText('Manual charge');
+    await within(invoices).findByText('May 2026');
+    expect(within(invoices).getByText('6–6')).toBeTruthy();
+    expect(cursors).toEqual([undefined, 'cursor-07']);
+    expect(
+        within(invoices)
+            .getByRole('button', { name: 'Older invoices' })
+            .hasAttribute('disabled')
+    ).toBe(true);
+
+    fireEvent.click(
+        within(invoices).getByRole('button', { name: 'Newer invoices' })
+    );
+    await within(invoices).findByText('July 2026');
+});
+
+test('opens an invoice to its lines and links', async () => {
+    serveInvoices({
+        first: invoicesData([
+            preview,
+            invoice('10', {
+                invoicePdf: 'https://pdf/10',
+                hostedInvoiceUrl: 'https://pay/10',
+            }),
+        ]),
+    });
+    render(<AdminBilling />, { wrapper });
+
+    const invoices = await screen.findByRole('region', { name: 'Invoices' });
+    const row = await within(invoices).findByRole('button', {
+        name: /October 2026/,
+    });
+    fireEvent.click(row);
+
+    expect(row.getAttribute('aria-expanded')).toBe('true');
+    expect(within(invoices).getByText('2,960 GB × $0.50/GB')).toBeTruthy();
+    expect(
+        within(invoices).getByText('Credit: Task hours during the 10 outage')
+    ).toBeTruthy();
+    expect(
+        within(invoices).getByText(
+            'Issued Nov 1, 2026 · 2,960 GB · 6,920 task hours · −$70.00 credits'
+        )
+    ).toBeTruthy();
+    expect(
+        within(invoices)
+            .getByRole('link', { name: 'View invoice' })
+            .getAttribute('href')
+    ).toBe('https://pay/10');
+    expect(
+        within(invoices)
+            .getByRole('link', { name: 'Download PDF' })
+            .getAttribute('href')
+    ).toBe('https://pdf/10');
 });
 
 test('starts each tenant at its newest invoices, including on return', async () => {
-    server.use(
-        billingGraphql.query('TenantBillingInvoices', ({ variables }) =>
-            HttpResponse.json({
-                data: variables.after
-                    ? invoicesData([invoice('05')])
-                    : invoicesData([invoice('09')], 'cursor-09'),
-            })
-        )
-    );
+    serveInvoices({
+        'first': invoicesData([invoice('09')], 'cursor-09'),
+        'cursor-09': invoicesData([invoice('05')]),
+    });
     const select = (selectedTenant: string) =>
         act(() => useTenantStore.setState({ selectedTenant }));
     const nextPage = async () => {
-        await screen.findByText('Usage in 09');
+        const invoices = await screen.findByRole('region', {
+            name: 'Invoices',
+        });
+        await within(invoices).findByText('September 2026');
         fireEvent.click(
-            screen.getByRole('button', { name: 'Go to next page' })
+            within(invoices).getByRole('button', { name: 'Older invoices' })
         );
-        await screen.findByText('Usage in 05');
+        await within(invoices).findByText('May 2026');
     };
     render(<AdminBilling />, { wrapper });
     await nextPage();
@@ -247,39 +385,45 @@ test('starts each tenant at its newest invoices, including on return', async () 
 
     // acme/'s reads are cached, so only the remount resets its page.
     select('acme/');
-    await screen.findByText('Usage in 09');
-    const previous = screen.getByRole('button', {
-        name: 'Go to previous page',
-    });
-    expect(previous.hasAttribute('disabled')).toBe(true);
+    const invoices = await screen.findByRole('region', { name: 'Invoices' });
+    await within(invoices).findByText('September 2026');
+    expect(
+        within(invoices)
+            .getByRole('button', { name: 'Newer invoices' })
+            .hasAttribute('disabled')
+    ).toBe(true);
 });
 
-test.each([
-    // The history and the usage graph share this read.
-    'TenantBillingInvoices',
-    'TenantBillingPaymentMethods',
-    'TenantBillingContact',
-])('replaces the details with one error when %s fails', async (operation) => {
+test('shows no spend alert or payment for an internal tenant', async () => {
     server.use(
-        billingGraphql.query(operation, () =>
-            // `billing` is non-null, so its error nulls the tenant.
-            HttpResponse.json({
-                data: { tenant: null },
-                errors: [
-                    {
-                        message: 'Stripe unavailable',
-                        path: ['tenant', 'billing'],
-                    },
-                ],
-            })
+        billingGraphql.query('TenantBillingPlan', () =>
+            HttpResponse.json({ data: planData(internalPlan) })
         )
     );
     render(<AdminBilling />, { wrapper });
 
-    await screen.findByText(
-        /There was an error loading your billing information/
+    await within(await card('This month')).findByText(
+        'Data processed in November'
     );
-    expect(screen.queryByText('Recent History')).toBeNull();
+    expect(
+        within(await card('Invoices')).getAllByText('Not billed')
+    ).toHaveLength(2);
+    expect(screen.queryByText(/Spend alert for/)).toBeNull();
+    expect(screen.queryByRole('region', { name: 'Payment' })).toBeNull();
+    expect(billingReads()).not.toContain('TenantBillingPaymentMethods acme/');
+});
+
+test('switches to the usage tab and back', async () => {
+    render(<AdminBilling />, { wrapper });
+
+    fireEvent.click(
+        await screen.findByRole('button', { name: 'Usage by task' })
+    );
+    await screen.findByText('Usage for acme/');
+    expect(screen.queryByRole('region', { name: 'Plan' })).toBeNull();
+
+    fireEvent.click(screen.getByRole('tab', { name: 'Overview' }));
+    await screen.findByRole('region', { name: 'Plan' });
 });
 
 test('reads no billing data until access loads', async () => {
@@ -299,12 +443,12 @@ test('reads no billing data until access loads', async () => {
     );
     render(<AdminBilling />, { wrapper });
 
-    expect(screen.queryByText('Payment Information')).toBeNull();
+    expect(screen.queryByRole('region', { name: 'Plan' })).toBeNull();
     await waitFor(() => expect(requested).toBe(true));
     expect(billingReads()).toEqual([]);
 
     release();
-    await screen.findByText('Acme card');
+    await screen.findByText('Acme Corp');
 });
 
 test.each([
@@ -339,9 +483,9 @@ test('hides edit actions on switching to a view-only tenant', async () => {
     render(<AdminBilling showAddPayment />, { wrapper });
 
     // Editors get the add-payment form from the route, and every action.
-    await screen.findByRole('dialog');
+    await screen.findByRole('heading', { name: 'Payment methods' });
     await screen.findByText('Acme card');
-    const actions = ['Add Payment Method', 'Delete', 'Make Primary', 'Edit'];
+    const actions = ['Change', 'Edit', 'Add Payment Method', 'Delete'];
     actions.forEach((name) =>
         expect(screen.getByRole('button', { name })).toBeTruthy()
     );
@@ -349,7 +493,9 @@ test('hides edit actions on switching to a view-only tenant', async () => {
     // Viewers on the same route get no actions, setup or form.
     act(() => useTenantStore.setState({ selectedTenant: 'viewer/' }));
 
-    await screen.findByRole('row', { name: /Acme card/ });
+    await within(
+        await screen.findByRole('region', { name: 'Payment' })
+    ).findByText('•••• 0042');
     actions.forEach((name) =>
         expect(screen.queryByRole('button', { name })).toBeNull()
     );

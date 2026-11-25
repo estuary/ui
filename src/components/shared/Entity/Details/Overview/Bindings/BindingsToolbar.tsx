@@ -7,33 +7,15 @@ import type {
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 
-import {
-    Chip,
-    IconButton,
-    InputAdornment,
-    inputBaseClasses,
-    outlinedInputClasses,
-    Stack,
-    TextField,
-    useTheme,
-} from '@mui/material';
+import { Chip, Stack } from '@mui/material';
 
-import { Search, Xmark } from 'iconoir-react';
 import { debounce } from 'lodash';
 import { useUnmount } from 'react-use';
 
-import { diminishedTextColor } from 'src/context/Theme';
+import { SearchField } from 'src/components/shared/SearchField';
 import { QUICK_DEBOUNCE_WAIT } from 'src/utils/workflow-utils';
 
 type FilterValue = BindingStatus | 'all';
-
-// RGB translations of #0B131E and #F7F9FC. Quieter than the app-wide
-// `defaultOutlineColor_hovered` (0.6), which flashes hard against this field's
-// 0.23 resting border.
-const searchOutlineColor_hovered = {
-    light: `rgba(11, 19, 30, 0.35)`,
-    dark: `rgba(247, 249, 252, 0.35)`,
-};
 
 const FILTERS: { value: FilterValue; label: string }[] = [
     { value: 'all', label: 'All' },
@@ -61,7 +43,6 @@ export function BindingsToolbar({
     searchLabel,
     setFilter,
 }: Props) {
-    const theme = useTheme();
     const inputRef = useRef<HTMLInputElement>(null);
 
     // The field stays uncontrolled for typing — see the debounce below — so
@@ -121,58 +102,14 @@ export function BindingsToolbar({
                 rowGap: 1,
             }}
         >
-            <TextField
+            <SearchField
                 defaultValue={filter.query}
                 id="bindings-table-search"
                 inputRef={inputRef}
                 label={searchLabel}
                 onChange={handleChange}
-                size="small"
-                slotProps={{
-                    input: {
-                        startAdornment: (
-                            <InputAdornment position="start">
-                                <Search
-                                    height={16}
-                                    width={16}
-                                    style={{
-                                        color: diminishedTextColor[
-                                            theme.palette.mode
-                                        ],
-                                    }}
-                                />
-                            </InputAdornment>
-                        ),
-                        // Replaces the native clear button `type="search"`
-                        // would draw in OS styling rather than this app's.
-                        endAdornment: hasQuery ? (
-                            <InputAdornment position="end">
-                                <IconButton
-                                    aria-label="Clear search"
-                                    edge="end"
-                                    onClick={handleClear}
-                                    size="small"
-                                >
-                                    <Xmark height={14} width={14} />
-                                </IconButton>
-                            </InputAdornment>
-                        ) : undefined,
-                    },
-                }}
-                sx={{
-                    flexGrow: 1,
-                    minWidth: 220,
-                    [`& .${inputBaseClasses.root}`]: { borderRadius: 3 },
-                    // Excluding the focused state leaves the primary focus ring
-                    // to win once the field is actually active.
-                    [`& .${outlinedInputClasses.root}:not(.${outlinedInputClasses.focused}):hover .${outlinedInputClasses.notchedOutline}`]:
-                        {
-                            borderColor:
-                                searchOutlineColor_hovered[theme.palette.mode],
-                        },
-                }}
-                type="text"
-                variant="outlined"
+                onClear={hasQuery ? handleClear : undefined}
+                sx={{ flexGrow: 1, minWidth: 220 }}
             />
 
             {FILTERS.map(({ value, label }) => (

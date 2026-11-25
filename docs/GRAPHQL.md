@@ -66,6 +66,8 @@ This should not impact normal users and only `support` staff. We have the `mutat
 
 Entity types are not yet normalized: the `keys` map in `src/context/URQL.tsx` returns `null` for them. The migration rules are in the comment on that map.
 
+The `tenant` resolver in `src/context/URQL.tsx` reads the cached tenant record whenever one exists, so a failed billing query, which nulls `tenant`, doesn't empty the other billing queries for that tenant. The trade-off is that a later legitimate `tenant: null`, as after access is revoked, keeps showing the last record until the page reloads.
+
 ### Impact
 
 Mutation results do not merge into cached queries. Mutations compensate with manual `invalidateQuery` updaters, and stale data can persist until the request-policy ttl refetches.

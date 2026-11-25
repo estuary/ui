@@ -1,81 +1,74 @@
+import type { Theme } from '@mui/material';
 import type { AdminBillingProps } from 'src/components/admin/Billing/types';
-import type { InvoiceId } from 'src/utils/billing-utils';
 
-import { useState } from 'react';
+import { useCallback } from 'react';
 
-import { Divider, Grid, Stack } from '@mui/material';
+import {
+    alpha,
+    Box,
+    Stack,
+    Tab,
+    tabClasses,
+    Tabs,
+    tabsClasses,
+} from '@mui/material';
 
 import { ErrorBoundary } from 'react-error-boundary';
+import { useSearchParams } from 'react-router-dom';
 
-import { BILLING_HISTORY_PAGE_SIZE } from 'src/api/gql/billing';
 import { authenticatedRoutes } from 'src/app/routes';
-import { BillingContactSection } from 'src/components/admin/Billing/BillingContactSection';
-import DateRange from 'src/components/admin/Billing/DateRange';
-import PaymentMethods from 'src/components/admin/Billing/PaymentMethods';
-import { INVOICE_ROW_HEIGHT } from 'src/components/admin/Billing/shared';
-import GraphLoadingState from 'src/components/graphs/states/Loading';
-import GraphStateWrapper from 'src/components/graphs/states/Wrapper';
-import UsageByMonthGraph from 'src/components/graphs/UsageByMonthGraph';
+import { Overview } from 'src/components/admin/Billing/overview/Overview';
+import { UsageTab } from 'src/components/admin/Billing/usage/UsageTab';
 import AlertBox from 'src/components/shared/AlertBox';
-import CardWrapper from 'src/components/shared/CardWrapper';
 import TenantSelector from 'src/components/shared/TenantSelector';
-import BillingHistoryTable from 'src/components/tables/Billing';
-import BillingLineItemsTable from 'src/components/tables/BillLineItems';
 import { useBillingAccess } from 'src/hooks/billing/useBillingAccess';
-import { useBillingInvoices } from 'src/hooks/billing/useBillingInvoices';
 import usePageTitle from 'src/hooks/usePageTitle';
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 import { useTenantStore } from 'src/stores/Tenant';
-import { invoiceId, TOTAL_CARD_HEIGHT } from 'src/utils/billing-utils';
 
 const routeTitle = authenticatedRoutes.admin.billing.title;
 
-// Adding the height of a row generally works and should make it
-//  not _too_ tall
-const invoiceCardHeight = TOTAL_CARD_HEIGHT + INVOICE_ROW_HEIGHT;
+type BillingTab = 'overview' | 'usage';
 
-function AdminBilling({ showAddPayment }: AdminBillingProps) {
-    usePageTitle({
-        header: routeTitle,
-        headerLink: 'https://www.estuary.dev/pricing/',
-    });
+// Overview is the default, so only the usage tab shows in the URL.
+const TAB_PARAM = 'tab';
 
-    const selectedTenant = useTenantStore((state) => state.selectedTenant);
+// The same filled pills as `NavigationTabs`, which navigates by path.
+const tabsSx = {
+    minHeight: 0,
+    [`& .${tabsClasses.indicator}`]: { display: 'none' },
+    [`& .${tabsClasses.flexContainer}`]: { gap: 1 },
+    [`& .${tabClasses.root}`]: {
+        borderRadius: 2,
+        minHeight: 0,
+        p: 1,
+        textTransform: 'none',
+    },
+    [`& .${tabClasses.root}:hover:not(.${tabClasses.selected})`]: {
+        backgroundColor: 'action.hover',
+    },
+    [`& .${tabClasses.selected}`]: {
+        backgroundColor: (theme: Theme) =>
+            alpha(
+                theme.palette.primary.main,
+                theme.palette.mode === 'light' ? 0.09 : 0.2
+            ),
+    },
+};
 
-    return (
-        <>
-            <Grid
-                container
-                spacing={{ xs: 3, md: 2 }}
-                sx={{ py: 2, justifyContent: 'flex-end' }}
-            >
-                <Grid
-                    size={{ xs: 12, md: 3 }}
-                    sx={{ display: 'flex', alignItems: 'end' }}
-                >
-                    <TenantSelector />
-                </Grid>
-            </Grid>
-
-            {/* The selector picks a tenant once the user's tenants load. It lists only tenants with a legacy admin grant, which billing-only users lack. */}
-            {selectedTenant ? (
-                // Remount per tenant so one tenant's results and errors never
-                // show for the next.
-                <BillingForTenant
-                    key={selectedTenant}
-                    tenant={selectedTenant}
-                    showAddPayment={showAddPayment}
-                />
-            ) : null}
-        </>
-    );
+interface BillingForTenantProps extends AdminBillingProps {
+    tenant: string;
+    tab: BillingTab;
+    onShowUsage: () => void;
 }
 
 function BillingForTenant({
     tenant,
+    tab,
     showAddPayment,
-}: AdminBillingProps & { tenant: string }) {
+    onShowUsage,
+}: BillingForTenantProps) {
     const access = useBillingAccess(tenant);
 
     if (access.error) {
@@ -99,6 +92,8 @@ function BillingForTenant({
         );
     }
 
+    // Each card shows its own errors. This boundary only catches the
+    // unexpected.
     return (
         <ErrorBoundary
             fallback={
@@ -116,104 +111,87 @@ function BillingForTenant({
                 });
             }}
         >
-            <BillingDetails
-                canEdit={access.canEdit}
-                showAddPayment={showAddPayment}
-            />
+            {tab === 'usage' ? (
+                <UsageTab tenant={tenant} />
+            ) : (
+                <Overview
+                    tenant={tenant}
+                    canEdit={access.canEdit}
+                    canEditAlerts={access.canEditAlerts}
+                    showAddPayment={showAddPayment}
+                    onShowUsage={onShowUsage}
+                />
+            )}
         </ErrorBoundary>
     );
 }
 
-// Mounted only once the user can view the selected tenant's billing, so none
-// of these queries run without access.
-function BillingDetails({
-    canEdit,
-    showAddPayment,
-}: AdminBillingProps & { canEdit: boolean }) {
-    const history = useBillingInvoices({
-        pageSize: BILLING_HISTORY_PAGE_SIZE,
-        withStripe: true,
+function AdminBilling({ showAddPayment }: AdminBillingProps) {
+    usePageTitle({
+        header: routeTitle,
+        headerLink: 'https://www.estuary.dev/pricing/',
     });
-    const { invoices, isLoading } = history;
-    const [selectedInvoiceId, setSelectedInvoiceId] =
-        useState<InvoiceId | null>(null);
-    // The selected invoice if it's on this page, otherwise the page's newest.
-    const selectedInvoice =
-        invoices.find((invoice) => invoiceId(invoice) === selectedInvoiceId) ??
-        invoices.at(0) ??
-        null;
+
+    const selectedTenant = useTenantStore((state) => state.selectedTenant);
+
+    const [searchParams, setSearchParams] = useSearchParams();
+    const tab: BillingTab =
+        searchParams.get(TAB_PARAM) === 'usage' ? 'usage' : 'overview';
+
+    const showTab = useCallback(
+        (value: BillingTab) =>
+            setSearchParams((current) => {
+                const next = new URLSearchParams(current);
+                if (value === 'usage') {
+                    next.set(TAB_PARAM, value);
+                } else {
+                    next.delete(TAB_PARAM);
+                }
+                return next;
+            }),
+        [setSearchParams]
+    );
 
     return (
-        <Grid container spacing={{ xs: 3, md: 2 }} sx={{ py: 2 }}>
-            <Grid size={{ xs: 12, md: 6 }}>
-                <CardWrapper
-                    height={TOTAL_CARD_HEIGHT}
-                    message="Recent History"
+        <Stack spacing={2.5} sx={{ py: 2 }}>
+            <Stack
+                direction="row"
+                sx={{
+                    flexWrap: 'wrap',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    columnGap: 3,
+                    rowGap: 1.5,
+                }}
+            >
+                <Tabs
+                    aria-label="Billing"
+                    value={tab}
+                    onChange={(_event, value: BillingTab) => showTab(value)}
+                    sx={tabsSx}
                 >
-                    <BillingHistoryTable
-                        history={history}
-                        selectedInvoiceId={
-                            selectedInvoice ? invoiceId(selectedInvoice) : null
-                        }
-                        onSelectInvoice={setSelectedInvoiceId}
-                    />
-                </CardWrapper>
-            </Grid>
+                    <Tab label="Overview" value="overview" />
+                    <Tab label="Usage" value="usage" />
+                </Tabs>
 
-            <Grid size={{ xs: 12, md: 6 }}>
-                <CardWrapper
-                    height={TOTAL_CARD_HEIGHT}
-                    message="Usage by Month"
-                >
-                    <GraphStateWrapper>
-                        <UsageByMonthGraph />
-                    </GraphStateWrapper>
-                </CardWrapper>
-            </Grid>
+                <Box sx={{ display: 'flex', width: { xs: '100%', sm: 280 } }}>
+                    <TenantSelector />
+                </Box>
+            </Stack>
 
-            <Grid size={{ xs: 12, md: 12 }}>
-                <CardWrapper
-                    height={invoiceCardHeight}
-                    message={
-                        isLoading ? (
-                            'Loading your bill'
-                        ) : selectedInvoice ? (
-                            <>
-                                {'Your bill for:'}
-                                <DateRange
-                                    start_date={selectedInvoice.dateStart}
-                                    end_date={selectedInvoice.dateEnd}
-                                />
-                            </>
-                        ) : (
-                            'No bill to display'
-                        )
-                    }
-                >
-                    {!isLoading ? (
-                        <BillingLineItemsTable
-                            selectedInvoice={selectedInvoice}
-                        />
-                    ) : (
-                        <GraphLoadingState />
-                    )}
-                </CardWrapper>
-            </Grid>
-
-            <Grid size={{ xs: 12 }}>
-                <Divider sx={{ mt: 3 }} />
-            </Grid>
-
-            <Grid size={{ xs: 12 }}>
-                <Stack spacing={3} divider={<Divider />}>
-                    <BillingContactSection canEdit={canEdit} />
-                    <PaymentMethods
-                        canEdit={canEdit}
-                        showAddPayment={showAddPayment}
-                    />
-                </Stack>
-            </Grid>
-        </Grid>
+            {/* The selector picks a tenant once the user's tenants load. It lists only tenants with a legacy admin grant, which billing-only users lack. */}
+            {selectedTenant ? (
+                // Remount per tenant so one tenant's results and errors never
+                // show for the next.
+                <BillingForTenant
+                    key={selectedTenant}
+                    tenant={selectedTenant}
+                    tab={tab}
+                    showAddPayment={showAddPayment}
+                    onShowUsage={() => showTab('usage')}
+                />
+            ) : null}
+        </Stack>
     );
 }
 
