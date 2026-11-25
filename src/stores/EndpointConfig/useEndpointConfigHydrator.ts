@@ -16,7 +16,11 @@ import { BASE_ERROR } from 'src/services/supabase';
 import { useEndpointConfigStore } from 'src/stores/EndpointConfig/Store';
 import { getEndpointConfig } from 'src/utils/connector-utils';
 import { configCanBeEmpty } from 'src/utils/misc-utils';
-import { parseEncryptedEndpointConfig } from 'src/utils/sops-utils';
+import { ENABLE_RUNTIME_V2, getSelectedOptions } from 'src/utils/secrets-utils';
+import {
+    isEncryptedConfig,
+    parseEncryptedEndpointConfig,
+} from 'src/utils/sops-utils';
 
 const useStoreEndpointSchema = () => {
     const setEndpointSchema = useEndpointConfigStore(
@@ -47,17 +51,21 @@ const useStoreEndpointSchema = () => {
 const useHydrateEndpointConfigDependentState = () => {
     const entityType = useEntityType();
 
-    const setEncryptedEndpointConfig = useEndpointConfigStore(
-        (state) => state.setEncryptedEndpointConfig
-    );
     const setEndpointConfig = useEndpointConfigStore(
         (state) => state.setEndpointConfig
     );
-    const setPreviousEndpointConfig = useEndpointConfigStore(
-        (state) => state.setPreviousEndpointConfig
+    const setSavedEndpointConfig = useEndpointConfigStore(
+        (state) => state.setSavedEndpointConfig
     );
     const setPublishedEndpointConfig = useEndpointConfigStore(
         (state) => state.setPublishedEndpointConfig
+    );
+
+    const setSopsPinned = useEndpointConfigStore(
+        (state) => state.setSopsPinned
+    );
+    const initializeSelectedOptions = useEndpointConfigStore(
+        (state) => state.initializeSelectedOptions
     );
 
     const hydrateEndpointConfigDependentState = async (
@@ -82,24 +90,33 @@ const useHydrateEndpointConfigDependentState = () => {
             };
         }
 
-        const encryptedEndpointConfig = getEndpointConfig(data);
+        const endpointConfig = getEndpointConfig(data);
+        const { spec } = data[0];
+        const flags = spec.shards?.flags ?? {};
 
-        setEncryptedEndpointConfig({
-            data: encryptedEndpointConfig,
-        });
+        // Stay on sops if the config is already sops encrypted, or the task is
+        // pinned to runtime v1, since a secrets stanza needs v2.
+        const isNotRuntimeV2 = flags[ENABLE_RUNTIME_V2] === 'false';
+        const mustUseSops = isEncryptedConfig(endpointConfig) || isNotRuntimeV2;
+        setSopsPinned(mustUseSops);
 
-        setPublishedEndpointConfig({
-            data: encryptedEndpointConfig,
-        });
+        setPublishedEndpointConfig({ data: endpointConfig });
 
-        const endpointConfig = parseEncryptedEndpointConfig(
-            encryptedEndpointConfig,
+        // The form shows a sops config parsed, which saving it keeps
+        const parsedConfig = parseEncryptedEndpointConfig(
+            endpointConfig,
             endpointSchema
         );
+        setEndpointConfig(parsedConfig);
+        setSavedEndpointConfig(endpointConfig, spec.secrets);
 
-        setPreviousEndpointConfig(endpointConfig);
-
-        setEndpointConfig(endpointConfig);
+        // Which option each union has selected, as the data alone can't always
+        // tell once its stored secrets aren't in it
+        const { endpointSchema: resolvedSchema, secretNames } =
+            useEndpointConfigStore.getState();
+        initializeSelectedOptions(
+            getSelectedOptions(resolvedSchema, parsedConfig.data, secretNames)
+        );
 
         return { error: null };
     };

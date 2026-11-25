@@ -10,9 +10,9 @@ import {
     useEditorStore_resetState,
 } from 'src/components/editor/Store/hooks';
 import { useApplyDraftToWorkflow } from 'src/components/shared/Entity/hooks/useApplyDraftToWorkflow';
-import { useEncryptEndpointConfig } from 'src/components/shared/Entity/hooks/useEncryptEndpointConfig';
 import useEntityWorkflowHelpers from 'src/components/shared/Entity/hooks/useEntityWorkflowHelpers';
 import { useValidateWorkflowForms } from 'src/components/shared/Entity/hooks/useValidateWorkflowForms';
+import { useWriteEndpointConfig } from 'src/components/shared/Entity/hooks/useWriteEndpointConfig';
 import { useMutateDraftSpec } from 'src/components/shared/Entity/MutateDraftSpecContext';
 import { useEntityWorkflow_Editing } from 'src/context/Workflow';
 import { useCreateDraft } from 'src/hooks/drafts/useCreateDraft';
@@ -78,7 +78,7 @@ export function useSubmitMaterializationForm() {
                 return Promise.reject(null);
             }
 
-            const { draftId, catalogName, draftSpec, encryptedEndpointConfig } =
+            const { draftId, catalogName, draftSpec, endpointConfig, secrets } =
                 written;
 
             // This needs to be called before mutate is called so that the
@@ -107,7 +107,8 @@ export function useSubmitMaterializationForm() {
             applyDraft({
                 draftId,
                 catalogName,
-                encryptedEndpointConfig,
+                endpointConfig,
+                secrets,
             });
 
             // Materializations do not use this setting but still letting it get populated to keep
@@ -137,7 +138,8 @@ interface WrittenMaterializationDraft {
     draftId: string;
     catalogName: string;
     draftSpec: MaterializationsDraftSpec;
-    encryptedEndpointConfig: Schema;
+    endpointConfig: Schema;
+    secrets: Record<string, string> | null;
 }
 
 /**
@@ -147,7 +149,7 @@ interface WrittenMaterializationDraft {
 function useWriteMaterializationDraft() {
     const isEdit = useEntityWorkflow_Editing();
 
-    const encryptEndpointConfig = useEncryptEndpointConfig();
+    const writeEndpointConfig = useWriteEndpointConfig();
     const createDraft = useCreateDraft();
     const getDraftSpec = useGetDraftSpec('materialization');
     const generateDraftSpec = useGenerateDraftSpec('materialization');
@@ -221,10 +223,10 @@ function useWriteMaterializationDraft() {
             draftId = draftRes.value;
         }
 
-        const { value: encryptedEndpointConfig, error: encryptError } =
-            await encryptEndpointConfig();
-        if (encryptError) {
-            return { error: encryptError };
+        const { value: endpoint, error: endpointError } =
+            await writeEndpointConfig(processedEntityName);
+        if (endpointError) {
+            return { error: endpointError };
         }
 
         // Matched by type, so a renamed materialization keeps its drafted spec.
@@ -243,17 +245,18 @@ function useWriteMaterializationDraft() {
 
         const generatedDraftSpec = generateDraftSpec(
             existingDraftSpec,
-            { ...endpointConfig, config: encryptedEndpointConfig },
+            { ...endpointConfig, config: endpoint.config },
             resourceConfigs,
             bindings,
-            specOptions
+            { ...specOptions, secrets: endpoint.secrets }
         );
 
         const { value: draftSpec, error: draftSpecError } = await saveDraftSpec(
             draftId,
             processedEntityName,
             generatedDraftSpec,
-            Boolean(existingDraftSpec)
+            Boolean(existingDraftSpec),
+            endpoint.secrets !== null
         );
         if (draftSpecError) {
             return { error: { title: ERROR_TITLE, error: draftSpecError } };
@@ -264,13 +267,13 @@ function useWriteMaterializationDraft() {
                 draftId,
                 catalogName: processedEntityName,
                 draftSpec,
-                encryptedEndpointConfig,
+                endpointConfig: endpoint.config,
+                secrets: endpoint.secrets,
             },
         };
     }, [
         bindings,
         createDraft,
-        encryptEndpointConfig,
         endpointConfig,
         generateDraftSpec,
         getDraftSpec,
@@ -279,5 +282,6 @@ function useWriteMaterializationDraft() {
         resourceConfigs,
         saveDraftSpec,
         specOptions,
+        writeEndpointConfig,
     ]);
 }

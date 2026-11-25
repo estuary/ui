@@ -21,7 +21,7 @@ export function useSetSecret() {
     const [, setSecret] = useMutation(SET_SECRET);
 
     return useCallback(
-        async (secretName: string, value: string) => {
+        async (secretName: string, value: unknown) => {
             const document = await encryptSecret(secretName, value);
 
             const result = await setSecret({
@@ -40,7 +40,7 @@ export function useSetSecret() {
 
 async function encryptSecret(
     secretName: string,
-    value: string
+    value: unknown
 ): Promise<unknown> {
     // regular fetch since the shared client logs failed requests,
     // which we don't want for this call

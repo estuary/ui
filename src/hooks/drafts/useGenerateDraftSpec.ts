@@ -30,6 +30,7 @@ import {
     getSourceCapturePropKey,
     setFieldsStanzaRecommended,
 } from 'src/utils/entity-utils';
+import { ENABLE_RUNTIME_V2 } from 'src/utils/secrets-utils';
 import {
     getBindingIndex,
     getCollectionName,
@@ -54,6 +55,7 @@ interface TaskSpecOptions {
     defaultFieldsRecommended?: boolean;
     targetNamingModel?: TargetNamingModel;
     targetNamingStrategy?: TargetNamingStrategy | null;
+    secrets?: Record<string, string> | null;
 }
 
 export function useGenerateDraftSpec(
@@ -78,14 +80,16 @@ function generateCaptureDraftSpec(
     existingDraftSpec: CaptureDraftSpec | null,
     endpointConfig: ConnectorConfig,
     resourceConfigs: ResourceConfigDictionary,
-    bindings: Bindings
+    bindings: Bindings,
+    options?: Pick<TaskSpecOptions, 'secrets'>
 ): CaptureDraftSpec {
     let spec = generateTaskSpec(
         'capture',
         existingDraftSpec?.spec,
         endpointConfig,
         resourceConfigs,
-        bindings
+        bindings,
+        options
     );
 
     // TODO: The discover executor applies starter defaults (autoDiscover,
@@ -173,6 +177,20 @@ function generateTaskSpec(
         ? 'dekaf'
         : 'connector';
     draftSpec.endpoint = { [endpointProp]: endpointConfig };
+
+    // A materialization only resolves secrets on runtime v2.
+    // An explicit flag is left alone.
+    if (isEmpty(options.secrets)) {
+        delete draftSpec.secrets;
+    } else {
+        draftSpec.secrets = options.secrets;
+
+        if (catalogType === 'materialization') {
+            draftSpec.shards ??= {};
+            draftSpec.shards.flags ??= {};
+            draftSpec.shards.flags[ENABLE_RUNTIME_V2] ??= 'true';
+        }
+    }
 
     if (isEmpty(resourceConfigs) || isEmpty(bindings)) {
         draftSpec.bindings = [];

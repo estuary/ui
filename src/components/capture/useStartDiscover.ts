@@ -18,11 +18,7 @@ import {
 } from 'src/services/supabase';
 import { CustomEvents } from 'src/services/types';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
-import {
-    useEndpointConfig_setServerUpdateRequired,
-    useEndpointConfigStore_endpointConfig_data,
-    useEndpointConfigStore_setPreviousEndpointConfig,
-} from 'src/stores/EndpointConfig/hooks';
+import { useEndpointConfig_setServerUpdateRequired } from 'src/stores/EndpointConfig/hooks';
 import { useFormStateStore_setFormState } from 'src/stores/FormState/hooks';
 import { FormStatus } from 'src/stores/FormState/types';
 
@@ -45,7 +41,6 @@ export function useStartDiscover() {
     const imageName = useDetailsFormStore(
         (state) => state.details.data.connectorImage.imageName
     );
-    const endpointConfigData = useEndpointConfigStore_endpointConfig_data();
 
     return useCallback(
         async (
@@ -85,7 +80,7 @@ export function useStartDiscover() {
                 return false;
             }
 
-            void watchDiscover(draftId, endpointConfigData);
+            void watchDiscover(draftId);
 
             setFormState({
                 logToken: discover.logsToken,
@@ -96,7 +91,6 @@ export function useStartDiscover() {
         [
             callFailed,
             createDiscover,
-            endpointConfigData,
             imageName,
             postHog,
             setDraftId,
@@ -128,8 +122,6 @@ function useWatchDiscover() {
 
     // Endpoint Config Store
     const setServerUpdateRequired = useEndpointConfig_setServerUpdateRequired();
-    const setPreviousEndpointConfig =
-        useEndpointConfigStore_setPreviousEndpointConfig();
 
     const jobFailed = useCallback(
         (error: any) => {
@@ -142,10 +134,7 @@ function useWatchDiscover() {
     );
 
     return useCallback(
-        async (
-            discoverDraftId: string,
-            existingEndpointConfig: any // JsonFormsData
-        ) => {
+        async (discoverDraftId: string) => {
             logRocketEvent(CustomEvents.DRAFT_ID_SET, {
                 newValue: 'defaulting-to-null',
                 component: 'useWatchDiscover',
@@ -191,7 +180,6 @@ function useWatchDiscover() {
             void postGenerateMutate();
 
             setDraftedEntityName(capture_name);
-            setPreviousEndpointConfig({ data: existingEndpointConfig });
             setFormState({ status: FormStatus.GENERATED });
 
             // We have ran a discover so we know the endpoint was able to be submitted
@@ -210,7 +198,6 @@ function useWatchDiscover() {
             setDraftId,
             setDraftedEntityName,
             setFormState,
-            setPreviousEndpointConfig,
             setServerUpdateRequired,
         ]
     );

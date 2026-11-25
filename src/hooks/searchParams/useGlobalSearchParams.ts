@@ -21,6 +21,7 @@ export enum GlobalSearchParams {
     PREFILL_LIVE_SPEC_ID = 'prefillLiveSpecId',
     PREFIX = 'prefix',
     PROVIDER = 'provider', // Login Provider but having a url like login/?loginProvider looked weird
+    SECRETS = 'secrets', // `true` or `false`, remembered until set again
     SSO_PROVIDER_ID = 'ssoProviderId',
     DIALOG = 'dialog',
 }
