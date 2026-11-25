@@ -6,7 +6,7 @@ import { forIn } from 'lodash';
 
 import { hasLength } from 'src/utils/misc-utils';
 
-export const discriminator = 'discriminator';
+const discriminator = 'discriminator';
 
 export const getDiscriminator = (schema: any) => {
     if (schema?.[discriminator]) {

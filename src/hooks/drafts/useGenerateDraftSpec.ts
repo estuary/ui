@@ -178,13 +178,14 @@ function generateTaskSpec(
         : 'connector';
     draftSpec.endpoint = { [endpointProp]: endpointConfig };
 
-    // A materialization only resolves secrets on runtime v2.
-    // An explicit flag is left alone.
     if (isEmpty(options.secrets)) {
         delete draftSpec.secrets;
     } else {
         draftSpec.secrets = options.secrets;
 
+        // The secrets stanza only works on runtime v2, so turn it on for
+        // materializations using secrets, unless the spec already sets the
+        // flag. Captures already default to runtime v2.
         if (catalogType === 'materialization') {
             draftSpec.shards ??= {};
             draftSpec.shards.flags ??= {};

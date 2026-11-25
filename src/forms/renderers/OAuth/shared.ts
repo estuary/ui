@@ -4,7 +4,7 @@ export const CLIENT_SECRET = 'client_secret';
 
 //MUST stay in sync with animate-carnival/supabase/functions/oauth/encrypt-config.ts
 export const CREDENTIALS = 'credentials';
-export const INJECTED = '_injectedDuringEncryption_';
+const INJECTED = '_injectedDuringEncryption_';
 
 // These are injected by the server/encryption call so just setting
 //      some value here to pass the validation

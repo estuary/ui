@@ -67,8 +67,9 @@ function EndpointConfigForm({ readOnly }: Props) {
         [activeSecretNames, endpointSchema, secretStorage]
     );
 
-    // Read when needed rather than passed in, so the config never changes and
-    // never makes JSON Forms reload its data mid-edit
+    // The union callbacks read the store when they're called, rather than
+    // capturing its values, so this config never changes. A new config makes
+    // JSON Forms reload its data from props, which can drop an edit in progress.
     const config = useMemo(
         () => ({
             ...defaultOptions,

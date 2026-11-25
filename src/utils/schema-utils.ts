@@ -350,7 +350,7 @@ type SchemaMatcher = (schema: Schema, value: unknown) => boolean;
 const isObject = (value: unknown): value is Schema =>
     typeof value === 'object' && value !== null && !Array.isArray(value);
 
-export const escapePointerToken = (token: string) =>
+const escapePointerToken = (token: string) =>
     token.replace(/~/g, '~0').replace(/\//g, '~1');
 
 // The schema is dereferenced before it gets here, except for what `json-refs`
