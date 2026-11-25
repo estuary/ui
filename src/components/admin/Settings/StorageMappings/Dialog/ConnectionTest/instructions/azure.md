@@ -8,12 +8,12 @@ An Azure AD administrator must add Estuary's Azure application to your tenant. T
 
 [Click here to add the application](https://login.microsoftonline.com/{{accountTenantId}}/v2.0/adminconsent?client_id={{azureApplicationClientId}}&scope=https://storage.azure.com/.default)
 
-# Step 3: Assign the Storage Blob Data Owner role
+# Step 3: Assign the Storage Blob Data Contributor role
 
 1. Navigate to your storage account `{{storageAccountName}}`
 1. Open **Access Control (IAM)**
 1. Click **Add role assignment**
-1. In the **Role** tab, search for and select **Storage Blob Data Owner**
+1. In the **Role** tab, search for and select **Storage Blob Data Contributor**
 1. In the **Members** tab, search for and select `{{azureApplicationName}}`
 1. Click **Review + assign**
 
