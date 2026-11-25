@@ -12,7 +12,6 @@ import {
     useEndpointConfigStore_activeSecretNames,
     useEndpointConfigStore_endpointConfig_data,
     useEndpointConfigStore_endpointSchema,
-    useEndpointConfigStore_savedSecretNames,
 } from 'src/stores/EndpointConfig/hooks';
 import { buildSecretsWrite } from 'src/utils/secrets-utils';
 
@@ -39,7 +38,6 @@ export function useWriteEndpointConfig() {
     const endpointSchema = useEndpointConfigStore_endpointSchema();
     const endpointConfigData = useEndpointConfigStore_endpointConfig_data();
     const activeSecretNames = useEndpointConfigStore_activeSecretNames();
-    const savedSecretNames = useEndpointConfigStore_savedSecretNames();
 
     return useCallback(
         async (
@@ -59,7 +57,6 @@ export function useWriteEndpointConfig() {
                     endpointSchema,
                     endpointConfigData,
                     activeSecretNames,
-                    savedSecretNames,
                     catalogName,
                     isEdit
                 );
@@ -89,7 +86,6 @@ export function useWriteEndpointConfig() {
             endpointSchema,
             isEdit,
             activeSecretNames,
-            savedSecretNames,
             secretStorage,
             setSecret,
         ]

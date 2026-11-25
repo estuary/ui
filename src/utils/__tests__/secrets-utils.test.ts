@@ -234,17 +234,12 @@ beforeAll(async () => {
 const TASK = 'acmeCo/task';
 const nameAt = (pointer: string) => getSecretName(TASK, pointer);
 
-// `stored` and `previous` are pointers to secret names, as the store keeps
-// them: the secrets still used, and those at the last load or write
+// `stored` is pointers to secret names, as the store keeps them
 const write = (
     schema: Schema,
     config: Schema,
-    {
-        stored = {} as Record<string, string>,
-        previous = {} as Record<string, string>,
-        isEdit = false,
-    } = {}
-) => buildSecretsWrite(schema, config, stored, previous, TASK, isEdit);
+    { stored = {} as Record<string, string>, isEdit = false } = {}
+) => buildSecretsWrite(schema, config, stored, TASK, isEdit);
 
 describe('buildSecretsWrite', () => {
     describe('secret field defaults', () => {
@@ -417,41 +412,35 @@ describe('buildSecretsWrite', () => {
             endpoint: 'http://es:9200',
             credentials: { username: 'elastic', password: 'new' },
         };
+        const name = 'acmeCo/secret-task-credentials-password-1qswi91';
 
-        test("is stored under the stored secret's name", () => {
+        test('replaces the secret the task gives the field', () => {
             const result = write(schemas.elasticsearch, config, {
-                stored: { '/credentials/password': 'acmeCo/old' },
+                stored: { '/credentials/password': name },
                 isEdit: true,
             });
 
-            expect(result.secrets).toEqual({
-                'acmeCo/old': '/credentials/password',
-            });
-            expect(result.values).toEqual([['acmeCo/old', 'new']]);
+            expect(result.values).toEqual([[name, 'new']]);
+            expect(result.secrets).toEqual({ [name]: '/credentials/password' });
         });
 
-        test("after clearing, is stored under the cleared secret's name", () => {
-            const result = write(schemas.elasticsearch, config, {
-                previous: { '/credentials/password': 'acmeCo/old' },
-                isEdit: true,
-            });
+        test.each([
+            ['in the same prefix', 'acmeCo/secret-other-task-password'],
+            ['in another prefix', 'otherCo/secret'],
+        ])(
+            "never overwrites a secret the spec names %s, and takes the task's name instead",
+            (_, stored) => {
+                const result = write(schemas.elasticsearch, config, {
+                    stored: { '/credentials/password': stored },
+                    isEdit: true,
+                });
 
-            expect(result.values).toEqual([['acmeCo/old', 'new']]);
-        });
-
-        test('after clearing, gets a new name when another field still uses the cleared secret', () => {
-            const privateKey = '/networkTunnel/sshForwarding/privateKey';
-            const result = write(schemas.elasticsearch, config, {
-                stored: { [privateKey]: 'acmeCo/old' },
-                previous: { '/credentials/password': 'acmeCo/old' },
-                isEdit: true,
-            });
-
-            expect(result.values).toEqual([
-                [nameAt('/credentials/password'), 'new'],
-            ]);
-            expect(result.secrets['acmeCo/old']).toBe(privateKey);
-        });
+                expect(result.values).toEqual([[name, 'new']]);
+                expect(result.secrets).toEqual({
+                    [name]: '/credentials/password',
+                });
+            }
+        );
     });
 });
 

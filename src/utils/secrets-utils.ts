@@ -42,19 +42,8 @@ const findSecretLocations = (
 ): SecretLocation[] =>
     findMatchingLocations(schema, config, isSecretValue).map(({ pointer }) => {
         const value = getAt(config, pointer);
-
         return { pointer, value: hasValue(value) ? value : undefined };
     });
-
-// djb2. Names already stored depend on it, so it must not change.
-const hash = (value: string) => {
-    let hash = 5381;
-    for (const character of value) {
-        hash = (hash * 33) ^ character.charCodeAt(0);
-    }
-
-    return (hash >>> 0).toString(36);
-};
 
 // A secret is a sibling of the task that uses it, e.g. `acmeCo/task`'s
 // `/credentials/password` is `acmeCo/secret-task-credentials-password-<hash>`.
@@ -65,8 +54,12 @@ export const getSecretName = (taskName: string, pointer: string) => {
     );
     const prefix = getParentPrefix(taskName);
     const task = taskName.slice(prefix.length).replace(NAME_CHARACTERS, '_');
+
+    // Computes the djb2 hash (quick hash) of the name and field pointer to
+    // append to the secret name. This prevents conflicts across tasks in the
+    // unlikely event the combination of task name and field pointer is the same.
     // `#` can't appear in a catalog name, so the input is unambiguous
-    const suffix = hash(`${taskName}#${pointer}`);
+    const suffix = djb2Hash(`${taskName}#${pointer}`);
 
     return `${prefix}secret-${task}-${tokens.join('-')}-${suffix}`;
 };
@@ -89,48 +82,40 @@ export const toSecretNames = (
         Object.entries(secrets ?? {}).map(([name, pointer]) => [pointer, name])
     );
 
-// The stored secret a value typed at `pointer` replaces: the one stored
-// there, or else the one cleared from there since the last write, unless
-// another field still uses it
-export const getReplacedSecretName = (
+// Whether a value typed at `pointer` replaces a stored secret: the task's own
+// secret for the field, stored there or cleared from there since the last write
+export const replacesStoredSecret = (
+    catalogName: string,
     pointer: string,
     secretNames: Record<string, string>,
     savedSecretNames: Record<string, string>
-): string | undefined => {
-    const cleared = savedSecretNames[pointer];
+) => {
+    const name = getSecretName(catalogName, pointer);
 
-    return (
-        secretNames[pointer] ??
-        (cleared && !Object.values(secretNames).includes(cleared)
-            ? cleared
-            : undefined)
-    );
+    return secretNames[pointer] === name || savedSecretNames[pointer] === name;
 };
 
 // What writing `config` takes: values typed into secret fields are set as
 // secrets, and the stanza names those along with the stored secrets in
-// `secretNames` (pointers to names). A typed value replaces the secret stored
-// at its location, or the one cleared from it since the last write
-// (`savedSecretNames`). Secrets are siblings of the task, so on create,
-// stored secrets under another prefix are dropped.
+// `secretNames` (pointers to names). A typed value is always set under the
+// name the task and field give, never one from the spec, so a spec can't point
+// it at another secret. On create, stored secrets under another prefix are
+// dropped.
 export const buildSecretsWrite = (
     schema: Schema,
     config: Schema,
     secretNames: Record<string, string>,
-    savedSecretNames: Record<string, string>,
     catalogName: string,
     isEdit: boolean
 ): SecretsWrite => {
     const prefix = getParentPrefix(catalogName);
-    const isSibling = (name: string) =>
-        isEdit || getParentPrefix(name) === prefix;
 
-    const secrets: Record<string, string> = {};
-    Object.entries(secretNames).forEach(([pointer, name]) => {
-        if (isSibling(name)) {
-            secrets[name] = pointer;
-        }
-    });
+    // Pointers to names, so a new name replaces the one at its location
+    const stanza = Object.fromEntries(
+        Object.entries(secretNames).filter(
+            ([, name]) => isEdit || getParentPrefix(name) === prefix
+        )
+    );
 
     const locations = findSecretLocations(schema, config);
     const values: [string, unknown][] = [];
@@ -140,18 +125,9 @@ export const buildSecretsWrite = (
             return;
         }
 
-        const replaced = getReplacedSecretName(
-            pointer,
-            secretNames,
-            savedSecretNames
-        );
-        const name =
-            replaced && isSibling(replaced)
-                ? replaced
-                : getSecretName(catalogName, pointer);
-
+        const name = getSecretName(catalogName, pointer);
         values.push([name, value]);
-        secrets[name] = pointer;
+        stanza[pointer] = name;
     });
 
     return {
@@ -159,7 +135,9 @@ export const buildSecretsWrite = (
             config,
             locations.map(({ pointer }) => pointer)
         ),
-        secrets,
+        secrets: Object.fromEntries(
+            Object.entries(stanza).map(([pointer, name]) => [name, pointer])
+        ),
         values,
     };
 };
@@ -351,4 +329,13 @@ export const toFormSchema = (
     storedPointers.forEach((pointer) => makeOptional(result, toPath(pointer)));
 
     return result;
+};
+
+const djb2Hash = (value: string) => {
+    let hash = 5381;
+    for (const character of value) {
+        hash = (hash * 33) ^ character.charCodeAt(0);
+    }
+
+    return (hash >>> 0).toString(36);
 };

@@ -28,6 +28,7 @@ import { useEntityWorkflow_Editing } from 'src/context/Workflow';
 import { FileUploadDialog } from 'src/generatedModules/FileUpload/FileUploadDialog';
 import { useGetSecret } from 'src/hooks/secrets/useGetSecret';
 import { useCopyToClipboard } from 'src/hooks/useCopyToClipboard';
+import useEntityNameSuffix from 'src/hooks/useEntityNameSuffix';
 import {
     useEndpointConfigStore_activeSecretNames,
     useEndpointConfigStore_clearStoredSecrets,
@@ -36,7 +37,7 @@ import {
 import { Annotations } from 'src/types/jsonforms';
 import { getIdTimestamp } from 'src/utils/flow-id-utils';
 import { toJsonPointer } from 'src/utils/schema-utils';
-import { getReplacedSecretName, isSecretSchema } from 'src/utils/secrets-utils';
+import { isSecretSchema, replacesStoredSecret } from 'src/utils/secrets-utils';
 
 // Muted text, as in the design system's `--text-muted`
 const MUTED_TEXT_OPACITY = 0.55;
@@ -75,6 +76,8 @@ const SecretFieldRenderer = ({
 
     const entityType = useEntityType();
     const isEdit = useEntityWorkflow_Editing();
+    // The task's name in edit, where the warning below shows
+    const catalogName = useEntityNameSuffix(false);
     const activeSecretNames = useEndpointConfigStore_activeSecretNames();
     const savedSecretNames = useEndpointConfigStore_savedSecretNames();
     const clearStoredSecrets = useEndpointConfigStore_clearStoredSecrets();
@@ -86,8 +89,9 @@ const SecretFieldRenderer = ({
     const existingName = activeSecretNames[pointer];
     const value = typeof data === 'string' ? data : '';
     const multiline = (schema as any)[Annotations.multiline] === true;
-    // The secret a typed value replaces, as Next does
-    const replacedName = getReplacedSecretName(
+    // Whether Next overwrites a stored secret with the typed value
+    const replacesStored = replacesStoredSecret(
+        catalogName,
         pointer,
         activeSecretNames,
         savedSecretNames
@@ -231,7 +235,7 @@ const SecretFieldRenderer = ({
                 ) : null}
             </Stack>
 
-            {isEdit && value && replacedName ? (
+            {isEdit && value && replacesStored ? (
                 <Box sx={{ pt: 1 }}>
                     <AlertBox short severity="warning">
                         {`Clicking Next changes this secret immediately, even without publishing. Running tasks that use it will get the new value the next time they restart.`}
