@@ -6,4 +6,5 @@ export const USERS = {
     collections: `${USER_PREFIX}col`,
     homepage: `${USER_PREFIX}wel`,
     materializations: `${USER_PREFIX}mat`,
+    secrets: `${USER_PREFIX}sec`,
 };

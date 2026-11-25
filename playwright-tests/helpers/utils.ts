@@ -224,6 +224,12 @@ export const defaultLocalStorage = async (page: Page) => {
 
         // Hide the help docs
         window.localStorage.setItem('estuary.side-panel-docs', 'false');
+
+        // Dismiss the Agent Skills toast, which covers the bottom right corner
+        window.localStorage.setItem(
+            'estuary.agent-skills-toast-dismissed',
+            JSON.stringify({ state: { toastDismissed: true }, version: 0 })
+        );
     });
 };
 

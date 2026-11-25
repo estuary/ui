@@ -14,6 +14,7 @@ const SESSION_USERS = [
     `${USERS.captures}__schema-evolution`,
     USERS.collections,
     USERS.materializations,
+    USERS.secrets,
 ];
 
 for (const user of SESSION_USERS) {
