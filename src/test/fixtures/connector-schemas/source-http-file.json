@@ -1,0 +1,661 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "HTTP File Source",
+    "type": "object",
+    "required": [
+        "url"
+    ],
+    "properties": {
+        "url": {
+            "type": "string",
+            "title": "HTTP File URL",
+            "description": "The HTTP URL of the source file to capture."
+        },
+        "credentials": {
+            "title": "Credentials",
+            "description": "User credentials, if required to access the data at the HTTP URL.",
+            "type": "object",
+            "oneOf": [
+                {
+                    "type": "object",
+                    "title": "Basic Authentication",
+                    "properties": {
+                        "user": {
+                            "type": "string",
+                            "title": "Username",
+                            "description": "Username, if required to access the HTTP endpoint.",
+                            "secret": true
+                        },
+                        "password": {
+                            "type": "string",
+                            "secret": true,
+                            "description": "Password, if required to access the HTTP endpoint.",
+                            "title": "Password"
+                        }
+                    }
+                }
+            ]
+        },
+        "parser": {
+            "$id": "flow://parser-config-schema",
+            "$schema": "http://json-schema.org/draft-07/schema#",
+            "title": "Parser Configuration",
+            "description": "Configures how files are parsed",
+            "type": "object",
+            "properties": {
+                "compression": {
+                    "title": "Compression",
+                    "description": "Determines how to decompress the contents. The default, 'Auto', will try to determine the\ncompression automatically.",
+                    "default": null,
+                    "oneOf": [
+                        {
+                            "title": "GZip",
+                            "const": "gzip",
+                            "default": "gzip"
+                        },
+                        {
+                            "title": "Zip Archive",
+                            "const": "zip",
+                            "default": "zip"
+                        },
+                        {
+                            "title": "Zstandard",
+                            "const": "zstd",
+                            "default": "zstd"
+                        },
+                        {
+                            "title": "None",
+                            "const": "none",
+                            "default": "none"
+                        },
+                        {
+                            "title": "Auto",
+                            "const": null,
+                            "default": null
+                        }
+                    ]
+                },
+                "defaultOffset": {
+                    "description": "The default timezone to use when parsing timestamps that do not have a timezone. Timezones\nmust be specified as an +/-HH:MM offset, defaults to +00:00.",
+                    "type": "string",
+                    "default": "+00:00"
+                },
+                "format": {
+                    "description": "Determines how to parse the contents. The default, 'Auto', will try to determine the format\nautomatically based on the file extension or MIME type, if available.",
+                    "type": "object",
+                    "default": {
+                        "type": "auto"
+                    },
+                    "discriminator": {
+                        "propertyName": "type"
+                    },
+                    "oneOf": [
+                        {
+                            "title": "Auto",
+                            "description": "Attempt to determine the format automatically, based on the file extension or associated\ncontent-type.",
+                            "type": "object",
+                            "properties": {
+                                "type": {
+                                    "type": "string",
+                                    "const": "auto",
+                                    "default": "auto"
+                                }
+                            },
+                            "required": [
+                                "type"
+                            ]
+                        },
+                        {
+                            "title": "Avro",
+                            "description": "Avro object container files, as defined by the [avro spec](https://avro.apache.org/docs/current/spec.html#Object+Container+Files)",
+                            "type": "object",
+                            "properties": {
+                                "type": {
+                                    "type": "string",
+                                    "const": "avro",
+                                    "default": "avro"
+                                }
+                            },
+                            "required": [
+                                "type"
+                            ]
+                        },
+                        {
+                            "title": "JSON",
+                            "description": "JSON objects separated by whitespace, typically a single newline. This format works for\nJSONL (a.k.a. JSON-newline), but also for any stream of JSON objects, as long as they have\nat least one character of whitespace between them.",
+                            "type": "object",
+                            "properties": {
+                                "type": {
+                                    "type": "string",
+                                    "const": "json",
+                                    "default": "json"
+                                }
+                            },
+                            "required": [
+                                "type"
+                            ]
+                        },
+                        {
+                            "title": "CSV",
+                            "description": "Character Separated Values, such as comma-separated, tab-separated, etc.",
+                            "type": "object",
+                            "properties": {
+                                "config": {
+                                    "type": "object",
+                                    "properties": {
+                                        "delimiter": {
+                                            "title": "Delimiter",
+                                            "description": "The delimiter that separates values within each row. Only single-byte delimiters are\nsupported.",
+                                            "default": null,
+                                            "oneOf": [
+                                                {
+                                                    "title": "Comma (,)",
+                                                    "const": ",",
+                                                    "default": ","
+                                                },
+                                                {
+                                                    "title": "Pipe (|)",
+                                                    "const": "|",
+                                                    "default": "|"
+                                                },
+                                                {
+                                                    "title": "Space (0x20)",
+                                                    "const": " ",
+                                                    "default": " "
+                                                },
+                                                {
+                                                    "title": "Semicolon (;)",
+                                                    "const": ";",
+                                                    "default": ";"
+                                                },
+                                                {
+                                                    "title": "Tab (0x09)",
+                                                    "const": "\t",
+                                                    "default": "\t"
+                                                },
+                                                {
+                                                    "title": "Tilde (~)",
+                                                    "const": "~",
+                                                    "default": "~"
+                                                },
+                                                {
+                                                    "title": "Vertical Tab (0x0B)",
+                                                    "const": "\u000b",
+                                                    "default": "\u000b"
+                                                },
+                                                {
+                                                    "title": "Unit Separator (0x1F)",
+                                                    "const": "\u001f",
+                                                    "default": "\u001f"
+                                                },
+                                                {
+                                                    "title": "SOH (0x01)",
+                                                    "const": "\u0001",
+                                                    "default": "\u0001"
+                                                },
+                                                {
+                                                    "title": "Auto",
+                                                    "const": null,
+                                                    "default": null
+                                                }
+                                            ]
+                                        },
+                                        "encoding": {
+                                            "title": "Encoding",
+                                            "description": "The character encoding of the source file. If unspecified, then the parser will make a\nbest-effort guess based on peeking at a small portion of the beginning of the file. If\nknown, it is best to specify. Encodings are specified by their WHATWG label.",
+                                            "default": null,
+                                            "oneOf": [
+                                                {
+                                                    "title": "UTF-8",
+                                                    "const": "UTF-8",
+                                                    "default": "UTF-8"
+                                                },
+                                                {
+                                                    "title": "UTF-16LE",
+                                                    "const": "UTF-16LE",
+                                                    "default": "UTF-16LE"
+                                                },
+                                                {
+                                                    "title": "UTF-16BE",
+                                                    "const": "UTF-16BE",
+                                                    "default": "UTF-16BE"
+                                                },
+                                                {
+                                                    "title": "IBM866",
+                                                    "const": "IBM866",
+                                                    "default": "IBM866"
+                                                },
+                                                {
+                                                    "title": "ISO-8859-2",
+                                                    "const": "ISO-8859-2",
+                                                    "default": "ISO-8859-2"
+                                                },
+                                                {
+                                                    "title": "ISO-8859-3",
+                                                    "const": "ISO-8859-3",
+                                                    "default": "ISO-8859-3"
+                                                },
+                                                {
+                                                    "title": "ISO-8859-4",
+                                                    "const": "ISO-8859-4",
+                                                    "default": "ISO-8859-4"
+                                                },
+                                                {
+                                                    "title": "ISO-8859-5",
+                                                    "const": "ISO-8859-5",
+                                                    "default": "ISO-8859-5"
+                                                },
+                                                {
+                                                    "title": "ISO-8859-6",
+                                                    "const": "ISO-8859-6",
+                                                    "default": "ISO-8859-6"
+                                                },
+                                                {
+                                                    "title": "ISO-8859-7",
+                                                    "const": "ISO-8859-7",
+                                                    "default": "ISO-8859-7"
+                                                },
+                                                {
+                                                    "title": "ISO-8859-8",
+                                                    "const": "ISO-8859-8",
+                                                    "default": "ISO-8859-8"
+                                                },
+                                                {
+                                                    "title": "ISO-8859-8-I",
+                                                    "const": "ISO-8859-8-I",
+                                                    "default": "ISO-8859-8-I"
+                                                },
+                                                {
+                                                    "title": "ISO-8859-10",
+                                                    "const": "ISO-8859-10",
+                                                    "default": "ISO-8859-10"
+                                                },
+                                                {
+                                                    "title": "ISO-8859-13",
+                                                    "const": "ISO-8859-13",
+                                                    "default": "ISO-8859-13"
+                                                },
+                                                {
+                                                    "title": "ISO-8859-14",
+                                                    "const": "ISO-8859-14",
+                                                    "default": "ISO-8859-14"
+                                                },
+                                                {
+                                                    "title": "ISO-8859-15",
+                                                    "const": "ISO-8859-15",
+                                                    "default": "ISO-8859-15"
+                                                },
+                                                {
+                                                    "title": "ISO-8859-16",
+                                                    "const": "ISO-8859-16",
+                                                    "default": "ISO-8859-16"
+                                                },
+                                                {
+                                                    "title": "KOI8-R",
+                                                    "const": "KOI8-R",
+                                                    "default": "KOI8-R"
+                                                },
+                                                {
+                                                    "title": "KOI8-U",
+                                                    "const": "KOI8-U",
+                                                    "default": "KOI8-U"
+                                                },
+                                                {
+                                                    "title": "macintosh",
+                                                    "const": "macintosh",
+                                                    "default": "macintosh"
+                                                },
+                                                {
+                                                    "title": "windows-874",
+                                                    "const": "windows-874",
+                                                    "default": "windows-874"
+                                                },
+                                                {
+                                                    "title": "windows-1250",
+                                                    "const": "windows-1250",
+                                                    "default": "windows-1250"
+                                                },
+                                                {
+                                                    "title": "windows-1251",
+                                                    "const": "windows-1251",
+                                                    "default": "windows-1251"
+                                                },
+                                                {
+                                                    "title": "windows-1252",
+                                                    "const": "windows-1252",
+                                                    "default": "windows-1252"
+                                                },
+                                                {
+                                                    "title": "windows-1253",
+                                                    "const": "windows-1253",
+                                                    "default": "windows-1253"
+                                                },
+                                                {
+                                                    "title": "windows-1254",
+                                                    "const": "windows-1254",
+                                                    "default": "windows-1254"
+                                                },
+                                                {
+                                                    "title": "windows-1255",
+                                                    "const": "windows-1255",
+                                                    "default": "windows-1255"
+                                                },
+                                                {
+                                                    "title": "windows-1256",
+                                                    "const": "windows-1256",
+                                                    "default": "windows-1256"
+                                                },
+                                                {
+                                                    "title": "windows-1257",
+                                                    "const": "windows-1257",
+                                                    "default": "windows-1257"
+                                                },
+                                                {
+                                                    "title": "windows-1258",
+                                                    "const": "windows-1258",
+                                                    "default": "windows-1258"
+                                                },
+                                                {
+                                                    "title": "x-mac-cyrillic",
+                                                    "const": "x-mac-cyrillic",
+                                                    "default": "x-mac-cyrillic"
+                                                },
+                                                {
+                                                    "title": "GBK",
+                                                    "const": "GBK",
+                                                    "default": "GBK"
+                                                },
+                                                {
+                                                    "title": "gb18030",
+                                                    "const": "gb18030",
+                                                    "default": "gb18030"
+                                                },
+                                                {
+                                                    "title": "Big5",
+                                                    "const": "Big5",
+                                                    "default": "Big5"
+                                                },
+                                                {
+                                                    "title": "EUC-JP",
+                                                    "const": "EUC-JP",
+                                                    "default": "EUC-JP"
+                                                },
+                                                {
+                                                    "title": "ISO-2022-JP",
+                                                    "const": "ISO-2022-JP",
+                                                    "default": "ISO-2022-JP"
+                                                },
+                                                {
+                                                    "title": "Shift_JIS",
+                                                    "const": "Shift_JIS",
+                                                    "default": "Shift_JIS"
+                                                },
+                                                {
+                                                    "title": "EUC-KR",
+                                                    "const": "EUC-KR",
+                                                    "default": "EUC-KR"
+                                                },
+                                                {
+                                                    "title": "Auto",
+                                                    "const": null,
+                                                    "default": null
+                                                }
+                                            ]
+                                        },
+                                        "errorThreshold": {
+                                            "title": "Error Threshold",
+                                            "description": "Allows a percentage of errors to be ignored without failing the entire\nparsing process. When this limit is exceeded, parsing halts.",
+                                            "type": "integer",
+                                            "default": 0,
+                                            "maximum": 100,
+                                            "minimum": 0
+                                        },
+                                        "escape": {
+                                            "title": "Escape Character",
+                                            "description": "The escape character, used to escape quotes within fields.",
+                                            "default": null,
+                                            "oneOf": [
+                                                {
+                                                    "title": "Backslash (\\)",
+                                                    "const": "\\",
+                                                    "default": "\\"
+                                                },
+                                                {
+                                                    "title": "Disable Escapes",
+                                                    "const": "",
+                                                    "default": ""
+                                                },
+                                                {
+                                                    "title": "Auto",
+                                                    "const": null,
+                                                    "default": null
+                                                }
+                                            ]
+                                        },
+                                        "headers": {
+                                            "description": "Manually specified headers, which can be used in cases where the file itself doesn't\ncontain a header row. If specified, then the parser will assume that the first row is data,\nnot column names, and the column names given here will be used. The column names will be\nmatched with the columns in the file by the order in which they appear here.",
+                                            "type": "array",
+                                            "default": [],
+                                            "items": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "lineEnding": {
+                                            "title": "Line Ending",
+                                            "description": "The value that terminates a line. Only single-byte values are supported, with the\nexception of \"\\r\\n\" (CRLF), which will accept lines terminated by\neither a carriage return, a newline, or both.",
+                                            "default": null,
+                                            "oneOf": [
+                                                {
+                                                    "title": "CRLF (\\r\\n) (Windows)",
+                                                    "const": "\r\n",
+                                                    "default": "\r\n"
+                                                },
+                                                {
+                                                    "title": "CR (\\r)",
+                                                    "const": "\r",
+                                                    "default": "\r"
+                                                },
+                                                {
+                                                    "title": "LF (\\n)",
+                                                    "const": "\n",
+                                                    "default": "\n"
+                                                },
+                                                {
+                                                    "title": "Record Separator (0x1E)",
+                                                    "const": "\u001e",
+                                                    "default": "\u001e"
+                                                },
+                                                {
+                                                    "title": "Auto",
+                                                    "const": null,
+                                                    "default": null
+                                                }
+                                            ]
+                                        },
+                                        "quote": {
+                                            "title": "Quote Character",
+                                            "description": "The character used to quote fields.",
+                                            "default": null,
+                                            "oneOf": [
+                                                {
+                                                    "title": "Double Quote (\")",
+                                                    "const": "\"",
+                                                    "default": "\""
+                                                },
+                                                {
+                                                    "title": "Single Quote (')",
+                                                    "const": "'",
+                                                    "default": "'"
+                                                },
+                                                {
+                                                    "title": "Disable Quoting",
+                                                    "const": "",
+                                                    "default": ""
+                                                },
+                                                {
+                                                    "title": "Auto",
+                                                    "const": null,
+                                                    "default": null
+                                                }
+                                            ]
+                                        },
+                                        "skipLines": {
+                                            "description": "Skip a number of lines at the beginning of the file before parsing begins.\nThis is useful for skipping over metadata that is sometimes added to the top of files.",
+                                            "type": "integer",
+                                            "format": "uint64",
+                                            "minimum": 0
+                                        }
+                                    }
+                                },
+                                "type": {
+                                    "type": "string",
+                                    "const": "csv",
+                                    "default": "csv"
+                                }
+                            },
+                            "required": [
+                                "type",
+                                "config"
+                            ]
+                        },
+                        {
+                            "title": "Protobuf",
+                            "description": "Parses a single protobuf message, using the given .proto file in the configuration.",
+                            "type": "object",
+                            "properties": {
+                                "config": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "description": "The name of the protobuf Message to deserialize as. Must be defined within the given proto\nfile.",
+                                            "type": "string"
+                                        },
+                                        "protoFile": {
+                                            "title": "Your .proto file",
+                                            "description": "The contents of the .proto that defines the message type to deserialize.",
+                                            "type": "string",
+                                            "multiline": true
+                                        }
+                                    },
+                                    "required": [
+                                        "protoFile",
+                                        "message"
+                                    ]
+                                },
+                                "type": {
+                                    "type": "string",
+                                    "const": "protobuf",
+                                    "default": "protobuf"
+                                }
+                            },
+                            "required": [
+                                "type",
+                                "config"
+                            ]
+                        },
+                        {
+                            "title": "W3C Extended Log",
+                            "description": "A W3C Extended Log file, as defined by the working group draft at:\nhttps://www.w3.org/TR/WD-logfile.html",
+                            "type": "object",
+                            "properties": {
+                                "type": {
+                                    "type": "string",
+                                    "const": "w3cExtendedLog",
+                                    "default": "w3cExtendedLog"
+                                }
+                            },
+                            "required": [
+                                "type"
+                            ]
+                        },
+                        {
+                            "title": "Parquet",
+                            "type": "object",
+                            "properties": {
+                                "type": {
+                                    "type": "string",
+                                    "const": "parquet",
+                                    "default": "parquet"
+                                }
+                            },
+                            "required": [
+                                "type"
+                            ]
+                        },
+                        {
+                            "title": "XML",
+                            "description": "XML documents. Each file's root element, or each element matching the configured\nrecord path, is emitted as a JSON document.",
+                            "type": "object",
+                            "properties": {
+                                "config": {
+                                    "title": "XML",
+                                    "description": "Configuration for parsing XML documents into JSON.\n\nElements are converted using the following rules:\n- Each document holds its element under the element's own name, such as `{\"Order\": {...}}`.\n- An element with only text content becomes a JSON string.\n- An element with attributes or child elements becomes a JSON object. Attributes are\n  prefixed with `@`, and any text content is placed under `#text`.\n- Child elements that occur more than once become JSON arrays. Elements named in\n  `arrayElements` always become arrays, even if they only occur once.\n- All values are strings. Namespace prefixes are removed from element names, but attribute\n  names keep them, such as `@xsi:type`.",
+                                    "type": "object",
+                                    "properties": {
+                                        "arrayElements": {
+                                            "title": "Array Elements",
+                                            "description": "Names of elements that should always be represented as arrays, even when an element\ncontains only a single occurrence of them. Use this for repeated elements, so that the\nshape of documents does not change depending on how many occurrences a file contains.\nNamespace prefixes are ignored.",
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "recordPath": {
+                                            "title": "Record Path",
+                                            "description": "The path of the element to emit as a document, for example `/Orders/Order`.\nEach matching element becomes a separate document. If empty, the root element of\neach file is emitted as a single document. Namespace prefixes are ignored, so\n`/ns:Orders/ns:Order` is the same as `/Orders/Order`.",
+                                            "type": [
+                                                "string",
+                                                "null"
+                                            ],
+                                            "examples": [
+                                                "/Orders/Order"
+                                            ]
+                                        }
+                                    }
+                                },
+                                "type": {
+                                    "type": "string",
+                                    "const": "xml",
+                                    "default": "xml"
+                                }
+                            },
+                            "required": [
+                                "type",
+                                "config"
+                            ]
+                        }
+                    ],
+                    "required": [
+                        "type"
+                    ]
+                }
+            },
+            "advanced": true
+        },
+        "headers": {
+            "title": "Headers",
+            "type": "object",
+            "properties": {
+                "items": {
+                    "title": "Additional HTTP Headers",
+                    "description": "Additional HTTP headers when requesting the file. These are uncommon.",
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "key": {
+                                "type": "string",
+                                "title": "Header Key"
+                            },
+                            "value": {
+                                "type": "string",
+                                "title": "Header Value",
+                                "secret": true
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
