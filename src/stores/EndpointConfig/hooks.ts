@@ -46,16 +46,12 @@ export const useEndpointConfigStore_encryptedEndpointConfig_data = () => {
     );
 };
 
-export const useEndpointConfigStore_setEncryptedEndpointConfig = () => {
-    return useEndpointConfigStore((state) => state.setEncryptedEndpointConfig);
+export const useEndpointConfigStore_savedEndpointConfig_data = () => {
+    return useEndpointConfigStore((state) => state.savedEndpointConfig.data);
 };
 
-export const useEndpointConfigStore_previousEndpointConfig_data = () => {
-    return useEndpointConfigStore((state) => state.previousEndpointConfig.data);
-};
-
-export const useEndpointConfigStore_setPreviousEndpointConfig = () => {
-    return useEndpointConfigStore((state) => state.setPreviousEndpointConfig);
+export const useEndpointConfigStore_setSavedEndpointConfig = () => {
+    return useEndpointConfigStore((state) => state.setSavedEndpointConfig);
 };
 
 export const useEndpointConfigStore_endpointConfig_data = () => {
@@ -84,4 +80,28 @@ export const useEndpointConfig_setServerUpdateRequired = () => {
 
 export const useEndpointConfig_endpointCanBeEmpty = () => {
     return useEndpointConfigStore((state) => state.endpointCanBeEmpty);
+};
+
+export const useEndpointConfigStore_savedSecretNames = () => {
+    return useEndpointConfigStore((state) => state.savedSecretNames);
+};
+
+export const useEndpointConfigStore_clearStoredSecrets = () => {
+    return useEndpointConfigStore((state) => state.clearStoredSecrets);
+};
+
+export const useEndpointConfigStore_activeSecretNames = () => {
+    return useEndpointConfigStore((state) => state.activeSecretNames);
+};
+
+// Whether the task has a `secrets` stanza: the spec last loaded or written
+// named stored secrets
+export const useEndpointConfigStore_hasStoredSecrets = () => {
+    return useEndpointConfigStore(
+        (state) => Object.keys(state.savedSecretNames).length > 0
+    );
+};
+
+export const useEndpointConfigStore_sopsPinned = () => {
+    return useEndpointConfigStore((state) => state.sopsPinned);
 };

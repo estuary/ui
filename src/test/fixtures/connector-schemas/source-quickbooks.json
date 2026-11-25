@@ -1,0 +1,83 @@
+{
+    "$defs": {
+        "OAuth2Credentials": {
+            "properties": {
+                "credentials_title": {
+                    "const": "OAuth Credentials",
+                    "default": "OAuth Credentials",
+                    "title": "Credentials Title",
+                    "type": "string"
+                },
+                "client_id": {
+                    "secret": true,
+                    "title": "Client Id",
+                    "type": "string"
+                },
+                "client_secret": {
+                    "secret": true,
+                    "title": "Client Secret",
+                    "type": "string"
+                },
+                "refresh_token": {
+                    "secret": true,
+                    "title": "Refresh Token",
+                    "type": "string"
+                },
+                "access_token": {
+                    "default": "PLACEHOLDER",
+                    "secret": true,
+                    "title": "Access Token",
+                    "type": "string",
+                    "x-hidden-field": true
+                },
+                "access_token_expires_at": {
+                    "default": "1970-01-01T00:00:00Z",
+                    "format": "date-time",
+                    "title": "Access token expiration time.",
+                    "type": "string",
+                    "x-hidden-field": true
+                }
+            },
+            "required": [
+                "client_id",
+                "client_secret",
+                "refresh_token"
+            ],
+            "title": "OAuth",
+            "type": "object"
+        }
+    },
+    "properties": {
+        "realm_id": {
+            "description": "ID for the Company to Request Data From",
+            "order": 0,
+            "title": "Company ID",
+            "type": "string"
+        },
+        "credentials": {
+            "$ref": "#/$defs/OAuth2Credentials",
+            "order": 1,
+            "title": "Authentication"
+        },
+        "start_date": {
+            "description": "UTC date and time in the format YYYY-MM-DDTHH:MM:SSZ. Any data generated before this date will not be replicated. If left blank, the start date will be set to 30 days before the present.",
+            "format": "date-time",
+            "order": 2,
+            "title": "Start Date",
+            "type": "string"
+        },
+        "is_sandbox": {
+            "default": false,
+            "description": "Enable to capture from a QuickBooks sandbox company instead of production.",
+            "order": 3,
+            "title": "Use Sandbox Environment",
+            "type": "boolean"
+        }
+    },
+    "required": [
+        "realm_id",
+        "credentials"
+    ],
+    "title": "EndpointConfig",
+    "type": "object"
+}

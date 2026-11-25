@@ -12,6 +12,26 @@ export const defaultOptions = {
     showUnfocusedDescription: true,
 };
 
+// Passed in JSON Forms' `config` by a form that keeps track of its unions'
+// options: which one each union has selected, as its data alone can't always
+// tell, and the fields last entered, so switching back restores them
+interface UnionOptionsConfig {
+    getSelectedOption: (path: string) => number | undefined;
+    // Resolves to the union's data for `option`: `defaults` with the option's
+    // own `fields` as last entered
+    switchOption: (
+        path: string,
+        option: number,
+        defaults: unknown,
+        fields: string[]
+    ) => unknown;
+}
+
+export const getUnionOptions = (
+    config: unknown
+): UnionOptionsConfig | undefined =>
+    (config as { unionOptions?: UnionOptionsConfig } | undefined)?.unionOptions;
+
 // TODO (json forms) Value being passed in is not used right now... need to decide if it is needed
 //   added the hideValidation just to match the style. This should be a single function
 export const showValidation = (_val?: any): ValidationMode => {

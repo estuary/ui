@@ -11,9 +11,9 @@ import {
     useEditorStore_setCatalogName,
 } from 'src/components/editor/Store/hooks';
 import { useApplyDraftToWorkflow } from 'src/components/shared/Entity/hooks/useApplyDraftToWorkflow';
-import { useEncryptEndpointConfig } from 'src/components/shared/Entity/hooks/useEncryptEndpointConfig';
 import useEntityWorkflowHelpers from 'src/components/shared/Entity/hooks/useEntityWorkflowHelpers';
 import { useValidateWorkflowForms } from 'src/components/shared/Entity/hooks/useValidateWorkflowForms';
+import { useWriteEndpointConfig } from 'src/components/shared/Entity/hooks/useWriteEndpointConfig';
 import { useMutateDraftSpec } from 'src/components/shared/Entity/MutateDraftSpecContext';
 import { useEntityWorkflow_Editing } from 'src/context/Workflow';
 import { useCreateDraft } from 'src/hooks/drafts/useCreateDraft';
@@ -72,7 +72,7 @@ export function useSubmitCaptureForm(options?: {
             return false;
         }
 
-        const { draftId, catalogName, encryptedEndpointConfig, startedOver } =
+        const { draftId, catalogName, endpointConfig, secrets, startedOver } =
             written;
 
         setCatalogName(catalogName);
@@ -83,7 +83,12 @@ export function useSubmitCaptureForm(options?: {
 
         // this breaks when you have published something, stay on the page, and then edit agin
         void mutateDraftSpec();
-        applyDraft({ draftId, catalogName, encryptedEndpointConfig });
+        applyDraft({
+            draftId,
+            catalogName,
+            endpointConfig,
+            secrets,
+        });
 
         return true;
     }, [
@@ -104,7 +109,8 @@ export function useSubmitCaptureForm(options?: {
 interface WrittenCaptureDraft {
     draftId: string;
     catalogName: string;
-    encryptedEndpointConfig: Schema;
+    endpointConfig: Schema;
+    secrets: Record<string, string> | null;
     // A new draft was started, so the capture needs a discover
     startedOver: boolean;
 }
@@ -117,7 +123,7 @@ interface WrittenCaptureDraft {
 function useWriteCaptureDraft(initiateDiscovery?: boolean) {
     const isEdit = useEntityWorkflow_Editing();
 
-    const encryptEndpointConfig = useEncryptEndpointConfig();
+    const writeEndpointConfig = useWriteEndpointConfig();
     const createDraft = useCreateDraft();
     const getDraftSpec = useGetDraftSpec('capture');
     const generateDraftSpec = useGenerateDraftSpec('capture');
@@ -143,10 +149,10 @@ function useWriteCaptureDraft(initiateDiscovery?: boolean) {
     return useCallback(async (): Promise<
         Result<WrittenCaptureDraft, FormError>
     > => {
-        const { value: encryptedEndpointConfig, error: encryptError } =
-            await encryptEndpointConfig();
-        if (encryptError) {
-            return { error: encryptError };
+        const { value: endpoint, error: endpointError } =
+            await writeEndpointConfig(catalogName);
+        if (endpointError) {
+            return { error: endpointError };
         }
 
         // The old capture and its collections are left behind in their draft
@@ -178,15 +184,17 @@ function useWriteCaptureDraft(initiateDiscovery?: boolean) {
         // Starting over drafts no bindings, as the discover adds them
         const draftSpec = generateDraftSpec(
             existingDraftSpec,
-            { image: imagePath, config: encryptedEndpointConfig },
+            { image: imagePath, config: endpoint.config },
             startedOver ? {} : resourceConfigs,
-            startedOver ? {} : bindings
+            startedOver ? {} : bindings,
+            { secrets: endpoint.secrets }
         );
 
         const { error: draftSpecError } = await saveDraftSpec(
             draftId,
             catalogName,
-            draftSpec
+            draftSpec,
+            endpoint.secrets !== null
         );
         if (draftSpecError) {
             return { error: { title: ERROR_TITLE, error: draftSpecError } };
@@ -196,7 +204,8 @@ function useWriteCaptureDraft(initiateDiscovery?: boolean) {
             value: {
                 draftId,
                 catalogName,
-                encryptedEndpointConfig,
+                endpointConfig: endpoint.config,
+                secrets: endpoint.secrets,
                 startedOver,
             },
         };
@@ -204,7 +213,6 @@ function useWriteCaptureDraft(initiateDiscovery?: boolean) {
         bindings,
         catalogName,
         createDraft,
-        encryptEndpointConfig,
         generateDraftSpec,
         getDraftSpec,
         imagePath,
@@ -212,5 +220,6 @@ function useWriteCaptureDraft(initiateDiscovery?: boolean) {
         persistedDraftId,
         resourceConfigs,
         saveDraftSpec,
+        writeEndpointConfig,
     ]);
 }

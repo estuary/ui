@@ -19,8 +19,10 @@ import { useEntityWorkflow_Editing } from 'src/context/Workflow';
 import { logRocketEvent } from 'src/services/shared';
 import {
     useEndpointConfig_setServerUpdateRequired,
+    useEndpointConfigStore_activeSecretNames,
     useEndpointConfigStore_endpointConfig_data,
-    useEndpointConfigStore_previousEndpointConfig_data,
+    useEndpointConfigStore_savedEndpointConfig_data,
+    useEndpointConfigStore_savedSecretNames,
 } from 'src/stores/EndpointConfig/hooks';
 import { useEndpointConfigStore } from 'src/stores/EndpointConfig/Store';
 import { useSidePanelDocsStore } from 'src/stores/SidePanelDocs/Store';
@@ -40,8 +42,10 @@ const SectionContent = ({ readOnly = false }: SectionContentProps) => {
         ])
     );
     const endpointConfig = useEndpointConfigStore_endpointConfig_data();
-    const previousEndpointConfig =
-        useEndpointConfigStore_previousEndpointConfig_data();
+    const savedEndpointConfig =
+        useEndpointConfigStore_savedEndpointConfig_data();
+    const activeSecretNames = useEndpointConfigStore_activeSecretNames();
+    const savedSecretNames = useEndpointConfigStore_savedSecretNames();
     const setServerUpdateRequired = useEndpointConfig_setServerUpdateRequired();
 
     // Workflow related props
@@ -51,7 +55,8 @@ const SectionContent = ({ readOnly = false }: SectionContentProps) => {
     const endpointConfigUpdated = useMemo(() => {
         const response = endpointCanBeEmpty
             ? false
-            : !isEqual(endpointConfig, previousEndpointConfig);
+            : !isEqual(endpointConfig, savedEndpointConfig) ||
+              !isEqual(activeSecretNames, savedSecretNames);
 
         logRocketEvent('EndpointConfig', {
             configCompare: true,
@@ -60,7 +65,13 @@ const SectionContent = ({ readOnly = false }: SectionContentProps) => {
         });
 
         return response;
-    }, [endpointCanBeEmpty, endpointConfig, previousEndpointConfig]);
+    }, [
+        endpointCanBeEmpty,
+        endpointConfig,
+        savedEndpointConfig,
+        activeSecretNames,
+        savedSecretNames,
+    ]);
 
     useEffect(() => {
         logRocketEvent('EndpointConfig', {

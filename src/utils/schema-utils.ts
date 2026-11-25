@@ -12,8 +12,17 @@ import type {
     SplitCollectionDef,
 } from 'src/types/wasm';
 
-import { has, isEmpty, isPlainObject, set } from 'lodash';
+import {
+    cloneDeep,
+    get,
+    has,
+    isEmpty,
+    isEqual,
+    isPlainObject,
+    set,
+} from 'lodash';
 
+import { getDiscriminator } from 'src/forms/shared';
 import { logRocketConsole } from 'src/services/shared';
 import { hasOwnProperty } from 'src/utils/misc-utils';
 
@@ -332,4 +341,402 @@ export const translateRedactionStrategy = (
         default:
             return null;
     }
+};
+
+// Whether a value in the document, at a location the schema applies to,
+// matches what's being searched for
+type SchemaMatcher = (schema: Schema, value: unknown) => boolean;
+
+const isObject = (value: unknown): value is Schema =>
+    typeof value === 'object' && value !== null && !Array.isArray(value);
+
+const escapePointerToken = (token: string) =>
+    token.replace(/~/g, '~0').replace(/\//g, '~1');
+
+// The schema is dereferenced before it gets here, except for what `json-refs`
+// leaves: references to a location in the same schema, as recursive ones are
+const resolveRef = (root: unknown, ref: string): unknown => {
+    if (ref === '#') {
+        return root;
+    }
+
+    const target = ref.startsWith('#/')
+        ? get(
+              root,
+              ref
+                  .slice(2)
+                  .split('/')
+                  .map((token) =>
+                      parsePointerEscapeCharacters(decodeURIComponent(token))
+                  )
+          )
+        : undefined;
+
+    if (target === undefined) {
+        throw new Error(`Unresolved schema reference: ${ref}`);
+    }
+
+    return target;
+};
+
+// The nearest `oneOf` or `anyOf` a schema was reached through
+export interface SchemaUnion {
+    // Location of the union in the document
+    pointer: string;
+    schema: Schema;
+    keyword: 'oneOf' | 'anyOf';
+    branch: number;
+}
+
+// A matched location, with each union the matching schemas were reached
+// through, or `null` for one reached outside of any union
+interface MatchedLocation {
+    pointer: string;
+    unions: (SchemaUnion | null)[];
+}
+
+interface Candidate {
+    schema: unknown;
+    union: SchemaUnion | null;
+}
+
+const unionKey = (union: SchemaUnion | null) =>
+    union ? `${union.pointer}/${union.keyword}/${union.branch}` : '';
+
+const walk = (
+    root: unknown,
+    candidates: Candidate[],
+    node: unknown,
+    pointer: string,
+    matches: SchemaMatcher,
+    out: MatchedLocation[]
+) => {
+    if (candidates.length === 0) {
+        return;
+    }
+
+    // Deduplicate within this location only: recursive schemas must be
+    // revisited as we descend through the (finite) config. A schema reached
+    // through two union branches is kept once per branch.
+    const seen = new Map<Schema, Set<string>>();
+    const expanded: Candidate[] = [];
+    const matchedUnions: (SchemaUnion | null)[] = [];
+    const stack = [...candidates];
+
+    while (stack.length > 0) {
+        const candidate = stack.pop()!;
+        const { schema, union } = candidate;
+
+        // Boolean schemas carry no keywords
+        if (!isObject(schema)) {
+            continue;
+        }
+
+        const seenUnions = seen.get(schema) ?? new Set<string>();
+        if (seenUnions.has(unionKey(union))) {
+            continue;
+        }
+
+        seenUnions.add(unionKey(union));
+        seen.set(schema, seenUnions);
+        expanded.push(candidate);
+
+        if (matches(schema, node)) {
+            matchedUnions.push(union);
+        }
+
+        const push = (...schemas: unknown[]) =>
+            schemas.forEach((target) => stack.push({ schema: target, union }));
+
+        if (typeof schema.$ref === 'string') {
+            push(resolveRef(root, schema.$ref));
+        }
+
+        // A secret under it could be missed, so it isn't walked past
+        if (typeof schema.$dynamicRef === 'string') {
+            throw new Error(
+                `Unresolved schema reference: ${schema.$dynamicRef}`
+            );
+        }
+
+        if (Array.isArray(schema.allOf)) {
+            push(...schema.allOf);
+        }
+
+        for (const keyword of ['anyOf', 'oneOf'] as const) {
+            if (Array.isArray(schema[keyword])) {
+                schema[keyword].forEach((member: unknown, branch: number) =>
+                    stack.push({
+                        schema: member,
+                        union: { pointer, schema, keyword, branch },
+                    })
+                );
+            }
+        }
+
+        for (const keyword of ['if', 'then', 'else']) {
+            if (keyword in schema) {
+                push(schema[keyword]);
+            }
+        }
+
+        if (isObject(schema.dependentSchemas)) {
+            push(...Object.values(schema.dependentSchemas));
+        }
+
+        // `not` discards annotations; `propertyNames` describes keys, not
+        // values. Definitions apply only when referenced.
+    }
+
+    if (matchedUnions.length > 0) {
+        out.push({ pointer, unions: matchedUnions });
+        return;
+    }
+
+    if (isObject(node)) {
+        Object.entries(node).forEach(([name, value]) => {
+            const children: Candidate[] = [];
+
+            expanded.forEach(({ schema: parent, union }) => {
+                const schema = parent as Schema;
+                const push = (target: unknown) =>
+                    children.push({ schema: target, union });
+                let matched = false;
+
+                if (
+                    isObject(schema.properties) &&
+                    Object.hasOwn(schema.properties, name)
+                ) {
+                    matched = true;
+                    push(schema.properties[name]);
+                }
+
+                if (isObject(schema.patternProperties)) {
+                    Object.entries(schema.patternProperties).forEach(
+                        ([pattern, patternSchema]) => {
+                            if (new RegExp(pattern, 'u').test(name)) {
+                                matched = true;
+                                push(patternSchema);
+                            }
+                        }
+                    );
+                }
+
+                // Evaluation depends on branch success, which isn't
+                // established here, so this applies to every child.
+                if ('unevaluatedProperties' in schema) {
+                    push(schema.unevaluatedProperties);
+                }
+
+                if (!matched && 'additionalProperties' in schema) {
+                    push(schema.additionalProperties);
+                }
+            });
+
+            walk(
+                root,
+                children,
+                value,
+                `${pointer}/${escapePointerToken(name)}`,
+                matches,
+                out
+            );
+        });
+    } else if (Array.isArray(node)) {
+        node.forEach((value, position) => {
+            const children: Candidate[] = [];
+
+            expanded.forEach(({ schema: parent, union }) => {
+                const schema = parent as Schema;
+                const push = (target: unknown) =>
+                    children.push({ schema: target, union });
+
+                const prefix = Array.isArray(schema.prefixItems)
+                    ? schema.prefixItems[position]
+                    : undefined;
+
+                if (prefix !== undefined) {
+                    push(prefix);
+                } else if ('items' in schema) {
+                    push(schema.items);
+                }
+
+                if ('contains' in schema) {
+                    push(schema.contains);
+                }
+
+                if ('unevaluatedItems' in schema) {
+                    push(schema.unevaluatedItems);
+                }
+            });
+
+            walk(root, children, value, `${pointer}/${position}`, matches, out);
+        });
+    }
+};
+
+// `null`, `{}` or `[]`. Unlike lodash's `isEmpty`, scalars like `0`, `false`
+// and `''` still count as values.
+export const isEmptyJsonValue = (value: unknown) =>
+    value === null || (typeof value === 'object' && isEmpty(value));
+
+// JSON pointers to every value in `document` that `matches` accepts against a
+// schema applying to it. Ported from flow's
+// `crates/validation/src/secrets/plaintext.rs`, so it's deliberately
+// conservative: every branch (`oneOf`, `if`/`then`/`else`, ...) counts,
+// whether or not the document matches it. A match is reported at its own
+// path, and nothing beneath it is searched. Throws when the walk reaches a
+// reference that doesn't resolve within the schema.
+export const findMatchingLocations = (
+    schema: unknown,
+    document: unknown,
+    matches: SchemaMatcher
+): MatchedLocation[] => {
+    const out: MatchedLocation[] = [];
+
+    walk(schema, [{ schema, union: null }], document, '', matches, out);
+
+    return out;
+};
+
+// JSON pointers into a document
+
+export const toPath = (pointer: string) =>
+    pointer.split('/').slice(1).map(parsePointerEscapeCharacters);
+
+export const getAt = (config: unknown, pointer: string) =>
+    pointer === '' ? config : get(config, toPath(pointer));
+
+// Whether a value is filled in: not missing, `''`, `null`, `{}` or `[]`
+export const hasValue = (value: unknown) =>
+    value !== undefined && value !== '' && !isEmptyJsonValue(value);
+
+// Whether `pointer` is `parent` or under it
+export const isAtOrUnder = (pointer: string, parent: string) =>
+    pointer === parent || pointer.startsWith(`${parent}/`);
+
+// The JSON pointer for a JSON Forms path, e.g. `credentials.password`
+export const toJsonPointer = (path: string) =>
+    path
+        .split('.')
+        .filter(Boolean)
+        .map((token) => `/${escapePointerToken(token)}`)
+        .join('');
+
+// The object or array holding the value at `pointer`, and its key in it
+const getParent = (config: unknown, pointer: string) => {
+    const path = toPath(pointer);
+    const key = path.pop()!;
+
+    return { parent: path.length > 0 ? get(config, path) : config, key };
+};
+
+// A copy of `config` without the values at `pointers`. An array item is
+// nulled rather than removed, so the pointers after it don't shift.
+export const withoutValuesAt = (config: Schema, pointers: string[]): Schema => {
+    const result = cloneDeep(config);
+    pointers.forEach((pointer) => {
+        const { parent, key } = getParent(result, pointer);
+
+        if (Array.isArray(parent) && Number(key) < parent.length) {
+            parent[Number(key)] = null;
+        } else if (isPlainObject(parent)) {
+            delete parent[key];
+        }
+    });
+
+    return result;
+};
+
+// Whether the object or array holding the value at `pointer` exists
+export const hasParent = (config: unknown, pointer: string) => {
+    const { parent } = getParent(config, pointer);
+    return isPlainObject(parent) || Array.isArray(parent);
+};
+
+// Which option of a union a document selects
+
+// The value a union branch fixes `property` to, if it fixes one
+const getBranchValue = (branch: unknown, property: string) => {
+    const schema = get(branch, ['properties', property]);
+    if (!isPlainObject(schema)) {
+        return undefined;
+    }
+
+    return (
+        schema.const ??
+        (Array.isArray(schema.enum) && schema.enum.length === 1
+            ? schema.enum[0]
+            : schema.default)
+    );
+};
+
+// The property that tells a union's branches apart: its `discriminator`, or
+// one that every branch fixes to a different value
+const getUnionDiscriminator = (
+    schema: Schema,
+    keyword: SchemaUnion['keyword']
+): string | null => {
+    const explicit = getDiscriminator(schema);
+    if (explicit) {
+        return explicit;
+    }
+
+    const branches = schema[keyword];
+    if (!Array.isArray(branches) || branches.length < 2) {
+        return null;
+    }
+
+    return (
+        Object.keys(get(branches[0], 'properties') ?? {}).find((property) => {
+            const values = branches.map((branch) =>
+                getBranchValue(branch, property)
+            );
+
+            return (
+                values.every((value) => value !== undefined) &&
+                values.every(
+                    (value, index) =>
+                        values.findIndex((other) => isEqual(other, value)) ===
+                        index
+                )
+            );
+        }) ?? null
+    );
+};
+
+// The selected branch of a union, or undefined when it can't be told. A
+// discriminator decides it. Otherwise it's the branch whose required
+// properties are all set and which sets the most of its properties.
+export const getSelectedBranch = (union: SchemaUnion, config: unknown) => {
+    const branches: unknown[] = union.schema[union.keyword];
+    const data = getAt(config, union.pointer);
+
+    const property = getUnionDiscriminator(union.schema, union.keyword);
+    if (property) {
+        const selected = branches.findIndex((branch) =>
+            isEqual(getBranchValue(branch, property), get(data, property))
+        );
+
+        return selected === -1 ? undefined : selected;
+    }
+
+    const isSet = (name: string) => hasValue(get(data, name));
+
+    const scores = branches.map((branch) => {
+        const required: string[] = get(branch, 'required') ?? [];
+        if (!required.every(isSet)) {
+            return -1;
+        }
+
+        return Object.keys(get(branch, 'properties') ?? {}).filter(isSet)
+            .length;
+    });
+
+    const best = Math.max(...scores);
+    const selected = scores.indexOf(best);
+
+    return best >= 0 && scores.lastIndexOf(best) === selected
+        ? selected
+        : undefined;
 };

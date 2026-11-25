@@ -30,90 +30,38 @@
 import type {
     CombinatorRendererProps,
     JsonSchema,
-    OwnPropsOfControl,
     RankedTester,
 } from '@jsonforms/core';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
-import {
-    Button,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogContentText,
-    DialogTitle,
-    Tab,
-    Tabs,
-    Typography,
-} from '@mui/material';
+import { Tab, Tabs, Typography } from '@mui/material';
 
 import {
     and,
     createCombinatorRenderInfos,
+    createDefaultValue,
     decode,
     isOneOfControl,
+    isOneOfEnumControl,
+    not,
     rankWith,
-    schemaMatches,
 } from '@jsonforms/core';
 import { JsonFormsDispatch } from '@jsonforms/react';
 
-import isEmpty from 'lodash/isEmpty';
-
 import CombinatorProperties from 'src/forms/overrides/material/complex/CombinatorProperties';
-import { INJECTED } from 'src/forms/renderers/OAuth/shared';
 import {
-    discriminator,
     getDiscriminator,
     getDiscriminatorDefaultValue,
 } from 'src/forms/shared';
 import { withCustomJsonFormsOneOfDiscriminatorProps } from 'src/services/jsonforms/JsonFormsContext';
+import { getUnionOptions } from 'src/services/jsonforms/shared';
 import { logRocketEvent } from 'src/services/shared';
 import { hasOwnProperty } from 'src/utils/misc-utils';
 
-const renderer = 'Custom_MaterialOneOfRenderer_Discriminator';
+const renderer = 'Custom_MaterialOneOfRenderer';
 
-export interface OwnOneOfProps extends OwnPropsOfControl {
-    indexOfFittingSchema?: number;
-}
-
-// Customization: do not prompt user if they are:
-//  only the discriminator is changing
-//      ex: first click of authentication (usually will only contain discriminator)
-//  only the discriminator is changing and others are blank or INJECTED
-//      ex: clicks after the first of authentication
-//      ex: any click off a tab that is for oAuth
-//  the data is totally empty (ex: parsers)
-function skipTabChangePrompt(data: any, prop: string): boolean {
-    // No data at all - we can skip
-    if (isEmpty(data)) {
-        return true;
-    }
-
-    for (const key in data) {
-        // If it is the discriminator we can ignore
-        if (key === prop) {
-            continue;
-        }
-
-        const value = data[key];
-
-        // Check if value is a non-null object - recurse into it
-        if (typeof value === 'object' && value !== null) {
-            if (!skipTabChangePrompt(value, prop)) {
-                return false;
-            }
-        }
-        // For non-object values, check if they're non-empty and not INJECTED
-        else if (value !== '' && value !== INJECTED) {
-            return false;
-        }
-    }
-
-    return true;
-}
-
-const Custom_MaterialOneOfRenderer_Discriminator = ({
+const Custom_MaterialOneOfRenderer = ({
     handleChange,
     schema,
     path,
@@ -128,17 +76,16 @@ const Custom_MaterialOneOfRenderer_Discriminator = ({
     data,
     enabled,
     required,
+    config,
 }: CombinatorRendererProps) => {
+    const unionOptions = getUnionOptions(config);
+
     const defaultDiscriminator = useRef(true);
-    const [open, setOpen] = useState(false);
+    // A form tracking its unions keeps the selected option, which the data
+    // alone can't always tell
     const [selectedIndex, setSelectedIndex] = useState(
-        indexOfFittingSchema || 0
+        unionOptions?.getSelectedOption(path) ?? (indexOfFittingSchema || 0)
     );
-    const [newSelectedIndex, setNewSelectedIndex] = useState(0);
-    const handleClose = useCallback(() => setOpen(false), [setOpen]);
-    const cancel = useCallback(() => {
-        setOpen(false);
-    }, [setOpen]);
 
     const possibleSchemas = (schema as JsonSchema).oneOf as JsonSchema[];
     const oneOfRenderInfos = createCombinatorRenderInfos(
@@ -190,40 +137,34 @@ const Custom_MaterialOneOfRenderer_Discriminator = ({
         const tabSchema = oneOfRenderInfos[newIndex].schema;
         const { properties: tabSchemaProps } = tabSchema;
 
-        // Customization: Handle setting the oneOf discriminator properly
-        const defaultVal = getDiscriminatorDefaultValue(
-            tabSchemaProps,
-            discriminatorProperty
+        // Customization: Handle setting the oneOf discriminator properly.
+        // Without one, the option's defaults, as JSON Forms sets them.
+        const defaultVal = discriminatorProperty
+            ? getDiscriminatorDefaultValue(
+                  tabSchemaProps,
+                  discriminatorProperty
+              )
+            : createDefaultValue(tabSchema, rootSchema);
+
+        // Its own fields come back as last entered. The discriminator and
+        // const fields are the option's, so they come from the defaults.
+        const fields = Object.keys(tabSchemaProps ?? {}).filter(
+            (key) =>
+                key !== discriminatorProperty &&
+                tabSchemaProps?.[key].const === undefined
         );
 
-        handleChange(path, defaultVal);
+        handleChange(
+            path,
+            unionOptions
+                ? unionOptions.switchOption(path, newIndex, defaultVal, fields)
+                : defaultVal
+        );
         setSelectedIndex(newIndex);
     };
 
-    const confirm = useCallback(() => {
-        handleChange(path, null);
-        openNewTab(newSelectedIndex);
-        setOpen(false);
-    }, [handleChange, newSelectedIndex]);
-
-    const handleTabChange = useCallback(
-        (_event: any, newOneOfIndex: number) => {
-            setNewSelectedIndex(newOneOfIndex);
-
-            // Customization: Skip prompting when changing tab
-            if (skipTabChangePrompt(data, discriminatorProperty)) {
-                logRocketEvent('JsonForms', {
-                    renderer,
-                    skippingTabChangePrompt: true,
-                });
-                openNewTab(newOneOfIndex);
-                return;
-            }
-
-            setOpen(true);
-        },
-        [setOpen, setSelectedIndex, data]
-    );
+    const handleTabChange = (_event: unknown, newOneOfIndex: number) =>
+        openNewTab(newOneOfIndex);
 
     // Customization : Need to handle defaulting for Pydantic schemas
     //  They will return an `enum` with a single value and that will not
@@ -238,6 +179,7 @@ const Custom_MaterialOneOfRenderer_Discriminator = ({
     useEffect(() => {
         if (
             defaultDiscriminator.current &&
+            discriminatorProperty &&
             required &&
             data &&
             !hasOwnProperty(data, discriminatorProperty)
@@ -309,51 +251,18 @@ const Custom_MaterialOneOfRenderer_Discriminator = ({
                         />
                     )
             )}
-            <Dialog
-                open={open}
-                onClose={handleClose}
-                aria-labelledby="alert-dialog-title"
-                aria-describedby="alert-dialog-description"
-            >
-                <DialogTitle id="alert-dialog-title">
-                    {'Clear form?'}
-                </DialogTitle>
-
-                <DialogContent>
-                    <DialogContentText id="alert-dialog-description">
-                        Your data will be cleared if you navigate away from this
-                        tab. Do you want to proceed?
-                    </DialogContentText>
-                </DialogContent>
-
-                <DialogActions>
-                    <Button variant="text" onClick={cancel} color="primary">
-                        No
-                    </Button>
-
-                    <Button
-                        onClick={confirm}
-                        color="primary"
-                        variant="outlined"
-                        autoFocus
-                        id={`oneOf-${id}-confirm-yes`}
-                    >
-                        Yes
-                    </Button>
-                </DialogActions>
-            </Dialog>
         </>
     );
 };
 
-export const materialOneOfControlTester_Discriminator: RankedTester = rankWith(
+// Every oneOf of objects, with or without a discriminator, so the
+// stored-secret handling lives in one renderer. Above JSON Forms' stock
+// renderer (3). A oneOf of consts is an enum, which keeps its own renderer.
+export const materialOneOfControlTester: RankedTester = rankWith(
     10,
-    and(
-        isOneOfControl,
-        schemaMatches((schema) => Object.hasOwn(schema, discriminator))
-    )
+    and(isOneOfControl, not(isOneOfEnumControl))
 );
 
-export default withCustomJsonFormsOneOfDiscriminatorProps(
-    Custom_MaterialOneOfRenderer_Discriminator
+export const MaterialOneOfRenderer = withCustomJsonFormsOneOfDiscriminatorProps(
+    Custom_MaterialOneOfRenderer
 );

@@ -53,14 +53,15 @@ const useSaveCaptureDraftSpec = () => {
         async (
             draftId: string,
             catalogName: string,
-            draftSpec: CaptureDraftSpec
+            draftSpec: CaptureDraftSpec,
+            usesSecrets = false
         ): Promise<Result<CaptureDraftSpec>> => {
             const endpoint = getEndpointFromSpec(draftSpec.spec);
             if (!endpoint?.config) {
                 return { error: UNSUPPORTED_CONFIG };
             }
             // saving expects an encryted config
-            if (!isEncryptedConfig(endpoint.config)) {
+            if (!canSave(endpoint.config, usesSecrets)) {
                 return { error: UNENCRYPTED_CONFIG_ERROR };
             }
 
@@ -95,13 +96,14 @@ const useSaveMaterializationDraftSpec = () => {
             draftId: string,
             catalogName: string,
             draftSpec: MaterializationsDraftSpec,
-            update: boolean
+            update: boolean,
+            usesSecrets = false
         ): Promise<Result<MaterializationsDraftSpec>> => {
             const endpoint = getEndpointFromSpec(draftSpec.spec);
             if (!endpoint?.config) {
                 return { error: UNSUPPORTED_CONFIG };
             }
-            if (!isEncryptedConfig(endpoint.config)) {
+            if (!canSave(endpoint.config, usesSecrets)) {
                 return { error: UNENCRYPTED_CONFIG_ERROR };
             }
 
@@ -139,3 +141,8 @@ const useSaveMaterializationDraftSpec = () => {
         []
     );
 };
+
+function canSave(config: unknown, usesSecrets: boolean) {
+    // A config using a `secrets` stanza is plaintext, with its secrets removed
+    return usesSecrets || isEncryptedConfig(config);
+}
