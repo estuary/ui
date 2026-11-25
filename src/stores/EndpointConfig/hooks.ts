@@ -94,14 +94,6 @@ export const useEndpointConfigStore_activeSecretNames = () => {
     return useEndpointConfigStore((state) => state.activeSecretNames);
 };
 
-// Whether the task has a `secrets` stanza: the spec last loaded or written
-// named stored secrets
-export const useEndpointConfigStore_hasStoredSecrets = () => {
-    return useEndpointConfigStore(
-        (state) => Object.keys(state.savedSecretNames).length > 0
-    );
-};
-
 export const useEndpointConfigStore_sopsPinned = () => {
     return useEndpointConfigStore((state) => state.sopsPinned);
 };

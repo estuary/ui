@@ -56,11 +56,6 @@ const getDraftedPointers = async (nameSegment: string) => {
 const setUpPage = async (browser: any) => {
     const page: Page = await browser.newPage();
 
-    // New tasks use secrets only when the flow is enabled
-    await page.context().addInitScript(() => {
-        window.localStorage.setItem('estuary.secrets-flow', 'true');
-    });
-
     const { email, tenant } = await defaultPageSetup(page, test, USERS.secrets);
     await raiseTaskQuota(tenant);
 
@@ -616,7 +611,7 @@ test.describe.serial('Secrets: editing a task with a stored secret', () => {
     });
 });
 
-// Tasks that keep their secrets sealed with sops though the flow is enabled:
+// Tasks that keep their secrets sealed with sops:
 // each drafts a sops encrypted config with no `secrets` stanza, and its secret
 // fields aren't the secrets flow's. (No local connector uses OAuth.)
 test.describe.serial('Secrets: tasks that stay on sops', () => {

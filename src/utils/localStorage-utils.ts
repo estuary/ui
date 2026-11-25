@@ -8,6 +8,5 @@ export enum LocalStorageKeys {
     SIDE_PANEL_DOCS = 'estuary.side-panel-docs',
     TABLE_SETTINGS = 'estuary.table-settings',
     AGENT_SKILLS_TOAST_DISMISSED = 'estuary.agent-skills-toast-dismissed',
-    SECRETS_FLOW = 'estuary.secrets-flow',
     // ENABLE_DATA_FLOW_RESET = 'estuary.enable-data-flow-reset', // Went Live
 }
