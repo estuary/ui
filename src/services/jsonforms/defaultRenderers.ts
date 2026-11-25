@@ -2,9 +2,10 @@ import type { JsonFormsRendererRegistryEntry } from '@jsonforms/core';
 
 import { materialRenderers } from '@jsonforms/material-renderers';
 
-import MaterialOneOfRenderer_Discriminator, {
-    materialOneOfControlTester_Discriminator,
-} from 'src/forms/overrides/material/complex/MaterialOneOfRenderer_Discriminator';
+import {
+    materialOneOfControlTester,
+    MaterialOneOfRenderer,
+} from 'src/forms/overrides/material/complex/MaterialOneOfRenderer';
 import MaterialDateControl, {
     materialDateControlTester,
 } from 'src/forms/overrides/material/controls/MaterialDateControl';
@@ -56,8 +57,8 @@ const defaultRenderers: JsonFormsRendererRegistryEntry[] = [
     ...materialRenderers,
     // These are normal renderers but customized to our needs
     {
-        renderer: MaterialOneOfRenderer_Discriminator,
-        tester: materialOneOfControlTester_Discriminator,
+        renderer: MaterialOneOfRenderer,
+        tester: materialOneOfControlTester,
     },
     {
         renderer: MaterialDateTimeControl,

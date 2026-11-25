@@ -21,6 +21,7 @@ import {
     tableCellClasses,
     tableHeadClasses,
     tableRowClasses,
+    tabsClasses,
     useMediaQuery,
 } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -702,6 +703,13 @@ export const jsonFormsPadding: SxProps<Theme> = {
         {
             marginBottom: 1,
         },
+    // Room between a input and tabs in a union field
+    [`& .${tabsClasses.root}`]: {
+        marginBottom: 2,
+    },
+    [`& .${tabsClasses.root} + *`]: {
+        marginBottom: 1,
+    },
 };
 
 export const underlineTextSx: SxProps<Theme> = {

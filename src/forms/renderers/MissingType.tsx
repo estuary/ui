@@ -25,7 +25,7 @@ const MissingTypeRenderer = (props: LayoutProps) => {
     //      1. has an authentication that only has discriminator, title, and oneOf (Google Sheets)
     //      2. has a `discriminator.mapping` that points to multiple objects (Source Shopify Native)
     // After we render the oneOf there is nothing left but the title and discriminator.
-    // This leads to Custom_MaterialOneOfRenderer_Discriminator trying to get a UI schema
+    // This leads to Custom_MaterialOneOfRenderer trying to get a UI schema
     //  from just a title and discriminator and deriveTypes will return no types.
     // There is a chance that a schema we are not planning for also gets a NullType at
     //  the root ref - but that chance is low and should be caught during testing.

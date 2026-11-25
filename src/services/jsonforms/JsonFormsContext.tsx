@@ -37,6 +37,7 @@ import React from 'react';
 
 import {
     getUISchemas,
+    mapStateToCombinatorRendererProps,
     mapStateToControlProps,
     Resolve,
     update,
@@ -47,7 +48,7 @@ import {
     withJsonFormsContext,
 } from '@jsonforms/react';
 
-import { getDiscriminatorIndex } from 'src/forms/shared';
+import { getDiscriminator, getDiscriminatorIndex } from 'src/forms/shared';
 import {
     CHILDREN_HAVE_VALUE,
     LAYOUT_PATH,
@@ -66,11 +67,12 @@ const mapCustomStateToCombinatorRendererProps = (
         ownProps
     );
 
-    const indexOfFittingSchema: any = getDiscriminatorIndex(
-        schema,
-        data,
-        keyword
-    );
+    // Without a discriminator, the first option the data fits, as JSON Forms
+    // finds it
+    const indexOfFittingSchema: any = getDiscriminator(schema)
+        ? getDiscriminatorIndex(schema, data, keyword)
+        : mapStateToCombinatorRendererProps(state, ownProps, keyword)
+              .indexOfFittingSchema;
 
     return {
         data,
