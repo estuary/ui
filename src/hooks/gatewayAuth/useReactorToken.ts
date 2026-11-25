@@ -59,7 +59,7 @@ const getTokenRefreshInterval = (token: Token | undefined): number => {
         if (now >= exp) {
             logRocketConsole('data plane JWT is expired', {
                 now,
-                token,
+                exp,
             });
             return 0;
         } else {

@@ -5,8 +5,12 @@ import { isEmpty } from 'lodash';
 import LogRocket from 'logrocket';
 
 import { OAUTH_OPERATIONS } from 'src/api/shared';
+import { maskKeys, sanitizeUrl } from 'src/services/sanitize';
 import { DEFAULT_FILTER, getUserDetails } from 'src/services/shared';
-import { getLogRocketSettings } from 'src/utils/env-utils';
+import {
+    getLogRocketSettings,
+    getMarketplaceSettings,
+} from 'src/utils/env-utils';
 
 // Based on node_modules/logrocket/dist/types.d.ts
 interface IUserTraits {
@@ -41,6 +45,10 @@ const maskEverythingURLs = [
     'config-encryption.estuary.dev',
     '/secret/encrypt',
     '/functions/v1/oauth',
+    '/auth/v1/token',
+    '/auth/v1/verify',
+    '/authorize/user/',
+    '/v1/journals/read',
 
     // Support staff make A LOT of these and we do not need them
     'auth_roles?offset',
@@ -61,6 +69,12 @@ const maskEverythingURLs = [
     'src/',
     'node_modules/',
 ];
+
+try {
+    maskEverythingURLs.push(getMarketplaceSettings().verifyURL.toLowerCase());
+} catch {
+    // The setting is optional here
+}
 
 const shouldMaskEverything = (url?: string) =>
     maskEverythingURLs.some((el) => url?.toLowerCase().includes(el));
@@ -114,14 +128,20 @@ const processBody = (
             response.push(filteredBody);
         });
     } else {
-        // Loop through all the elements and then loop through all the keys
-        //      to mask the ones that are not allowed.
-        response.forEach((el) => {
-            keys.forEach((key) => {
-                if (el[key]) {
-                    el[key] = MASKED;
+        // Copy each element and mask the provided keys. Header names are
+        //      case-insensitive so the keys are matched that way.
+        const lowerKeys = keys.map((key) => key.toLowerCase());
+
+        (originalIsArray ? obj : [obj]).forEach((el: any) => {
+            const masked = { ...el };
+
+            Object.keys(masked).forEach((key) => {
+                if (masked[key] && lowerKeys.includes(key.toLowerCase())) {
+                    masked[key] = MASKED;
                 }
             });
+
+            response.push(masked);
         });
     }
 
@@ -171,6 +191,15 @@ const maskContent = (requestResponse: any) => {
             shouldMaskEverythingInOperation(parsedBody?.operation)
         ) {
             requestResponse.body = `${MASKED}_${parsedBody?.operation}`;
+        } else if (parsedBody && typeof parsedBody === 'object') {
+            const maskedBody = maskKeys(parsedBody, MASKED);
+
+            if (maskedBody !== parsedBody) {
+                requestResponse.body =
+                    typeof requestResponse.body === 'string'
+                        ? JSON.stringify(maskedBody)
+                        : maskedBody;
+            }
         }
     }
 
@@ -205,6 +234,9 @@ export const initLogRocket = () => {
     if (logRocketSettings?.appID) {
         const settings: Settings = {
             release: __ESTUARY_UI_COMMIT_ID__,
+            browser: {
+                urlSanitizer: sanitizeUrl,
+            },
             dom: {
                 // isEnabled: false,
                 disableWebAnimations: true,
