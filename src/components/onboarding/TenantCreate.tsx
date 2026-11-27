@@ -37,6 +37,10 @@ import { getUrls } from 'src/utils/env-utils';
 
 const urls = getUrls();
 const NAME_TAKEN_MESSAGE = 'is already in use';
+// A taken name often means the user meant to join an existing organization,
+// which takes an invite link from its admin, not a new organization.
+const NAME_TAKEN_HINT =
+    "If you're trying to join an organization that already exists, don't create a new one. Ask an admin of that organization to create an invite link under Admin > Account Access and share it with you.";
 const EVENT_NAME = 'Tenant:Create';
 
 export const TenantCreate = () => {
@@ -202,6 +206,11 @@ export const TenantCreate = () => {
                     {serverError ? (
                         <AlertBox severity="error" short>
                             {serverError}
+                            {serverError.includes(NAME_TAKEN_MESSAGE) ? (
+                                <Typography variant="inherit" sx={{ mt: 1 }}>
+                                    {NAME_TAKEN_HINT}
+                                </Typography>
+                            ) : null}
                         </AlertBox>
                     ) : null}
 
